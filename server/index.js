@@ -1,1 +1,3 @@
-// backend starting point
+const express = require('express');
+
+const app = express();
