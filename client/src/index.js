@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-const dotenv = require('dotenv');
 
 async function getData() {
   let url = `${process.env.BACKEND_URL}`;
