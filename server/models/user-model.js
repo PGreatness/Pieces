@@ -38,7 +38,7 @@ const UserSchema = new Schema(
         },
         bio: {
             type: String,
-            required: false
+            required: true
         },
         friends: {
             type: [String],
