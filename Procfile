@@ -1,0 +1,1 @@
+web: npm run --prefix client start

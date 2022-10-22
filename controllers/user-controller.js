@@ -1,4 +1,4 @@
-const auth = require('../auth')
+const auth = require('../../auth')
 const User = require('../models/user-model')
 const Notification = require('../models/notification-model')
 const Image = require('../models/image-model')
