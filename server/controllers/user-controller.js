@@ -97,7 +97,8 @@ registerUser = async (req, res) => {
                     success: true,
                     message: 'User has been registered!'
                 })
-            }).catch(() => {
+            }).catch((err) => {
+                console.log(err)
                 return res.status(404).json({
                     success: false,
                     message: 'Failed to register user'

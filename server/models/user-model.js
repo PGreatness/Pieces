@@ -4,10 +4,6 @@ const Image = require("./image-model").schema;
 
 const UserSchema = new Schema(
     {
-        _id: {
-			type: ObjectId,
-			required: true
-        },
         firstName: { 
             type: String, 
             required: true 
@@ -38,7 +34,7 @@ const UserSchema = new Schema(
         },
         bio: {
             type: String,
-            required: true
+            required: false
         },
         friends: {
             type: [String],
