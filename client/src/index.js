@@ -5,20 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 
-async function getData() {
-  let url = `${process.env.BACKEND_URL}`;
-  let response = await fetch(url);
-  return await response.json();
-}
-
-window.onload = () => {
-  async function run() {
-    let data = await getData();
-    console.log(data);
-  }
-  run();
-}
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
