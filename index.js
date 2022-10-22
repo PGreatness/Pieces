@@ -33,11 +33,11 @@ mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true , useUnifiedTopol
     .catch(error => {
         console.log(error)
     });
-
+/* 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html')
 })
 
 app.get('/api', (req, res) => {
     res.send(__dirname + '/public/index.html')
-})
+}) */
