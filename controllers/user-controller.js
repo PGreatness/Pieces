@@ -167,6 +167,5 @@ module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
-    loginGuest,
     logoutUser
 }
