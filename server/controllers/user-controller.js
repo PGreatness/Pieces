@@ -151,62 +151,7 @@ loginUser = async (req, res) => {
     }
 }
 
-loginGuest = async (req, res) => {
-    try {
-        const foundGuest = await User.findOne({ userName: "Guest" });
-        
-        if (!foundGuest) {
-            const newUser = new User({
-                firstName: "Guest", 
-                lastName: "User", 
-                userName: "Guest", 
-                email: "guestuser@pieces.com", 
-                passwordHash: "GuestUser",
-                notifications: [],
-                bio: "",
-                friends: [],
-                chats: []
-            });
-            const savedUser = await newUser.save();
-            const token = auth.signToken(savedUser);
 
-            await res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none"
-            }).status(200).json({
-                success: true,
-                user: {
-                    firstName: savedUser.firstName,
-                    lastName: savedUser.lastName,
-                    userName: savedUser.userName,
-                    isGuest: true
-                }
-            }).send();
-        }
-        else {
-            const token = auth.signToken(foundGuest);
-
-            await res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none"
-            }).status(200).json({
-                success: true,
-                user: {
-                    firstName: foundGuest.firstName,
-                    lastName: foundGuest.lastName,
-                    userName: foundGuest.userName,
-                    isGuest: true
-                }
-            }).send();
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send();
-    }
-
-}
 
 logoutUser = async (req, res) => {
     res.clearCookie("token", {
