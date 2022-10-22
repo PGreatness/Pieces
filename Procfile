@@ -1,1 +1,2 @@
-web: npm run --prefix client start
+web: "cd ../client && npm start"
+heroku-postbuild: "nodemon"
