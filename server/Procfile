@@ -1,2 +1,2 @@
-web: "cd ./client && npm start"
+web: "npm start"
 heroku-postbuild: "nodemon"
