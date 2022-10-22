@@ -23,8 +23,7 @@ app.use(cookieParser())
 const piecesRouter = require('./routes/pieces-router')
 app.use('/api', piecesRouter)
 
-// CONNECT TO DATABASE 
-console.log(process.env)
+// CONNECT TO DATABASE
 mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true , useUnifiedTopology: true})
     .then(() => {
         app.listen({ port: PORT }, () => {
