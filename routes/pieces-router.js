@@ -10,9 +10,12 @@ router.get('/login/', UserController.loginUser)
 router.get('/logout/', UserController.logoutUser)
 router.get('/users/userId/:id', UserController.getUserbyId)
 router.get('/users/username/:username', UserController.getUserbyUsername)
+router.get('/forgotPassword', UserController.forgotPassword)
 
 router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
+router.post('/resetPassword', UserController.resetPassword)
+
 
 
 

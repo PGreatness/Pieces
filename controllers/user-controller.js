@@ -4,7 +4,6 @@ const Notification = require('../models/notification-model')
 const Image = require('../models/image-model')
 const bcrypt = require('bcryptjs')
 const nodemailer = require("nodemailer");
-//const tokens = require("../utils/tokens");
 const emailUtil = require("../utils/emails");
 const config = require("config");
 
@@ -83,6 +82,52 @@ getUserbyUsername = async (req, res) => {
     return res.status(200).json({
         user: savedUser
     }).send();
+}
+
+forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        if (!email)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "ERROR (email)!"
+                });
+
+        const user = await User.findOne({ email: email });
+        if (!user)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "ERROR (no user found)!"
+                });
+
+        // NOTE generated tokens expire in 15 minutes
+        const token = auth.signPasswordResetToken(user);
+
+        const mailOptions = {
+            from: config.get("email_address"),
+            to: email,
+            subject: "Reset Your Pieces Password",
+            text: emailUtil.generatePasswordResetEmailText(email, user._id, token),
+            html: emailUtil.generatePasswordResetEmailHTML(email, user._id, token),
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return "ERROR";
+            } else {
+                console.log(`Email sent: ${info.response}`);
+            }
+        });
+
+        return "OK";
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
 }
 
 
@@ -252,55 +297,9 @@ changePassword = async (req, res) => {
     }
 }
 
-forgotPassword = async (req, res) => {
-    try {
-        const { email } = args;
-
-        if (!email) 
-        return res
-        .status(400)
-        .json({
-            errorMessage: "ERROR (email)!"
-        });
-
-        const user = await User.findOne({ email: email });
-        if (!user) 
-        return res
-        .status(400)
-        .json({
-            errorMessage: "ERROR (no user found)!"
-        });
-
-        // NOTE generated tokens expire in 15 minutes
-        const token = auth.signPasswordResetToken(user);
-
-        const mailOptions = {
-            from: "imanali4@gmail.com",
-            to: email,
-            subject: "Reset Your Pieces Password",
-            text: emailUtil.generateEmailText(email, user._id, token),
-            html: emailUtil.generateEmailHTML(email, user._id, token),
-        };
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log(error);
-                return "ERROR";
-            } else {
-                console.log(`Email sent: ${info.response}`);
-            }
-        });
-
-        return "OK";
-    } catch (err) {
-        console.error(err);
-        res.status(500).send();
-    }
-}
-
 resetPassword = async (req, res) => {
     try {
-        const { id, token, password } = args;
+        const { id, token, password } = req.body;
 
         if (!id || !token || !password)
             return res
@@ -350,5 +349,7 @@ module.exports = {
     logoutUser,
     getUserbyId,
     getUserbyUsername,
-    changePassword
+    changePassword,
+    forgotPassword,
+    resetPassword
 }
