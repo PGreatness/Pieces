@@ -1,19 +1,19 @@
 // THESE ARE NODE APIs WE WISH TO USE
 const express = require('express')
 const cors = require('cors')
-const dotenv = require('dotenv')
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
+const config = require("config");
 
 // CREATE OUR SERVER
-dotenv.config()
-const PORT = process.env.PORT || 4000;
+const PORT = config.get("port");
+const serverDomain = config.get("server_local_domain");
 const app = express()
 
 // SETUP THE MIDDLEWARE
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: config.get("client_origin"),
     credentials: true
 }))
 app.use(express.json())
@@ -24,16 +24,18 @@ const piecesRouter = require('./routes/pieces-router')
 app.use('/api', piecesRouter)
 
 // CONNECT TO DATABASE
-mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true , useUnifiedTopology: true})
+mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
     .then(() => {
         app.listen({ port: PORT }, () => {
-            console.log(`Server ready at http://localhost:${PORT}`);
+            console.log(`Server ready at ${serverDomain}:${PORT}`);
         })
     })
     .catch(error => {
         console.log(error)
     });
-/* 
+
+
+ /* 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html')
 })

@@ -12,7 +12,7 @@ function authManager() {
                 })
             }
 
-            const verified = jwt.verify(token, process.env.JWT_SECRET)
+            const verified = jwt.verify(token, config.get("secrets.access_token"))
             req.userId = verified.userId;
 
             next();
@@ -25,10 +25,8 @@ function authManager() {
     }
 
     signToken = function (user) {
-        return jwt.sign({
-            userId: user._id
-        }, process.env.JWT_SECRET);
-    }
+        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "1h" });
+    };
 
     return this;
 }
