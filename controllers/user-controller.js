@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 
 getLoggedIn = async (req, res) => {
-    auth.verify(req, res, async function () {
+    auth.verifyToken(req, res, async function () {
         const loggedInUser = await User.findOne({ _id: req.userId });
         return res.status(200).json({
             loggedIn: true,
@@ -272,7 +272,7 @@ forgotPassword = async (req, res) => {
         });
 
         // NOTE generated tokens expire in 15 minutes
-        const token = tokens.generatePasswordResetToken(user);
+        const token = auth.signPasswordResetToken(user);
 
         const mailOptions = {
             from: "imanali4@gmail.com",
@@ -314,7 +314,7 @@ resetPassword = async (req, res) => {
                 .status(400)
                 .json({ errorMessage: "Account with specified id not found." });
 
-        const payload = tokens.verifyPasswordResetToken(user, token);
+        const payload = auth.verifyPasswordResetToken(user, token);
 
         if (!payload)
             return res
