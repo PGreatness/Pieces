@@ -2,6 +2,10 @@ const express = require('express')
 const UserController = require('../controllers/user-controller')
 const MapController = require('../controllers/map-controller')
 const TilesetController = require('../controllers/tileset-controller')
+const TileController = require('../controllers/tile-controller')
+const ThreadController = require('../controllers/thread-controller')
+const ChatController = require('../controllers/chat-controller')
+
 const router = express.Router()
 
 
@@ -29,6 +33,8 @@ router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', TilesetController.updateMap)
 
+
+
 // TileSet Routes
 router.get('/tileset/:ownerId', TilesetController.getAllUserTilesets)
 router.get('/tileset/:username', TilesetController.getAllUserTilesetsByName)
@@ -38,9 +44,13 @@ router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
 
+
+
 // Tile Routes
 
-// Thread/Community? Routes
+// Thread Routes
+
+// Chat Routes
 
 
 module.exports = router
