@@ -49,7 +49,7 @@ createTile = (req, res) => {
     const newTile = new tile({
         tilesetId,
         height,
-        width,
+        width
     });
     newTile.save().then(() => {
         return res.status(201).json({
@@ -66,6 +66,13 @@ createTile = (req, res) => {
 }
 
 updateTile = async (req, res) => {
+    if (!req.body.id) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide an id to update',
+        });
+    }
+
     const { height, width } = req.body;
 
     if (!height || !width) {
@@ -89,7 +96,7 @@ updateTile = async (req, res) => {
         });
     }
 
-    const userTile = tile.findOne({ _id: req.params.id });
+    const userTile = tile.findOne({ _id: req.body.id });
     if (!userTile) {
         return res.status(400).json({
             success: false,
@@ -112,23 +119,27 @@ updateTile = async (req, res) => {
         });
     }
 
-    tile.findOneAndUpdate({ _id: req.params.id }, { height, width }, (error, tile) => {
-        if (error) {
-            return res.status(400).json({
-                error,
-                message: 'Tile not updated!',
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            id: tile._id,
-            message: 'Tile updated!',
+    let updatedTile = await tile.findOneAndUpdate({ _id: req.params.id }, { height, width }, { new: true });
+    if (!updatedTile) {
+        return res.status(400).json({
+            success: false,
+            error: 'Tile not updated',
         });
+    }
+    return res.status(200).json({
+        success: true,
+        tile: updatedTile,
     });
 }
 
 deleteTile = async (req, res) => {
-    const userTile = tile.findOne({ _id: req.params.id });
+    if (!req.body.id) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a tile id',
+        });
+    }
+    const userTile = tile.findOne({ _id: req.body.id });
     if (!userTile) {
         return res.status(400).json({
             success: false,
@@ -151,7 +162,7 @@ deleteTile = async (req, res) => {
         });
     }
 
-    tile.findOneAndDelete({ _id: req.params.id }, (error, tile) => {
+    tile.findOneAndDelete({ _id: req.body.id }, (error, tile) => {
         if (error) {
             return res.status(400).json({
                 error,
@@ -163,51 +174,45 @@ deleteTile = async (req, res) => {
             id: tile._id,
             message: 'Tile deleted!',
         });
-    });
-}
-
-getTileById = async (req, res) => {
-    await tile.findOne({ _id: req.params.id }, (error, tile) => {
-        if (error) {
-            return res.status(400).json({
-                error,
-                message: 'Tile not found!',
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            tile,
+    }).catch(error => {
+        return res.status(400).json({
+            error,
+            message: 'Tile not deleted!',
         });
     });
 }
 
 getAllTiles = async (req, res) => {
-    await tile.find({}, (error, tiles) => {
-        if (error) {
-            return res.status(400).json({
-                error,
-                message: 'Tiles not found!',
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            tiles,
+    let allTiles = await tile.find({});
+    if (allTiles.length == 0) {
+        return res.status(400).json({
+            success: false,
+            error: 'No tiles found',
         });
+    }
+    return res.status(200).json({
+        success: true,
+        tiles: allTiles,
     });
 }
 
 getTileById = async (req, res) => {
-    await tile.findOne({ _id: req.params.id }, (error, tile) => {
-        if (error) {
-            return res.status(400).json({
-                error,
-                message: 'Tile not found!',
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            tile,
+    if (!req.params.id) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide an id',
         });
+    }
+    let tilesId = await tile.findOne({ _id: req.params.id });
+    if (!tilesId) {
+        return res.status(400).json({
+            success: false,
+            error: 'Tile not found',
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        tile: tilesId,
     });
 }
 
