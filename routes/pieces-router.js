@@ -1,5 +1,10 @@
 const express = require('express')
 const UserController = require('../controllers/user-controller')
+const MapController = require('../controllers/map-controller')
+const TilesetController = require('../controllers/tileset-controller')
+const TileController = require('../controllers/tile-controller')
+const ThreadController = require('../controllers/thread-controller')
+const ChatController = require('../controllers/chat-controller')
 
 const router = express.Router()
 
@@ -20,14 +25,16 @@ router.post('/resetPassword', UserController.resetPassword)
 
 
 // Map Routes
-router.get('/map/:id', UserController.getMapbyId)
+router.get('/map/:id', MapController.getMapbyId)
 
 // TileSet Routes
-router.get('/tileset/:id', UserController.getTilesetbyId)
+router.get('/tileset/:id', TilesetController.getTilesetbyId)
 
 // Tile Routes
 
-// Thread/Community? Routes
+// Thread Routes
+
+// Chat Routes
 
 
 module.exports = router
