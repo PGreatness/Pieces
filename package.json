@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "server": "npm install && nodemon index.js",
-    "client": "cd client && npm install && npm build",
+    "client": "cd client && npm install && npm run build",
     "prod": "concurrently --kill-others \"npm run server\" \"npm run client\""
   },
   "author": "",
