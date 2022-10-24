@@ -1,0 +1,15 @@
+{
+    "mongo_uri": "mongodb+srv://piecesAdmin:zBzVR5DvrI5PPOkw@cluster0.jyrlicl.mongodb.net/Pieces?retryWrites=true&w=majority",
+    "port": 4000,
+    "client_origin": "http://localhost:3000",
+    "server_local_domain": "http://localhost",
+    "secrets": {
+        "reset_token": "5g[^2-Y>oDN+&p2",
+        "refresh_token": "uv]k[8?GCE1#4=}",
+        "access_token": "|imWA>J{*r,3!tD",
+        "jwt": ":r(4[CaQ3`N<#8EV~7<K75Rd/ZpfzBkv`m-x]+QnjQcXazr%w;"
+    },
+    "email_address": "imzu123@gmail.com",
+    "app_password": "zxffgtaasnvwplai",
+    "envType": "DEFAULT"
+}

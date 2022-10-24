@@ -1,28 +1,186 @@
-const auth = require('../auth/index');
+const auth = require('../auth/tokens');
 const User = require('../models/user-model')
 const Notification = require('../models/notification-model')
 const Image = require('../models/image-model')
+const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcryptjs')
+const nodemailer = require("nodemailer");
+const emailUtil = require("../utils/emails");
+const config = require("config");
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: config.get("email_address"),
+        pass: config.get("app_password"),
+    },
+});
 
 getLoggedIn = async (req, res) => {
-    auth.verify(req, res, async function () {
+    auth.verifyToken(req, res, async function () {
         const loggedInUser = await User.findOne({ _id: req.userId });
         return res.status(200).json({
             loggedIn: true,
-            user: {
-                firstName: loggedInUser?.firstName,
-                lastName: loggedInUser?.lastName,
-                userName: loggedInUser?.userName,
-                isGuest: (loggedInUser?.userName === "Guest")
-            }
+            user: loggedInUser
         }).send();
     })
 }
 
+loginUser = async (req, res) => {
+    try {
+        const { userName, password } = req.query;
+        if (userName === "Community" || userName === "Guest") {
+            return res.status(400).json({ errorMessage: "You cannot login with this userName" });
+        }
+
+        const foundUser = await User.findOne({ userName: userName });
+        if (!foundUser) {
+            return res.status(400).json({ errorMessage: "A User with the username provided does not exist." });
+        }
+
+        const match = await bcrypt.compare(password, foundUser.passwordHash);
+        if (match) {
+            const token = auth.signToken(foundUser);
+
+            await res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none"
+            }).status(200).json({
+                success: true,
+                user: foundUser
+            }).send();
+        }
+        else {
+            return res.status(400).json({ errorMessage: "Wrong password entered." });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
+
+logoutUser = async (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 0
+    });
+    return res.status(200).json({ success: true });
+}
+
+
+getUserbyId = async (req, res) => {
+    const savedUser = await User.findById(req.params.id);
+    return res.status(200).json({
+        user: savedUser
+    }).send();
+}
+
+getUserbyUsername = async (req, res) => {
+    const savedUser = await User.findOne({ userName: req.params.username });
+    return res.status(200).json({
+        user: savedUser
+    }).send();
+}
+
+forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        if (!email)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "ERROR (email)!"
+                });
+
+        const user = await User.findOne({ email: email });
+        if (!user)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "ERROR (no user found)!"
+                });
+
+        // NOTE generated tokens expire in 15 minutes
+        const token = auth.signPasswordResetToken(user);
+
+        const mailOptions = {
+            from: config.get("email_address"),
+            to: email,
+            subject: "Reset Your Pieces Password",
+            text: emailUtil.generatePasswordResetEmailText(email, user._id, token),
+            html: emailUtil.generatePasswordResetEmailHTML(email, user._id, token),
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return "ERROR";
+            } else {
+                console.log(`Email sent: ${info.response}`);
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Reset email sent!'
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
+
+
+
+
+updateUser = async (req, res) => {
+    try {
+        const { _id, firstName, lastName, userName, email, bio } = req.body;
+
+        const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: _id } }] });
+        if (alreadyRegistered) {
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "User with that email already registered."
+                });
+        }
+
+
+        const user = await User.findById(_id);
+        await user.updateOne({
+            firstName: firstName,
+            lastName: lastName,
+            userName: userName,
+            email: email,
+            bio: bio
+        }).then(() => {
+            return res.status(200).json({
+                success: true,
+                message: 'User has been updated!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to update user'
+            })
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
+
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, userName, email, password, passwordVerify,  } = req.body;
-        
+        const { firstName, lastName, userName, email, password, passwordVerify, } = req.body;
+
         if (!firstName || !lastName || !email || !password || !passwordVerify) {
             return res
                 .status(400)
@@ -42,22 +200,22 @@ registerUser = async (req, res) => {
                     errorMessage: "Please enter the same password twice."
                 })
         }
-        if(userName === "Community" || userName === "Guest") {
+        if (userName === "Community" || userName === "Guest") {
             return res
                 .status(400)
                 .json({
                     errorMessage: "An account with this User Name already exists."
                 })
         }
-        if(email === "community@pieces.com" || email === "guestuser@pieces.com") {
+        if (email === "community@pieces.com" || email === "guestuser@pieces.com") {
             return res
                 .status(400)
                 .json({
                     errorMessage: "An account with this email address already exists."
                 })
         }
-        
-        
+
+
         const existingUser = await User.findOne({ email: email });
         if (existingUser) {
             return res
@@ -84,67 +242,131 @@ registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
         const notifications = [];
-        const friends= [];
-        const chats= [];
-        const bio= '';
+        const friends = [];
+        const chats = [];
+        const bio = '';
+        //const key = crypto.randomBytes(20).toString('hex');
 
 
         const newUser = new User({
             firstName, lastName, userName, email, passwordHash, notifications, bio, friends, chats
         });
-            await newUser.save().then(() => {
-                return res.status(200).json({
-                    success: true,
-                    message: 'User has been registered!'
-                })
-            }).catch((err) => {
-                console.log(err)
-                return res.status(404).json({
-                    success: false,
-                    message: 'Failed to register user'
-                })
-            });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send();
-    }
-
-}
-
-loginUser = async (req, res) => {
-    try {
-        const { userName, password } = req.query;
-        if (userName === "Community" || userName === "Guest") {
-            return res.status(400).json({ errorMessage: "You cannot login with this userName" });
-        }
-
-        const foundUser = await User.findOne({ userName: userName });
-        if (!foundUser) {
-            return res.status(400).json({ errorMessage: "A User with the username provided does not exist." });
-        }
-
-        const match = await bcrypt.compare(password, foundUser.passwordHash);
-        if (match) {
-            const token = auth.signToken(foundUser);
-
-            await res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none"
-            }).status(200).json({
+        await newUser.save().then(() => {
+            //sendVerification(email, key);
+            return res.status(200).json({
                 success: true,
-                user: {
-                    firstName: foundUser.firstName,
-                    lastName: foundUser.lastName,
-                    userName: foundUser.userName,
-                    isGuest: false
-                }
-            }).send();
-        }
-        else {
-            return res.status(400).json({ errorMessage: "Wrong password entered." });
-        }
+                message: 'User has been registered!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to register user'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+
+}
+
+changePassword = async (req, res) => {
+    try {
+        const { email, currentPassword, newPassword, repeatNewPassword } = req.body;
+
+        if (!email || !currentPassword || !newPassword)
+            return res
+                .status(400)
+                .json({ errorMessage: "Must Provide All Required Arguments to Change Password!" });
+
+        if (newPassword !== repeatNewPassword)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "New Password Must Match!"
+                });
+
+        const user = await User.findOne({ email: email });
+        if (!user)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Account With Specified Email Not Found!"
+                });
+
+        const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!valid)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Incorrect Current Password. Please Try Again!"
+                });
+
+        if (currentPassword === newPassword && newPassword === repeatNewPassword)
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Can Not Change to Same Password!"
+                });
+
+        newPasswordHash = await bcrypt.hash(newPassword, 10);
+        await User.findOneAndUpdate({ email }, { passwordHash: newPasswordHash }).then(() => {
+            return res.status(200).json({
+                success: true,
+                message: 'User password has been changed!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to change password'
+            })
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
+
+resetPassword = async (req, res) => {
+    try {
+        const { id, token, password } = req.body;
+
+        if (!id || !token || !password)
+            return res
+                .status(400)
+                .json({ errorMessage: "Must Provide All Required Arguments to Change Password!" });
+
+        const objectId = new ObjectId(id);
+        const user = await User.findOne({ _id: objectId });
+        if (!user)
+            return res
+                .status(400)
+                .json({ errorMessage: "Account with specified id not found." });
+
+        const payload = auth.verifyPasswordResetToken(user, token);
+
+        if (!payload)
+            return res
+                .status(400)
+                .json({ errorMessage: "Token is invalid or expired." });
+
+        newPasswordHash = await bcrypt.hash(password, 10);
+        await User.findOneAndUpdate({ id }, { passwordHash: newPasswordHash }).then(() => {
+            return res.status(200).json({
+                success: true,
+                message: 'User password has been reset!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to reset password'
+            })
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).send();
@@ -152,20 +374,16 @@ loginUser = async (req, res) => {
 }
 
 
-
-logoutUser = async (req, res) => {
-    res.clearCookie("token", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 0
-    });
-    return res.status(200).json({ success: true });
-}
 
 module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    getUserbyId,
+    getUserbyUsername,
+    updateUser,
+    changePassword,
+    forgotPassword,
+    resetPassword
 }
