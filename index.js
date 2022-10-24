@@ -7,7 +7,7 @@ const config = require("config");
 
 // CREATE OUR SERVER
 const PORT = config.get("port");
-const serverDomain = config.get("server_local_domain");
+const serverDomain = "https://pieces-316.herokuapp.com";
 const app = express()
 
 // SETUP THE MIDDLEWARE
