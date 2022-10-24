@@ -2,6 +2,7 @@ const auth = require('../auth/tokens');
 const User = require('../models/user-model')
 const Notification = require('../models/notification-model')
 const Image = require('../models/image-model')
+const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcryptjs')
 const nodemailer = require("nodemailer");
 const emailUtil = require("../utils/emails");
@@ -138,14 +139,42 @@ forgotPassword = async (req, res) => {
 
 
 updateUser = async (req, res) => {
-//     const _id = new ObjectId(id);
-//     try {
-//         await User.findOneAndUpdate({ _id }, { $set: update }, { new: true });
-//         return true;
-//     } catch (error) {
-//         console.log(error);
-//         throw new Error("There was an error updating the fields");
-//     }
+    try {
+        const { _id, firstName, lastName, userName, email, bio } = req.body;
+
+        const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: _id } }] });
+        if (alreadyRegistered) {
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "User with that email already registered."
+                });
+        }
+
+
+        const user = await User.findById(_id);
+        await user.updateOne({
+            firstName: firstName,
+            lastName: lastName,
+            userName: userName,
+            email: email,
+            bio: bio
+        }).then(() => {
+            return res.status(200).json({
+                success: true,
+                message: 'User has been updated!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to update user'
+            })
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
 }
 
 registerUser = async (req, res) => {

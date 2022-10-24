@@ -31,13 +31,13 @@ router.get('/map/:id', MapController.getMapbyId)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
-router.post('/map/updateMap', TilesetController.updateMap)
+router.post('/map/updateMap', MapController.updateMap)
 
 
 
-// TileSet Routes
+// // TileSet Routes
 router.get('/tileset/:ownerId', TilesetController.getAllUserTilesets)
-router.get('/tileset/:username', TilesetController.getAllUserTilesetsByName)
+router.get('/tileset/:username', TilesetController.getUserTilesetsByName)
 router.get('/tileset/:id', TilesetController.getTilesetbyId)
 
 router.post('/tileset/newTileset', TilesetController.createTileset)

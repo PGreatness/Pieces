@@ -397,3 +397,12 @@ getMapbyId = async (req, res) => {
         map: savedMap
     }).send();
 }
+
+module.exports = {
+    getAllUserMaps,
+    getUserMapsByName,
+    getMapbyId,
+    createMap,
+    deleteMap,
+    updateMap
+}

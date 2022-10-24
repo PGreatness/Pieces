@@ -249,7 +249,7 @@ getAllUserTilesets = async (req, res) => {
 
 }
 
-getAllUserTilesetsByName = async (req, res) => {
+getUserTilesetsByName = async (req, res) => {
 
     const { userName, name } = req.query;
     await Tileset.find({ userName: userName }, (err, tilesets) => {
@@ -313,4 +313,14 @@ getTilesetbyId = async (req, res) => {
     return res.status(200).json({
         tileset: savedTileset
     }).send();
+}
+
+
+module.exports = {
+    getAllUserTilesets,
+    getUserTilesetsByName,
+    getTilesetbyId,
+    createTileset,
+    deleteTileset,
+    updateTileset
 }
