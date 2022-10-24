@@ -1,7 +1,17 @@
+const mongoose = require('mongoose');
 const tile = require('../models/tile-model')
 const tileset = require('../models/tileset-model')
 
-createTile = (req, res) => {
+/**
+ * @desc    create a new tile
+ * @route   POST /api/tile/createTile
+ * @access  Private
+ * @param   {ObjectId}    tilesetId
+ * @param   {string}      height
+ * @param   {string}      width
+ * @param   {string}      userId
+ */
+createTile = async (req, res) => {
     const { tilesetId, height, width } = req.body;
 
     if (!tilesetId || !height || !width) {
@@ -25,28 +35,35 @@ createTile = (req, res) => {
         });
     }
 
-    const userTileset = tileset.findOne({ _id: tilesetId });
+    const userTileset = await tileset.findOne({ _id: tilesetId });
+    console.log(userTileset);
+
     if (!userTileset) {
         return res.status(400).json({
             success: false,
             error: 'Tileset not found',
         });
     }
-    if (userTileset.ownerId !== req.user.id) {
+    console.log(userTileset.ownerId.toString());
+    console.log(req.body.userId?.toString());
+    if (userTileset.ownerId?.toString() != req.body.userId.toString()) {
         return res.status(400).json({
             success: false,
             error: 'You do not own this tileset',
         });
-    }
-
-    if (!userTileset.collaboratorIds.includes(req.user.id)) {
-        return res.status(400).json({
-            success: false,
-            error: 'You do not own this tileset',
-        });
+    }else {
+        for (let i = 0; i < userTileset.collaboratorIds.length; i++) {
+            if (userTileset.collaboratorIds[i].toString() == req.body.userId) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'You do not own this tileset',
+                });
+            }
+        }
     }
 
     const newTile = new tile({
+        _id: new mongoose.Types.ObjectId(),
         tilesetId,
         height,
         width
@@ -65,8 +82,18 @@ createTile = (req, res) => {
     });
 }
 
+/**
+ * @desc    update a tile
+ * @route   POST /api/tile/updateTile
+ * @access  Private
+ * @param   {ObjectId}    userId
+ * @param   {string}      height
+ * @param   {string}      width
+ * @param   {string}      tileId
+ */
 updateTile = async (req, res) => {
-    if (!req.body.id) {
+    if (!req.body.tileId) {
+        console.log(req.body.tileId);
         return res.status(400).json({
             success: false,
             error: 'You must provide an id to update',
@@ -96,7 +123,7 @@ updateTile = async (req, res) => {
         });
     }
 
-    const userTile = tile.findOne({ _id: req.body.id });
+    const userTile = await tile.findOne({ _id: req.body.tileId });
     if (!userTile) {
         return res.status(400).json({
             success: false,
@@ -104,22 +131,25 @@ updateTile = async (req, res) => {
         });
     }
 
-    const userTileset = tileset.findOne({ _id: userTile.tilesetId });
-    if (userTileset.ownerId !== req.user.id) {
+    console.log(userTile);
+    const userTileset = await tileset.findOne({ _id: userTile.tilesetId });
+    if (userTileset.ownerId.toString() != req.body.userId.toString()) {
         return res.status(400).json({
             success: false,
             error: 'You do not own this tile',
         });
+    } else {
+        for (let i = 0; i < userTileset.collaboratorIds.length; i++) {
+            if (userTileset.collaboratorIds[i] == req.body.id) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'You do not own this tile',
+                });
+            }
+        }
     }
 
-    if (!userTileset.collaboratorIds.includes(req.user.id)) {
-        return res.status(400).json({
-            success: false,
-            error: 'You do not own this tile',
-        });
-    }
-
-    let updatedTile = await tile.findOneAndUpdate({ _id: req.params.id }, { height, width }, { new: true });
+    let updatedTile = await tile.findOneAndUpdate({ _id: req.body.tileId }, { height, width }, { new: true });
     if (!updatedTile) {
         return res.status(400).json({
             success: false,
@@ -132,6 +162,13 @@ updateTile = async (req, res) => {
     });
 }
 
+/**
+ * @desc    delete a tile
+ * @route   POST /api/tile/deleteTile
+ * @access  Private
+ * @param   {string}      userId
+ * @param   {ObjectId}    tilesetId
+ */
 deleteTile = async (req, res) => {
     if (!req.body.id) {
         return res.status(400).json({
@@ -139,7 +176,7 @@ deleteTile = async (req, res) => {
             error: 'You must provide a tile id',
         });
     }
-    const userTile = tile.findOne({ _id: req.body.id });
+    const userTile = await tile.findOne({ _id: req.body.id });
     if (!userTile) {
         return res.status(400).json({
             success: false,
@@ -147,22 +184,24 @@ deleteTile = async (req, res) => {
         });
     }
 
-    const userTileset = tileset.findOne({ _id: userTile.tilesetId });
-    if (userTileset.ownerId !== req.user.id) {
+    const userTileset = await tileset.findOne({ _id: userTile.tilesetId });
+    if (userTileset.ownerId.toString() !== req.body.ownerId.toString()) {
         return res.status(400).json({
             success: false,
             error: 'You do not own this tile',
         });
+    } else {
+        for (let i = 0; i < userTileset.collaboratorIds.length; i++) {
+            if (userTileset.collaboratorIds[i] == req.body.ownerId) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'You do not own this tile',
+                });
+            }
+        }
     }
 
-    if (!userTileset.collaboratorIds.includes(req.user.id)) {
-        return res.status(400).json({
-            success: false,
-            error: 'You do not own this tile',
-        });
-    }
-
-    tile.findOneAndDelete({ _id: req.body.id }, (error, tile) => {
+    return await tile.findOneAndDelete({ _id: req.body.id }, (error, tile) => {
         if (error) {
             return res.status(400).json({
                 error,
@@ -182,6 +221,12 @@ deleteTile = async (req, res) => {
     });
 }
 
+/**
+ * @desc    get all tiles
+ * @route   GET /api/tile/getAllTiles
+ * @access  Private
+ * @param   None
+ */
 getAllTiles = async (req, res) => {
     let allTiles = await tile.find({});
     if (allTiles.length == 0) {
@@ -196,6 +241,12 @@ getAllTiles = async (req, res) => {
     });
 }
 
+/**
+ * @desc    get specific tile
+ * @route   GET /api/tile/:id
+ * @access  Private
+ * @param   {ObjectId}    tileId
+ */
 getTileById = async (req, res) => {
     if (!req.params.id) {
         return res.status(400).json({

@@ -8,7 +8,7 @@
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "cd client && npm start",
-    "prod": "concurrently --kill-others \"npm run server\" \"npm run client\""
+    "prod": "npm install && cd client && npm install && cd ../ && concurrently --kill-others \"npm run server\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",
