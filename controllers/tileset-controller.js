@@ -307,3 +307,10 @@ getAllUserTilesetsByName = async (req, res) => {
     }).catch(err => console.log(err));
 
 }
+
+getTilesetbyId = async (req, res) => {
+    const savedTileset = await Tileset.findById(req.params.id);
+    return res.status(200).json({
+        tileset: savedTileset
+    }).send();
+}
