@@ -1,2 +1,2 @@
-heroku-postbuild: "nodemon"
-web: npm run --prefix client start
+heroku-postbuild: npm install concurrently
+web: npm run prod
