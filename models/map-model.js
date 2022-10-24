@@ -14,6 +14,10 @@ const mapSchema = new Schema({
         type: String,
         required: false,
     },
+    tags: {
+        type: [String],
+        required: false,
+    },
     mapBackgroundColor: {
         type: String,
         required: false,
@@ -33,6 +37,10 @@ const mapSchema = new Schema({
     tileWidth: {
         type: Number,
         required: true,
+    },
+    tiles: {
+        types: [ObjectId],
+        required: false,
     },
     tilesets: {
         type: [ObjectId],
