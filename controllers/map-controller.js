@@ -390,3 +390,51 @@ getUserMapsByName = async (req, res) => {
     }).catch(err => console.log(err));
 
 }
+
+setMapPrivacy = async (req, res) => {
+
+    // Checks if request contains any body data
+    const body = req.body
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: "No body was given by the client",
+        })
+    }
+
+    Map.findOne({ _id: req.params.id }, async (err, map) => {
+
+        // Checks if Map exists
+        if (err) {
+            return res.status(404).json({
+                err, 
+                message: "Map not found"
+            })
+        }
+
+        // Changes all the present fields
+        const { isPublic } = req.body;
+
+        if (isPublic)
+            map.isPublic = isPublic
+
+        // Attempts to save updated map
+        map
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: map._id,
+                    message: 'Map was successfully updated',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Map was not updated',
+                })
+            })
+        
+    })
+
+}
