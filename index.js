@@ -30,9 +30,9 @@ app.use('/test', (req, res) => {
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
     .then(() => {
-        app.listen({ port: PORT }, () => {
-            console.log(`Server ready at ${serverDomain}:${PORT}`);
-        })
+        require('http').createServer(app).listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`)
+        }
     })
     .catch(error => {
         console.log(error)
