@@ -23,6 +23,9 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
+app.use('/test', (req, res) => {
+    res.send("Hello World!")
+})
 
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
