@@ -25,10 +25,26 @@ router.post('/resetPassword', UserController.resetPassword)
 
 
 // Map Routes
+router.get('/map/:ownerId', MapController.getAllUserMaps)
+router.get('/map/:username', MapController.getUserMapsByName)
 router.get('/map/:id', MapController.getMapbyId)
 
+router.post('/map/newMap', MapController.createMap)
+router.post('/map/deleteMap', MapController.deleteMap)
+router.post('/map/updateMap', TilesetController.updateMap)
+
+
+
 // TileSet Routes
+router.get('/tileset/:ownerId', TilesetController.getAllUserTilesets)
+router.get('/tileset/:username', TilesetController.getAllUserTilesetsByName)
 router.get('/tileset/:id', TilesetController.getTilesetbyId)
+
+router.post('/tileset/newTileset', TilesetController.createTileset)
+router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
+router.post('/tileset/updateTileset', TilesetController.updateTileset)
+
+
 
 // Tile Routes
 
