@@ -390,3 +390,10 @@ getUserMapsByName = async (req, res) => {
     }).catch(err => console.log(err));
 
 }
+
+getMapbyId = async (req, res) => {
+    const savedMap = await Map.findById(req.params.id);
+    return res.status(200).json({
+        map: savedMap
+    }).send();
+}

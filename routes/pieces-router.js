@@ -20,8 +20,10 @@ router.post('/resetPassword', UserController.resetPassword)
 
 
 // Map Routes
+router.get('/map/:id', UserController.getMapbyId)
 
 // TileSet Routes
+router.get('/tileset/:id', UserController.getTilesetbyId)
 
 // Tile Routes
 
