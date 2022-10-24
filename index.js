@@ -10,6 +10,10 @@ const PORT = config.get('port') || 5000;
 const serverDomain = "https://pieces-316.herokuapp.com";
 const app = express()
 
+// SETUP OUR OWN ROUTERS AS MIDDLEWARE
+const piecesRouter = require('./routes/pieces-router')
+app.use('/api', piecesRouter)
+
 // SETUP THE MIDDLEWARE
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
@@ -19,9 +23,6 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-// SETUP OUR OWN ROUTERS AS MIDDLEWARE
-const piecesRouter = require('./routes/pieces-router')
-app.use('/api', piecesRouter)
 
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
