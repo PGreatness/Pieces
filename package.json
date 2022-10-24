@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "server": "nodemon index.js",
-    "client": "cd client && npm start",
-    "prod": "npm install && cd client && npm install && cd ../ && concurrently --kill-others \"npm run server\" \"npm run client\""
+    "server": "npm install && nodemon index.js",
+    "client": "cd client && npm install && npm start",
+    "prod": "concurrently --kill-others \"npm run server\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",

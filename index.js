@@ -13,7 +13,7 @@ const app = express()
 // SETUP THE MIDDLEWARE
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
-    origin: config.get("client_origin"),
+    origin: [config.get("client_origin"), "http://pieces-316.herokuapp.com", "https://pieces-316.herokuapp.com"],
     credentials: true
 }))
 app.use(express.json())
