@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken")
+const config = require("config")
 
 function authManager() {
     verifyToken = function (req, res, next) {

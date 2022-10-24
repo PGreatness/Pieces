@@ -123,7 +123,11 @@ forgotPassword = async (req, res) => {
             }
         });
 
-        return "OK";
+        return res.status(200).json({
+            success: true,
+            message: 'Reset email sent!'
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).send();
@@ -133,7 +137,7 @@ forgotPassword = async (req, res) => {
 
 
 
-// updateUser = async (_, { _id: id, update }) => {
+updateUser = async (req, res) => {
 //     const _id = new ObjectId(id);
 //     try {
 //         await User.findOneAndUpdate({ _id }, { $set: update }, { new: true });
@@ -142,7 +146,7 @@ forgotPassword = async (req, res) => {
 //         console.log(error);
 //         throw new Error("There was an error updating the fields");
 //     }
-// }
+}
 
 registerUser = async (req, res) => {
     try {
@@ -349,6 +353,7 @@ module.exports = {
     logoutUser,
     getUserbyId,
     getUserbyUsername,
+    updateUser,
     changePassword,
     forgotPassword,
     resetPassword

@@ -5,7 +5,7 @@ createMap = async (req, res) => {
     // Checks if the request contains any data
     // If not, return an error message
     const body = req.body;
-    if(!body) {
+    if (!body) {
         return res.status(400).json({
             success: false,
             error: "No body was provided by the client."
@@ -22,7 +22,7 @@ createMap = async (req, res) => {
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
         }
-    
+
         // Checks if another one of the user's maps already has the given name
         // If so, map is not created
         const existingMap = await Map.findOne({
@@ -124,11 +124,11 @@ createMap = async (req, res) => {
         map
             .save()
             .then(() => {
-            return res.status(201).json({
-                success: true,
-                map: map,
-                message: 'Map was successfully created.'
-            })
+                return res.status(201).json({
+                    success: true,
+                    map: map,
+                    message: 'Map was successfully created.'
+                })
             })
             .catch(error => {
                 return res.status(400).json({
@@ -193,7 +193,7 @@ updateMap = async (req, res) => {
         // Checks if Map exists
         if (err) {
             return res.status(404).json({
-                err, 
+                err,
                 message: "Map not found"
             })
         }
@@ -267,20 +267,20 @@ updateMap = async (req, res) => {
                     message: 'Map was not updated',
                 })
             })
-        
+
     })
 
 }
 
 getAllUserMaps = async (req, res) => {
 
-    const {ownerId} = req.query;
-    await Map.find({ownerId: ownerId}, (err, maps) => {
-    
+    const { ownerId } = req.query;
+    await Map.find({ ownerId: ownerId }, (err, maps) => {
+
         if (err) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                error: err 
+                error: err
             })
         }
 
@@ -314,7 +314,7 @@ getAllUserMaps = async (req, res) => {
                     collaboratorIds: map.collaboratorIds,
                     isPublic: map.isPublic,
                     layers: map.layers
-                    
+
                 }
 
                 mapsData.push(mapData)
@@ -331,13 +331,13 @@ getAllUserMaps = async (req, res) => {
 
 getUserMapsByName = async (req, res) => {
 
-    const {userName, name} = req.query;
-    await Map.find({userName: userName}, (err, maps) => {
-    
+    const { userName, name } = req.query;
+    await Map.find({ userName: userName }, (err, maps) => {
+
         if (err) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                error: err 
+                error: err
             })
         }
 
@@ -375,7 +375,7 @@ getUserMapsByName = async (req, res) => {
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
                         layers: map.layers
-                        
+
                     }
 
                     mapsData.push(mapData)

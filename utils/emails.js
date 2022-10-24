@@ -2,9 +2,9 @@ const config = require("config");
 
 const generatePasswordResetEmailHTML = (email, id, token) => {
     const htmlTemplate = `
-        <h1>Hello There!</h1>
-        <p>We recieved a request to reset the password for the Pieces account associated with ${email}.</p>
-        <p>You can reset your password by clicking on the link below:</p>
+        <h1>Dear User, we've got you!</h1>
+        <p>Reset password for the Pieces account associated with ${email}.</p>
+        <p>Click on the link below:</p>
         <table width="100%" cellspacing="0" cellpadding="0">
         <tr>
             <td>
