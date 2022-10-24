@@ -9,7 +9,7 @@ const chatSchema = new Schema({
         type: ObjectId,
         required: true,
     },
-    recieverId: {
+    receiverId: {
         type: ObjectId,
         required: true,
     },
@@ -17,7 +17,7 @@ const chatSchema = new Schema({
         type: String,
         required: true,
     },
-    recieverSeen: {
+    receiverSeen: {
         type: Boolean,
         required: true,
     },
