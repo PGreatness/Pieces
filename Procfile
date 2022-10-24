@@ -1,2 +1,2 @@
-heroku-postbuild: npm install && cd client && npm install
+build: npm install && cd client && npm install
 web: npm run prod
