@@ -32,7 +32,7 @@ mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTop
     .then(() => {
         require('http').createServer(app).listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`)
-        }
+        })
     })
     .catch(error => {
         console.log(error)
