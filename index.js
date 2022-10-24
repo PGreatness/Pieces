@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const config = require("config");
 
 // CREATE OUR SERVER
-const PORT = config.get("port");
+const PORT = process.env.PORT || config.get("port");
 const serverDomain = "https://pieces-316.herokuapp.com";
 const app = express()
 
