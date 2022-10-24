@@ -314,3 +314,33 @@ getTilesetbyId = async (req, res) => {
         tileset: savedTileset
     }).send();
 }
+
+publishTileset = async (req, res) => {
+    
+    Tileset.findById({ _id: req.params.id }, (err, tileset) => {
+        // Checks if Tileset with given id exists
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: 'Tileset not found',
+            })
+        }
+
+        // Checks if tileset belongs to the User who is trying to delete it
+        if (tileset.ownerId != req.params.ownerId) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this tileset',
+            })
+        }
+
+        // Finds tileset with given id and deletes it
+        Tileset.findOneAndUpdate({"_id": req.params.id},  {
+            $set: {
+                "isPublic.$.value" : true
+            }
+        },
+        { new: true })
+    })
+    
+}
