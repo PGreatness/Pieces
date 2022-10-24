@@ -249,7 +249,7 @@ getAllUserTilesets = async (req, res) => {
 
 }
 
-getAllUserTilesets = async (req, res) => {
+getAllUserTilesetsByName = async (req, res) => {
 
     const { userName, name } = req.query;
     await Tileset.find({ userName: userName }, (err, tilesets) => {
