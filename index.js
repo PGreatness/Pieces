@@ -24,6 +24,13 @@ app.use('/test', (req, res) => {
     res.send("Hello World!")
 })
 
+const path = require('path')
+app.use(express.static(path.join(__dirname, '/client/build')))
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/client/build/index.html'))
+})
+
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
     .then(() => {

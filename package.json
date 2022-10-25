@@ -8,9 +8,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "server": "npm install",
+    "server-start": "npm install && nodemon index.js",
     "client": "cd client && npm install",
+    "client-build": "cd client && npm install && npm run build",
     "prod": "concurrently --kill-others \"npm start\" \"npm run --prefix client start\"",
-    "heroku-postbuild": "npm install && npm run client && npm run server"
+    "heroku-postbuild": "npm run client-build"
   },
   "author": "",
   "license": "ISC",
