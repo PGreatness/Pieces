@@ -1,9 +1,9 @@
 const request = require("supertest");
 
-let mapName = "JEST 2"
+// let mapName = "JEST 2"
 
-let objectIdOfDeleted = null
-let ownerIdOfDeleted = null
+// let objectIdOfDeleted = null
+// let ownerIdOfDeleted = null
 
 /* Connects to the database before each test. */
 // beforeEach(async () => {
@@ -16,25 +16,38 @@ let ownerIdOfDeleted = null
 // });
 
 // // ADDING MAP SUCCESS
-// describe("POST /api/map/newMap", () => {
-//     it("Should add a Map to the database", async () => {
-//         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-//             "mapName": mapName,
-//             "mapDescription": "This map will be deleted vert shortly!",
-//             "tags": ["188", "Scary"],
-//             "mapBackgroundColor": "#188188",
-//             "mapHeight": 1024,
-//             "mapWidth": 1024,
-//             "tileHeight": 64,
-//             "tileWidth": 64,
-//             "ownerId": "6355e171286afe702190fe10"
-//         });
-//         expect(res.status).toBe(201);
-//         expect(res.body.map.mapName).toBe(mapName);
-//         objectIdOfDeleted = res.body.id.toString();
-//         ownerIdOfDeleted = res.body.map.ownerId;
-//     });
-// });
+describe("POST /api/map/newMap", () => {
+
+    let mapId;
+    let ownerId;
+    let mapName = 'JEST 99 MAP NAME'
+
+    it("Should add a Map to the database", async () => {
+        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
+            "mapName": mapName,
+            "mapDescription": "This map will be deleted vert shortly!",
+            "tags": ["188", "Scary"],
+            "mapBackgroundColor": "#188188",
+            "mapHeight": 1024,
+            "mapWidth": 1024,
+            "tileHeight": 64,
+            "tileWidth": 64,
+            "ownerId": "6355e171286afe702190fe10"
+        });
+        expect(res.status).toBe(201);
+        expect(res.body.map.mapName).toBe(mapName);
+        mapId = res.body.id.toString();
+        ownerId = res.body.map.ownerId;
+    });
+
+    afterAll(async() => {
+        await request("http://pieces-316.herokuapp.com").post("/api/map/deleteMap").query({
+            "id": mapId,
+            "ownerId": ownerId
+        })
+    })
+
+});
 
 // // ADDING MAP WITH SAME NAME
 // describe("POST /api/map/newMap", () => {
@@ -131,11 +144,14 @@ describe("POST /api/map/newMap", () => {
     });
 });
 
-// // UPDATE MAP
+// UPDATE MAP
 // describe("POST /api/map/updateMap", () => {
     
-//     it("Updated Map description field", async () => {
+//     let mapId;
+//     let ownerId;
+//     let mapName = "JEST 98 MAP NAME"
 
+//     beforeAll(async() => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
 //             "mapName": mapName,
 //             "mapDescription": "This map will be deleted vert shortly!",
@@ -147,36 +163,28 @@ describe("POST /api/map/newMap", () => {
 //             "tileWidth": 64,
 //             "ownerId": "6355e171286afe702190fe10"
 //         });
-
-//         let objectIdOfMap = res.body.id.toString()
-//         let ownerIdOfMap = res.body.map.ownerId
-    
-//         const res2 = await request("http://pieces-316.herokuapp.com").post("/api/map/updateMap").send({
-//             "mapDescription": "This is the new map description",
-//             "tags": ["NEW TAG"]
-//         }).query({
-//             "id": objectIdOfMap,
-//             "ownerId": ownerIdOfMap
-//         });
-//         expect(res2.status).toBe(200);
-//         expect(res2.body.message).toBe("Map was successfully updated")
+//         mapId = res.body.id.toString();
+//         ownerId = res.body.map.ownerId;
 //     })
-// })
 
-// // UPDATE MAP UNAUTH
-// describe("POST /api/map/updateMap", () => {
-//     it("Unauthorized updating", async () => {
+//     afterAll(async() => {
+//         await request("http://pieces-316.herokuapp.com").post("/api/map/deleteMap").query({
+//             "id": mapId,
+//             "ownerId": ownerId
+//         })
+//     })
+
+//     it("Updated Map description field", async () => {
+    
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/updateMap").send({
 //             "mapDescription": "This is the new map description",
 //             "tags": ["NEW TAG"]
 //         }).query({
-//             "id": objectIdOfDeleted,
-//             "ownerId": "6355e171286afe702190fe23"
+//             "id": mapId,
+//             "ownerId": ownerId
 //         });
-//         // console.log(res.status)
-//         // console.log(res.body)
-//         expect(res.status).toBe(401)
-//         expect(res.body.message).toBe("User does not have ownership of this Map")
+//         expect(res.status).toBe(200);
+//         expect(res.body.message).toBe("Map was successfully updated")
 //     })
 // })
 
