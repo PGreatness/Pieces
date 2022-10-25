@@ -59,3 +59,14 @@ describe("POST /api/tileset/updateTileset", () => {
         expect(res.body.message).toBe("Tileset was successfully updated")
     })
 })
+
+describe("POST /api/tileset/deleteTileset", () => {
+    it("Should delete Tileset from the database", async () => {
+        const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/deleteTileset").query({
+            "id": objectIdOfDeleted,
+            "ownerId": ownerIdOfDeleted
+        })
+        expect(res.status).toBe(200);
+        expect(res.body.data.tilesetName).toBe(tilesetName);
+    });
+});
