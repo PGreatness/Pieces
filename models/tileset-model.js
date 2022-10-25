@@ -2,10 +2,6 @@ const { model, Schema, ObjectId } = require("mongoose");
 const Tile = require("./tile-model").schema;
 
 const tilesetSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
     tilesetName: {
         type: String,
         required: true,

@@ -37,14 +37,14 @@ router.post('/map/publishMap', MapController.publishMap)
 
 
 // // TileSet Routes
-router.get('/tileset/:ownerId', TilesetController.getAllUserTilesets)
-router.get('/tileset/:username', TilesetController.getUserTilesetsByName)
-router.get('/tileset/:id', TilesetController.getTilesetbyId)
+router.get('/tileset/userMaps/:ownerId', TilesetController.getAllUserTilesets)
+router.get('/tileset/userMapsByName/:tilesetName', TilesetController.getUserTilesetsByName)
+router.get('/tileset/userMapsById/:id', TilesetController.getTilesetbyId)
 
 router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
-
+router.post('/tileset/publishTileset', TilesetController.publishTileset)
 
 
 // Tile Routes
