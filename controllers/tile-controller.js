@@ -236,15 +236,12 @@ deleteTile = async (req, res) => {
                 message: 'Tile not deleted!',
             });
         }
-        return res.status(200).json({
-            success: true,
-            id: tile._id,
-            message: 'Tile deleted!',
-        });
-    }).catch(error => {
-        return res.status(400).json({
-            error,
-            message: 'Tile not deleted!',
+        tileset.updateMany({ tiles: tile._id }, { $pull: { tiles: tile._id } }).then(() => {
+            return res.status(200).json({
+                success: true,
+                id: tile._id,
+                message: 'Tile deleted!',
+            });
         });
     });
 }
