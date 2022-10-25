@@ -86,6 +86,7 @@ describe('POST /api/tile/newTile', () => {
             "height": -15,
             "width": 64,
             "userId": "6355e171286afe702190fe10",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
@@ -102,10 +103,11 @@ describe('POST /api/tile/newTile', () => {
             "height": 0,
             "width": 64,
             "userId": "6355e171286afe702190fe10",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
-        expect(res.body.error).toBe("Height and width must be greater than 0");
+        expect(res.body.error).toBe("You must provide a tilesetId, height, tileData, and width");
     });
 });
 
@@ -118,6 +120,7 @@ describe('POST /api/tile/newTile', () => {
             "height": 64,
             "width": -15,
             "userId": "6355e171286afe702190fe10",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
@@ -134,10 +137,11 @@ describe('POST /api/tile/newTile', () => {
             "height": 64,
             "width": 0,
             "userId": "6355e171286afe702190fe10",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
-        expect(res.body.error).toBe("Height and width must be greater than 0");
+        expect(res.body.error).toBe("You must provide a tilesetId, height, tileData, and width");
     });
 });
 
@@ -150,6 +154,7 @@ describe('POST /api/tile/newTile', () => {
             "height": 1252,
             "width": 64,
             "userId": "6355e171286afe702190fe10",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
@@ -166,6 +171,7 @@ describe('POST /api/tile/newTile', () => {
             "height": 64,
             "width": 1252,
             "userId": "6355e171286afe702190fe10",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
@@ -180,8 +186,9 @@ describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
         const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 64,
-            "width": 1252,
+            "width": 64,
             "userId": "6355e171286afe702190fe11",
+            "tilesetId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
         });
         expect(res.status).toBe(400);
@@ -195,12 +202,13 @@ describe('POST /api/tile/newTile', () => {
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
         const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
-            "height": 64,
-            "width": 64,
-            "userId": "6355e171286afe702190fe10",
+            "height": 22,
+            "width": 22,
+            "userId": "6356e452281db1470ee812cb",
+            "tilesetId": "6356e373281db1470ee812c8",
             "tileData": ["rgba(0,0,0,0)"]
         });
-        expect(res.status).toBe(200);
+        expect(res.status).toBe(201);
         expect(res.body.error).toBe("Tile created!");
         expect(res.body.id).toBeDefined();
     });

@@ -82,7 +82,7 @@ createTile = async (req, res) => {
         tileData
     });
     newTile.save().then(() => {
-        userTileset.updateOne({ $push: { tileIds: newTile._id } }).then(() => {
+        return userTileset.updateOne({ $push: { tileIds: newTile._id } }).then(() => {
             return res.status(201).json({
                 success: true,
                 id: newTile._id,
