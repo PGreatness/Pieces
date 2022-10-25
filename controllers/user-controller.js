@@ -140,7 +140,9 @@ forgotPassword = async (req, res) => {
 
 updateUser = async (req, res) => {
     try {
+        console.log(req.body)
         const { _id, firstName, lastName, userName, email, bio } = req.body;
+
 
         const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: _id } }] });
         if (alreadyRegistered) {
