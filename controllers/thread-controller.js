@@ -218,3 +218,8 @@ removeReplyFromThread = async (req, res) => {
     })
 
 }
+
+module.exports = {
+    createThread,
+    deleteThread
+}
