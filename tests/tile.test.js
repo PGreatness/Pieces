@@ -1,6 +1,5 @@
 const request = require('supertest');
 
-require('dotenv').config();
 
 /**
  * Attempt to create a new tile with missing parameter: tileData
