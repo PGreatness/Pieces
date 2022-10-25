@@ -344,6 +344,12 @@ getUserTilesetsByName = async (req, res) => {
 
 getTilesetbyId = async (req, res) => {
     const savedTileset = await Tileset.findById(req.query.id);
+    if (savedTileset == null) {
+        return res.status(404).json({
+            err,
+            message: "Tileset not found"
+        }).send();
+    }
     return res.status(200).json({
         tileset: savedTileset
     }).send();
