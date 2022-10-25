@@ -1,3 +1,3 @@
 heroku-postbuild: npm run heroku-postbuild
-web: npm 
+web: npm server-start
 serverOnly: npm install && nodemon index.js
