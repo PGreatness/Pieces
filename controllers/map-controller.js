@@ -197,6 +197,8 @@ deleteMap = async (req, res) => {
 
     })
 
+    console.log("random console.log")
+    
 }
 
 updateMap = async (req, res) => {
