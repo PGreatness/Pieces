@@ -1,10 +1,6 @@
 const { model, Schema, ObjectId } = require("mongoose");
 
 const tileSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
     tilesetId: {
         type: ObjectId,
         required: true,
