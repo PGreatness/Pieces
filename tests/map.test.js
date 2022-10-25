@@ -134,6 +134,20 @@ describe("POST /api/map/newMap", () => {
     });
 });
 
+describe("POST /api/map/updateMap", () => {
+    it("Updated Map description field", async () => {
+        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/updateMap").send({
+            "mapDescription": "This is the new map description",
+            "tags": ["NEW TAG"]
+        }).query({
+            "id": objectIdOfDeleted,
+            "ownerId": ownerIdOfDeleted
+        });
+        console.log(res.status)
+        console.log(res.body)
+    })
+})
+
 // DELETING MAP SUCCESS
 describe("POST /api/map/deleteMap", () => {
     console.log("POST /api/map/deleteMap")
