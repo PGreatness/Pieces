@@ -27,10 +27,6 @@ if (process.env.NODE_ENV === "production") {
     });
   }
 
-// SETUP OUR OWN ROUTERS AS MIDDLEWARE
-const piecesRouter = require('./routes/pieces-router')
-app.use('/api', piecesRouter)
-
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
     .then(() => {
