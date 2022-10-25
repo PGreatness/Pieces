@@ -134,6 +134,7 @@ describe("POST /api/map/newMap", () => {
     });
 });
 
+// UPDATE MAP
 describe("POST /api/map/updateMap", () => {
     it("Updated Map description field", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/updateMap").send({
@@ -148,6 +149,7 @@ describe("POST /api/map/updateMap", () => {
     })
 })
 
+// UPDATE MAP UNAUTH
 describe("POST /api/map/updateMap", () => {
     it("Unauthorized updating", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/updateMap").send({
@@ -156,6 +158,22 @@ describe("POST /api/map/updateMap", () => {
         }).query({
             "id": objectIdOfDeleted,
             "ownerId": "6355e171286afe702190fe23"
+        });
+        // console.log(res.status)
+        // console.log(res.body)
+        expect(res.status).toBe(401)
+        expect(res.body.message).toBe("User does not have ownership of this Map")
+    })
+})
+
+// PUBLISH MAP
+describe("POST /api/map/publishMap", () => {
+    it("Publishes Map", async () => {
+        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/publishMap").send({
+            "isPublic": true
+        }).query({
+            "id": objectIdOfDeleted,
+            "ownerId": ownerIdOfDeleted
         });
         console.log(res.status)
         console.log(res.body)
@@ -173,3 +191,4 @@ describe("POST /api/map/deleteMap", () => {
         expect(res.body.data.mapName).toBe(mapName);
     });
 });
+
