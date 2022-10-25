@@ -1,5 +1,3 @@
-const { config } = require('dotenv');
-const { MongoClient } = require('mongodb');
 const request = require('supertest');
 
 require('dotenv').config();

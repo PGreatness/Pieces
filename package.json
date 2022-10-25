@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cd tests && cross-env NODE_ENV=test jest --testTimeout=10000",
+    "test": "npm run --prefix tests test",
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "cd client && npm start",
