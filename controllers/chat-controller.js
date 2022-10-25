@@ -1,4 +1,5 @@
 const Chat = require('../models/chat-model')
+const mongoose = require('mongoose')
 
 createChat = async (req, res) => {
 
@@ -12,9 +13,9 @@ createChat = async (req, res) => {
 
     try {
 
-        const { _id, senderId, receiverId, msg, receiverSeen, sentAt } = req.body
+        const { senderId, receiverId, msg, sentAt } = req.body
         
-        if ( !_id || !senderId || !receiverId || !msg || !receiverSeen || !sentAt ) {
+        if ( !senderId || !receiverId || !msg || !sentAt ) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
@@ -28,11 +29,10 @@ createChat = async (req, res) => {
         
         let chat = new Chat({
             
-            _id: _id,
             senderId: senderId,
             receiverId: receiverId,
             msg: msg,
-            receiverSeen: receiverSeen,
+            receiverSeen: false,
             sentAt: sentAt
 
         })
@@ -71,7 +71,10 @@ createChat = async (req, res) => {
 
 deleteChat = async (req, res) => {
 
-    Chat.findById({ _id: req.params.id }, (err, chat) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let senderObjectId = mongoose.Types.ObjectId(req.query.senderId)
+
+    Chat.findById({ _id: id }, (err, chat) => {
 
         // Checks if Chat with given id exists
         if (err) {
@@ -82,7 +85,7 @@ deleteChat = async (req, res) => {
         }
 
         // Checks if Chat belongs to the User who is trying to delete it
-        if (chat.senderId != req.params.senderId) {
+        if (!chat.senderId.equals(senderObjectId)) {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this Chat',
@@ -90,7 +93,7 @@ deleteChat = async (req, res) => {
         }
 
         // Finds Chat with given id and deletes it
-        Chat.findByIdAndDelete(req.params.id, (err, chat) => {
+        Chat.findByIdAndDelete(id, (err, chat) => {
             return res.status(200).json({
                 success: true,
                 data: chat
@@ -103,6 +106,8 @@ deleteChat = async (req, res) => {
 
 markChatAsSeen = async (req, res) => {
 
+    let id = mongoose.Types.ObjectId(req.query.id)
+
     // Checks if request contains any body data
     const body = req.body
     if (!body) {
@@ -112,7 +117,7 @@ markChatAsSeen = async (req, res) => {
         })
     }
 
-    Chat.findOne({ _id: req.params.id }, async (err, chat) => {
+    Chat.findOne({ _id: id}, async (err, chat) => {
 
         // Checks if Chat exists
         if (err) {
@@ -149,50 +154,69 @@ markChatAsSeen = async (req, res) => {
 fetchChat = async (req, res) => {
 
     // Fetches Chats with the given senderId and receiverId
-    const { senderId, receiverId } = req.query;
-    await Chat.find({ senderId: senderId, receiverId: receiverId }, (err, chats) => {
-    
-        if (err) {
-            return res.status(400).json({ 
-                success: false,
-                error: err 
-            })
-        }
+    let senderId = mongoose.Types.ObjectId(req.query.senderId)
+    let receiverId = mongoose.Types.ObjectId(req.query.receiverId)
 
-        if (!chats) {
-            return res
-                .status(404)
-                .json({
+    try {
+
+        await Chat.find({ senderId: senderId , receiverId: receiverId}, (err, chats) => {
+        
+            let chatsData = []
+
+            if (err) {
+                return res.status(400).json({ 
                     success: false,
-                    error: "Chats could not be found"
+                    error: err 
                 })
-        }
-        else {
-            
-            // Adds data to return array
-            let chatsData = [];
-            for (key in chats) {
+            }
 
-                let chat = chats[key]
-                let chatData = {
+            if (!chats) {
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        error: "Chats could not be found"
+                    })
+            }
+            else {
+                
+                // Adds data to return array
+                for (key in chats) {
 
-                    _id: chat._id,
-                    senderId: chat._senderId,
-                    receiverId: chat._receiverId,
-                    msg: chat._msg,
-                    receiverSeen: chat._receiverSeen,
-                    seenAt: chat._seenAt
+                    let chat = chats[key]
+                    console.log(chat) 
+
+                    let chatData = {
+                        _id: chat._id,
+                        senderId: chat.senderId,
+                        receiverId: chat.receiverId,
+                        msg: chat.msg,
+                        receiverSeen: chat.receiverSeen,
+                        sentAt: chat.sentAt
+                    }
+                    chatsData.push(chatData)
 
                 }
-
-                chatsData.push(chatData)
-
             }
+
             return res.status(200).json({
                 success: true,
                 chats: chatsData
             })
-        }
-    }).catch(err => console.log(err));
+        
+        }).catch(err => console.log(err));
 
+    }
+    catch (error) {
+        console.log(error)
+        res.status(500).send()
+    }
+
+}
+
+module.exports = {
+    createChat,
+    deleteChat,
+    markChatAsSeen,
+    fetchChat
 }

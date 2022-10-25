@@ -56,8 +56,13 @@ router.post('/tile/deleteTile', TileController.deleteTile)
 router.post('/tile/updateTile', TileController.updateTile)
 
 // Thread Routes
+router.post('/thread/newThread', ThreadController.createThread)
+router.post('/thread/deleteThread', ThreadController.deleteThread)
 
 // Chat Routes
-
+router.get('/chat/fetchChat', ChatController.fetchChat)
+router.post('/chat/newChat', ChatController.createChat)
+router.post('/chat/deleteChat', ChatController.deleteChat)
+router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
 
 module.exports = router
