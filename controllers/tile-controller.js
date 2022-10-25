@@ -159,16 +159,16 @@ updateTile = async (req, res) => {
  * @route   POST /api/tile/deleteTile
  * @access  Private
  * @param   {string}      userId
- * @param   {ObjectId}    tilesetId
+ * @param   {ObjectId}    tileId
  */
 deleteTile = async (req, res) => {
-    if (!req.body.userId) {
+    if (!req.body.tileId) {
         return res.status(400).json({
             success: false,
             error: 'You must provide a tile id',
         });
     }
-    const userTile = await tile.findOne({ _id: req.body.userId });
+    const userTile = await tile.findOne({ _id: req.body.tileId });
     if (!userTile) {
         return res.status(400).json({
             success: false,
@@ -193,7 +193,7 @@ deleteTile = async (req, res) => {
         }
     }
 
-    return await tile.findOneAndDelete({ _id: req.body.userId }, (error, tile) => {
+    return await tile.findOneAndDelete({ _id: req.body.tileId }, (error, tile) => {
         if (error) {
             return res.status(400).json({
                 error,
