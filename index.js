@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const config = require("config");
 
 // CREATE OUR SERVER
-const PORT = process.env.PORT || 4000;
+const PORT = config.get("port") || 4000;
 const serverDomain = "localhost";
 const app = express()
 
