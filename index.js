@@ -4,6 +4,7 @@ const cors = require('cors')
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
 const config = require("config");
+const path = require('path')
 
 // CREATE OUR SERVER
 const PORT = process.env.PORT || 4000;
