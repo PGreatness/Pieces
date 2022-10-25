@@ -46,8 +46,7 @@ createThread = async (req, res) => {
         // Creates Thread
         let thread = null
         thread = new Thread({
-            
-            _id: _id,
+
             threadName: threadName,
             threadText: threadText,
             senderId: senderId,
