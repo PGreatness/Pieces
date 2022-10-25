@@ -48,6 +48,12 @@ router.post('/tileset/updateTileset', TilesetController.updateTileset)
 
 
 // Tile Routes
+router.get('/tile/all', TileController.getAllTiles)
+router.get('/tile/:id', TileController.getTileById)
+
+router.post('/tile/newTile', TileController.createTile)
+router.post('/tile/deleteTile', TileController.deleteTile)
+router.post('/tile/updateTile', TileController.updateTile)
 
 // Thread Routes
 
