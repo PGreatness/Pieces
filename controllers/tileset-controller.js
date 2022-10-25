@@ -35,14 +35,14 @@ createTileset = async (req, res) => {
             tilesetName = "Untitled"
             let untitled_num = 1
 
-            const existingUntitledTileset = await Tileset.findOne({
+            let existingUntitledTileset = await Tileset.findOne({
                 ownerId: objectOwnerId,
                 tilesetName: tilesetName
             });
 
             while (existingUntitledTileset) {
                 tilesetName = "Untitled" + untitled_num
-                const existingUntitledTileset = await Tileset.findOne({
+                existingUntitledTileset = await Tileset.findOne({
                     ownerId: objectOwnerId,
                     tilesetName: tilesetName
                 });
@@ -158,14 +158,14 @@ updateTileset = async (req, res) => {
                 tilesetName = "Untitled"
                 let untitled_num = 1
 
-                const existingUntitledTileset = await Tileset.findOne({
+                let existingUntitledTileset = await Tileset.findOne({
                     _id: id,
                     tilesetName: tilesetName
                 });
 
                 while (existingUntitledTileset) {
                     tilesetName = "Untitled" + untitled_num
-                    const existingUntitledTileset = await Tileset.findOne({
+                    existingUntitledTileset = await Tileset.findOne({
                         _id: id,
                         tilesetName: tilesetName
                     });
