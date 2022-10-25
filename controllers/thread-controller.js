@@ -14,9 +14,9 @@ createThread = async (req, res) => {
     try {
 
         // Get data from request
-        const { _id, threadName, threadText, senderId, sentAt } = req.body;
+        const { threadName, threadText, senderId, sentAt } = req.body;
 
-        if (!_id || !threadName || !threadText || !senderId || !sentAt) {
+        if (!threadName || !threadText || !senderId || !sentAt) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
