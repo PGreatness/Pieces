@@ -12,6 +12,10 @@ const tileSchema = new Schema({
     width: {
         type: Number,
         required: true,
+    },
+    tileData: {
+        type: [String],
+        required: true
     }
 });
 

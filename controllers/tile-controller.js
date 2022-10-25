@@ -10,14 +10,15 @@ const tileset = require('../models/tileset-model')
  * @param   {string}      height
  * @param   {string}      width
  * @param   {string}      userId
+ * @param   {string}      tileData
  */
 createTile = async (req, res) => {
-    const { tilesetId, height, width, userId } = req.body;
+    const { tilesetId, height, width, userId, tileData } = req.body;
 
-    if (!tilesetId || !height || !width) {
+    if (!tilesetId || !height || !width || !tileData) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a tilesetId, height, and width',
+            error: 'You must provide a tilesetId, height, tileData, and width',
         });
     }
 
@@ -33,6 +34,10 @@ createTile = async (req, res) => {
             success: false,
             error: 'Height and width must be less than 100',
         });
+    }
+
+    if (tileData.length == 0) {
+        tileData.push('rgba(0,0,0,0)');
     }
 
     const userTileset = await tileset.findOne({ _id: tilesetId });
@@ -72,7 +77,8 @@ createTile = async (req, res) => {
     const newTile = new tile({
         tilesetId,
         height,
-        width
+        width,
+        tileData
     });
     newTile.save().then(() => {
         return res.status(201).json({
@@ -93,9 +99,8 @@ createTile = async (req, res) => {
  * @route   POST /api/tile/updateTile
  * @access  Private
  * @param   {ObjectId}    userId
- * @param   {string}      height
- * @param   {string}      width
  * @param   {string}      tileId
+ * @param   {string}      tileData
  */
 updateTile = async (req, res) => {
     if (!req.body.tileId) {
@@ -106,28 +111,7 @@ updateTile = async (req, res) => {
         });
     }
 
-    const { height, width, tileId, userId } = req.body;
-
-    if (!height || !width) {
-        return res.status(400).json({
-            success: false,
-            error: 'You must provide a height and width',
-        });
-    }
-
-    if (height < 1 || width < 1) {
-        return res.status(400).json({
-            success: false,
-            error: 'Height and width must be greater than 0',
-        });
-    }
-
-    if (height > 100 || width > 100) {
-        return res.status(400).json({
-            success: false,
-            error: 'Height and width must be less than 100',
-        });
-    }
+    const { tileId, userId, tileData } = req.body;
 
     const userTile = await tile.findOne({ _id: tileId });
     if (!userTile) {
@@ -155,21 +139,7 @@ updateTile = async (req, res) => {
         }
     }
 
-    if (userTileset.tileHeight < height || userTileset.tileWidth < width) {
-        return res.status(400).json({
-            success: false,
-            error: 'Tile height and width must be less than or equal to the tileset height and width',
-        });
-    }
-
-    if (userTileset.tileHeight % height == 0 || userTileset.tileWidth % width == 0) {
-        return res.status(400).json({
-            success: false,
-            error: 'Tileset tile dimensions is not a multiple of new tile dimensions',
-        });
-    }
-
-    let updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { height, width }, { new: true });
+    let updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { tileData }, { new: true });
     if (!updatedTile) {
         return res.status(400).json({
             success: false,
