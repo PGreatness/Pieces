@@ -62,17 +62,10 @@ createTile = async (req, res) => {
         }
     }
 
-    if (userTileset.tileHeight < height || userTileset.tileWidth < width) {
+    if (userTileset.tileHeight != height || userTileset.tileWidth != width) {
         return res.status(400).json({
             success: false,
-            error: 'Tile height and width must be less than or equal to the tileset height and width',
-        });
-    }
-
-    if (userTileset.tileHeight % height == 0 || userTileset.tileWidth % width == 0) {
-        return res.status(400).json({
-            success: false,
-            error: 'Tileset tile dimensions is not a multiple of new tile dimensions',
+            error: 'Tile height and width must equal to the tileset height and width',
         });
     }
 
