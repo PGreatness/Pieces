@@ -1,6 +1,5 @@
 const request = require('supertest');
 
-require('dotenv').config();
 
 /**
  * Attempt to create a new tile with missing parameter: tileData
@@ -199,6 +198,7 @@ describe('POST /api/tile/newTile', () => {
 /**
  * Attempt to create a new tile with all parameters
 */
+/**
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
         const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
@@ -213,3 +213,4 @@ describe('POST /api/tile/newTile', () => {
         expect(res.body.id).toBeDefined();
     });
 });
+*/
