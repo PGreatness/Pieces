@@ -11,16 +11,18 @@ const PORT = process.env.PORT || 4000;
 const serverDomain = "localhost";
 const app = express()
 
+const piecesRouter = require('./routes/pieces-router')
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname,  "/client/build", "index.html"));
-  });
+  app.use('/api', piecesRouter);
+  // app.use(express.static("client/build"));
+  // app.get("*", (req, res) => {
+  //   res.sendFile(path.resolve(__dirname,  "/client/build", "index.html"));
+  // });
 }
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
-const piecesRouter = require('./routes/pieces-router')
-app.use('/api', piecesRouter)
+//const piecesRouter = require('./routes/pieces-router')
+//app.use('/api', piecesRouter)
 
 // SETUP THE MIDDLEWARE
 app.use(express.urlencoded({ extended: true }))
