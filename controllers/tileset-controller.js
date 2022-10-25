@@ -95,6 +95,13 @@ createTileset = async (req, res) => {
 }
 
 deleteTileset = async (req, res) => {
+    if (req.query.id == undefined) {
+        return res.status(404).json({
+            err,
+            message: 'ID empty',
+        })
+    }
+
     let id = mongoose.Types.ObjectId(req.query.id)
     let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
 
@@ -128,6 +135,13 @@ deleteTileset = async (req, res) => {
 }
 
 updateTileset = async (req, res) => {
+    if (req.query.id == undefined) {
+        return res.status(404).json({
+            err,
+            message: 'ID empty',
+        })
+    }
+    
     let id = mongoose.Types.ObjectId(req.query.id)
     let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
 
