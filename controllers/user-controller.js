@@ -333,6 +333,7 @@ changePassword = async (req, res) => {
     }
 }
 
+
 resetPassword = async (req, res) => {
     try {
         const { id, token, password } = req.body;
