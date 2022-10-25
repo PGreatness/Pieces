@@ -476,6 +476,7 @@ getMapsByName = async (req, res) => {
         }
     }).catch(err => console.log(err));
 
+    // console.log("RANDOM CONSOLE LOG")
 }
 
 getMapbyId = async (req, res) => {
