@@ -1,7 +1,5 @@
 const request = require("supertest");
 
-require("dotenv").config();
-
 let userName = "Jest Test"
 let updateId = null;
 let updateIdDuplicate = null;

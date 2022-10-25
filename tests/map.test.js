@@ -1,7 +1,5 @@
 const request = require("supertest");
 
-require("dotenv").config();
-
 let mapName = "JEST 2"
 
 let objectIdOfDeleted = null
