@@ -141,6 +141,10 @@ updateTile = async (req, res) => {
         }
     }
 
+    if (tileData.length == 0) {
+        tileData.push('rgba(0,0,0,0)');
+    }
+
     let updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { tileData }, { new: true });
     if (!updatedTile) {
         return res.status(400).json({
