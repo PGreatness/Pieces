@@ -1,2 +1,2 @@
-heroku-postbuild: "nodemon"
-web: npm run --prefix client start
+heroku-postbuild: cd client & npm install
+web: npm run prod
