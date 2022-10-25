@@ -15,7 +15,8 @@ const tileset = require('../models/tileset-model')
 createTile = async (req, res) => {
     const { tilesetId, height, width, userId, tileData } = req.body;
 
-    if (!tilesetId || !height || !width || !tileData) {
+    console.log(userId);
+    if (!tilesetId || !height || !width || !tileData || !userId) {
         return res.status(400).json({
             success: false,
             error: 'You must provide a tilesetId, height, tileData, and width',
@@ -81,7 +82,7 @@ createTile = async (req, res) => {
         tileData
     });
     newTile.save().then(() => {
-        userTileset.updateOne({ $push: { tileIds: newTile._id } }).then(() => {
+        return userTileset.updateOne({ $push: { tileIds: newTile._id } }).then(() => {
             return res.status(201).json({
                 success: true,
                 id: newTile._id,
