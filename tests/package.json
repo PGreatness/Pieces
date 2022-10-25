@@ -4,7 +4,8 @@
   "description": "",
   "main": "tests",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000"
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+    "start": "npm install && npm run test"
   },
   "author": "",
   "license": "ISC",

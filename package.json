@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run --prefix tests test",
+    "test": "npm run --prefix tests start",
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "cd client && npm start",
