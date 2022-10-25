@@ -1,5 +1,6 @@
 const Thread = require('../models/thread-model')
 const Reply = require('../models/reply-model')
+const mongoose = require('mongoose')
 
 createThread = async (req, res) => {
 
@@ -14,9 +15,9 @@ createThread = async (req, res) => {
     try {
 
         // Get data from request
-        const { _id, threadName, threadText, senderId, sentAt } = req.body;
+        const { threadName, threadText, senderId, sentAt } = req.body;
 
-        if (!_id || !threadName || !threadText || !senderId || !sentAt) {
+        if (!threadName || !threadText || !senderId || !sentAt) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
@@ -46,8 +47,7 @@ createThread = async (req, res) => {
         // Creates Thread
         let thread = null
         thread = new Thread({
-            
-            _id: _id,
+
             threadName: threadName,
             threadText: threadText,
             senderId: senderId,
@@ -91,7 +91,10 @@ createThread = async (req, res) => {
 
 deleteThread = async (req, res) => {
 
-    Thread.findById({ _id: req.params.id }, (err, thread) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let senderObjectId = mongoose.Types.ObjectId(req.query.senderId)
+
+    Thread.findById({ _id: id}, (err, thread) => {
 
         // Checks if Thread with given id exists
         if (err) {
@@ -102,7 +105,7 @@ deleteThread = async (req, res) => {
         }
 
         // Checks if Thread belongs to the User who is trying to delete it
-        if (thread.senderId != req.params.senderId) {
+        if (!thread.senderId.equals(senderObjectId)) {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this Thread',
@@ -110,7 +113,7 @@ deleteThread = async (req, res) => {
         }
 
         // Finds Thread with given id and deletes it
-        Thread.findByIdAndDelete(req.params.id, (err, thread) => {
+        Thread.findByIdAndDelete(id, (err, thread) => {
             return res.status(200).json({
                 success: true,
                 data: thread
