@@ -143,6 +143,20 @@ describe("POST /api/map/updateMap", () => {
             "id": objectIdOfDeleted,
             "ownerId": ownerIdOfDeleted
         });
+        expect(res.status).toBe(200);
+        expect(res.body.message).toBe("Map was successfully updated")
+    })
+})
+
+describe("POST /api/map/updateMap", () => {
+    it("Unauthorized updating", async () => {
+        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/updateMap").send({
+            "mapDescription": "This is the new map description",
+            "tags": ["NEW TAG"]
+        }).query({
+            "id": objectIdOfDeleted,
+            "ownerId": "6355e171286afe702190fe23"
+        });
         console.log(res.status)
         console.log(res.body)
     })
@@ -150,7 +164,6 @@ describe("POST /api/map/updateMap", () => {
 
 // DELETING MAP SUCCESS
 describe("POST /api/map/deleteMap", () => {
-    console.log("POST /api/map/deleteMap")
     it("Should delete a Map from the database", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/deleteMap").query({
             "id": objectIdOfDeleted,
