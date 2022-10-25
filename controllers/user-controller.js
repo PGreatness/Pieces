@@ -257,6 +257,7 @@ registerUser = async (req, res) => {
             //sendVerification(email, key);
             return res.status(200).json({
                 success: true,
+                user: newUser,
                 message: 'User has been registered!'
             })
         }).catch((err) => {

@@ -145,6 +145,7 @@ createMap = async (req, res) => {
                 return res.status(201).json({
                     success: true,
                     map: map,
+                    id: map._id,
                     message: 'Map was successfully created.'
                 })
             })
