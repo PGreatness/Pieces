@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === "production") {
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
     .then(() => {
-        app.listen({ port: PORT }, () => {
+        app.listen({ port: PORT, host: '0.0.0.0' }, () => {
             console.log(`Server is running on port ${PORT}`)
         });
     })
