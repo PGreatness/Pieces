@@ -1,4 +1,5 @@
 const Map = require('../models/map-model')
+const mongoose = require('mongoose')
 
 createMap = async (req, res) => {
 
@@ -15,19 +16,23 @@ createMap = async (req, res) => {
     try {
 
         // Get data from request
-        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers } = req.body;
+        const { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
 
-        if (!_id || !mapName || !mapDescription || !tags || !mapBackgroundColor || !mapHeight || !mapWidth || !tileHeight || !tileWidth || !tiles || !tilesets || !ownerId || !collaboratorIds || !isPublic || !layers) {
+        if ( !mapHeight || !mapWidth || !ownerId ) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({
+                    errorMessage: "Please enter all required fields."
+                });
         }
+
+        let ownerObjectId = mongoose.Types.ObjectId(ownerId)
 
         // Checks if another one of the user's maps already has the given name
         // If so, map is not created
         const existingMap = await Map.findOne({
-            _id: _id,
-            mapName, mapName
+            ownerId: ownerObjectId,
+            mapName: mapName
         });
         if (existingMap) {
             return res
@@ -77,12 +82,18 @@ createMap = async (req, res) => {
             let untitled_num = 1
 
             const existingUntitledMap = await Map.findOne({
-                _id: _id,
+                ownerId: ownerObjectId,
                 mapName: mapName
             });
 
             while (existingUntitledMap) {
                 mapName = "Untitled" + untitled_num
+
+                const existingUntitledMap = await Map.findOne({
+                    ownerId: ownerObjectId,
+                    mapName: mapName
+                });
+
                 untitled_num++
             }
 
@@ -95,8 +106,14 @@ createMap = async (req, res) => {
 
         // Creates Map
         let map = null
+        let layers = []
+        let collaboratorIds = []
+        let tiles = []
+        let tilesets = []
+        let isPublic = false
+
         map = new Map({
-            _id: _id,
+            
             mapName: mapName,
             mapDescription: mapDescription,
             mapBackgroundColor: mapBackgroundColor,
@@ -106,10 +123,11 @@ createMap = async (req, res) => {
             tileWidth: tileWidth,
             tiles: tiles,
             tilesets: tilesets,
-            ownerId: ownerId,
+            ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
             layers: layers
+
         })
 
         if (!map) {
@@ -147,7 +165,10 @@ createMap = async (req, res) => {
 
 deleteMap = async (req, res) => {
 
-    Map.findById({ _id: req.params.id }, (err, map) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    Map.findById({ _id: id }, (err, map) => {
 
         // Checks if Map with given id exists
         if (err) {
@@ -158,7 +179,7 @@ deleteMap = async (req, res) => {
         }
 
         // Checks if Map belongs to the User who is trying to delete it
-        if (map.ownerId != req.params.ownerId) {
+        if (!map.ownerId.equals(ownerObjectId)) {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this Map',
@@ -166,7 +187,7 @@ deleteMap = async (req, res) => {
         }
 
         // Finds Map with given id and deletes it
-        Map.findByIdAndDelete(req.params.id, (err, map) => {
+        Map.findByIdAndDelete(id, (err, map) => {
             return res.status(200).json({
                 success: true,
                 data: map
@@ -179,6 +200,9 @@ deleteMap = async (req, res) => {
 
 updateMap = async (req, res) => {
 
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
     // Checks if request contains any body data
     const body = req.body
     if (!body) {
@@ -188,13 +212,21 @@ updateMap = async (req, res) => {
         })
     }
 
-    Map.findOne({ _id: req.params.id }, async (err, map) => {
+    Map.findOne({ _id: id }, async (err, map) => {
 
         // Checks if Map exists
         if (err) {
             return res.status(404).json({
                 err,
                 message: "Map not found"
+            })
+        }
+
+        // Checks if Map belongs to the User who is trying to delete it
+        if (!map.ownerId.equals(ownerObjectId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this Map',
             })
         }
 
@@ -242,14 +274,68 @@ updateMap = async (req, res) => {
             map.tiles = tiles
         if (tilesets)
             map.tilesets = tilesets
-        if (ownerId)
-            map.ownerId = ownerId
         if (collaboratorIds)
             map.collaboratorIds = collaboratorIds
         if (isPublic)
             map.isPublic = isPublic
         if (layers)
             map.layers = layers
+
+        // Attempts to save updated map
+        map
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: map._id,
+                    message: 'Map was successfully updated',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Map was not updated',
+                })
+            })
+
+    })
+
+}
+
+publishMap = async (req, res) => {
+
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    // Checks if request contains any body data
+    const body = req.body
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: "No body was given by the client",
+        })
+    }
+
+    Map.findOne({ _id: id }, async (err, map) => {
+
+        // Checks if Map exists
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: "Map not found"
+            })
+        }
+
+        // Checks if Map belongs to the User who is trying to delete it
+        if (!map.ownerId.equals(ownerObjectId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this Map',
+            })
+        }
+
+        // Change public
+        map.isPublic = req.body.isPublic
 
         // Attempts to save updated map
         map
@@ -329,10 +415,10 @@ getAllUserMaps = async (req, res) => {
 
 }
 
-getUserMapsByName = async (req, res) => {
+getMapsByName = async (req, res) => {
 
-    const { userName, name } = req.query;
-    await Map.find({ userName: userName }, (err, maps) => {
+    const { mapName } = req.query;
+    await Map.find({}, (err, maps) => {
 
         if (err) {
             return res.status(400).json({
@@ -354,10 +440,10 @@ getUserMapsByName = async (req, res) => {
             let mapsData = [];
             for (key in maps) {
 
-                map = maps[key]
+                let map = maps[key]
 
                 //Checks if Map matches or begins with the wanted name/search
-                if (map.name.toLowerCase().startsWith(name.toLowerCase()) && name) {
+                if (map.mapName.toLowerCase().startsWith(mapName.toLowerCase()) && mapName) {
 
                     let mapData = {
 
@@ -392,7 +478,7 @@ getUserMapsByName = async (req, res) => {
 }
 
 getMapbyId = async (req, res) => {
-    const savedMap = await Map.findById(req.params.id);
+    const savedMap = await Map.findById(req.query.id);
     return res.status(200).json({
         map: savedMap
     }).send();
@@ -400,9 +486,10 @@ getMapbyId = async (req, res) => {
 
 module.exports = {
     getAllUserMaps,
-    getUserMapsByName,
+    getMapsByName,
     getMapbyId,
     createMap,
     deleteMap,
-    updateMap
+    updateMap,
+    publishMap
 }
