@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const config = require("config");
 
 // CREATE OUR SERVER
-const PORT = config.get('port') || 5000;
+const PORT = config.get('port') || 4000;
 const serverDomain = "localhost";
 const app = express()
 
@@ -21,15 +21,12 @@ app.use(express.json())
 app.use(cookieParser())
 
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static("build"));
+    app.use(express.static("client/build"));
+    const path = require("path");
     app.get("*", (req, res) => {
-      res.sendFile(path.resolve(__dirname,  "build", "index.html"));
+      res.sendFile(path.resolve(__dirname,  'client', "build", "index.html"));
     });
   }
-
-// SETUP OUR OWN ROUTERS AS MIDDLEWARE
-const piecesRouter = require('./routes/pieces-router')
-app.use('/api', piecesRouter)
 
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
