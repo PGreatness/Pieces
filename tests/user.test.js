@@ -4,22 +4,22 @@ let userName = "Jest Test"
 let updateId = null;
 let updateIdDuplicate = null;
 
-describe("POST /api/register", () => {
-    it("Add a new user to the database", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
-            "firstName": "Iman",
-            "lastName": "Ali",
-            "userName": userName,
-            "email": "iman.ali@stonybrook.edu",
-            "password": "iman1234",
-            "passwordVerify": "iman1234"
-        });
-        expect(res.status).toBe(200);
-        expect(res.body.user.userName).toBe(userName);
-        expect(res.body.message).toBe("User has been registered!")
-        updateId = res.body.user._id.toString()
-    });
-});
+// describe("POST /api/register", () => {
+//     it("Add a new user to the database", async () => {
+//         const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+//             "firstName": "Iman",
+//             "lastName": "Ali",
+//             "userName": userName,
+//             "email": "iman.ali@stonybrook.edu",
+//             "password": "iman1234",
+//             "passwordVerify": "iman1234"
+//         });
+//         expect(res.status).toBe(200);
+//         expect(res.body.user.userName).toBe(userName);
+//         expect(res.body.message).toBe("User has been registered!")
+//         updateId = res.body.user._id.toString()
+//     });
+// });
 
 describe("POST /api/register", () => {
     it("Register without all fields", async () => {
