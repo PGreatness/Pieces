@@ -37,8 +37,8 @@ createTile = async (req, res) => {
         });
     }
 
-    if (tileData.length == 0) {
-        tileData.push('rgba(0,0,0,0)');
+    if (tileData?.length == 0) {
+        tileData = ['rgba(0,0,0,0)'];
     }
 
     const userTileset = await tileset.findOne({ _id: tilesetId });
@@ -81,19 +81,25 @@ createTile = async (req, res) => {
         width,
         tileData
     });
-    newTile.save().then(() => {
-        return userTileset.updateOne({ $push: { tileIds: newTile._id } }).then(() => {
-            return res.status(201).json({
-                success: true,
-                id: newTile._id,
-                message: 'Tile created!',
-            });
-        });
-    }).catch(error => {
+
+    let savedTile = await newTile.save();
+    if (!savedTile) {
         return res.status(400).json({
-            error,
-            message: 'Tile not created!',
+            success: false,
+            error: 'Tile not created!',
         });
+    }
+    let updatedTileset = await tileset.findOneAndUpdate({ _id: tilesetId }, { $push: { tileIds: savedTile._id } }, { new: true });
+    if (!updatedTileset) {
+        return res.status(400).json({
+            success: false,
+            error: 'Tileset not updated!',
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        id: savedTile._id,
+        message: 'Tile created!',
     });
 }
 
@@ -142,8 +148,11 @@ updateTile = async (req, res) => {
         }
     }
 
-    if (tileData.length == 0) {
+    if (tileData.length == 0 && userTile.tileData.length == 0) {
         tileData.push('rgba(0,0,0,0)');
+    }
+    if (tileData.length == 0) {
+        tileData = userTile.tileData;
     }
 
     let updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { tileData }, { new: true });
@@ -156,6 +165,7 @@ updateTile = async (req, res) => {
     return res.status(200).json({
         success: true,
         tile: updatedTile,
+        message: 'Tile updated!',
     });
 }
 
