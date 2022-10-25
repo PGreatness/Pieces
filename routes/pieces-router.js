@@ -25,13 +25,14 @@ router.post('/resetPassword', UserController.resetPassword)
 
 
 // Map Routes
-router.get('/map/:ownerId', MapController.getAllUserMaps)
-router.get('/map/:username', MapController.getUserMapsByName)
-router.get('/map/:id', MapController.getMapbyId)
+router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
+router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
+router.get('/map/getMapById/:id', MapController.getMapbyId)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', MapController.updateMap)
+router.post('/map/publishMap', MapController.publishMap)
 
 
 
