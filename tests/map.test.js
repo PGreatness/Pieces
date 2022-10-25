@@ -3,7 +3,7 @@ const request = require("supertest");
 
 require("dotenv").config();
 
-let mapName = "JEST 1"
+let mapName = "JEST 2"
 
 let objectIdOfDeleted = null
 let ownerIdOfDeleted = null
@@ -131,19 +131,6 @@ describe("POST /api/map/newMap", () => {
         });
         expect(res.status).toBe(400);
         expect(res.body.errorMessage).toBe("Map can not have a width of zero or less tiles.");
-    });
-});
-
-// DELETING MAP SUCCESS
-describe("POST /api/map/deleteMap", () => {
-    console.log("POST /api/map/deleteMap")
-    it("Should delete a Map from the database", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/deleteMap").query({
-            "id": objectIdOfDeleted,
-            "ownerId": "6355e171286afe702190fe20"
-        })
-        expect(res.status).toBe(401);
-        expect(res.body.message).toBe("User does not have ownership of this Map");
     });
 });
 
