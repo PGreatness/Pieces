@@ -20,16 +20,16 @@ app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 
-app.use('/test', (req, res) => {
-    res.send("Hello World!")
-})
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static("build"));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname,  "build", "index.html"));
+    });
+  }
 
-const path = require('path')
-app.use(express.static(path.join(__dirname, '/client/build')))
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/client/build/index.html'))
-})
+// SETUP OUR OWN ROUTERS AS MIDDLEWARE
+const piecesRouter = require('./routes/pieces-router')
+app.use('/api', piecesRouter)
 
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
