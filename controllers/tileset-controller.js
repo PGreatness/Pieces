@@ -1,18 +1,22 @@
 const Tileset = require('../models/tileset-model')
+var mongoose = require('mongoose');
 
 createTileset = async (req, res) => {
     try {
-        const { tilesetName, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, source, ownerId, isPublic, isLocked, tiles } = req.body;
-        if (!imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !source || !ownerId || !isPublic || !isLocked || !tiles) {
+        const { tilesetName, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, source, ownerId, isPublic, isLocked } = req.body;
+        if (!tilesetName || !imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !source || !ownerId || (isPublic == null) || (isLocked == null)) {
             return res
                 .status(400)
-                .json({ errorMessage: "Something went wrong with tileset input." })
+                .json({ errorMessage: "Empty required fields." })
         }
+        
+        const objectOwnerId = mongoose.Types.ObjectId(ownerId)
+        console.log(objectOwnerId)
 
         // Checks if another one of the user's tilesets already has the given name,
         // If so, tileset is not created.
         const existingTileset = await Tileset.findOne({
-            _id: _id,
+            ownerId: objectOwnerId,
             tilesetName: tilesetName
         });
         if (existingTileset) {
@@ -32,32 +36,58 @@ createTileset = async (req, res) => {
             let untitled_num = 1
 
             const existingUntitledTileset = await Tileset.findOne({
-                _id: _id,
+                ownerId: objectOwnerId,
                 tilesetName: tilesetName
             });
 
             while (existingUntitledTileset) {
                 tilesetName = "Untitled" + untitled_num
+                const existingUntitledTileset = await Tileset.findOne({
+                    ownerId: objectOwnerId,
+                    tilesetName: tilesetName
+                });
                 untitled_num++
             }
 
         }
 
-        const newTileset = new Tileset({
-            tilesetName, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, source, ownerId, isPublic, isLocked, tiles
+        const tilesetDesc = "No description"
+        const tilesetTags = []
+        const tilesetBackgroundColor = ""
+        const padding = 0
+        const collaboratorIds = []
+        const tiles = []
+
+        let newTileset = new Tileset({
+            tilesetName: tilesetName, 
+            tilesetDesc: tilesetDesc,
+            tilesetTags: tilesetTags,
+            tilesetBackgroundColor: tilesetBackgroundColor,
+            imagePixelHeight: imagePixelHeight,
+            imagePixelWidth: imagePixelWidth,
+            tileHeight: tileHeight,
+            tileWidth: tileWidth,
+            padding: padding,
+            source: source,
+            ownerId: objectOwnerId,
+            collaboratorIds: collaboratorIds,
+            isPublic: isPublic,
+            isLocked: isLocked,
+            tiles: tiles
         });
-            await newTileset.save().then(() => {
-                return res.status(200).json({
-                    success: true,
-                    message: 'A tileset has been created!'
-                })
-            }).catch((err) => {
-                console.log(err)
-                return res.status(404).json({
-                    success: false,
-                    message: 'Failed to create tileset.'
-                })
-            });
+
+        newTileset.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                message: 'A tileset has been created!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to create tileset.'
+            })
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send();
@@ -65,8 +95,10 @@ createTileset = async (req, res) => {
 }
 
 deleteTileset = async (req, res) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
 
-    Tileset.findById({ _id: req.params.id }, (err, tileset) => {
+    Tileset.findById({ _id: id }, (err, tileset) => {
 
         // Checks if Tileset with given id exists
         if (err) {
@@ -77,7 +109,7 @@ deleteTileset = async (req, res) => {
         }
 
         // Checks if tileset belongs to the User who is trying to delete it
-        if (tileset.ownerId != req.params.ownerId) {
+        if (!tileset.ownerId.equals(ObjectOwnerId)) {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this tileset',
@@ -85,7 +117,7 @@ deleteTileset = async (req, res) => {
         }
 
         // Finds tileset with given id and deletes it
-        Tileset.findByIdAndDelete(req.params.id, (err, tileset) => {
+        Tileset.findByIdAndDelete(id, (err, tileset) => {
             return res.status(200).json({
                 success: true,
                 data: tileset
@@ -93,21 +125,13 @@ deleteTileset = async (req, res) => {
         }).catch(err => console.log(err))
 
     })
-
 }
 
 updateTileset = async (req, res) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
 
-    // Checks if request contains any body data
-    const body = req.body
-    if (!body) {
-        return res.status(400).json({
-            success: false,
-            error: "No body was given by the client",
-        })
-    }
-
-    Tileset.findOne({ _id: req.params.id }, async (err, tileset) => {
+    Tileset.findOne({ _id: id }, async (err, tileset) => {
 
         // Checks if tileset exists
         if (err) {
@@ -117,8 +141,16 @@ updateTileset = async (req, res) => {
             })
         }
 
+        // Checks if tileset belongs to the User who is trying to update it
+        if (!tileset.ownerId.equals(ObjectOwnerId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this tileset',
+            })
+        }
+
         // Changes all the present fields
-        const { _id, tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles } = req.body;
+        const { tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles } = req.body;
 
         if (tilesetName) {
             if (tilesetName == "") {
@@ -127,12 +159,16 @@ updateTileset = async (req, res) => {
                 let untitled_num = 1
 
                 const existingUntitledTileset = await Tileset.findOne({
-                    _id: _id,
+                    _id: id,
                     tilesetName: tilesetName
                 });
 
                 while (existingUntitledTileset) {
                     tilesetName = "Untitled" + untitled_num
+                    const existingUntitledTileset = await Tileset.findOne({
+                        _id: id,
+                        tilesetName: tilesetName
+                    });
                     untitled_num++
                 }
 
@@ -173,21 +209,19 @@ updateTileset = async (req, res) => {
             tileset.tiles = tiles
 
         // Attempts to save updated tileset
-        tileset
-            .save()
-            .then(() => {
-                return res.status(200).json({
-                    success: true,
-                    id: tileset._id,
-                    message: 'Tileset was successfully updated',
-                })
+        tileset.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                id: tileset._id,
+                message: 'Tileset was successfully updated',
             })
-            .catch(error => {
-                return res.status(404).json({
-                    error,
-                    message: 'Tileset was not updated',
-                })
+        })
+        .catch(error => {
+            return res.status(404).json({
+                error,
+                message: 'Tileset was not updated',
             })
+        })
 
     })
 
@@ -251,8 +285,8 @@ getAllUserTilesets = async (req, res) => {
 
 getUserTilesetsByName = async (req, res) => {
 
-    const { userName, name } = req.query;
-    await Tileset.find({ userName: userName }, (err, tilesets) => {
+    const { tilesetName } = req.query;
+    await Tileset.find({}, (err, tilesets) => {
 
         if (err) {
             return res.status(400).json({
@@ -277,7 +311,7 @@ getUserTilesetsByName = async (req, res) => {
                 let tileset = tilesets[key]
 
                 //Checks if Tileset matches or begins with the wanted name/search
-                if (tileset.name.toLowerCase().startsWith(name.toLowerCase()) && name) {
+                if (tileset.tilesetName.toLowerCase().startsWith(tilesetName.toLowerCase()) && tilesetName) {
                     let tilesetData = {
 
                         _id: tileset._id,
@@ -309,12 +343,58 @@ getUserTilesetsByName = async (req, res) => {
 }
 
 getTilesetbyId = async (req, res) => {
-    const savedTileset = await Tileset.findById(req.params.id);
+    const savedTileset = await Tileset.findById(req.query.id);
     return res.status(200).json({
         tileset: savedTileset
     }).send();
 }
 
+publishTileset = async (req, res) => {
+
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    Tileset.findOne({ _id: id }, async (err, tileset) => {
+
+        // Checks if Tileset exists
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: "Tileset not found"
+            })
+        }
+
+        // Checks if Tileset belongs to the User
+        if (!tileset.ownerId.equals(ownerObjectId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this Tileset',
+            })
+        }
+
+        // Change public
+        tileset.isPublic = true
+
+        // Attempts to save updated tileset
+        tileset
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: tileset._id,
+                    message: 'Tileset was successfully updated',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Tileset was not updated',
+                })
+            })
+
+    })
+
+}
 
 module.exports = {
     getAllUserTilesets,
@@ -322,5 +402,6 @@ module.exports = {
     getTilesetbyId,
     createTileset,
     deleteTileset,
-    updateTileset
+    updateTileset,
+    publishTileset
 }
