@@ -11,7 +11,7 @@
     "client": "cd client && npm start",
     "dev": "concurrently --kill-others \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "cd client && npm install && npm run build",
-    "prod": "concurrently --kill-others \"npm start\" \"npm run --prefix client start\""
+    "prod": "concurrently --kill-others \"npm server\" \"npm run --prefix client build\""
   },
   "author": "",
   "license": "ISC",
