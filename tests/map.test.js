@@ -175,8 +175,10 @@ describe("POST /api/map/publishMap", () => {
             "id": objectIdOfDeleted,
             "ownerId": ownerIdOfDeleted
         });
-        console.log(res.status)
-        console.log(res.body)
+        // console.log(res.status)
+        // console.log(res.body)
+        expect(res.status).toBe(200);
+        expect(res.body.message).toBe("Map was successfully updated")
     })
 })
 
