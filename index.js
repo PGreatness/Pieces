@@ -7,7 +7,7 @@ const config = require("config");
 
 // CREATE OUR SERVER
 const PORT = config.get('port') || 5000;
-const serverDomain = "localhost:4000";
+const serverDomain = "localhost";
 const app = express()
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
