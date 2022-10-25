@@ -77,7 +77,6 @@ createTile = async (req, res) => {
     }
 
     const newTile = new tile({
-        _id: new mongoose.Types.ObjectId(),
         tilesetId,
         height,
         width
