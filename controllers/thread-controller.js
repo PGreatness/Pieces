@@ -90,7 +90,10 @@ createThread = async (req, res) => {
 
 deleteThread = async (req, res) => {
 
-    Thread.findById({ _id: req.params.id }, (err, thread) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let senderObjectId = mongoose.Types.ObjectId(req.query.senderId)
+
+    Thread.findById({ _id: id}, (err, thread) => {
 
         // Checks if Thread with given id exists
         if (err) {
@@ -101,7 +104,7 @@ deleteThread = async (req, res) => {
         }
 
         // Checks if Thread belongs to the User who is trying to delete it
-        if (thread.senderId != req.params.senderId) {
+        if (!thread.senderId.equals(senderObjectId)) {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this Thread',
@@ -109,7 +112,7 @@ deleteThread = async (req, res) => {
         }
 
         // Finds Thread with given id and deletes it
-        Thread.findByIdAndDelete(req.params.id, (err, thread) => {
+        Thread.findByIdAndDelete(id, (err, thread) => {
             return res.status(200).json({
                 success: true,
                 data: thread
