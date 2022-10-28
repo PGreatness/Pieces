@@ -1,21 +1,22 @@
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-import {
-  WelcomeScreen,
-  ProfileScreen,
-  ExploreScreen,
-  LibraryScreen,
-  CommunityScreen,
-  TilesetEditor,
-  MapEditor,
-  ResetPasswordScreen
-} from './components'
+import { BrowserRouter, Routes, Route, Redirect } from "react-router-dom";
+import React, { useState, Suspense, lazy } from "react";
+import WelcomeScreen from './components/WelcomeScreen'
+import ProfileScreen from './components/ProfileScreen'
+import ExploreScreen from './components/ExploreScreen'
+import CommunityScreen from './components/CommunityScreen'
+import LibraryScreen from './components/LibraryScreen'
+import TilesetEditor from './components/TilesetEditor'
+import MapEditor from './components/MapEditor'
+import ResetPasswordScreen from './components/ResetPasswordScreen'
+import Navbar from './components/Navbar'
+
 
 const App = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<div className="Loading">Loading...</div>}>
-        <NavbarBar/>
-        <Switch>
+        <Navbar/>
+        <Routes>
           <Route path="/" exact component={WelcomeScreen}/>
           <Route path="/profile/" exact component={ProfileScreen}/>
           <Route path="/explore/" exact component={ExploreScreen}/>
@@ -32,7 +33,7 @@ const App = () => {
           />
 
           <Route path="/reset-password/:id/:token" exact component={ResetPasswordScreen}/>
-        </Switch>
+        </Routes>
       </Suspense>
     </BrowserRouter>
   );
