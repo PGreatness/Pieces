@@ -208,13 +208,14 @@ deleteTile = async (req, res) => {
         }
     }
 
-    return await tile.findOneAndDelete({ _id: req.body.tileId }, (error, tile) => {
-        if (error) {
+    tile.findOneAndDelete({ _id: req.body.tileId }).then((deletedTile) => {
+        if (!deletedTile) {
             return res.status(400).json({
-                error,
-                message: 'Tile not deleted!',
+                success: false,
+                error: 'Tile not deleted',
             });
         }
+
         tileset.updateMany({ tiles: tile._id }, { $pull: { tiles: tile._id } }).then(() => {
             return res.status(200).json({
                 success: true,
@@ -231,7 +232,7 @@ deleteTile = async (req, res) => {
  * @access  Private
  * @param   None
  */
-getAllTiles = async (req, res) => {
+var getAllTiles = async (req, res) => {
     let allTiles = await tile.find({});
     if (allTiles.length == 0) {
         return res.status(400).json({
