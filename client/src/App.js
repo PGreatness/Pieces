@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import {
+  WelcomeScreen,
+  ProfileScreen,
+  ExploreScreen,
+  LibraryScreen,
+  CommunityScreen,
+  TilesetEditor,
+  MapEditor,
+  ResetPasswordScreen
+} from './components'
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Suspense fallback={<div className="Loading">Loading...</div>}>
+        <NavbarBar/>
+        <Switch>
+          <Route path="/" exact component={WelcomeScreen}/>
+          <Route path="/profile/" exact component={ProfileScreen}/>
+          <Route path="/explore/" exact component={ExploreScreen}/>
+          <Route path="/library/" exact component={LibraryScreen}/>
+          <Route path="/community/" exact component={CommunityScreen}/>
+
+          <Route
+            path="/tileset/:id"
+            exact component={TilesetEditor}
+          />
+          <Route
+            path="/map/:id"
+            exact component={MapEditor}
+          />
+
+          <Route path="/reset-password/:id/:token" exact component={ResetPasswordScreen}/>
+        </Switch>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 
