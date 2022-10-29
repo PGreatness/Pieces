@@ -15,24 +15,27 @@ const app = express()
 const piecesRouter = require('./routes/pieces-router')
 
 if (process.env.NODE_ENV === "production") {
-  
-  // SETUP THE MIDDLEWARE
-  app.use(express.urlencoded({ extended: true }))
-  app.use(cors())
-  app.use(express.json())
-  app.use(cookieParser())
-  
-  app.use('/api', piecesRouter);
-  
-  
-  // app.use(express.static("client/build"));
-  // app.get("*", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname,  "/client/build", "index.html"));
-  // });
+
+    // SETUP THE MIDDLEWARE
+    app.use(express.urlencoded({ extended: true }))
+    app.use(cors())
+    app.use(express.json())
+    app.use(cookieParser())
+
+    app.use('/api', piecesRouter);
+
+
+    // app.use(express.static("client/build"));
+    // app.get("*", (req, res) => {
+    //   res.sendFile(path.resolve(__dirname,  "/client/build", "index.html"));
+    // });
 }
 
+const serverRouter = require('./routes/server-router');
+app.use('/', serverRouter);
+
 // CONNECT TO DATABASE
-mongoose.connect(config.get("mongo_uri"), {useNewUrlParser: true , useUnifiedTopology: true})
+mongoose.connect(config.get("mongo_uri"), { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         app.listen({ port: PORT }, () => {
             console.log(`Server is running on port ${PORT}`)
