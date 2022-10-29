@@ -1,8 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './../css/navbarAppOptions.css';
 
 export default function NavbarAppOptions() {
-
+    const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = React.useState(false);
     const createLogo = () => {
         return (
@@ -19,17 +20,16 @@ export default function NavbarAppOptions() {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1>Library</h1>
-                    <h1>Explore</h1>
-                    <h1>Community</h1>
+                    <h1 onClick={() => { navigate("/library")}} >Library</h1>
+                    <h1 onClick={() => { navigate("/explore")}} >Explore</h1>
+                    <h1 onClick={() => { navigate("/community")}} >Community</h1>
                 </>
             )
         }
         else {
             return (
                 <>
-                    <h1>Explore</h1>
-                    <h1>Community</h1>
+                
                 </>
             )
         }
@@ -44,7 +44,7 @@ export default function NavbarAppOptions() {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1>Profile</h1>
+                    <h1 onClick={() => { navigate("/profile")}} >Profile</h1>
                 </>
             )
         }
