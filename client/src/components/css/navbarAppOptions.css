@@ -1,0 +1,61 @@
+h1 {
+    color: white;
+    user-select: none;
+}
+
+h1:hover {
+    color: #2dd4cf;
+}
+
+h1:active {
+    color: #0e74a0;
+}
+
+.navbar_appoptions {
+    display: block;
+}
+
+.navbar_logo {
+    width: 100px;
+    height: 100px;
+    vertical-align: middle;
+    border: 0 0 0 0;
+    background: url(../images/logo.png) no-repeat;
+    margin: 0;
+    float: left;
+}
+
+.navbar_appflexbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100% - navbar_logo;
+    height: 100%;
+}
+
+.navbar_flexitem_left {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.navbar_flexitem_right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.navbar_flexitem_right > h1 {
+    padding-right: 5%;
+}
+
+.navbar_flexitem_left > h1 {
+    padding-right: 5%;
+}
