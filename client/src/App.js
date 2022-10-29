@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route, Redirect } from "react-router-dom";
 import React, { useState, Suspense, lazy } from "react";
-import WelcomeScreen from './components/WelcomeScreen'
-import ProfileScreen from './components/ProfileScreen'
-import ExploreScreen from './components/ExploreScreen'
-import CommunityScreen from './components/CommunityScreen'
-import LibraryScreen from './components/LibraryScreen'
+import WelcomeScreen from './components/Screens/WelcomeScreen'
+import ProfileScreen from './components/Screens/ProfileScreen'
+import ExploreScreen from './components/Screens/ExploreScreen'
+import CommunityScreen from './components/Screens/CommunityScreen'
+import LibraryScreen from './components/Screens/LibraryScreen'
 import TilesetEditor from './components/TilesetEditor'
 import MapEditor from './components/MapEditor'
-import ResetPasswordScreen from './components/ResetPasswordScreen'
-import Navbar from './components/Navbar'
+import ResetPasswordScreen from './components/Screens/ResetPasswordScreen'
+import Navbar from './components/Navbar/Navbar'
 
 
 const App = () => {
