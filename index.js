@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === "production") {
     // });
 }
 
-app.use(express.static(path.join(__dirname + '/public')))
+app.use('/*', express.static(path.join(__dirname + '/public')))
 
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), { useNewUrlParser: true, useUnifiedTopology: true })
