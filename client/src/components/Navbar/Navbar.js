@@ -1,6 +1,6 @@
 import React from 'react';
 import './../css/navbar.css';
-import NavbarAppOptions from './Navbar/NavbarAppOptions';
+import NavbarAppOptions from './NavbarAppOptions'
 
 export default function Navbar() {
     // navbar using material ui
