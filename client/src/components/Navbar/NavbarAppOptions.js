@@ -20,17 +20,15 @@ export default function NavbarAppOptions() {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={() => { navigate("/library")}} >Library</h1>
                     <h1 onClick={() => { navigate("/explore")}} >Explore</h1>
+                    <h1 onClick={() => { navigate("/library")}} >Library</h1>
                     <h1 onClick={() => { navigate("/community")}} >Community</h1>
                 </>
             )
         }
         else {
             return (
-                <>
-                
-                </>
+                <div></div>
             )
         }
     }
