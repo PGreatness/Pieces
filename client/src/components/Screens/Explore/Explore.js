@@ -2,6 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import SortIcon from '@mui/icons-material/Sort';
 import Box from '@mui/material/Box';
+import { borders } from '@mui/system';
 import '../../css/explore.css';
 
 export default function Explore() {
@@ -35,11 +36,17 @@ export default function Explore() {
             width: '100%',
             overflow: 'auto'}}
             >
-                <Box style={{marginBottom:"40px", width: '99%'}} sx={{ borderRadius: '16px' }}>
-                    <img src={require("./images/map.jpg")} width="100%" height="500px"></img>
+                <Box style={{marginBottom:"60px", width: '99%', height: '70%', position: 'relative'}}>
+                    <img class='image' src={require("./images/map.jpg")} width="100%" height="100%" border-radius="20%"></img>
+                    <div class="overlay">
+                        <div class="project_title">Planet Midget</div>
+                    </div>
                 </Box>
-                <Box style={{marginBottom:"40px", width: '99%'}}>
-                    <img src={require("./images/tile.png")} width="100%" height="500px"></img>
+                <Box style={{marginBottom:"60px", width: '99%', height: '70%', position: 'relative'}}>
+                    <img class='image' src={require("./images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
+                    <div class="overlay">
+                        <div class="project_title">Minecraft Copy</div>
+                    </div>
                 </Box>
             </Box>
 
