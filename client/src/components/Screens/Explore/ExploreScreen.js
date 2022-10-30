@@ -18,7 +18,6 @@ export default function ExploreScreen() {
                     setShowComments(true);
                 }}
             />): (<ExploreComments
-                showComments={showComments}
                 setShowComments={() => {
                     setShowComments(false);
                 }}

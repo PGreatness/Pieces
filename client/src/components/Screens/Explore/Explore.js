@@ -10,7 +10,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import { borders } from '@mui/system';
+import img from './images/map.jpg'
 import '../../css/explore.css';
 
 export default function Explore(props) {
@@ -47,7 +47,8 @@ export default function Explore(props) {
                     overflow: 'auto'
                 }}
             >
-                <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '99%', height: '78%', position: 'relative' }}>
+                <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} 
+                style={{marginBottom: "60px", width: '99%', height: '78%', position: 'relative' }}>
                     <img class='image' src={require("./images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                     <LockIcon className='lock_icon'></LockIcon>
                     <div class="overlay">
