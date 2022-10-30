@@ -15,11 +15,32 @@
     color: white;
     opacity: 1;
     border-radius: 20px;
-  }
+}
+
+.lock_icon {
+    color: black;
+    font-size: 110px !important;
+    position: absolute; 
+    top: 5%;
+    right: 5%;
+}
 
 .project_title {
     font-size: 60px;
-    padding: 20px;
+    padding-left: 25px;
+    padding-top: 3px;
+    padding-bottom: 0px;
+}
+
+.like_num {
+    font-size: 20px;
+    text-align: center;
+}
+
+.project_username {
+    font-size: 25px;
+    padding-left: 25px;
+    padding-top: 0;
 }
 
 .image {
