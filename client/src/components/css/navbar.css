@@ -4,5 +4,6 @@
     position: sticky;
     top: 0;
     width: 100vw;
+    height: 100px;
     z-index: 1;
 }
