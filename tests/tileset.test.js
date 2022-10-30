@@ -25,10 +25,7 @@ describe("POST /api/tileset/newTileset", () => {
         });
         expect(res.status).toBe(400);
         console.log(res.body)
-        expect(res.body.tileset.tilesetName).toBe(tilesetName);
         expect(res.body.errorMessage).toBe("Empty required fields.")
-        objectIdOfDeleted = res.body.id.toString();
-        ownerIdOfDeleted = res.body.tileset.ownerId;
     });
 });
 
