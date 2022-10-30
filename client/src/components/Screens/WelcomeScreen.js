@@ -8,6 +8,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import SquareIcon from '@mui/icons-material/Square';
 import ChatIcon from '@mui/icons-material/Chat';
+import Button from '@mui/material/Button';
 
 export default function WelcomeScreen() {
     return (
@@ -23,8 +24,11 @@ export default function WelcomeScreen() {
                     <br />
                     A collaboration service.</span>
                     <br></br>
-                    <span className="welcome_call_to_action"><br>
-                    </br>Join the Community</span>
+                    {/* <span className="welcome_call_to_action"><br>
+                    </br>Join the Community</span> */}
+                    <div className="welcome_call_to_action">
+                        <Button>Join the Community</Button>
+                    </div>
                 </div>
                 <div>
                     <div className="welcome_vertical_align">
