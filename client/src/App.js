@@ -19,27 +19,29 @@ const App = () => {
       <Suspense fallback={<div className="Loading">Loading...</div>}>
         <div>
           <div className='app-nav-social-container'>
-          <Navbar/>
-          <SocialSidebar id={1}/>
-        </div>
-        <Routes>
-          <Route path="/" element={<WelcomeScreen/>}/>
-          <Route path="/profile/" element={<ProfileScreen/>}/>
-          <Route path="/explore/" element={<ExploreScreen/>}/>
-          <Route path="/library/" element={<LibraryScreen/>}/>
-          <Route path="/community/" element={<CommunityScreen/>}/>
+            <Navbar />
+            <SocialSidebar id={1} />
+          </div>
+          <div className='app-main-content'>
+            <Routes>
+              <Route path="/" element={<WelcomeScreen />} />
+              <Route path="/profile/" element={<ProfileScreen />} />
+              <Route path="/explore/" element={<ExploreScreen />} />
+              <Route path="/library/" element={<LibraryScreen />} />
+              <Route path="/community/" element={<CommunityScreen />} />
 
-          <Route
-            path="/tileset/:id"
-            element={<TilesetEditor/>}
-          />
-          <Route
-            path="/map/:id"
-            element={<MapEditor/>}
-          />
+              <Route
+                path="/tileset/:id"
+                element={<TilesetEditor />}
+              />
+              <Route
+                path="/map/:id"
+                element={<MapEditor />}
+              />
 
-          <Route path="/reset-password/:id/:token" element={<ResetPasswordScreen/>}/>
-        </Routes>
+              <Route path="/reset-password/:id/:token" element={<ResetPasswordScreen />} />
+            </Routes>
+          </div>
         </div>
       </Suspense>
     </BrowserRouter>
