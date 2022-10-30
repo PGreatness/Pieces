@@ -1,8 +1,9 @@
 .navbar {
     background-color: #11182A;
     overflow: hidden;
-    position: sticky;
+    position: fixed;
     top: 0;
     width: 100vw;
     z-index: 1;
+    height:80px;
 }
