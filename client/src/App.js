@@ -9,14 +9,19 @@ import TilesetEditor from './components/TilesetEditor'
 import MapEditor from './components/MapEditor'
 import ResetPasswordScreen from './components/Screens/ResetPasswordScreen'
 import Navbar from './components/Navbar/Navbar'
+import SocialSidebar from "./components/SocialSidebar/SocialSidebar";
 
+import './css/app.css';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<div className="Loading">Loading...</div>}>
         <div>
-        <Navbar/>
+          <div className='app-nav-social-container'>
+          <Navbar/>
+          <SocialSidebar id={1}/>
+        </div>
         <Routes>
           <Route path="/" element={<WelcomeScreen/>}/>
           <Route path="/profile/" element={<ProfileScreen/>}/>
