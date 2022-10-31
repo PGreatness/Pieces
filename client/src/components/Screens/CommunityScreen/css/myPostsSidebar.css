@@ -1,0 +1,18 @@
+.myposts-sidebar-container {
+    position: fixed;
+    top: 80px;
+    max-width: 20vw;
+    z-index: 100;
+    background-color: #11182A;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.myposts-sidebar-list {
+    position: sticky;
+    left: 0;
+    width: 20vw;
+    height: 100vh;
+    z-index: 100;
+    top:10%;
+}
