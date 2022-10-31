@@ -163,7 +163,7 @@ export default function Explore(props) {
                                 <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={props.setShowComments}></CommentIcon>
                                 <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
                                 <FavoriteIcon sx={{ fontSize: 50, px: 1 }}></FavoriteIcon>
-                                <EditIcon sx={{ fontSize: 50 }} onClick={() => { navigate("/map/:id") }}></EditIcon>
+                                <EditIcon sx={{ fontSize: 50 }} onClick={() => { props.setLoc('/map');navigate("/map/1") }}></EditIcon>
                             </Box>
                         </Box>
                     </div>

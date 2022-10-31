@@ -54,7 +54,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<WelcomeScreen />} />
             <Route path="/profile/" element={<ProfileScreen />} />
-            <Route path="/explore/" element={<ExploreScreen />} />
+            <Route path="/explore/" element={<ExploreScreen setLoc={setLocation}/>} />
             <Route path="/library/" element={<LibraryScreen />} />
             <Route path="/community/" element={<CommunityScreen />} />
 

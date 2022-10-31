@@ -5,7 +5,7 @@ import ExploreComments from './ExploreComments'
 import { useNavigate } from 'react-router-dom';
 
 
-export default function ExploreScreen() {
+export default function ExploreScreen(props) {
     const navigate = useNavigate();
     const [showComments, setShowComments] = React.useState(false);
     
@@ -13,7 +13,7 @@ export default function ExploreScreen() {
         <Box style={{height: '100%', width: '80vw', color: 'white', backgroundColor: '#1F293A',
          display:'flex', zIndex:0, position: 'relative'}}>
             {/* <SocialSidebar></SocialSidebar> */}
-            {!showComments? (<Explore 
+            {!showComments? (<Explore setLoc={props.setLoc}
                 setShowComments={() => {
                     setShowComments(true);
                 }}
