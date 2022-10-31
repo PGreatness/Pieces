@@ -66,8 +66,8 @@ export default function MapToolBar() {
 
                 <Grid item xs={12}>
                     <Box className="brush_selections_container">
-                        <Box bgcolor={"#00dd00"} className="brush_selection" id="tile_primary"></Box>
-                        <Box bgcolor={"#0000dd"} className="brush_selection" id="tile_secondary"></Box>
+                        <img src={require("../images/dummyTile1.png")} className="brush_selection" id="tile_primary"/>
+                        <img src={require("../images/dummyTile2.png")} className="brush_selection" id="tile_secondary"/>
                         <Button className="toolbar_mui_icon" id="swap_primary">
                             <SwapHoriz/>
                         </Button>

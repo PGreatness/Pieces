@@ -1,14 +1,14 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
 import { Slider, TextField, Tab, Tabs, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
-import { Brush, HighlightAlt, OpenWith, Map, FormatColorFill, Colorize, People, Edit, LibraryAdd, IosShare, Clear, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
+import { Brush, HighlightAlt, OpenWith, FormatColorFill, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { TabPanel, TabContext, TabList} from '@mui/lab'
 import { styled } from "@mui/material/styles";
 
-export default function MapRightBar() {
+export default function TilesetRightBar() {
 
   const [ value, setValue ] = useState(0);
   const handleChange = (event, newValue) => {
@@ -22,7 +22,7 @@ export default function MapRightBar() {
   });
 
   return (
-    <Box bgcolor={"#11182a"} flex={4} className="map_rightbar">
+    <Box bgcolor={"#11182a"} flex={4} className="tile_rightbar">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs 
           value={value} 
@@ -44,7 +44,7 @@ export default function MapRightBar() {
             <Box bgcolor="#ffffff" className="previewWindow">
               <Stack direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
-                <img src={require('../images/dummyMapPreview.png')} id="map_preview"/>
+                <img src={require('../images/dummyTilePreview.png')} id="map_preview"/>
               </Stack>
             </Box>
             <Box bgcolor="#ffffff" class="layersContainer">
@@ -152,12 +152,6 @@ export default function MapRightBar() {
                 </Box>
               </Stack>
             </Box>
-            <Box>
-              <Button sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                <Typography>Import Tileset</Typography>
-                <LibraryAdd style={{marginLeft:'15px'}}/>
-              </Button>
-            </Box>
           </Box>
         )}
         {value === 1 && (
@@ -237,7 +231,7 @@ export default function MapRightBar() {
                   </ListItem>
                   <ListItem className='conference_message' style={{backgroundColor:'antiquewhite',borderRadius:'2px',padding:'2px', margin:'5px 0px 5px 0px'}}>
                     <Typography style={{marginRight: '5px'}} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Working on maps </Typography>
+                    <Typography size='10px' color='black'> Working on tiles </Typography>
                   </ListItem>
                   <ListItem className='conference_message' style={{backgroundColor:'azure',borderRadius:'2px',padding:'2px', margin:'5px 0px 5px 0px'}}>
                     <Typography style={{marginRight: '5px'}} size='10px' color='black'> Vincent:  </Typography>
@@ -276,9 +270,8 @@ export default function MapRightBar() {
             </Box>
 
             <Box>
-              <Button sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                <Typography>Users Settings</Typography>
-                <People style={{marginLeft:'15px'}}/>
+              <Button sx={{width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+                Permissions & Users
               </Button>
             </Box>
 
@@ -304,13 +297,13 @@ export default function MapRightBar() {
                     <Typography style={{overflowWrap:"break-word"}} color='azure'>Name: </Typography>
                   </Grid>
                   <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Simple Grassy Plains Map </Typography>
+                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Simple Grassy Plains Tileset </Typography>
                   </Grid>
                   <Grid item xs={3}>
                     <Typography style={{overflowWrap:"break-word"}} color='azure'>Desc: </Typography>
                   </Grid>
                   <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>An orthogonal 2D map that resembles a grassy plain. </Typography>
+                    <Typography style={{overflowWrap:"break-word"}} color='azure'>An orthogonal 2D tileset that resembles a grassy plain. </Typography>
                   </Grid>
                   <Grid item xs={3}>
                     <Typography style={{overflowWrap:"break-word"}} color='azure'>Size: </Typography>
@@ -330,14 +323,20 @@ export default function MapRightBar() {
 
             <Box>
               <Button sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                <Typography>Import Map</Typography>
-                <Map style={{marginLeft:'15px'}}/>
+                <Typography>Import Tile</Typography>
+                <AddBox style={{marginLeft:'8px'}}/>
               </Button>
             </Box>
             <Box>
-              <Button sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                <Typography>Export Map</Typography>
-                <IosShare style={{marginLeft:'15px'}}/>
+              <Button sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+                <Typography>Import Tileset</Typography>
+                <LibraryAdd style={{marginLeft:'8px'}}/>
+              </Button>
+            </Box>
+            <Box>
+              <Button sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+                <Typography>Export Tileset</Typography>
+                <IosShare style={{marginLeft:'8px'}}/>
               </Button>
             </Box>
 

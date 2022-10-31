@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/mapeditor.css'
+import '../css/editor.css'
 import '../css/tileseteditor.css'
 import { Box, Stack } from '@mui/system';
 import MapToolBar from './MapToolBar';
