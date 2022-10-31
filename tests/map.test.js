@@ -16,38 +16,38 @@ const request = require("supertest");
 // });
 
 // // ADDING MAP SUCCESS
-describe("POST /api/map/newMap", () => {
+// describe("POST /api/map/newMap", () => {
 
-    let mapId;
-    let ownerId;
-    let mapName = 'JEST 99 MAP NAME'
+//     let mapId;
+//     let ownerId;
+//     let mapName = 'JEST 99 MAP NAME'
 
-    it("Should add a Map to the database", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-            "mapName": mapName,
-            "mapDescription": "This map will be deleted vert shortly!",
-            "tags": ["188", "Scary"],
-            "mapBackgroundColor": "#188188",
-            "mapHeight": 1024,
-            "mapWidth": 1024,
-            "tileHeight": 64,
-            "tileWidth": 64,
-            "ownerId": "6355e171286afe702190fe10"
-        });
-        expect(res.status).toBe(201);
-        expect(res.body.map.mapName).toBe(mapName);
-        mapId = res.body.id.toString();
-        ownerId = res.body.map.ownerId;
-    });
+//     it("Should add a Map to the database", async () => {
+//         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
+//             "mapName": mapName,
+//             "mapDescription": "This map will be deleted vert shortly!",
+//             "tags": ["188", "Scary"],
+//             "mapBackgroundColor": "#188188",
+//             "mapHeight": 1024,
+//             "mapWidth": 1024,
+//             "tileHeight": 64,
+//             "tileWidth": 64,
+//             "ownerId": "6355e171286afe702190fe10"
+//         });
+//         expect(res.status).toBe(201);
+//         expect(res.body.map.mapName).toBe(mapName);
+//         mapId = res.body.id.toString();
+//         ownerId = res.body.map.ownerId;
+//     });
 
-    afterAll(async() => {
-        await request("http://pieces-316.herokuapp.com").post("/api/map/deleteMap").query({
-            "id": mapId,
-            "ownerId": ownerId
-        })
-    })
+//     afterAll(async() => {
+//         await request("http://pieces-316.herokuapp.com").post("/api/map/deleteMap").query({
+//             "id": mapId,
+//             "ownerId": ownerId
+//         })
+//     })
 
-});
+// });
 
 // // ADDING MAP WITH SAME NAME
 // describe("POST /api/map/newMap", () => {
