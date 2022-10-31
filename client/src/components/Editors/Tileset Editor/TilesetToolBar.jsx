@@ -1,12 +1,24 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
-import { List, ListItem, ListItemIcon, ListItemButton, ListItemText, Typography, Grid, Button} from '@mui/material'
-import { Brush, HighlightAlt, OpenWith, FormatColorFill, Colorize, Clear, SwapHoriz } from '@mui/icons-material'
+import { Modal, Slider, TextField, Tab, Tabs, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
+import { Brush, HighlightAlt, OpenWith, FormatColorFill, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
 import { SketchPicker } from 'react-color'
+import { useState } from 'react'
 
 export default function TilesetToolBar() {
+
+    const [ openClearConfirm, setOpenClearConfirm ] = useState(false);
+
+    const handleOpenClearConfirm = () => {
+        setOpenClearConfirm(true)
+      }
+    
+      const handleCloseClearConfirm = () => {
+        setOpenClearConfirm(false)
+      }
+
     return (
         <Box bgcolor={"#11182a"} flex={2} className='map_toolbar'>
 
@@ -57,7 +69,7 @@ export default function TilesetToolBar() {
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
+                    <Button onClick={handleOpenClearConfirm}>
                         <Clear className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
@@ -115,6 +127,29 @@ export default function TilesetToolBar() {
                     </Grid>
                 </Grid> 
             </Grid>
+
+
+            <Modal
+                open={openClearConfirm}
+                onClose={handleCloseClearConfirm}
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+                <Stack direction='column'>
+                    <Typography variant='h5' color='azure'>Proceed to Clear?</Typography>
+                    <Stack direction='row'>
+                    <Button onClick={handleCloseClearConfirm}>
+                        <Typography >Confirm</Typography>
+                        <Check/>
+                    </Button>
+                    <Button onClick={handleCloseClearConfirm}>
+                        <Typography>Cancel</Typography>
+                        <Clear/>
+                    </Button>
+                    </Stack>
+                </Stack>
+                </Box>
+            </Modal>
+
         </Box>
     )
 }
