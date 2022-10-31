@@ -10,19 +10,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { useNavigate } from 'react-router-dom';
 import img from './images/map.jpg'
 import '../../css/explore.css';
 
 export default function Explore(props) {
+    const navigate = useNavigate();
+
     return (
-        <Box
-            style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                flexDirection: 'column',
-                width: '75%',
-            }}
-        >
+        <Box style={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column', width: '75%'}}>
 
             <Box>
                 <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "20px", marginBottom: "20px" }}>
@@ -38,14 +34,8 @@ export default function Explore(props) {
             <Box height="20px"></Box>
 
             <Box
-                style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    flexDirection: 'column',
-                    maxHeight: '100%',
-                    width: '100%',
-                    overflow: 'auto'
-                }}
+                style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', 
+                    maxHeight: '100%', width: '100%', overflow: 'auto' }}
             >
                 <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} 
                 style={{marginBottom: "60px", width: '99%', height: '78%', position: 'relative' }}>
@@ -76,8 +66,8 @@ export default function Explore(props) {
                         </Box>
                     </div>
                 </Box>
+
                 <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{ marginBottom: "60px", width: '99%', height: '70%', position: 'relative' }}>
-                    
                     <img class='image' src={require("./images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
                     <LockOpenIcon className='lock_icon'></LockOpenIcon>
                     <div class="overlay">
@@ -99,7 +89,7 @@ export default function Explore(props) {
                                 <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={props.setShowComments}></CommentIcon>
                                 <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
                                 <FavoriteIcon sx={{ fontSize: 50, px: 1}}></FavoriteIcon>
-                                <EditIcon sx={{ fontSize: 50 }}></EditIcon>
+                                <EditIcon sx={{ fontSize: 50 }} onClick={() => { navigate("/map/:id")}}></EditIcon>
                             </Box>
                         </Box>
                     </div>
