@@ -26,17 +26,19 @@ export default function LibraryScreen() {
         >
 
             <Box>
-                <Box style={{ display: 'flex', flexDirection: 'row' }} >
+                <Box style={{ display: 'flex', flexDirection: 'row', width: '80vw' }} >
                     <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "20px", marginBottom: "20px" }}>
-                        <div className="library_button">Sort by</div>
+                        <div className="library_button">Sort</div>
                         <SortIcon className="library_button_icons" ></SortIcon>
                     </Button>
                     <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "20px", marginBottom: "20px" }}>
-                        <div className="library_button">Filter by</div>
+                        <div className="library_button">Filter</div>
                         <FilterAltIcon className="library_button_icons" ></FilterAltIcon>
                     </Button>
                     <Box style={{ width: '100%', paddingLeft: '70px', paddingRight:'20px', paddingTop:"10px", display: 'flex', alignItems: 'center', justifyContent:'end', flexDirection: 'row' }} >
-                                    <AddIcon sx={{ fontSize: 30, px: 1, color: 'white' }}></AddIcon>
+                            <Button>
+                                <AddIcon sx={{ fontSize: 30, px: 1, color: 'white' }}></AddIcon>
+                            </Button>
                     </Box>
                 </Box>
             </Box>
@@ -82,6 +84,23 @@ export default function LibraryScreen() {
                             <Box style={{ width: '50%', paddingRight:'20px', paddingTop:"10px", display: 'flex', alignItems: 'center', justifyContent:'end  ', flexDirection: 'row' }} >
                                 <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
                                 <PublicIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></PublicIcon>
+                                <EditIcon sx={{ fontSize: 20 }}></EditIcon>
+                            </Box>
+                        </Box>
+                    </div>
+                </Box>
+                <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
+                    <img className='library_image' src={require("./Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                    <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                    <div className="library_overlay">
+                        <Box style={{ display: 'flex', flexDirection: 'row' }} >
+                            <Box style={{ width:'50%', display: 'flex', flexDirection: 'column' }} >
+                                <div className="library_project_title">Planet Midget Public</div>
+                                <div className="library_project_author">@tomJackson16</div>
+                            </Box>
+                            <Box style={{ width: '50%', paddingRight:'20px', paddingTop:"10px", display: 'flex', alignItems: 'center', justifyContent:'end  ', flexDirection: 'row' }} >
+                                <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
+                                <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
                                 <EditIcon sx={{ fontSize: 20 }}></EditIcon>
                             </Box>
                         </Box>
