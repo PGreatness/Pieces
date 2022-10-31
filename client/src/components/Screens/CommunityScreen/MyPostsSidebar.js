@@ -13,7 +13,9 @@ const SearchBarWhite = styled(Input)({
     // search bar underline color
     '&::after': {
         borderBottomColor: 'white',
-    }
+    },
+    backgroundColor: 'rgba(155, 155, 155, 0.70)',
+    borderRadius: '0px 4px 4px 0px',
 });
 
 const createSearchButton = () => {

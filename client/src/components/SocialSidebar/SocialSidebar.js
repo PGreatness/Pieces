@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/material';
 import React from 'react';
 import SidebarUserList from './SidebarUserList';
 
@@ -8,10 +8,8 @@ import './css/SocialSidebar.css';
 
 const SearchBarWhite = styled(Input)({
     color: "white",
-    // search bar underline color
-    '& .MuiInput-underline:after': {
-        borderBottomColor: 'white',
-    }
+    backgroundColor: 'rgba(155, 155, 155, 0.70)',
+    borderRadius: '4px',
 });
 
 const createSearchButton = () => {

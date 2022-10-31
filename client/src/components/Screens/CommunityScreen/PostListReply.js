@@ -7,11 +7,17 @@ import { ThemeProvider } from '@emotion/react';
 
 export default function PostListReply(props) {
 
+    const ColoredListItem = styled(ListItem)({
+        '&:hover': {
+            backgroundColor: '#1E2A4A',
+        },
+    });
+
     return (
         <>
-            <ListItem button sx={{ color: 'white' }}>
+            <ColoredListItem button sx={{ color: 'white' }}>
                 <ListItemText primary={props.reply.replyMsg} />
-            </ListItem>
+            </ColoredListItem>
             <Divider light />
         </>
     );

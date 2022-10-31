@@ -26,6 +26,10 @@ const WhiteDivider = styled(Divider)({
     },
 });
 
+const BackgroundColorList = styled(List)({
+    backgroundColor: '#11182A',
+});
+
 export default function PostListSidebar(props) {
 
     const getAllPosts = () => {
@@ -119,7 +123,7 @@ export default function PostListSidebar(props) {
     if (!props.filteredName) {
         return (
             <div className='postlist-sidebar-postlist'>
-                <List>
+                <BackgroundColorList>
                     <WhiteDivider >
                         <WhiteChip label='My Threads' />
                     </WhiteDivider>
@@ -139,13 +143,13 @@ export default function PostListSidebar(props) {
                     );
                     })
                 }
-                </List>
+                </BackgroundColorList>
             </div>
         )
     }
     return (
         <div className='postlist-sidebar-postlist'>
-            <List>
+            <BackgroundColorList>
                 <WhiteDivider >
                     <WhiteChip label='Threads'/>
                 </WhiteDivider>
@@ -165,7 +169,7 @@ export default function PostListSidebar(props) {
                 );
                 })
             }
-            </List>
+            </BackgroundColorList>
         </div>
     )
 }
