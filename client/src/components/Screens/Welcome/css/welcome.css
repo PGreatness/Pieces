@@ -46,6 +46,7 @@
 
 .welcome_vertical_align {
     vertical-align: center;
+    text-align: left;
 }
 
 .welcome_section {
@@ -66,4 +67,12 @@
     font-size: 18px;
     padding-left: 200px;
     padding-right: 200px;
+}
+
+.welcome_stats { 
+    display: inline-block;
+    width: 50px;
+    padding-left: 30%;
+    /* display: flex; */
+    vertical-align: center;
 }
