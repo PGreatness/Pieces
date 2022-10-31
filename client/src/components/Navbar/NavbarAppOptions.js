@@ -2,12 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/navbarAppOptions.css';
 
-export default function NavbarAppOptions() {
+export default function NavbarAppOptions(props) {
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = React.useState(false);
     const createLogo = () => {
         return (
-            <div className='navbar_logo'>
+            <div className='navbar_logo' onClick={()=>{props.changeLoc('/');navigate('/')}}>
             </div>
         )
     }
@@ -20,9 +20,9 @@ export default function NavbarAppOptions() {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={() => { navigate("/explore")}} >Explore</h1>
-                    <h1 onClick={() => { navigate("/library")}} >Library</h1>
-                    <h1 onClick={() => { navigate("/community")}} >Community</h1>
+                    <h1 onClick={() => {props.changeLoc('/explore');navigate("/explore")}} >Explore</h1>
+                    <h1 onClick={() => {props.changeLoc('/library');navigate("/library")}} >Library</h1>
+                    <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>
             )
         }
@@ -42,7 +42,7 @@ export default function NavbarAppOptions() {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={() => { navigate("/profile")}} >Profile</h1>
+                    <h1 onClick={() => {props.changeLoc('/profile');navigate("/profile")}} >Profile</h1>
                 </>
             )
         }
