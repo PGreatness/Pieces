@@ -2,7 +2,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/navbarAppOptions.css';
 
+import { Input, InputAdornment } from '@mui/material';
+import { styled } from '@mui/material';
+
+import SearchIcon from '@mui/icons-material/Search';
+
 export default function NavbarAppOptions(props) {
+
+    const WideInput = styled(Input)({
+        width: '100%',
+        backgroundColor: 'rgba(155, 155, 155, 0.70)',
+        borderRadius: '4px',
+        height: '50%'
+    });
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = React.useState(false);
     const createLogo = () => {
@@ -38,7 +50,6 @@ export default function NavbarAppOptions(props) {
         // if logged in, create a button for library
         // if not logged in, create 2 buttons for login and signup
         // make sure the buttons are next to each other
-        console.log(isLoggedIn);
         if (isLoggedIn) {
             return (
                 <>
@@ -56,6 +67,21 @@ export default function NavbarAppOptions(props) {
         }
     }
 
+    const createSearchBar = () => {
+        const createSearchIcon = () => {
+            return (
+                <InputAdornment position="start">
+                    <SearchIcon sx={{color:'rgba(200, 200, 200, 1)'}}/>
+                </InputAdornment>
+            )
+        }
+        return loggedIn ? (
+            <>
+                <WideInput placeholder="Search" startAdornment={createSearchIcon()}/>
+            </>
+        ) : (<></>);
+    }
+
     // return the logo, app buttons, and login buttons
     // the login buttons should be on the right side of the navbar
     // and everything else should be on the left side of the navbar
@@ -67,6 +93,7 @@ export default function NavbarAppOptions(props) {
                 <div className='navbar_flexitem_left'>
                     {createAppButtons(loggedIn)}
                 </div>
+                {createSearchBar()}
                 <div className='navbar_flexitem_right'>
                     {createLoginButtons(loggedIn, setLoggedIn)}
                 </div>
