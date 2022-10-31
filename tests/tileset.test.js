@@ -5,29 +5,29 @@ let objectIdOfDeleted = null
 let ownerIdOfDeleted = null
 
 
-describe("POST /api/tileset/newTileset", () => {
-    afterAll(async () => {
-        await request("http://pieces-316.herokuapp.com").post("/api/tileset/deleteTileset").query({
-            "id": objectIdOfDeleted,
-            "ownerId": ownerIdOfDeleted
-        })
-    });
+// describe("POST /api/tileset/newTileset", () => {
+//     afterAll(async () => {
+//         await request("http://pieces-316.herokuapp.com").post("/api/tileset/deleteTileset").query({
+//             "id": objectIdOfDeleted,
+//             "ownerId": ownerIdOfDeleted
+//         })
+//     });
 
-    it("Should add a Tileset to the database", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
-            "imagePixelWidth": 64,
-            "tileHeight": 8,
-            "tileWidth": 8,
-            "source": "testSource",
-            "ownerId": "635364191c83e20194521f1e",
-            "isPublic": false,
-            "isLocked": false
-        });
-        expect(res.status).toBe(400);
-        console.log(res.body)
-        expect(res.body.errorMessage).toBe("Empty required fields.")
-    });
-});
+//     it("Should add a Tileset to the database", async () => {
+//         const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
+//             "imagePixelWidth": 64,
+//             "tileHeight": 8,
+//             "tileWidth": 8,
+//             "source": "testSource",
+//             "ownerId": "635364191c83e20194521f1e",
+//             "isPublic": false,
+//             "isLocked": false
+//         });
+//         expect(res.status).toBe(400);
+//         console.log(res.body)
+//         expect(res.body.errorMessage).toBe("Empty required fields.")
+//     });
+// });
 
 // describe("POST /api/tileset/newTileset", () => {
 //     afterAll(async () => {
