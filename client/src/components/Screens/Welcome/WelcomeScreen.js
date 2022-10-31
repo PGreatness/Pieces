@@ -9,10 +9,28 @@ import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import SquareIcon from '@mui/icons-material/Square';
 import ChatIcon from '@mui/icons-material/Chat';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export default function WelcomeScreen() {
     return (
         <div className="welcome_body">
+            <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '96%', height: '200px', position: 'relative' }}>
+                    <img className='welcome_image' src={require("../Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
+                    <div className="welcome_overlay">
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between' }} >
+                                <div>
+                                    <KeyboardArrowLeftIcon sx={{ fontSize: 30, px: 5, pt: 1 }}></KeyboardArrowLeftIcon>
+                                </div>
+                                <div className="welcome_project_title">Island by tomJackson16</div>
+                                <div>
+                                    <KeyboardArrowRightIcon sx={{ fontSize: 30, px: 5, pt: 1 }}></KeyboardArrowRightIcon>
+                                </div>
+                        </Box>
+                    </div>
+            </Box>
+
             <div className="welcome_flexbox">
                 <MilitaryTechIcon />Island, our currently top-rated map.
             </div>
@@ -32,16 +50,27 @@ export default function WelcomeScreen() {
                 </div>
                 <div>
                     <div className="welcome_vertical_align">
-                        <div className="welcome_flexbox">
-                            <PeopleIcon></PeopleIcon> 1,234,567 Users Online
+                            <div className="welcome_stats">
+                                <PeopleIcon></PeopleIcon>
+                            </div>
+                             1,234,567 Users Online
                             <br></br>
-                            <ForumIcon></ForumIcon> 1,234,567 Ongoing Discussions
+                            <div className="welcome_stats">
+                                <ForumIcon></ForumIcon>
+                            </div>
+                            1,234,567 Ongoing Discussions
                             <br></br>
-                            <DownloadIcon></DownloadIcon> 1,234,567 Project Downloads
+                            <div className="welcome_stats">
+                                <DownloadIcon></DownloadIcon>
+                            </div>
+                            1,234,567 Project Downloads
                             <br></br>
-                            <WorkIcon></WorkIcon> 1,234,567 Projects to Collaborate On
+                            <div className="welcome_stats">
+                                <WorkIcon></WorkIcon>
+                            </div>
+                            1,234,567 Projects to Collaborate On
                             <br></br>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -89,8 +118,8 @@ export default function WelcomeScreen() {
                         <span className="welcome_section_subtitle">Socials
                         </span>
                         <br></br>
-                        <span className="welcome_section_description">Add other users as friends, invite them to edit on your projects. 
-                                                                    Talk to each other with our chat service, Pieces has it all.</span>
+                        <span className="welcome_section_description">Add other users as friends, invite them to edit on your projects, 
+                                                                    talk to others with our chat service, Pieces has it all.</span>
                                                                     
                         <br></br>
                     </div>

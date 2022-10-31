@@ -4,6 +4,8 @@ import TextField from "@mui/material/TextField"
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
+import Avatar from '@mui/material/Avatar';
+import { deepOrange, deepPurple } from '@mui/material/colors';
 
 export default function ProfileScreen() {
     return (
@@ -13,26 +15,17 @@ export default function ProfileScreen() {
             </div>
             <div className="profile_content">
                 <div className="profile_picture">
-                    John Smith Default<br></br>
-                    Profile Picture
+                    <Avatar sx={{ bgcolor: deepOrange[500], width: 250, height: 250 }} >
+                        JS
+                    </Avatar>
                     <br></br>
-                    <EditIcon></EditIcon>
+                    <div className="profile_padding">
+                        <Button>
+                            <EditIcon sx={{ fontSize: 35 }}></EditIcon>
+                        </Button>
+                    </div>
                 </div>
                 <div className="profile_fields">
-                    <div className="profile_flexbox">
-                        <span className="profile_fields_text">
-                            First Name:
-                        </span>
-                        <TextField id="filled-basic" label="John" variant="filled" />
-                    </div>
-                    <br></br>
-                    <div className="profile_flexbox">
-                        <span className="profile_fields_text">
-                            Last Name:
-                        </span>
-                        <TextField id="filled-basic" label="Smith" variant="filled" />
-                    </div>
-                    <br></br>
                     <div className="profile_flexbox">
                         <span className="profile_fields_text">
                             Username:
@@ -54,7 +47,28 @@ export default function ProfileScreen() {
                         <TextField id="filled-basic" label="xxxxxx" variant="filled" />
                     </div>
                     <br></br>
-
+                    <div className="profile_flexbox">
+                        <span className="profile_fields_text">
+                            Display Name:
+                        </span>
+                        <TextField id="filled-basic" label="John Smith" variant="filled" />
+                    </div>
+                    <br></br>
+                    <div className="profile_flexbox">
+                        <span className="profile_fields_text">
+                            Bio:
+                        </span>
+                        <TextField
+                            id="filled-multiline-static"
+                            label="Bio"
+                            multiline
+                            rows={4}
+                            defaultValue="Hey! I'm John Smith."
+                            variant="filled"
+                        />
+                    </div>
+                    <br></br>
+                    
                     <Stack direction="row" spacing={2}>
                     <Button disabled>Clear</Button>
                     <Button>Save</Button>
