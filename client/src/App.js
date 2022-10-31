@@ -50,7 +50,7 @@ const App = () => {
               buildSidebar()
             }
           </div>
-          <div className={location === '/' || location.includes('profile') ? 'contentBody-nosocial' : "contentBody" || location.includes('map') ? 'contentBody-nosocial' : "contentBody" || location.includes('tileset') ? 'contentBody-nosocial' : "contentBody" }>
+          <div className={(location === '/' || location.includes('profile') || location.includes('map') || location.includes('tileset')) ? 'contentBody-nosocial' : "contentBody"}>
           <Routes>
             <Route path="/" element={<WelcomeScreen />} />
             <Route path="/profile/" element={<ProfileScreen />} />
