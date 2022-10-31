@@ -14,9 +14,16 @@
 }
 
 .profile_picture {
+    width: 100%;
     text-align: center;
     align-items: center;
     justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile_padding {
+    padding-top: 25px;
 }
 
 .profile_content {
@@ -40,5 +47,5 @@
 
 .profile_fields_text { 
     display: inline-block;
-    width: 125px;
+    width: 150px;
 }
