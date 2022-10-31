@@ -44,14 +44,15 @@ export default function MapCanvas() {
                 <Box sx={{padding:2}}>
                     {value === 0 && (
                         <Stack direction='row' spacing={2}>
-                            <Box className='palette_option' bgcolor='red'></Box>
-                            <Box className='palette_option' bgcolor='blue'></Box>
-                            <Box className='palette_option' bgcolor='green'></Box>
+                            <img src={require("../images/dummyTile1.png")} className='palette_option' bgcolor='red'/>
+                            <img src={require("../images/dummyTile2.png")} className='palette_option' bgcolor='blue'/>
+                            <img src={require("../images/dummyTile3.png")} className='palette_option' bgcolor='green'/>
                         </Stack>
                     )}
                 </Box>
             </Box>
-            <canvas id='map_canvas'></canvas>
+            {/* <canvas id='map_canvas'></canvas> */}
+            <img style={{marginTop:'50px', height:'450px', width:'450px'}} src={require('../images/dummyMapPreview.png')} id='map_canvas'/>
         </Box>
     )
 }

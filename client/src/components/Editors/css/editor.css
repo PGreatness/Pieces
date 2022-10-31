@@ -1,10 +1,10 @@
-.map_toolbar {
+.map_toolbar, .tile_toolbar {
     height: calc(100vh - 80px);
     margin-top: 5px;
     border-radius: 0px 10px 10px 0px;
 }
 
-.map_rightbar {
+.map_rightbar, .tile_rightbar {
     height: calc(100vh - 80px);
     margin-top: 5px;
     border-radius: 10px 0px 0px 10px;
@@ -53,6 +53,22 @@
     width: 150px;
 }
 
+.brush_selection_tileset {
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: black;
+}
+
+.brush_selections_container_tileset {
+    position: relative;
+    margin-top: 40px;
+    height: 100px;
+    width: 100px;
+}
+
 .previewWindow {
     height: 275px;
     width: 250px;
@@ -83,6 +99,16 @@
     text-align: center;
 }
 
+.tileset_container {
+    position: absolute;
+    width: 90%;
+    border-radius: 0px 10px 0px 0px;
+    margin-left: 5%;
+    background-color: "#11182a";
+    bottom: 0%;
+    height: 18%;
+}
+
 .palettes_container {
     position: absolute;
     width: 90%;
@@ -95,6 +121,11 @@
 .palette_option {
     width: 50px;
     height: 50px;
+}
+
+.tile_option {
+    width: 80px;
+    height: 80px;
 }
 
 #tile_primary {
@@ -120,13 +151,34 @@
     color: #2dd4cf;
 }
 
-#map_preview {
+#color_primary {
+    z-index: 2;
+}
+
+#color_secondary {
+    bottom: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+#swap_primary_color {
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    max-height: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    color: #2dd4cf;
+}
+
+#map_preview, #tile_preview {
     height: 250px;
     width: 250px;
     background-color: blueviolet;
 }
  
-#map_canvas {
+#map_canvas, #tile_canvas {
     width: 500px;
     height: 500px;
     background-color: white;
@@ -139,13 +191,13 @@
     top: 3%;
 }
 
-#map_undo_button {
+#map_undo_button, #tile_undo_button {
     position: absolute;
     right:8%;
     top: 8%;
 }
 
-#map_redo_button {
+#map_redo_button, #tile_redo_button {
     position: absolute;
     right:3%;
     top: 8%;
