@@ -9,5 +9,15 @@
     margin-top: 80px;
     z-index: -1;
     position:absolute;
-    width:100%
+    width:100%;
+    overflow-x: hidden;
+}
+
+.contentBody-nosocial {
+    margin-left: 0;
+    margin-top: 80px;
+    z-index: -1;
+    position:absolute;
+    width:100%;
+    overflow-x: hidden;
 }
