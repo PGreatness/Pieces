@@ -1,5 +1,5 @@
 import React from 'react';
-import './../css/welcome.css';
+import './css/welcome.css';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import PeopleIcon from '@mui/icons-material/People';
 import DownloadIcon from '@mui/icons-material/Download';

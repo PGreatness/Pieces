@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Redirect } from "react-router-dom";
 import React, { useState, Suspense, lazy } from "react";
-import WelcomeScreen from './components/Screens/WelcomeScreen'
-import ProfileScreen from './components/Screens/ProfileScreen'
+import WelcomeScreen from './components/Screens/Welcome/WelcomeScreen'
+import ProfileScreen from './components/Screens/Profile/ProfileScreen'
 import ExploreScreen from './components/Screens/Explore/ExploreScreen'
 import CommunityScreen from './components/Screens/CommunityScreen'
 import LibraryScreen from './components/Screens/LibraryScreen'
@@ -17,7 +17,10 @@ const App = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<div className="Loading">Loading...</div>}>
-          <Navbar/>
+          <div className='app-nav-social-container'>
+            <Navbar/>
+            <SocialSidebar/>
+          </div>
           <div className="contentBody">
           <Routes>
             <Route path="/" element={<WelcomeScreen />} />

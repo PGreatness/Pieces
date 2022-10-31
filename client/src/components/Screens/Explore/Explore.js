@@ -12,7 +12,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { useNavigate } from 'react-router-dom';
 import img from './images/map.jpg'
-import '../../css/explore.css';
+import './css/explore.css';
 
 export default function Explore(props) {
     const navigate = useNavigate();

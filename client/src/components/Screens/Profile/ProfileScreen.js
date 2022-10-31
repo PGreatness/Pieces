@@ -1,5 +1,5 @@
 import React from 'react';
-import './../css/profile.css';
+import './css/profile.css';
 import TextField from "@mui/material/TextField"
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';

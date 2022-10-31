@@ -1,7 +1,0 @@
-html, body, #root, .App {
-    height: 100%;
-}
-
-.contentBody {
-    height: calc(100% - 80px);
-}
