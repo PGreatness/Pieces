@@ -1,6 +1,7 @@
 import React from 'react';
 import CommunityMainClickableThread from './CommunityMainClickableThread';
 import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
 import CommunityOpenThread from '../CommunityOpenThread/CommunityOpenThread';
 
 import './css/communityMainThreadList.css';
@@ -23,7 +24,7 @@ export default function CommunityMainThreadList(props) {
         return (
             <div className='community-main-thread-list' onClick={handleOutsideClick}>
                 <div className='community-main-thread-list-div'>
-                    <List>
+                    <Stack spacing={2}>
                     {
                         threadList.map((thread, index)=>{
                             return (
@@ -31,7 +32,7 @@ export default function CommunityMainThreadList(props) {
                                 );
                         })
                     }
-                    </List>
+                    </Stack>
                 </div>
             </div>
         )

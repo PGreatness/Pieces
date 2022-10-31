@@ -6,7 +6,7 @@ import { styled } from '@mui/material';
 export default function CommunityMainClickableThread(props) {
 
     const LightListItem = styled(ListItem)({
-        backgroundColor: '#455571',
+        backgroundColor: '#333b4a',
         borderRadius: '10px',
         '&:hover': {
             backgroundColor: '#29313f',
