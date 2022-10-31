@@ -12,7 +12,7 @@ import SendIcon from '@mui/icons-material/Send';
 import TextField from "@mui/material/TextField"
 import img from './images/map.jpg'
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import '../../css/explore.css';
+import './css/explore.css';
 
 export default function ExploreComments(props) {
     return (

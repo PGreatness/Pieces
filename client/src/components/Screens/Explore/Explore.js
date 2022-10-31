@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import img from './images/map.jpg'
-import '../../css/explore.css';
+import './css/explore.css';
 
 export default function Explore(props) {
     return (
