@@ -35,14 +35,14 @@ createTileset = async (req, res) => {
             tilesetName = "Untitled"
             let untitled_num = 1
 
-            const existingUntitledTileset = await Tileset.findOne({
+            let existingUntitledTileset = await Tileset.findOne({
                 ownerId: objectOwnerId,
                 tilesetName: tilesetName
             });
 
             while (existingUntitledTileset) {
                 tilesetName = "Untitled" + untitled_num
-                const existingUntitledTileset = await Tileset.findOne({
+                existingUntitledTileset = await Tileset.findOne({
                     ownerId: objectOwnerId,
                     tilesetName: tilesetName
                 });
@@ -95,6 +95,19 @@ createTileset = async (req, res) => {
 }
 
 deleteTileset = async (req, res) => {
+    if (req.query.id == undefined) {
+        return res.status(404).json({
+            err,
+            message: 'ID empty',
+        })
+    }
+    if (req.query.ownerId == undefined) {
+        return res.status(404).json({
+            err,
+            message: 'ownerId empty',
+        })
+    }
+
     let id = mongoose.Types.ObjectId(req.query.id)
     let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
 
@@ -128,6 +141,19 @@ deleteTileset = async (req, res) => {
 }
 
 updateTileset = async (req, res) => {
+    if (req.query.id == undefined) {
+        return res.status(404).json({
+            err,
+            message: 'ID empty',
+        })
+    }
+    if (req.query.ownerId == undefined) {
+        return res.status(404).json({
+            err,
+            message: 'ownerId empty',
+        })
+    }
+
     let id = mongoose.Types.ObjectId(req.query.id)
     let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
 
@@ -158,14 +184,14 @@ updateTileset = async (req, res) => {
                 tilesetName = "Untitled"
                 let untitled_num = 1
 
-                const existingUntitledTileset = await Tileset.findOne({
+                let existingUntitledTileset = await Tileset.findOne({
                     _id: id,
                     tilesetName: tilesetName
                 });
 
                 while (existingUntitledTileset) {
                     tilesetName = "Untitled" + untitled_num
-                    const existingUntitledTileset = await Tileset.findOne({
+                    existingUntitledTileset = await Tileset.findOne({
                         _id: id,
                         tilesetName: tilesetName
                     });
@@ -344,6 +370,12 @@ getUserTilesetsByName = async (req, res) => {
 
 getTilesetbyId = async (req, res) => {
     const savedTileset = await Tileset.findById(req.query.id);
+    if (savedTileset == null) {
+        return res.status(404).json({
+            err,
+            message: "Tileset not found"
+        }).send();
+    }
     return res.status(200).json({
         tileset: savedTileset
     }).send();

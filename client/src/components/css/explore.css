@@ -1,0 +1,84 @@
+.button_text {
+    color:white;
+}
+
+.button_icons {
+    color:white;
+}
+
+.overlay {
+    position: absolute; 
+    bottom: 0; 
+    background: rgba(0, 0, 7, 0.70); /* Black see-through */
+    width: 100%;
+    height: 20%;
+    color: white;
+    opacity: 1;
+    border-radius: 20px;
+}
+
+.overlay_comments {
+    position: absolute; 
+    bottom: 0; 
+    background: rgba(0, 0, 7, 0.70); /* Black see-through */
+    width: 100%;
+    height: 45%;
+    color: white;
+    opacity: 1;
+    border-radius: 16px;
+}
+
+
+.lock_icon {
+    color: black;
+    font-size: 110px !important;
+    position: absolute; 
+    top: 5%;
+    right: 5%;
+}
+
+.project_title {
+    font-size: 60px;
+    padding-left: 25px;
+    padding-top: 3px;
+    padding-bottom: 0px;
+}
+
+.like_num {
+    font-size: 20px;
+    text-align: center;
+}
+
+.project_username {
+    font-size: 25px;
+    padding-left: 25px;
+    padding-top: 0;
+}
+
+.image {
+    border-radius: 20px;
+    overflow:hidden;
+    box-sizing:border-box;
+}
+
+.back_icon {
+    margin-left: 20px;
+    font-size: 60px !important;
+}
+
+.comment_title {
+    font-size: 40px;
+    width: 100%;
+    text-align: center;
+    
+}
+
+#reply_field {
+    color: white;
+    width: 70%;
+    background-color: transparent;
+    border: 0;
+    width: 90%;
+    margin-left: 30px;
+    font-size: 30px;
+}
