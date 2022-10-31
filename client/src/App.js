@@ -9,8 +9,9 @@ import TilesetEditor from './components/TilesetEditor'
 import MapEditor from './components/MapEditor'
 import ResetPasswordScreen from './components/Screens/ResetPasswordScreen'
 import Navbar from './components/Navbar/Navbar'
-import './components/css/app.css';
+import SocialSidebar from "./components/SocialSidebar/SocialSidebar";
 
+import './css/app.css';
 
 const App = () => {
   return (

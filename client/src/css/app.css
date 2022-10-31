@@ -1,0 +1,10 @@
+.app-nav-social-container {
+    position: fixed;
+    top: 0;
+    max-width: 20vw;
+}
+
+.app-main-content {
+    margin-left: 20vw;
+    margin-top: 80px;
+}

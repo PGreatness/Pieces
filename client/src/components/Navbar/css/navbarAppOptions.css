@@ -12,15 +12,19 @@ h1:active {
 }
 
 .navbar_appoptions {
+    height: inherit;
+    width: inherit;
     display: block;
 }
 
 .navbar_logo {
+    max-width: 90%;
+    max-height: 90%;
+    height: inherit;
     width: 100px;
-    height: 100px;
     vertical-align: middle;
     border: 0 0 0 0;
-    background: url(../images/logo.png) no-repeat;
+    background: url(../../images/logo.png) no-repeat;
     margin: 0;
     float: left;
 }
@@ -30,7 +34,6 @@ h1:active {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 100% - navbar_logo;
     height: 100%;
 }
 

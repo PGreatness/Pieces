@@ -1,0 +1,27 @@
+.sidebar-container {
+    position: sticky;
+    left: 0;
+    width: 20vw;
+    height: 100vh;
+    z-index: 100;
+    top:10%;
+}
+
+.sidebar-search {
+    position: sticky;
+    background-color: #11182A;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-container-container {
+    position: fixed;
+    width: 20vw;
+    height: 100vh;
+    z-index: 100;
+    background-color: #11182A;
+    top:80px;
+    overflow:hidden;
+}
