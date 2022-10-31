@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
-import { Slider, TextField, Tab, Tabs, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
-import { Brush, HighlightAlt, OpenWith, FormatColorFill, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
+import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
+import { Brush, HighlightAlt, OpenWith, FormatColorFill, PersonRemove, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
@@ -11,6 +11,11 @@ import { styled } from "@mui/material/styles";
 export default function TilesetRightBar() {
 
   const [ value, setValue ] = useState(0);
+  const [ openImportTileset, setOpenImportTileset ] = useState(false);
+  const [ openImportTile, setOpenImportTile ] = useState(false);
+  const [ openExportTileset, setOpenExportTileset ] = useState(false);
+  const [ openUserSettings, setOpenUserSettings ] = useState(false);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   }
@@ -20,6 +25,39 @@ export default function TilesetRightBar() {
       color: "#2dd4cf"
     }
   });
+
+  const handleOpenImportTileset = () => {
+    setOpenImportTileset(true)
+  }
+
+  const handleCloseImportTileset = () => {
+    setOpenImportTileset(false)
+  }
+
+  const handleOpenImportTile = () => {
+    setOpenImportTile(true)
+  }
+
+  const handleCloseImportTile = () => {
+    setOpenImportTile(false)
+  }
+
+  const handleOpenExportTileset = () => {
+    setOpenExportTileset(true)
+  }
+
+  const handleCloseExportTileset = () => {
+    setOpenExportTileset(false)
+  }
+
+  const handleOpenUserSettings = () => {
+    setOpenUserSettings(true)
+  }
+
+  const handleCloseUserSettings = () => {
+    setOpenUserSettings(false)
+  }
+
 
   return (
     <Box bgcolor={"#11182a"} flex={4} className="tile_rightbar">
@@ -270,8 +308,9 @@ export default function TilesetRightBar() {
             </Box>
 
             <Box>
-              <Button sx={{width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                Permissions & Users
+              <Button onClick={handleOpenUserSettings} sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+                <Typography>User Settings</Typography>
+                <People/>
               </Button>
             </Box>
 
@@ -322,19 +361,19 @@ export default function TilesetRightBar() {
             </Box>
 
             <Box>
-              <Button sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+              <Button onClick={handleOpenImportTile} sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
                 <Typography>Import Tile</Typography>
                 <AddBox style={{marginLeft:'8px'}}/>
               </Button>
             </Box>
             <Box>
-              <Button sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+              <Button onClick={handleOpenImportTileset} sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
                 <Typography>Import Tileset</Typography>
                 <LibraryAdd style={{marginLeft:'8px'}}/>
               </Button>
             </Box>
             <Box>
-              <Button sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+              <Button onClick={handleOpenExportTileset} sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
                 <Typography>Export Tileset</Typography>
                 <IosShare style={{marginLeft:'8px'}}/>
               </Button>
@@ -343,6 +382,170 @@ export default function TilesetRightBar() {
           </Box>
         )}
       </Box>
+
+      <Modal
+        open={openImportTileset}
+        onClose={handleCloseImportTileset}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%' id="importTilesetModal">
+          <Stack direction='column'>
+            <Typography variant='h5' color='azure'>Import Tileset</Typography>
+            <TextField size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+            <Stack direction='row'>
+              <Button onClick={handleCloseImportTileset}>
+                <Typography >Confirm</Typography>
+                <Check/>
+              </Button>
+              <Button onClick={handleCloseImportTileset}>
+                <Typography>Cancel</Typography>
+                <Clear/>
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openImportTile}
+        onClose={handleCloseImportTile}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column'>
+            <Typography variant='h5' color='azure'>Import Tile</Typography>
+            <TextField size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+            <Stack direction='row'>
+              <Button onClick={handleCloseImportTile}>
+                <Typography >Confirm</Typography>
+                <Check/>
+              </Button>
+              <Button onClick={handleCloseImportTile}>
+                <Typography>Cancel</Typography>
+                <Clear/>
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openExportTileset}
+        onClose={handleCloseExportTileset}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column'>
+            <Typography variant='h5' color='azure'>Export Tileset</Typography>
+            <TextField size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+            <Stack direction='row'>
+              <Button onClick={handleCloseExportTileset}>
+                <Typography >Confirm</Typography>
+                <Check/>
+              </Button>
+              <Button onClick={handleCloseExportTileset}>
+                <Typography>Cancel</Typography>
+                <Clear/>
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openUserSettings}
+        onClose={handleCloseUserSettings}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='25%' top='30%' left='30%'>
+          <Stack direction='column'>
+            <Typography style={{textAlign:'center', marginBottom:'5px'}} variant='h5' color='azure'>User Settings</Typography>
+            <Grid justify='center' container style={{backgroundColor:"#1f293a"}}>
+              <Grid item xs={1}>
+                <AccountCircle/>
+              </Grid>
+              <Grid item xs={5}>
+                <Typography>Iman Ali</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
+                  <People/>
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
+                  <PersonRemove/>
+                </Button>
+              </Grid>
+              <Grid align='center' item xs={4}>
+                <Typography>Owner</Typography>
+              </Grid>
+            </Grid>
+            <Grid container style={{backgroundColor:"#1f293a"}}>
+              <Grid item xs={1}>
+                <AccountCircle/>
+              </Grid>
+              <Grid item xs={5}>
+                <Typography>Iman Ali</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
+                  <People/>
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
+                  <PersonRemove/>
+                </Button>
+              </Grid>
+              <Grid item xs={4}>
+                <FormControl fullWidth size='small'>
+                  <InputLabel>Acess</InputLabel>
+                  <Select
+                  >
+                    <MenuItem>View</MenuItem>
+                    <MenuItem>Edit</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid container style={{backgroundColor:"#1f293a"}}>
+              <Grid item xs={1}>
+                <AccountCircle/>
+              </Grid>
+              <Grid item xs={5}>
+                <Typography>McKenna</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
+                  <People/>
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
+                  <PersonRemove/>
+                </Button>
+              </Grid>
+              <Grid item xs={4}>
+                <FormControl fullWidth size='small'>
+                  <InputLabel>Acess</InputLabel>
+                  <Select
+                  >
+                    <MenuItem>View</MenuItem>
+                    <MenuItem>Edit</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Stack direction='row' justifyContent='space-between'>
+              <Button onClick={handleCloseUserSettings}>
+                <Typography >Confirm</Typography>
+                <Check/>
+              </Button>
+              <Button onClick={handleCloseUserSettings}>
+                <Typography>Cancel</Typography>
+                <Clear/>
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
     </Box>
   )
 }
