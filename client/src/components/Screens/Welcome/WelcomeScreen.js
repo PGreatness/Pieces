@@ -9,10 +9,28 @@ import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import SquareIcon from '@mui/icons-material/Square';
 import ChatIcon from '@mui/icons-material/Chat';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export default function WelcomeScreen() {
     return (
         <div className="welcome_body">
+            <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '96%', height: '200px', position: 'relative' }}>
+                    <img className='welcome_image' src={require("../Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
+                    <div className="welcome_overlay">
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between' }} >
+                                <div>
+                                    <KeyboardArrowLeftIcon sx={{ fontSize: 30, px: 5, pt: 1 }}></KeyboardArrowLeftIcon>
+                                </div>
+                                <div className="welcome_project_title">Island by tomJackson16</div>
+                                <div>
+                                    <KeyboardArrowRightIcon sx={{ fontSize: 30, px: 5, pt: 1 }}></KeyboardArrowRightIcon>
+                                </div>
+                        </Box>
+                    </div>
+            </Box>
+
             <div className="welcome_flexbox">
                 <MilitaryTechIcon />Island, our currently top-rated map.
             </div>
