@@ -18,14 +18,15 @@ export default function Explore(props) {
     const navigate = useNavigate();
 
     return (
-        <Box style={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column', width: '75%'}}>
+        <Box style={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column', 
+        width: '100%', padding: '20px'}}>
 
             <Box>
-                <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "20px", marginBottom: "20px" }}>
+                <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "10px", marginBottom: "20px" }}>
                     <div className="button_text">Sort by</div>
                     <SortIcon className="button_icons" ></SortIcon>
                 </Button>
-                <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "20px", marginBottom: "20px" }}>
+                <Button style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "10px", marginBottom: "20px" }}>
                     <div className="button_text">Filter by</div>
                     <SortIcon className="button_icons" ></SortIcon>
                 </Button>
@@ -35,15 +36,15 @@ export default function Explore(props) {
 
             <Box
                 style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', 
-                    maxHeight: '100%', width: '100%', overflow: 'auto' }}
+                    maxHeight: '100%', width: '100%', overflow: 'auto', paddingLeft:'10px', borderRadius: '30px' }}
             >
                 <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} 
-                style={{marginBottom: "60px", width: '99%', height: '78%', position: 'relative' }}>
+                style={{marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
                     <img class='image' src={require("./images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                     <LockIcon className='lock_icon'></LockIcon>
                     <div class="overlay">
                         <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                            <Box style={{ width:'50%', display: 'flex', flexDirection: 'column' }} >
+                            <Box style={{ width:'50%', display: 'flex', flexDirection: 'column', justifyContent:'center' }} >
                                 <div class="project_title">Planet Midget</div>
                                 <div class="project_username">by @tomJackson16</div>
                             </Box>
@@ -67,12 +68,13 @@ export default function Explore(props) {
                     </div>
                 </Box>
 
-                <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{ marginBottom: "60px", width: '99%', height: '70%', position: 'relative' }}>
+                <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} 
+                style={{marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
                     <img class='image' src={require("./images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
                     <LockOpenIcon className='lock_icon'></LockOpenIcon>
                     <div class="overlay">
                         <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                            <Box style={{ width:'50%', display: 'flex', flexDirection: 'column' }} >
+                            <Box style={{ width:'50%', display: 'flex', flexDirection: 'column', justifyContent:'center' }} >
                                 <div class="project_title">Minecraft Copy</div>
                                 <div class="project_username">by @maximusc888</div>
                             </Box>

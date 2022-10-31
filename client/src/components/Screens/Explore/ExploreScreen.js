@@ -10,7 +10,8 @@ export default function ExploreScreen() {
     const [showComments, setShowComments] = React.useState(false);
     
     return (
-        <Box style={{height: '100%', color: 'white', backgroundColor: '#1F293A', display:'flex', zIndex:0}}>
+        <Box style={{height: '100%', width: '80vw', color: 'white', backgroundColor: '#1F293A',
+         display:'flex', zIndex:0, position: 'relative'}}>
             {/* <SocialSidebar></SocialSidebar> */}
             {!showComments? (<Explore 
                 setShowComments={() => {

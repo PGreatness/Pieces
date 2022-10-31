@@ -19,7 +19,8 @@ import './css/explore.css';
 
 export default function ExploreComments(props) {
     return (
-        <Box style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', width: '75%' }}>
+        <Box style={{ width: '100%', display: 'flex', alignItems: 'flex-start', 
+            flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative' }}>
 
             <Box style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '10%', alignItems: 'center' }}>
                 <KeyboardBackspaceIcon className="back_icon" onClick={props.setShowComments}></KeyboardBackspaceIcon>
@@ -35,7 +36,7 @@ export default function ExploreComments(props) {
             }}>
 
                 <Box style={{
-                    display: 'flex', width: '100%', height: '30%',
+                    display: 'flex', width: '100%', height: '40%',
                     marginBottom: "18px"
                 }}>
                     <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{
@@ -44,26 +45,26 @@ export default function ExploreComments(props) {
                     }}>
                         <LockIcon className='lock_icon'></LockIcon>
                         <div class="overlay_comments">
-                            <Box style={{ display: 'flex', flexDirection: 'row' }} >
+                            <Box style={{ display: 'flex', flexDirection: 'row', maxHeight: '100%' }} >
                                 <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                    <div class="project_title">Planet Midget</div>
+                                    <div class="project_title_comments">Planet Midget</div>
                                     <div class="project_username">by @tomJackson16</div>
                                 </Box>
                                 <Box style={{ width: '50%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                                     <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <ThumbUpIcon sx={{ fontSize: 50, px: 1, pt: 1 }}></ThumbUpIcon>
+                                        <ThumbUpIcon sx={{ fontSize: 40, px: 1, pt: 1 }}></ThumbUpIcon>
                                         <div class="like_num">352</div>
                                     </Box>
 
                                     <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <ThumbDownIcon sx={{ fontSize: 50, px: 2, pt: 1 }}></ThumbDownIcon>
+                                        <ThumbDownIcon sx={{ fontSize: 40, px: 2, pt: 1 }}></ThumbDownIcon>
                                         <div class="like_num">7</div>
                                     </Box>
 
-                                    <CommentIcon sx={{ fontSize: 50, px: 1, color: '#0e74a0' }}></CommentIcon>
-                                    <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
-                                    <FavoriteIcon sx={{ fontSize: 50, px: 1 }}></FavoriteIcon>
-                                    <EditIcon sx={{ fontSize: 50, color: 'gray' }}></EditIcon>
+                                    <CommentIcon sx={{ fontSize: 40, px: 1, color: '#0e74a0' }}></CommentIcon>
+                                    <DownloadIcon sx={{ fontSize: 40, px: 1 }}></DownloadIcon>
+                                    <FavoriteIcon sx={{ fontSize: 40, px: 1 }}></FavoriteIcon>
+                                    <EditIcon sx={{ fontSize: 40, color: 'gray' }}></EditIcon>
                                 </Box>
                             </Box>
                         </div>
@@ -82,7 +83,7 @@ export default function ExploreComments(props) {
                             backgroundColor: "rgb(217, 217, 217, 0.1)", borderRadius: '30px'
                         }}>
 
-                            <ListItem style={{ display: 'flex', flexDirection: 'row', padding: '0px' }}>
+                            <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
                                 <ListItemAvatar >
                                     <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
                                 </ListItemAvatar>
@@ -107,7 +108,7 @@ export default function ExploreComments(props) {
                             </ListItem>
 
                             <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItem sx={{ fontSize: "20px", px: 1, pt: 1 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
+                                <ListItem sx={{ fontSize: "20px", px: 1}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
                                 Aliquam in hendrerit urna.  Pellentesque commodo lacus at sodales sodales.
                                 Quisque sagittis orci ut diam condimentum, vel euismod erat placerat.
                                     Pellentesque sit amet sapien fringilla, mattis ligula magna...</ListItem>
@@ -124,7 +125,7 @@ export default function ExploreComments(props) {
                             backgroundColor: "rgb(217, 217, 217, 0.1)", borderRadius: '30px'
                         }}>
 
-                            <ListItem style={{ display: 'flex', flexDirection: 'row' }}>
+                            <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
                                 
                                 <ListItemAvatar >
                                     <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
@@ -150,7 +151,7 @@ export default function ExploreComments(props) {
                             </ListItem>
 
                             <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItemText sx={{ px: 1, pt: 1 }}>Pellentesque commodo lacus at sodales sodales.
+                                <ListItemText sx={{ px: 1 }}>Pellentesque commodo lacus at sodales sodales.
                                 Quisque sagittis orci ut diam condimentum, Pellentesque muster sit amet sapien fringilla,
                                  mattis ligula...</ListItemText>
                             </ListItem>
@@ -166,7 +167,7 @@ export default function ExploreComments(props) {
                             backgroundColor: "rgb(217, 217, 217, 0.1)", borderRadius: '30px'
                         }}>
 
-                            <ListItem style={{ display: 'flex', flexDirection: 'row' }}>
+                            <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
                                 
                                 <ListItemAvatar >
                                     <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
@@ -192,7 +193,7 @@ export default function ExploreComments(props) {
                             </ListItem>
 
                             <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItemText sx={{ px: 1, pt: 1 }}>Tis ligula magna...</ListItemText>
+                                <ListItemText sx={{ px: 1}}>Tis ligula lacus at sodales sodat magna...</ListItemText>
                             </ListItem>
 
                         </ListItem>

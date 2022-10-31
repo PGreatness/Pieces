@@ -8,8 +8,9 @@
     margin-left: 20vw;
     margin-top: 80px;
     z-index: -1;
-    position:absolute;
+    position:fixed;
     width:100%;
+    height: calc(100vh - 80px);
     overflow-x: hidden;
 }
 
