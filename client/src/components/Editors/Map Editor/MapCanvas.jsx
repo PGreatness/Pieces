@@ -1,0 +1,57 @@
+import React from 'react'
+import { Box, Stack } from '@mui/system';
+import { Typography, Button, Tabs, Tab } from '@mui/material'
+import { Undo, Redo } from '@mui/icons-material'
+import { styled } from "@mui/material/styles";
+import { useState } from 'react'
+
+export default function MapCanvas() {
+
+    const [ value, setValue ] = useState(0);
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    }
+
+    const StyledTab = styled(Tab)({
+        "&.Mui-selected": {
+            color: "#2dd4cf"
+        }
+    });
+
+    return (
+        <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
+            <Typography variant='h5' id='cursor_coord' color='azure'>2, 3</Typography>
+            <Button id='map_undo_button' sx={{minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px'}}>
+                <Undo className='toolbar_mui_icon'/>
+            </Button>
+            <Button id='map_redo_button' sx={{minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px'}}>
+                <Redo className='toolbar_mui_icon'/>
+            </Button>
+        
+            <Box bgcolor="#11182a" className="palettes_container">
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs
+                        value={value} 
+                        onChange={handleChange} 
+                        centered
+                        TabIndicatorProps={{style: {backgroundColor: "#2dd4cf"}}}
+                        sx={{
+                            '& .MuiTab-root': { color: "azure" },
+                        }}>
+                        <StyledTab label="Palette One"/>
+                    </Tabs>
+                </Box>
+                <Box sx={{padding:2}}>
+                    {value === 0 && (
+                        <Stack direction='row' spacing={2}>
+                            <Box className='palette_option' bgcolor='red'></Box>
+                            <Box className='palette_option' bgcolor='blue'></Box>
+                            <Box className='palette_option' bgcolor='green'></Box>
+                        </Stack>
+                    )}
+                </Box>
+            </Box>
+            <canvas id='map_canvas'></canvas>
+        </Box>
+    )
+}

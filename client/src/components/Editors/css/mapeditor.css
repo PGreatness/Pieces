@@ -1,0 +1,152 @@
+.map_toolbar {
+    height: calc(100vh - 80px);
+    margin-top: 5px;
+    border-radius: 0px 10px 10px 0px;
+}
+
+.map_rightbar {
+    height: calc(100vh - 80px);
+    margin-top: 5px;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.toolbar_mui_icon {
+    transform: scale(1.5);
+    color: #2dd4cf;
+}
+
+.toolbar_fa_icon {
+    transform: scale(2);
+    color: #2dd4cf;
+}
+
+.toolbar_grid_item {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.toolbar_header {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    color: azure;
+}
+
+/* .editor_typography {
+    font-size: 30px;
+} */
+
+.brush_selection {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: black;
+}
+
+.brush_selections_container {
+    position: relative;
+    margin-top: 40px;
+    height: 150px;
+    width: 150px;
+}
+
+.previewWindow {
+    height: 275px;
+    width: 250px;
+    border-radius: 3px;
+}
+
+.layersContainer, .suggestionsContainer, .conferenceContainer, .properties_container {
+    height: 225px;
+    width: 250px;
+    background-color: #444444;
+    margin-top: 15px;
+    border-radius: 3px;
+}
+
+.layer_item, .suggestion_item {
+    background-color: aliceblue;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.add_layer_container {
+    background-color: "#1f293a";
+}
+
+.canvas_container {
+    width: 100%;
+    position: relative;
+    text-align: center;
+}
+
+.palettes_container {
+    position: absolute;
+    width: 90%;
+    border-radius: 10px 10px 0px 0px;
+    margin-left: 5%;
+    background-color: "#11182a";
+    bottom: 0%;
+}
+
+.palette_option {
+    width: 50px;
+    height: 50px;
+}
+
+#tile_primary {
+    left: 10px;
+    top: 10px;
+    z-index: 2;
+}
+
+#tile_secondary {
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+#swap_primary {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    max-height: 30px;
+    max-width: 30px;
+    min-height: 30px;
+    min-width: 30px;
+    color: #2dd4cf;
+}
+
+#map_preview {
+    height: 250px;
+    width: 250px;
+    background-color: blueviolet;
+}
+ 
+#map_canvas {
+    width: 500px;
+    height: 500px;
+    background-color: white;
+    margin-top: 5%;
+}
+
+#cursor_coord {
+    position: absolute;
+    right: 3%;
+    top: 3%;
+}
+
+#map_undo_button {
+    position: absolute;
+    right:8%;
+    top: 8%;
+}
+
+#map_redo_button {
+    position: absolute;
+    right:3%;
+    top: 8%;
+}
