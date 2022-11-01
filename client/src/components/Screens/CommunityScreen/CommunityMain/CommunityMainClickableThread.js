@@ -6,7 +6,6 @@ import { styled } from '@mui/material';
 export default function CommunityMainClickableThread(props) {
 
     const LightListItem = styled(ListItem)({
-        backgroundColor: '#333b4a',
         borderRadius: '10px',
         '&:hover': {
             backgroundColor: '#29313f',
@@ -14,9 +13,7 @@ export default function CommunityMainClickableThread(props) {
         '&.Mui-selected:hover': {
             backgroundColor: '#29313f',
         },
-        '& .MuiListItem-root': {
-            backgroundColor: '#455571',
-        }
+        backgroundColor: '#455571',
     });
     const findUserAvatar = () => {
         let userAvatar = '';
