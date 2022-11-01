@@ -15,9 +15,6 @@ import React from 'react';
 
 const WhiteMore = styled(moreHorizIcon)({
   color: "white",
-  '& .MuiSvgIcon-root': {
-    color: 'white',
-  },
   '& .MuiSvgIcon-colorPrimary': {
     color: 'white',
   },
@@ -28,9 +25,6 @@ const WhiteMore = styled(moreHorizIcon)({
 
 const WhitePersonAdd = styled(PersonAddIcon)({
   color: "white",
-  '& .MuiSvgIcon-root': {
-    color: 'white',
-  },
   '& .MuiSvgIcon-colorPrimary': {
     color: 'white',
   },
