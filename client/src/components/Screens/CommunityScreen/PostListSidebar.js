@@ -21,9 +21,7 @@ const WhiteDivider = styled(Divider)({
     '&::after': {
         borderTopColor: 'rgb(255,255,255)',
     },
-    '& .MuiDivider-root': {
-        borderColor: 'rgb(255,255,255)',
-    },
+    borderColor: 'rgb(255,255,255)',
 });
 
 const BackgroundColorList = styled(List)({
