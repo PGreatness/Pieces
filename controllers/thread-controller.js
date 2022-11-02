@@ -20,28 +20,28 @@ createThread = async (req, res) => {
         if (!threadName || !threadText || !senderId || !sentAt) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ message: "Please enter all required fields." });
         }
     
         if (threadName == "") {
             return res
                 .status(400)
-                .json({ errorMessage: "Thread name can not be empty" });
+                .json({ message: "Thread name can not be empty" });
         }
         if (threadText == "") {
             return res
                 .status(400)
-                .json({ errorMessage: "Thread text can not be empty" });
+                .json({ message: "Thread text can not be empty" });
         }
         if (threadText.length > 2500) {
             return res
                 .status(400)
-                .json({ errorMessage: "Thread text is over the limit of 2500 characters" });
+                .json({ message: "Thread text is over the limit of 2500 characters" });
         }
         if (threadName.length > 250) {
             return res
                 .status(400)
-                .json({ errorMessage: "Thread title is over the limit of 250 characters" });
+                .json({ message: "Thread title is over the limit of 250 characters" });
         }
 
         // Creates Thread
@@ -60,7 +60,7 @@ createThread = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Ran into an error when creating Thread"
+                    message: "Ran into an error when creating Thread"
                 });
         }
 

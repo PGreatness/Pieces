@@ -18,13 +18,13 @@ createChat = async (req, res) => {
         if ( !senderId || !receiverId || !msg || !sentAt ) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ message: "Please enter all required fields." });
         }
 
         if (msg == "") {
             return res
                 .status(400)
-                .json({errorMessage: "Message can not be empty"});
+                .json({message: "Message can not be empty"});
         }
         
         let chat = new Chat({
@@ -41,7 +41,7 @@ createChat = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Ran into an error when creating Chat"
+                    message: "Ran into an error when creating Chat"
                 });
         }
 

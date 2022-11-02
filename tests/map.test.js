@@ -64,7 +64,7 @@ const request = require("supertest");
 //             "ownerId": "6355e171286afe702190fe10"
 //         });
 //         expect(res.status).toBe(400);
-//         expect(res.body.errorMessage).toBe("Another Map owned by the same User already has this name");
+//         expect(res.body.message).toBe("Another Map owned by the same User already has this name");
 //     });
 // });
 
@@ -83,7 +83,7 @@ describe("POST /api/map/newMap", () => {
             "ownerId": "6355e171286afe702190fe10"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Map can not have a height of zero or less pixels.");
+        expect(res.body.message).toBe("Map can not have a height of zero or less pixels.");
     });
 });
 
@@ -102,7 +102,7 @@ describe("POST /api/map/newMap", () => {
             "ownerId": "6355e171286afe702190fe10"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Map can not have a width of zero or less pixels.");
+        expect(res.body.message).toBe("Map can not have a width of zero or less pixels.");
     });
 });
 
@@ -121,7 +121,7 @@ describe("POST /api/map/newMap", () => {
             "ownerId": "6355e171286afe702190fe10"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Map can not have a height of zero or less tiles.");
+        expect(res.body.message).toBe("Map can not have a height of zero or less tiles.");
     });
 });
 
@@ -140,7 +140,7 @@ describe("POST /api/map/newMap", () => {
             "ownerId": "6355e171286afe702190fe10"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Map can not have a width of zero or less tiles.");
+        expect(res.body.message).toBe("Map can not have a width of zero or less tiles.");
     });
 });
 

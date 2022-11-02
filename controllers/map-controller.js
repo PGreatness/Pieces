@@ -22,7 +22,7 @@ createMap = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Please enter all required fields."
+                    message: "Please enter all required fields."
                 });
         }
 
@@ -39,7 +39,7 @@ createMap = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "Another Map owned by the same User already has this name"
+                    message: "Another Map owned by the same User already has this name"
                 })
         }
 
@@ -49,28 +49,28 @@ createMap = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a height of zero or less pixels."
+                    message: "Map can not have a height of zero or less pixels."
                 });
         }
         if (mapWidth <= 0) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a width of zero or less pixels."
+                    message: "Map can not have a width of zero or less pixels."
                 });
         }
         if (tileHeight <= 0) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a height of zero or less tiles."
+                    message: "Map can not have a height of zero or less tiles."
                 });
         }
         if (tileWidth <= 0) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a width of zero or less tiles."
+                    message: "Map can not have a width of zero or less tiles."
                 });
         }
 
@@ -134,7 +134,7 @@ createMap = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Ran into an error when creating Map"
+                    message: "Ran into an error when creating Map"
                 });
         }
 

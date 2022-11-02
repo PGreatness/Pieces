@@ -7,7 +7,7 @@ createTileset = async (req, res) => {
         if (!tilesetName || !imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !source || !ownerId || (isPublic == null) || (isLocked == null)) {
             return res
                 .status(400)
-                .json({ errorMessage: "Empty required fields." })
+                .json({ message: "Empty required fields." })
         }
         
         const objectOwnerId = mongoose.Types.ObjectId(ownerId)
@@ -24,7 +24,7 @@ createTileset = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "Another Tileset owned by the same User already has this name."
+                    message: "Another Tileset owned by the same User already has this name."
                 })
         }
 

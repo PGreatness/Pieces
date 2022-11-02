@@ -25,7 +25,7 @@ let ownerIdOfDeleted = null
 //         });
 //         expect(res.status).toBe(400);
 //         console.log(res.body)
-//         expect(res.body.errorMessage).toBe("Empty required fields.")
+//         expect(res.body.message).toBe("Empty required fields.")
 //     });
 // });
 
@@ -95,7 +95,7 @@ let ownerIdOfDeleted = null
 //             "isLocked": false
 //         });
 //         expect(res.status).toBe(400);
-//         expect(res.body.errorMessage).toBe("Another Tileset owned by the same User already has this name.")
+//         expect(res.body.message).toBe("Another Tileset owned by the same User already has this name.")
 //     });
 // });
 

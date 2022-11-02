@@ -31,7 +31,7 @@ describe("POST /api/register", () => {
             "passwordVerify": "iman1234"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Please enter all required fields.")
+        expect(res.body.message).toBe("Please enter all required fields.")
     });
 });
 
@@ -46,7 +46,7 @@ describe("POST /api/register", () => {
             "passwordVerify": "iman1234"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("An account with this email address already exists.")
+        expect(res.body.message).toBe("An account with this email address already exists.")
     });
 });
 
@@ -61,7 +61,7 @@ describe("POST /api/register", () => {
             "passwordVerify": "iman1234"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("An account with this User Name already exists.")
+        expect(res.body.message).toBe("An account with this User Name already exists.")
     });
 });
 
@@ -77,7 +77,7 @@ describe("POST /api/register", () => {
             "passwordVerify": "iman123"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Please enter a password of at least 8 characters.")
+        expect(res.body.message).toBe("Please enter a password of at least 8 characters.")
     });
 });
 
@@ -92,7 +92,7 @@ describe("POST /api/register", () => {
             "passwordVerify": "iman123123"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Please enter the same password twice.")
+        expect(res.body.message).toBe("Please enter the same password twice.")
     });
 });
 
@@ -134,7 +134,7 @@ describe("POST /api/changePassword", () => {
             "repeatNewPassword": "testin"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("New Password Must Match!")
+        expect(res.body.message).toBe("New Password Must Match!")
     });
 });
 
@@ -146,7 +146,7 @@ describe("POST /api/changePassword", () => {
             "repeatNewPassword": "testinttttt"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Must Provide All Required Arguments to Change Password!")
+        expect(res.body.message).toBe("Must Provide All Required Arguments to Change Password!")
     });
 });
 
@@ -159,6 +159,6 @@ describe("POST /api/changePassword", () => {
             "repeatNewPassword": "testinttttt"
         });
         expect(res.status).toBe(400);
-        expect(res.body.errorMessage).toBe("Account With Specified Email Not Found!")
+        expect(res.body.message).toBe("Account With Specified Email Not Found!")
     });
 });
