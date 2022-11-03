@@ -59,14 +59,14 @@ export default function CommunityScreen() {
         <>
             <div className='community-screen'>
                 <div className='community-screen-text'>
-                    <br/>
+                    <br />
                     <h1>Top Threads</h1>
                     <Button style={{ backgroundColor: "#10ba36", float: 'right' }}>
-                    <div className="button_text">New Thread</div>
-                    <AddIcon className="button_icons" ></AddIcon>
-                </Button>
+                        <div className="button_text">New Thread</div>
+                        <AddIcon className="button_icons" ></AddIcon>
+                    </Button>
                 </div>
-                <CommunityMain topThreads={topThreads}/>
+                <CommunityMain topThreads={topThreads} />
             </div>
         </>
     )
