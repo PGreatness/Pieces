@@ -7,6 +7,7 @@ import { styled } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
 
+import NotificationSidebar from '../NotificationSidebar/NotificationSidebar';
 export default function NavbarAppOptions(props) {
 
     const WideInput = styled(Input)({
@@ -53,6 +54,8 @@ export default function NavbarAppOptions(props) {
         if (isLoggedIn) {
             return (
                 <>
+                    {/* add user information once they are logged in here */}
+                    <NotificationSidebar />
                     <h1 onClick={() => {props.changeLoc('/profile');navigate("/profile")}} >Profile</h1>
                 </>
             )
