@@ -57,7 +57,7 @@ export default function NotificationSidebar(props) {
                     sx={{ width: 250 }}
                     role="presentation"
                 >
-                    <NotificationList />
+                    <NotificationList notifications={props.user?.notifications}/>
                 </Box>
             </Drawer>
         </>
