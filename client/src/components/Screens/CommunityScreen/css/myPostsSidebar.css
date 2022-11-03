@@ -10,10 +10,9 @@
 }
 
 .myposts-sidebar-list {
-    position: sticky;
+    position: relative;
     left: 0;
     width: 20vw;
     height: 100vh;
     z-index: 100;
-    top:10%;
 }
