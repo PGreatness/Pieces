@@ -1,0 +1,59 @@
+@keyframes slideOutAndExpand {
+    0% {
+        transform: translateX(0);
+        height: 0;
+        width: 0;
+    }
+    100% {
+        transform: translateX(0);
+        width: 250px;
+    }
+}
+
+@keyframes slideInAndReset {
+    0% {
+        transform: translateX(0);
+        width: 250px;
+    }
+    100% {
+        transform: translateX(0);
+        height: 0;
+        width: 0;
+    }
+}
+
+@keyframes expandVertically {
+    0% {
+        height: 0;
+    }
+    100% {
+        height: 100vw;
+    }
+}
+
+@keyframes resetVertically {
+    0% {
+        height: 100vw;
+    }
+    100% {
+        height: 0;
+    }
+}
+
+.notification-sidebar-cover {
+    position: fixed;
+    top:0;
+    background-color: transparent;
+    width: 250px;
+    z-index: 9999;
+    animation: resetVertically 1s ease-in-out forwards;
+}
+
+.notification-sidebar-cover.slide-out {
+    background-color: #11182A;
+    animation: expandVertically 1s ease-in-out forwards;
+}
+
+.notification-sidebar-cover.slide-in {
+    animation: resetVertically 1s ease-in-out forwards;
+}
