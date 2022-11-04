@@ -193,8 +193,8 @@ deleteMap = async (req, res) => {
         }
 
         // Deletes Map comments
-        var request = new Request(req, { body: {"projectId": id} });
-        var response = new Request(res);
+        var request = new Request(req.url, { body: {"projectId": id} });
+        var response = new Request(res.url);
         deleteCommentsOfProject(request, response);
 
         if (response.status != 200) {
