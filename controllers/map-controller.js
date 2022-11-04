@@ -1,4 +1,5 @@
 const Map = require('../models/map-model')
+const { deleteCommentsOfProject, deleteComment, getComments } = require('./project-comment-controller')
 const mongoose = require('mongoose')
 
 createMap = async (req, res) => {
@@ -126,7 +127,11 @@ createMap = async (req, res) => {
             ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
-            layers: layers
+            layers: layers,
+            likes: 0,
+            dislikes: 0,
+            downloads: 0,
+            comments: [],
 
         })
 
@@ -184,6 +189,17 @@ deleteMap = async (req, res) => {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this Map',
+            })
+        }
+
+        // Deletes Map comments
+        var response = {};
+        deleteCommentsOfProject({"projectId": id}, response);
+
+        if (response.status != 200) {
+            return res.status(500).json({
+                err,
+                message: 'Ran into an error when deleting Map comments',
             })
         }
 
@@ -490,6 +506,29 @@ getMapbyId = async (req, res) => {
     }).send();
 }
 
+var getAllPublicMapsOnPage = async (req, res) => {
+    const { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        return res.status(400).json({
+            success: false,
+            error: "No page was given by the client",
+        })
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    const rangeMaps = await Map.find({ isPublic: true }).sort({ likes: 1 }).skip(startIndex).limit(limit);
+    return res.status(200).json({
+        success: true,
+        maps: rangeMaps
+    }).send();
+}
+
 module.exports = {
     getAllUserMaps,
     getMapsByName,
@@ -497,5 +536,6 @@ module.exports = {
     createMap,
     deleteMap,
     updateMap,
-    publishMap
+    publishMap,
+    getAllPublicMapsOnPage
 }
