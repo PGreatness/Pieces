@@ -89,11 +89,11 @@ export default function Explore(props) {
                 open={isFilterMenuOpen}
                 onClose={handleFilterMenuClose}
             >
-                <MenuItem >Rating</MenuItem>
-                <MenuItem >Size</MenuItem>
-                <MenuItem >Tags</MenuItem>
-                <MenuItem >Owned</MenuItem>
-                <MenuItem >Shared</MenuItem>
+                <MenuItem>Rating</MenuItem>
+                <MenuItem>Size</MenuItem>
+                <MenuItem>Tags</MenuItem>
+                <MenuItem>Owned</MenuItem>
+                <MenuItem>Shared</MenuItem>
             </Menu>
 
 
