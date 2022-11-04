@@ -2,11 +2,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Explore from './Explore'
 import ExploreComments from './ExploreComments'
-import { useNavigate } from 'react-router-dom';
 
 
 export default function ExploreScreen(props) {
-    const navigate = useNavigate();
     const [showComments, setShowComments] = React.useState(false);
     
     return (

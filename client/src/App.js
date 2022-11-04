@@ -4,10 +4,9 @@ import WelcomeScreen from './components/Screens/Welcome/WelcomeScreen'
 import ProfileScreen from './components/Screens/Profile/ProfileScreen'
 import ExploreScreen from './components/Screens/Explore/ExploreScreen'
 import CommunityScreen from './components/Screens/CommunityScreen/CommunityScreen'
-import LibraryScreen from './components/Screens/LibraryScreen'
+import LibraryScreen from './components/Screens/Library/LibraryScreen'
 import TilesetEditor from './components/Editors/Tileset Editor/TilesetEditor'
 import MapEditor from './components/Editors/Map Editor/MapEditor'
-import ResetPasswordScreen from './components/Screens/ResetPasswordScreen'
 import Navbar from './components/Navbar/Navbar'
 import SocialSidebar from "./components/SocialSidebar/SocialSidebar";
 import MyPostsSidebar from "./components/Screens/CommunityScreen/MyPostsSidebar";
@@ -26,7 +25,6 @@ const App = () => {
     let profile = location.includes('profile');
     let tilesetEditor = location.includes('tileset');
     let mapEditor = location.includes('map');
-    let resetPassword = location.includes('password');
     if (library || explore) {
       return (
         <SocialSidebar id={1}/>
@@ -66,8 +64,6 @@ const App = () => {
               path="/map/:id"
               element={<MapEditor />}
             />
-
-            <Route path="/reset-password/:id/:token" element={<ResetPasswordScreen />} />
           </Routes>
         </div>
       </Suspense>

@@ -10,7 +10,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import PublicIcon from '@mui/icons-material/Public';
 import AddIcon from '@mui/icons-material/Add';
-import '../css/library.css';
+import './css/library.css';
 
 export default function LibraryScreen() {
     return (
@@ -56,7 +56,7 @@ export default function LibraryScreen() {
                 }}
             >
                 <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
-                    <img className='library_image' src={require("./Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                    <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                     <LockIcon className='library_lock_icon'></LockIcon>
                     <div className="library_overlay">
                         <Box style={{ display: 'flex', flexDirection: 'row' }} >
@@ -73,7 +73,7 @@ export default function LibraryScreen() {
                     </div>
                 </Box>
                 <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
-                    <img className='library_image' src={require("./Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                    <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                     <LockIcon className='library_lock_icon'></LockIcon>
                     <div className="library_overlay">
                         <Box style={{ display: 'flex', flexDirection: 'row' }} >
@@ -90,7 +90,7 @@ export default function LibraryScreen() {
                     </div>
                 </Box>
                 <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
-                    <img className='library_image' src={require("./Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                    <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                     <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                     <div className="library_overlay">
                         <Box style={{ display: 'flex', flexDirection: 'row' }} >
