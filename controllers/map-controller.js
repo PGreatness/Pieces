@@ -196,7 +196,7 @@ deleteMap = async (req, res) => {
         req.body = {"projectId": id}
         deleteCommentsOfProject(req, res);
 
-        if (response.status != 200) {
+        if (res.status != 200) {
             return res.status(500).json({
                 err,
                 message: 'Ran into an error when deleting Map comments',
