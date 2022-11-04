@@ -10,6 +10,7 @@ import MapEditor from './components/Editors/Map Editor/MapEditor'
 import Navbar from './components/Navbar/Navbar'
 import SocialSidebar from "./components/SocialSidebar/SocialSidebar";
 import MyPostsSidebar from "./components/Screens/CommunityScreen/MyPostsSidebar";
+import CreateButton from "./components/CreateButton/CreateButton";
 
 
 import './css/app.css';
@@ -42,6 +43,9 @@ const App = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<div className="Loading">Loading...</div>}>
+          {
+            location.includes('explore') || location.includes('library') ? <CreateButton setLoc={setLocation}/> : <></>
+          }
           <div className='app-nav-social-container'>
             <Navbar changeLoc={setLocation}/>
             {
@@ -53,7 +57,7 @@ const App = () => {
             <Route path="/" element={<WelcomeScreen />} />
             <Route path="/profile/" element={<ProfileScreen />} />
             <Route path="/explore/" element={<ExploreScreen setLoc={setLocation}/>} />
-            <Route path="/library/" element={<LibraryScreen />} />
+            <Route path="/library/" element={<LibraryScreen setLoc={setLocation}/>} />
             <Route path="/community/" element={<CommunityScreen />} />
 
             <Route

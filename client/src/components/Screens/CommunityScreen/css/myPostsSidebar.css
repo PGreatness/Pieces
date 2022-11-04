@@ -6,13 +6,13 @@
     background-color: #11182A;
     overflow: hidden;
     height: 100vh;
+    border-right: 1px solid black;
 }
 
 .myposts-sidebar-list {
-    position: sticky;
+    position: relative;
     left: 0;
     width: 20vw;
     height: 100vh;
     z-index: 100;
-    top:10%;
 }

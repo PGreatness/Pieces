@@ -21,9 +21,11 @@ const WhiteDivider = styled(Divider)({
     '&::after': {
         borderTopColor: 'rgb(255,255,255)',
     },
-    '& .MuiDivider-root': {
-        borderColor: 'rgb(255,255,255)',
-    },
+    borderColor: 'rgb(255,255,255)',
+});
+
+const BackgroundColorList = styled(List)({
+    backgroundColor: '#11182A',
 });
 
 export default function PostListSidebar(props) {
@@ -119,7 +121,7 @@ export default function PostListSidebar(props) {
     if (!props.filteredName) {
         return (
             <div className='postlist-sidebar-postlist'>
-                <List>
+                <BackgroundColorList>
                     <WhiteDivider >
                         <WhiteChip label='My Threads' />
                     </WhiteDivider>
@@ -139,13 +141,13 @@ export default function PostListSidebar(props) {
                     );
                     })
                 }
-                </List>
+                </BackgroundColorList>
             </div>
         )
     }
     return (
         <div className='postlist-sidebar-postlist'>
-            <List>
+            <BackgroundColorList>
                 <WhiteDivider >
                     <WhiteChip label='Threads'/>
                 </WhiteDivider>
@@ -165,7 +167,7 @@ export default function PostListSidebar(props) {
                 );
                 })
             }
-            </List>
+            </BackgroundColorList>
         </div>
     )
 }

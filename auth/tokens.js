@@ -9,7 +9,7 @@ function authManager() {
                 return res.status(401).json({
                     loggedIn: false,
                     user: null,
-                    errorMessage: "Unauthorized"
+                    message: "Unauthorized"
                 })
             }
 
@@ -20,7 +20,7 @@ function authManager() {
         } catch (err) {
             console.error(err);
             return res.status(401).json({
-                errorMessage: "Unauthorized"
+                message: "Unauthorized"
             });
         }
     };

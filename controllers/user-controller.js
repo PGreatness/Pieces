@@ -30,12 +30,12 @@ loginUser = async (req, res) => {
     try {
         const { userName, password } = req.query;
         if (userName === "Community" || userName === "Guest") {
-            return res.status(400).json({ errorMessage: "You cannot login with this userName" });
+            return res.status(400).json({ message: "You cannot login with this userName" });
         }
 
         const foundUser = await User.findOne({ userName: userName });
         if (!foundUser) {
-            return res.status(400).json({ errorMessage: "A User with the username provided does not exist." });
+            return res.status(400).json({ message: "A User with the username provided does not exist." });
         }
 
         const match = await bcrypt.compare(password, foundUser.passwordHash);
@@ -52,7 +52,7 @@ loginUser = async (req, res) => {
             }).send();
         }
         else {
-            return res.status(400).json({ errorMessage: "Wrong password entered." });
+            return res.status(400).json({ message: "Wrong password entered." });
         }
     } catch (err) {
         console.error(err);
@@ -93,7 +93,7 @@ forgotPassword = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "ERROR (email)!"
+                    message: "ERROR (email)!"
                 });
 
         const user = await User.findOne({ email: email });
@@ -101,7 +101,7 @@ forgotPassword = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "ERROR (no user found)!"
+                    message: "ERROR (no user found)!"
                 });
 
         // NOTE generated tokens expire in 15 minutes
@@ -149,7 +149,7 @@ updateUser = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "User with that email already registered."
+                    message: "User with that email already registered."
                 });
         }
 
@@ -186,34 +186,34 @@ registerUser = async (req, res) => {
         if (!firstName || !lastName || !email || !password || !passwordVerify) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ message: "Please enter all required fields." });
         }
         if (password.length < 8) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Please enter a password of at least 8 characters."
+                    message: "Please enter a password of at least 8 characters."
                 });
         }
         if (password !== passwordVerify) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Please enter the same password twice."
+                    message: "Please enter the same password twice."
                 })
         }
         if (userName === "Community" || userName === "Guest") {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "An account with this User Name already exists."
+                    message: "An account with this User Name already exists."
                 })
         }
         if (email === "community@pieces.com" || email === "guestuser@pieces.com") {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "An account with this email address already exists."
+                    message: "An account with this email address already exists."
                 })
         }
 
@@ -224,7 +224,7 @@ registerUser = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this email address already exists."
+                    message: "An account with this email address already exists."
                 })
         }
 
@@ -234,7 +234,7 @@ registerUser = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this User Name already exists."
+                    message: "An account with this User Name already exists."
                 })
         }
 
@@ -282,13 +282,13 @@ changePassword = async (req, res) => {
         if (!email || !currentPassword || !newPassword)
             return res
                 .status(400)
-                .json({ errorMessage: "Must Provide All Required Arguments to Change Password!" });
+                .json({ message: "Must Provide All Required Arguments to Change Password!" });
 
         if (newPassword !== repeatNewPassword)
             return res
                 .status(400)
                 .json({
-                    errorMessage: "New Password Must Match!"
+                    message: "New Password Must Match!"
                 });
 
         const user = await User.findOne({ email: email });
@@ -296,7 +296,7 @@ changePassword = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Account With Specified Email Not Found!"
+                    message: "Account With Specified Email Not Found!"
                 });
 
         const valid = await bcrypt.compare(currentPassword, user.passwordHash);
@@ -304,14 +304,14 @@ changePassword = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Incorrect Current Password. Please Try Again!"
+                    message: "Incorrect Current Password. Please Try Again!"
                 });
 
         if (currentPassword === newPassword && newPassword === repeatNewPassword)
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Can Not Change to Same Password!"
+                    message: "Can Not Change to Same Password!"
                 });
 
         newPasswordHash = await bcrypt.hash(newPassword, 10);
@@ -341,21 +341,21 @@ resetPassword = async (req, res) => {
         if (!id || !token || !password)
             return res
                 .status(400)
-                .json({ errorMessage: "Must Provide All Required Arguments to Change Password!" });
+                .json({ message: "Must Provide All Required Arguments to Change Password!" });
 
         const objectId = new ObjectId(id);
         const user = await User.findOne({ _id: objectId });
         if (!user)
             return res
                 .status(400)
-                .json({ errorMessage: "Account with specified id not found." });
+                .json({ message: "Account with specified id not found." });
 
         const payload = auth.verifyPasswordResetToken(user, token);
 
         if (!payload)
             return res
                 .status(400)
-                .json({ errorMessage: "Token is invalid or expired." });
+                .json({ message: "Token is invalid or expired." });
 
         newPasswordHash = await bcrypt.hash(password, 10);
         await User.findOneAndUpdate({ id }, { passwordHash: newPasswordHash }).then(() => {
