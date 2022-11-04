@@ -14,7 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import Avatar from '@mui/material/Avatar';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
-import img from './images/map.jpg'
+import img from '../../images/map.jpg'
 import './css/explore.css';
 
 export default function ExploreComments(props) {

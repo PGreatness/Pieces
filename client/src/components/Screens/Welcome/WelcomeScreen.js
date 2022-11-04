@@ -17,7 +17,7 @@ export default function WelcomeScreen() {
     return (
         <div className="welcome_body">
             <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '96%', height: '200px', position: 'relative' }}>
-                    <img className='welcome_image' src={require("../Explore/images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
+                    <img className='welcome_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
                     <div className="welcome_overlay">
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between' }} >
                                 <div>
