@@ -1,5 +1,5 @@
 const Map = require('../models/map-model')
-const { deleteCommentsOfProject, deleteComment, getComments } = require('./project-comment-controller')
+const ProjectComment = require('../models/project-comment-model')
 const mongoose = require('mongoose')
 
 createMap = async (req, res) => {
@@ -193,8 +193,15 @@ deleteMap = async (req, res) => {
         }
 
         // Deletes Map comments
-        req.body = {"projectId": id}
-        deleteCommentsOfProject(req, res);
+        ProjectComment.deleteMany({ projectId: id }, (err, comments) => {
+            if (err) {
+                return res.status(400).json({
+                    success: false,
+                    err: err,
+                    message: 'Comments were not deleted.'
+                })
+            }
+        })
 
         if (res.status != 200) {
             return res.status(500).json({
