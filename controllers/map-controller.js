@@ -1,4 +1,5 @@
 const Map = require('../models/map-model')
+const ProjectComment = require('../models/project-comment-model')
 const mongoose = require('mongoose')
 
 createMap = async (req, res) => {
@@ -18,7 +19,7 @@ createMap = async (req, res) => {
         // Get data from request
         const { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
 
-        if ( !mapHeight || !mapWidth || !ownerId ) {
+        if (!mapHeight || !mapWidth || !ownerId) {
             return res
                 .status(400)
                 .json({
@@ -113,7 +114,7 @@ createMap = async (req, res) => {
         let isPublic = false
 
         map = new Map({
-            
+
             mapName: mapName,
             mapDescription: mapDescription,
             mapBackgroundColor: mapBackgroundColor,
@@ -126,7 +127,11 @@ createMap = async (req, res) => {
             ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
-            layers: layers
+            layers: layers,
+            likes: 0,
+            dislikes: 0,
+            downloads: 0,
+            comments: [],
 
         })
 
@@ -187,18 +192,27 @@ deleteMap = async (req, res) => {
             })
         }
 
-        // Finds Map with given id and deletes it
-        Map.findByIdAndDelete(id, (err, map) => {
-            return res.status(200).json({
-                success: true,
-                data: map
-            })
-        }).catch(err => console.log(err))
-
+        // Deletes Map comments
+        const comments = ProjectComment.deleteMany({ projectId: id })
+        comments.then((deleted) => {
+            if (!deleted) {
+                return res.status(400).json({
+                    err,
+                    message: 'Comments were not deleted',
+                })
+            }
+            // Finds Map with given id and deletes it
+            Map.findByIdAndDelete(id, (err, map) => {
+                return res.status(200).json({
+                    success: true,
+                    data: map
+                })
+            }).catch(err => console.log(err))
+        })
     })
 
     console.log("random console.log")
-    
+
 }
 
 updateMap = async (req, res) => {
@@ -490,6 +504,63 @@ getMapbyId = async (req, res) => {
     }).send();
 }
 
+var getAllPublicMapsOnPage = async (req, res) => {
+    var { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        page = 1;
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            error: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Limit must be greater than 0"
+        })
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
+    const rangeMap = await Map.aggregate([
+        { $match: { isPublic: true } },
+        { $skip : startIndex },
+        { $addFields: {
+            "ratio": { $cond: [
+                { $eq: [ "$dislikes", 0 ] },
+                    "$likes",
+                    { $divide: [ "$likes", "$dislikes" ] } ] }
+        }},
+        { $limit: limit },
+        { $sort: { "ratio": -1 } },
+    ])
+    return res.status(200).json({
+        success: true,
+        count: rangeMap.length,
+        maps: rangeMap
+    }).send();
+}
+
 module.exports = {
     getAllUserMaps,
     getMapsByName,
@@ -497,5 +568,6 @@ module.exports = {
     createMap,
     deleteMap,
     updateMap,
-    publishMap
+    publishMap,
+    getAllPublicMapsOnPage
 }

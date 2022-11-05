@@ -109,6 +109,9 @@ dist
 # Public folder contents
 public/*
 
+# MongoDB playground
+*.mongodb
+
 
 # Do not ignore the following files
 !placeholder

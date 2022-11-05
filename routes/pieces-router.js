@@ -28,6 +28,7 @@ router.post('/resetPassword', UserController.resetPassword)
 router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
 router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
+router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)

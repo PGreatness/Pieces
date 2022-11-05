@@ -57,7 +57,23 @@ const mapSchema = new Schema({
     layers: {
         type: [Layer],
         required: false
-    }
+    },
+    likes: {
+        type: Number,
+        required: true,
+    },
+    dislikes: {
+        type: Number,
+        required: false,
+    },
+    downloads: {
+        type: Number,
+        required: false,
+    },
+    comments: {
+        type: [ObjectId],
+        required: false,
+    },
 });
 
 const Map = model("Map", mapSchema);
