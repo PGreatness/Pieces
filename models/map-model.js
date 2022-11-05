@@ -59,11 +59,11 @@ const mapSchema = new Schema({
         required: false
     },
     likes: {
-        type: Number,
+        type: [ObjectId],
         required: true,
     },
     dislikes: {
-        type: Number,
+        type: [ObjectId],
         required: false,
     },
     downloads: {
