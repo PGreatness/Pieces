@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import api from '../api'
-import AuthContext from '../auth'
+import api from '../api/api'
+import AuthContext from '../auth/auth'
 
 export const GlobalStoreContext = createContext({});
 
@@ -42,6 +42,13 @@ function GlobalStoreContextProvider(props) {
                 });
             }
 
+            case GlobalStoreActionType.SET_CURRENT_PAGE: {
+                return setStore({
+                    publicProjects: payload.publicProjects,
+                    currentPage: store.currentPage
+                });
+            }
+
             default:
                 return store;
         }
@@ -62,16 +69,36 @@ function GlobalStoreContextProvider(props) {
         // Ahnaf is writing the getAllPublicProjects in the backend
         const response = await api.getAllPublicProjects();
         if (response.data.success) {
-            let publicProjects = response.data.top5lists;
+            let publicProjects = response.data.maps;
             storeReducer({
                 type: GlobalStoreActionType.LOAD_PUBLIC_PROJECTS,
                 payload: publicProjects
             });
         } else {
-            console.log("API FAILED TO GET THE LIST PAIRS");
+            console.log("API FAILED TO GET THE PUBLIC PROJECTS");
         }
 
     }
+
+
+    store.changePageToExplore = async function () {
+        console.log("in store")
+        const response = await api.getAllPublicProjects();
+        if(response.data.success){
+            console.log(response.data)
+            let publicProjects = response.data.maps;
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentPage: "explore",
+                    publicProjects: publicProjects
+                }
+            });
+        } else {
+            console.log("API FAILED TO GET THE PUBLIC PROJECTS");
+        }
+    }
+
 
     return (
         <GlobalStoreContext.Provider value={{

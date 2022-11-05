@@ -12,13 +12,13 @@ import './css/explore.css';
 
 
 export default function ExploreItem(props) {
-    const { store } = useContext(GlobalStoreContext);
-    const { auth } = useContext(AuthContext); 
-    const { item } = props;
-    const [likes, setLikes] = useState(item.likes.length); 
-    const [dislikes, setDislikes] = useState(item.dislikes.length); 
-    const [isLiked, setIsLiked] = useState(item.likes.includes(auth.user?.userName));
-    const [isDisliked, setIsDisliked] = useState(item.dislikes.includes(auth.user?.userName));
+    // const { store } = useContext(GlobalStoreContext);
+    // const { auth } = useContext(AuthContext); 
+    // const { item } = props;
+    // const [likes, setLikes] = useState(item.likes.length); 
+    // const [dislikes, setDislikes] = useState(item.dislikes.length); 
+    // const [isLiked, setIsLiked] = useState(item.likes.includes(auth.user?.userName));
+    // const [isDisliked, setIsDisliked] = useState(item.dislikes.includes(auth.user?.userName));
 
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
