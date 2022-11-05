@@ -505,14 +505,11 @@ getMapbyId = async (req, res) => {
 }
 
 var getAllPublicMapsOnPage = async (req, res) => {
-    const { page } = req.query;
+    var { page } = req.query;
     var { limit } = req.body;
 
     if (!page) {
-        return res.status(400).json({
-            success: false,
-            error: "No page was given by the client",
-        })
+        page = 1;
     }
 
     if (!limit) {
@@ -520,9 +517,11 @@ var getAllPublicMapsOnPage = async (req, res) => {
     }
 
     const startIndex = page > 0 ? (page - 1) * limit : 0;
-    const rangeMaps = await Map.find({ isPublic: true }).sort({ likes: 1 }).skip(startIndex).limit(limit);
+    const rangeMaps = await Map.find({ isPublic: true }).sort({ likes: -1 }).skip(startIndex).limit(limit);
     return res.status(200).json({
         success: true,
+        count: rangeMaps.length,
+        page: page,
         maps: rangeMaps
     }).send();
 }
