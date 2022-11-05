@@ -5,7 +5,10 @@ import Box from '@mui/material/Box';
 import ExploreItem from './ExploreItem'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth';
+
 import './css/explore.css';
 
 export default function Explore(props) {
@@ -13,6 +16,11 @@ export default function Explore(props) {
     const [anchorEl2, setAnchorEl2] = useState(null);
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+
+    const projects = store.publicProjects
+    console.log(projects)
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -31,18 +39,19 @@ export default function Explore(props) {
     };
 
     return (
-        <Box style={{ display: 'flex', alignItems: 'flex-start', 
-        flexDirection: 'column', width: '100%', padding: '20px'
+        <Box style={{
+            display: 'flex', alignItems: 'flex-start',
+            flexDirection: 'column', width: '100%', padding: '20px'
         }}>
 
             <Box>
-                <Button onClick={handleSortMenuOpen} 
+                <Button onClick={handleSortMenuOpen}
                     style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "10px", marginBottom: "20px" }}
                 >
                     <div className="button_text">Sort by</div>
                     <SortIcon className="button_icons"></SortIcon>
                 </Button>
-                <Button onClick={handleFilterMenuOpen} 
+                <Button onClick={handleFilterMenuOpen}
                     style={{ backgroundColor: "#333135", marginLeft: "30px", marginTop: "10px", marginBottom: "20px" }}
                 >
                     <div className="button_text">Filter by</div>
@@ -100,12 +109,17 @@ export default function Explore(props) {
             <Box height="20px"></Box>
 
 
-            <Box style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', maxHeight: '100%', 
-                width: '100%', overflow: 'auto', paddingLeft: '10px', borderRadius: '30px'}}
-            >
-                <ExploreItem
-                    setShowComments={props.setShowComments}
-                />
+            <Box style={{
+                display: 'flex', alignItems: 'flex-start', flexDirection: 'column', maxHeight: '100%',
+                width: '100%', overflow: 'auto', paddingLeft: '10px', borderRadius: '30px'
+            }}>
+                {projects.map((entry) => (
+                    <ExploreItem
+                        setShowComments={props.setShowComments}
+                        project={entry}
+                    />))
+                }
+
             </Box>
 
 

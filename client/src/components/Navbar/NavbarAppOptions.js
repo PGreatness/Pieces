@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useState, useContext } from "react";
 import './css/navbarAppOptions.css';
 
 import { Input, InputAdornment } from '@mui/material';
@@ -8,6 +9,10 @@ import { styled } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 import NotificationSidebar from '../NotificationSidebar/NotificationSidebar';
+import { GlobalStoreContext } from '../../store/store'
+import AuthContext from '../../auth/auth';
+
+
 export default function NavbarAppOptions(props) {
 
     const WideInput = styled(Input)({
@@ -16,6 +21,9 @@ export default function NavbarAppOptions(props) {
         borderRadius: '4px',
         height: '50%'
     });
+
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = React.useState(false);
     const createLogo = () => {
@@ -23,6 +31,13 @@ export default function NavbarAppOptions(props) {
             <div className='navbar_logo' onClick={()=>{props.changeLoc('/');navigate('/')}}>
             </div>
         )
+    }
+
+    const handleLogin = () => {
+        props.changeLoc('/explore')
+        store.changePageToExplore();
+        console.log('fetched the maps');
+        navigate("/explore")
     }
 
     const createAppButtons = (isLoggedIn) => {
@@ -33,7 +48,7 @@ export default function NavbarAppOptions(props) {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={() => {props.changeLoc('/explore');navigate("/explore")}} >Explore</h1>
+                    <h1 onClick={handleLogin} >Explore</h1>
                     <h1 onClick={() => {props.changeLoc('/library');navigate("/library")}} >Library</h1>
                     <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>

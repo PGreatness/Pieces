@@ -10,10 +10,6 @@ export default function ExploreScreen(props) {
     const [showComments, setShowComments] = useState(false);
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    
-    // Temporary here to make api call to getAllPublicProjects
-    // otherwise should automatically happen when login
-    store.changePageToExplore();
 
     return (
         <Box style={{height: '100%', width: '80vw', color: 'white', backgroundColor: '#1F293A',

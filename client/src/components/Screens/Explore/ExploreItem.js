@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useContext} from 'react';
 import Box from '@mui/material/Box';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -8,15 +9,19 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth';
 import './css/explore.css';
 
 
 export default function ExploreItem(props) {
-    // const { store } = useContext(GlobalStoreContext);
-    // const { auth } = useContext(AuthContext); 
-    // const { item } = props;
-    // const [likes, setLikes] = useState(item.likes.length); 
-    // const [dislikes, setDislikes] = useState(item.dislikes.length); 
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext); 
+    const project = props.project;
+    console.log(project)
+
+    // const [likes, setLikes] = useState(project.likes.length); 
+    // const [dislikes, setDislikes] = useState(project.dislikes.length);  
     // const [isLiked, setIsLiked] = useState(item.likes.includes(auth.user?.userName));
     // const [isDisliked, setIsDisliked] = useState(item.dislikes.includes(auth.user?.userName));
 
@@ -28,7 +33,7 @@ export default function ExploreItem(props) {
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '50%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <div class="project_title">Planet Midget</div>
+                        <div class="project_title">{project.mapName}</div>
                         <div class="project_username">by @tomJackson16</div>
                     </Box>
                     <Box style={{ width: '50%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
