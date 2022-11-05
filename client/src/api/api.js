@@ -15,13 +15,16 @@ export const registerUser = (payload) => api.post(`/register/`, payload)
 export const loginUser = (payload) => api.get(`/login/`, {params: payload})
 export const logoutUser = () => api.get(`/logout/`)
 
+export const getUserById = (id) => api.get(`/users/userId/${id}/`)
+
 const apis = {
     getAllPublicProjects,
 
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    getUserById
 }
 
 export default apis

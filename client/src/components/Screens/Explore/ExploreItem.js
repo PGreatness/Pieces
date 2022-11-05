@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext} from 'react';
+import { useState, useContext, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -11,17 +11,26 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth';
+import api from '../../../api/api';
 import './css/explore.css';
 
 
 export default function ExploreItem(props) {
     const { store } = useContext(GlobalStoreContext);
-    const { auth } = useContext(AuthContext); 
+    const { auth } = useContext(AuthContext);
     const project = props.project;
     console.log(project)
     console.log(auth.user)
 
-    // get the map owner, this for presenting 'by @tomhank'
+    //const [mapOwner, setMapOwner] = useState('');
+
+    // useEffect(()=>{
+    //     // api.getUserById(project.ownerId).then((response) => {
+    //     //     console.log(response.data.user.userName)
+    //     //     setMapOwner(response.data.user.userName)
+    //     // })
+    // }, [])
+
 
     // const [likes, setLikes] = useState(project.likes.length); 
     // const [dislikes, setDislikes] = useState(project.dislikes.length);  

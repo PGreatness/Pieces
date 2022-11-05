@@ -20,7 +20,7 @@ export default function Explore(props) {
     const { auth } = useContext(AuthContext);
 
     const projects = store.publicProjects
-    console.log(projects)
+    //console.log(projects)
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);

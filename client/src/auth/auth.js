@@ -66,7 +66,6 @@ function AuthContextProvider(props) {
 
 
     auth.loginUser = async function(userData, store){
-        console.log('trying to login at least')
 
         await api.loginUser(userData).then(response => {
             console.log(response.data)

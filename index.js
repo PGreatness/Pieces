@@ -13,6 +13,23 @@ const app = express()
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
 const piecesRouter = require('./routes/pieces-router')
 
+
+
+// For local testing
+app.use(express.urlencoded({ extended: true }))
+app.use(cors({
+    origin: ["http://localhost:3000"],
+    credentials: true
+}))
+app.use(express.json())
+app.use(cookieParser())
+app.use('/api', piecesRouter);
+
+
+
+
+
+// For production build
 if (process.env.NODE_ENV === "production") {
 
     // SETUP THE MIDDLEWARE
@@ -22,7 +39,6 @@ if (process.env.NODE_ENV === "production") {
         credentials: true
     }))
     //"http://pieces-316.herokuapp.com", 
-    //app.use(cors())
     app.use(express.json())
     app.use(cookieParser())
 
