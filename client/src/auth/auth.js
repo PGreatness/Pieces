@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
-import { useHistory } from 'react-router-dom'
-import api from '../api'
+import api from '../api/api'
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
@@ -17,8 +17,7 @@ function AuthContextProvider(props) {
         loggedIn: false,
         errorMessage: null
     });
-    
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const authReducer = (action) => {
         const { type, payload } = action;
@@ -53,7 +52,7 @@ function AuthContextProvider(props) {
     auth.getLoggedIn = async function (store) {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
-            //store.changePageToHome(response.data.user); 
+            //store.changePageToExplore(); 
 
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
@@ -74,20 +73,36 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            //store.changePageToHome();
-            //history.push("/list");
+            store.changePageToExplore();
+            navigate("/explore");
         })
         .catch(({response}) => {
             if(response){ 
                 authReducer({
                     type: AuthActionType.SET_ERROR_MESSAGE,
                     payload:{
-                        message: response.data.errorMessage
+                        message: response.data.message
                     }
                 })
             }
         });      
         
+    }
+
+    auth.registerUser = async function(userData, store) {
+        await api.registerUser(userData).then(response => {
+            navigate("/");
+        })
+        .catch(({response}) => {
+            if(response){ 
+                authReducer({
+                    type: AuthActionType.SET_ERROR_MESSAGE,
+                    payload:{
+                        message: response.data.message
+                    }
+                })
+            }
+        });      
     }
 
     auth.logoutUser = async function(store){
@@ -100,8 +115,8 @@ function AuthContextProvider(props) {
                     loggedIn: false
                 }
             });
-            //store.reset(); 
-            //history.push("/");
+            store.reset(); 
+            navigate("/");
         }
     }
 
