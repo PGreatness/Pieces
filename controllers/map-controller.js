@@ -504,7 +504,7 @@ getMapbyId = async (req, res) => {
     }).send();
 }
 
-var getAllPublicMapsOnPage = async (req, res) => {
+getAllPublicMapsOnPage = async (req, res) => {
     var { page } = req.query;
     var { limit } = req.body;
 
