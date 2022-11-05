@@ -19,7 +19,7 @@ createMap = async (req, res) => {
         // Get data from request
         const { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
 
-        if ( !mapHeight || !mapWidth || !ownerId ) {
+        if (!mapHeight || !mapWidth || !ownerId) {
             return res
                 .status(400)
                 .json({
@@ -114,7 +114,7 @@ createMap = async (req, res) => {
         let isPublic = false
 
         map = new Map({
-            
+
             mapName: mapName,
             mapDescription: mapDescription,
             mapBackgroundColor: mapBackgroundColor,
@@ -193,28 +193,26 @@ deleteMap = async (req, res) => {
         }
 
         // Deletes Map comments
-        ProjectComment.deleteMany({ projectId: id }, (err, comments) => {
-            if (err) {
+        const comments = ProjectComment.deleteMany({ projectId: id })
+        comments.then((deleted) => {
+            if (!deleted) {
                 return res.status(400).json({
-                    success: false,
-                    err: err,
-                    message: 'Comments were not deleted.'
+                    err,
+                    message: 'Comments were not deleted',
                 })
             }
+            // Finds Map with given id and deletes it
+            Map.findByIdAndDelete(id, (err, map) => {
+                return res.status(200).json({
+                    success: true,
+                    data: map
+                })
+            }).catch(err => console.log(err))
         })
-
-        // Finds Map with given id and deletes it
-        Map.findByIdAndDelete(id, (err, map) => {
-            return res.status(200).json({
-                success: true,
-                data: map
-            })
-        }).catch(err => console.log(err))
-
     })
 
     console.log("random console.log")
-    
+
 }
 
 updateMap = async (req, res) => {
