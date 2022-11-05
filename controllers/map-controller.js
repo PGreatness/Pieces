@@ -203,13 +203,6 @@ deleteMap = async (req, res) => {
             }
         })
 
-        if (res.status != 200) {
-            return res.status(500).json({
-                err,
-                message: 'Ran into an error when deleting Map comments',
-            })
-        }
-
         // Finds Map with given id and deletes it
         Map.findByIdAndDelete(id, (err, map) => {
             return res.status(200).json({
