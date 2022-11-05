@@ -21,10 +21,14 @@ export default function ExploreItem(props) {
     console.log(project)
     console.log(auth.user)
 
+    // get the map owner, this for presenting 'by @tomhank'
+
     // const [likes, setLikes] = useState(project.likes.length); 
     // const [dislikes, setDislikes] = useState(project.dislikes.length);  
-    // const [isLiked, setIsLiked] = useState(item.likes.includes(auth.user?.userName));
-    // const [isDisliked, setIsDisliked] = useState(item.dislikes.includes(auth.user?.userName));
+    // const [fav, setFav] = useState(false);
+    // const [isLiked, setIsLiked] = useState(project.likes.includes(auth.user?._id));
+    // const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
+    // const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
 
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
