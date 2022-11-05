@@ -46,6 +46,10 @@ const mapSchema = new Schema({
         type: ObjectId,
         required: true,
     },
+    ownerUsername: {
+        type: String,
+        required: true,
+    },
     collaboratorIds: {
         type: [ObjectId],
         required: false,
