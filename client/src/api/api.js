@@ -3,7 +3,7 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
     //baseURL: 'http://localhost:4000/api',
-    baseURL: 'http://pieces-316.herokuapp.com/api',
+    baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 

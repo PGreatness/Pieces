@@ -17,11 +17,11 @@ if (process.env.NODE_ENV === "production") {
 
     // SETUP THE MIDDLEWARE
     app.use(express.urlencoded({ extended: true }))
-    // app.use(cors({
-    //     origin: ["http://pieces-316.herokuapp.com:3000"],
-    //     credentials: true
-    // }))
-    app.use(cors())
+    app.use(cors({
+        origin: ["http://pieces-316.herokuapp.com", "http://localhost:3000"],
+        credentials: true
+    }))
+    //app.use(cors())
     app.use(express.json())
     app.use(cookieParser())
 
