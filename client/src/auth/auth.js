@@ -66,17 +66,21 @@ function AuthContextProvider(props) {
 
 
     auth.loginUser = async function(userData, store){
+        console.log('trying to login at least')
+
         await api.loginUser(userData).then(response => {
+            console.log(response.data)
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
                     user: response.data.user
                 }
             });
-            store.changePageToExplore();
-            navigate("/explore");
+            //store.changePageToExplore();
+            //navigate("/explore");
         })
         .catch(({response}) => {
+            console.log('error error')
             if(response){ 
                 authReducer({
                     type: AuthActionType.SET_ERROR_MESSAGE,

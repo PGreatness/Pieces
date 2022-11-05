@@ -35,6 +35,12 @@ export default function NavbarAppOptions(props) {
 
     const handleLogin = () => {
         props.changeLoc('/explore')
+
+        auth.loginUser({
+            userName: 'iman123',
+            password: 'iman1234',
+        }, store);
+        
         store.changePageToExplore();
         console.log('fetched the maps');
         navigate("/explore")
@@ -48,7 +54,7 @@ export default function NavbarAppOptions(props) {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={handleLogin} >Explore</h1>
+                    <h1 onClick={() => {props.changeLoc('/explore');navigate("/explore")}} >Explore</h1>
                     <h1 onClick={() => {props.changeLoc('/library');navigate("/library")}} >Library</h1>
                     <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>
@@ -78,7 +84,7 @@ export default function NavbarAppOptions(props) {
         else {
             return (
                 <>
-                    <h1 onClick={()=>loginFn(true)}>Login</h1>
+                    <h1 onClick={handleLogin}>Login</h1>
                     <h1>Signup</h1>
                 </>
             )

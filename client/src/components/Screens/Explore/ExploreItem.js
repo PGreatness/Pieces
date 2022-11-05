@@ -19,6 +19,7 @@ export default function ExploreItem(props) {
     const { auth } = useContext(AuthContext); 
     const project = props.project;
     console.log(project)
+    console.log(auth.user)
 
     // const [likes, setLikes] = useState(project.likes.length); 
     // const [dislikes, setDislikes] = useState(project.dislikes.length);  
