@@ -8,7 +8,6 @@ const path = require('path')
 
 // CREATE OUR SERVER
 const PORT = process.env.PORT || 4000;
-const serverDomain = "localhost";
 const app = express()
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
@@ -18,10 +17,11 @@ if (process.env.NODE_ENV === "production") {
 
     // SETUP THE MIDDLEWARE
     app.use(express.urlencoded({ extended: true }))
-    app.use(cors({
-        origin: ["http://pieces-316.herokuapp.com:3000"],
-        credentials: true
-    }))
+    // app.use(cors({
+    //     origin: ["http://pieces-316.herokuapp.com:3000"],
+    //     credentials: true
+    // }))
+    app.use(cors())
     app.use(express.json())
     app.use(cookieParser())
 
