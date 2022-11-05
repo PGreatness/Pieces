@@ -517,6 +517,7 @@ var getAllPublicMapsOnPage = async (req, res) => {
     }
 
     const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
     const rangeMap = await Map.aggregate([
         { $match: { isPublic: true } },
         { $skip : startIndex },
