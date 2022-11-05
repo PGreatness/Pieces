@@ -517,12 +517,22 @@ var getAllPublicMapsOnPage = async (req, res) => {
     }
 
     const startIndex = page > 0 ? (page - 1) * limit : 0;
-    const rangeMaps = await Map.find({ isPublic: true }).sort({ likes: -1 }).skip(startIndex).limit(limit);
+    const rangeMap = await Map.aggregate([
+        { $match: { isPublic: true } },
+        { $skip : startIndex },
+        { $addFields: {
+            "ratio": { $cond: [
+                { $eq: [ "$dislikes", 0 ] },
+                    "$likes",
+                    { $divide: [ "$likes", "$dislikes" ] } ] }
+        }},
+        { $limit: limit },
+        { $sort: { "ratio": -1 } },
+    ])
     return res.status(200).json({
         success: true,
-        count: rangeMaps.length,
-        page: page,
-        maps: rangeMaps
+        count: rangeMap.length,
+        maps: rangeMap
     }).send();
 }
 
