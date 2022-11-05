@@ -516,6 +516,30 @@ var getAllPublicMapsOnPage = async (req, res) => {
         limit = 10;
     }
 
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            error: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Limit must be greater than 0"
+        })
+    }
+
     const startIndex = page > 0 ? (page - 1) * limit : 0;
     limit = Number(limit);
     const rangeMap = await Map.aggregate([
