@@ -46,6 +46,10 @@ const mapSchema = new Schema({
         type: ObjectId,
         required: true,
     },
+    ownerUsername: {
+        type: String,
+        required: true,
+    },
     collaboratorIds: {
         type: [ObjectId],
         required: false,
@@ -59,11 +63,11 @@ const mapSchema = new Schema({
         required: false
     },
     likes: {
-        type: Number,
+        type: [ObjectId],
         required: true,
     },
     dislikes: {
-        type: Number,
+        type: [ObjectId],
         required: false,
     },
     downloads: {
