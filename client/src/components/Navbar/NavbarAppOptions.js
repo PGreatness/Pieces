@@ -34,8 +34,11 @@ export default function NavbarAppOptions(props) {
 
     useEffect(() => {
         auth.getLoggedIn(store); 
+        setLoggedIn(auth.user? true:false);
+        console.log(loggedIn)
     }, []);
 
+    console.log(loggedIn)
     const handleLogin = () => {
         props.changeLoc('/explore')
 
