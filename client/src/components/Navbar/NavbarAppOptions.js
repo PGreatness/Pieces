@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import './css/navbarAppOptions.css';
 
 import { Input, InputAdornment } from '@mui/material';
@@ -14,7 +14,6 @@ import AuthContext from '../../auth/auth';
 
 
 export default function NavbarAppOptions(props) {
-
     const WideInput = styled(Input)({
         width: '100%',
         backgroundColor: 'rgba(155, 155, 155, 0.70)',
@@ -32,6 +31,10 @@ export default function NavbarAppOptions(props) {
             </div>
         )
     }
+
+    useEffect(() => {
+        auth.getLoggedIn(store); 
+    }, []);
 
     const handleLogin = () => {
         props.changeLoc('/explore')

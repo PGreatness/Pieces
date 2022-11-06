@@ -32,12 +32,14 @@ export default function ExploreItem(props) {
     // }, [])
 
 
-    // const [likes, setLikes] = useState(project.likes.length); 
-    // const [dislikes, setDislikes] = useState(project.dislikes.length);  
-    // const [fav, setFav] = useState(false);
-    // const [isLiked, setIsLiked] = useState(project.likes.includes(auth.user?._id));
-    // const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
-    // const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
+    const [likes, setLikes] = useState(project.likes.length); 
+    const [dislikes, setDislikes] = useState(project.dislikes.length);  
+    const [fav, setFav] = useState(false);
+    const [isLiked, setIsLiked] = useState(project.likes.includes(auth.user?._id));
+    const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
+    const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
+
+    console.log(isLiked)
 
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
