@@ -47,8 +47,10 @@ export default function NavbarAppOptions(props) {
             password: 'iman1234',
         }, store);
         
+        setLoggedIn(true)
+        // below stuff already done in auth.loginUser
         store.changePageToExplore();
-        console.log('fetched the maps');
+        //console.log('fetched the maps');
         navigate("/explore")
     }
 

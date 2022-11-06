@@ -44,12 +44,13 @@ loginUser = async (req, res) => {
         if (match) {
             const token = auth.signToken(foundUser);
             console.log("token", token)
+
             res.set("Set-Cookie", [
                 `token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
                 ]);
             res.status(200).json({
                 success: true,
-                user:foundUser,
+                user: foundUser,
             }).send();
             console.log("cookies", res.cookies)
             return res;
