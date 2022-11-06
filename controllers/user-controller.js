@@ -29,6 +29,8 @@ getLoggedIn = async (req, res) => {
 loginUser = async (req, res) => {
     try {
         const { userName, password } = req.query;
+        console.log("username and password")
+        console.log(userName, password)
         if (userName === "Community" || userName === "Guest") {
             return res.status(400).json({ message: "You cannot login with this userName" });
         }
@@ -42,7 +44,7 @@ loginUser = async (req, res) => {
         if (match) {
             const token = auth.signToken(foundUser);
 
-            return res.status(200).json({
+            res.status(200).json({
                 success: true,
                 user:foundUser,
             }).cookie("token", token, {
@@ -50,6 +52,7 @@ loginUser = async (req, res) => {
                 secure: true,
                 sameSite: "none",
             }).send();
+            return res;
         }
         else {
             return res.status(400).json({ message: "Wrong password entered." });
