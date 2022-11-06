@@ -43,7 +43,7 @@ loginUser = async (req, res) => {
         const match = await bcrypt.compare(password, foundUser.passwordHash);
         if (match) {
             const token = auth.signToken(foundUser);
-
+            console.log("token", token)
             res.status(200).json({
                 success: true,
                 user:foundUser,
