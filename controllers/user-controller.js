@@ -42,13 +42,13 @@ loginUser = async (req, res) => {
         if (match) {
             const token = auth.signToken(foundUser);
 
-            await res.cookie("token", token, {
+            return res.status(200).json({
+                success: true,
+                user:foundUser,
+            }).cookie("token", token, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "none"
-            }).status(200).json({
-                success: true,
-                user: foundUser
+                sameSite: "none",
             }).send();
         }
         else {

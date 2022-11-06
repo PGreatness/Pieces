@@ -585,9 +585,9 @@ getAllPublicMapsOnPage = async (req, res) => {
         { $skip : startIndex },
         { $addFields: {
             "ratio": { $cond: [
-                { $eq: [ "$dislikes", 0 ] },
+                { $eq: [ $size "$dislikes", 0 ] },
                     "$likes",
-                    { $divide: [ "$likes", "$dislikes" ] } ] }
+                    { $divide: [ $size "$likes", $size "$dislikes" ] } ] }
         }},
         { $limit: limit },
         { $sort: { "ratio": -1 } },
