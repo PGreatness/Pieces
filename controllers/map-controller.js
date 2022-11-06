@@ -128,8 +128,9 @@ createMap = async (req, res) => {
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
             layers: layers,
-            likes: 0,
-            dislikes: 0,
+            likes: [],
+            dislikes: [],
+            favs: [],
             downloads: 0,
             comments: [],
 
@@ -248,7 +249,8 @@ updateMap = async (req, res) => {
         }
 
         // Changes all the present fields
-        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers } = req.body;
+        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, 
+            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs, downloads, comments } = req.body;
 
         if (mapName) {
             if (mapName == "") {

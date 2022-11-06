@@ -66,6 +66,10 @@ const mapSchema = new Schema({
         type: [ObjectId],
         required: false,
     },
+    favs: {
+        type: [ObjectId],
+        required: false,
+    },
     downloads: {
         type: Number,
         required: false,
