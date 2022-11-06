@@ -43,7 +43,7 @@ export default function NavbarAppOptions(props) {
             userName: 'iman123',
             password: 'iman1234',
         }, store);
-        
+        console.log('login clicked');
         store.changePageToExplore();
         console.log('fetched the maps');
         navigate("/explore")
