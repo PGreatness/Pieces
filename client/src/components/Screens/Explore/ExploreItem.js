@@ -22,14 +22,9 @@ export default function ExploreItem(props) {
     console.log(project)
     console.log(auth.user)
 
-    //const [mapOwner, setMapOwner] = useState('');
-
-    // useEffect(()=>{
-    //     // api.getUserById(project.ownerId).then((response) => {
-    //     //     console.log(response.data.user.userName)
-    //     //     setMapOwner(response.data.user.userName)
-    //     // })
-    // }, [])
+    // store.getUserById(project.ownerId)
+    // const mapOwner = store.mapOwner;
+    // console.log(mapOwner.userName)
 
 
     // const [likes, setLikes] = useState(project.likes.length); 
@@ -48,7 +43,7 @@ export default function ExploreItem(props) {
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '50%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
                         <div class="project_title">{project.mapName}</div>
-                        <div class="project_username">by @tomJackson16</div>
+                        <div class="project_username">by @</div>
                     </Box>
                     <Box style={{ width: '50%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
