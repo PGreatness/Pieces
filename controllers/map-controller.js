@@ -17,7 +17,7 @@ createMap = async (req, res) => {
     try {
 
         // Get data from request
-        const { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
+        let { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
 
         if (!mapHeight || !mapWidth || !ownerId) {
             return res
@@ -185,6 +185,12 @@ deleteMap = async (req, res) => {
             })
         }
 
+        if (!map) {
+            return res.status(404).json({
+                message: 'Map not found'
+            })
+        }
+
         // Checks if Map belongs to the User who is trying to delete it
         if (!map.ownerId.equals(ownerObjectId)) {
             return res.status(401).json({
@@ -212,8 +218,6 @@ deleteMap = async (req, res) => {
         })
     })
 
-    console.log("random console.log")
-
 }
 
 updateMap = async (req, res) => {
@@ -237,6 +241,12 @@ updateMap = async (req, res) => {
             return res.status(404).json({
                 err,
                 message: "Map not found"
+            })
+        }
+
+        if (!map) {
+            return res.status(404).json({
+                message: 'Map not found'
             })
         }
 
@@ -299,6 +309,16 @@ updateMap = async (req, res) => {
             map.isPublic = isPublic
         if (layers)
             map.layers = layers
+        if (likes)
+            map.likes = likes
+        if (dislikes) 
+            map.dislikes = dislikes
+        if (favs)
+            map.favs = favs
+        if (downloads)
+            map.downloads = downloads
+        if (comments)
+            map.comments = comments
 
         // Attempts to save updated map
         map
@@ -344,6 +364,12 @@ publishMap = async (req, res) => {
             return res.status(404).json({
                 err,
                 message: "Map not found"
+            })
+        }
+
+        if (!map) {
+            return res.status(404).json({
+                message: 'Map not found'
             })
         }
 
@@ -420,7 +446,12 @@ getAllUserMaps = async (req, res) => {
                     ownerId: map.ownerId,
                     collaboratorIds: map.collaboratorIds,
                     isPublic: map.isPublic,
-                    layers: map.layers
+                    layers: map.layers,
+                    likes: map.likes,
+                    dislikes: map.dislikes,
+                    favs: map.favs,
+                    downloads: map.downloads,
+                    comments: map.comments
 
                 }
 
@@ -481,7 +512,12 @@ getMapsByName = async (req, res) => {
                         ownerId: map.ownerId,
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
-                        layers: map.layers
+                        layers: map.layers,
+                        likes: map.likes,
+                        dislikes: map.dislikes,
+                        favs: map.favs,
+                        downloads: map.downloads,
+                        comments: map.comments
 
                     }
 
