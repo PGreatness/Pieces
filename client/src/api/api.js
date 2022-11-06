@@ -1,4 +1,5 @@
 import axios from 'axios'
+// const axios = require('axios');
 
 axios.defaults.withCredentials = true;
 const api = axios.create({

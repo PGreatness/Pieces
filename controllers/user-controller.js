@@ -29,6 +29,8 @@ getLoggedIn = async (req, res) => {
 loginUser = async (req, res) => {
     try {
         const { userName, password } = req.query;
+        console.log("username and password")
+        console.log(userName, password)
         if (userName === "Community" || userName === "Guest") {
             return res.status(400).json({ message: "You cannot login with this userName" });
         }
@@ -41,15 +43,17 @@ loginUser = async (req, res) => {
         const match = await bcrypt.compare(password, foundUser.passwordHash);
         if (match) {
             const token = auth.signToken(foundUser);
+            console.log("token", token)
 
-            await res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none"
-            }).status(200).json({
+            res.set("Set-Cookie", [
+                `token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
+                ]);
+            res.status(200).json({
                 success: true,
-                user: foundUser
+                user: foundUser,
             }).send();
+            console.log("cookies", res.cookies)
+            return res;
         }
         else {
             return res.status(400).json({ message: "Wrong password entered." });

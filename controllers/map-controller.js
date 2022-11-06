@@ -259,7 +259,7 @@ updateMap = async (req, res) => {
         }
 
         // Changes all the present fields
-        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, 
+        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
             tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs, downloads, comments } = req.body;
 
         if (mapName) {
@@ -311,7 +311,7 @@ updateMap = async (req, res) => {
             map.layers = layers
         if (likes)
             map.likes = likes
-        if (dislikes) 
+        if (dislikes)
             map.dislikes = dislikes
         if (favs)
             map.favs = favs
@@ -582,15 +582,20 @@ getAllPublicMapsOnPage = async (req, res) => {
     limit = Number(limit);
     const rangeMap = await Map.aggregate([
         { $match: { isPublic: true } },
-        { $skip : startIndex },
-        { $addFields: {
-            "ratio": { $cond: [
-                { $eq: [ "$dislikes", 0 ] },
-                    "$likes",
-                    { $divide: [ "$likes", "$dislikes" ] } ] }
-        }},
+        { $skip: startIndex },
+        {
+            $addFields: {
+                "ratio": {
+                    $cond: {
+                        if: { $eq: [{ $size: "$dislikes" }, 0] },
+                        then: { $size: "$likes" },
+                        else: { $divide: [{ $size: "$likes" }, { $size: "$dislikes" }] }
+                    }
+                }
+            }
+        },
         { $limit: limit },
-        { $sort: { "ratio": -1 } },
+        { $sort: { ratio: -1 } }
     ])
     return res.status(200).json({
         success: true,

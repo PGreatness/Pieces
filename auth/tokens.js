@@ -13,6 +13,7 @@ function authManager() {
                 })
             }
 
+            // this line is causing the stupid error when refreshing
             const verified = jwt.verify(token, config.get("secrets.access_token"))
             req.userId = verified.userId;
 
@@ -26,7 +27,7 @@ function authManager() {
     };
 
     signToken = function (user) {
-        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "1h" });
+        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "3h" });
     };
 
     verifyPasswordResetToken = function (user, token) {

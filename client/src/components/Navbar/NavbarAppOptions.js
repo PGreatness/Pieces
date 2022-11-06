@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import './css/navbarAppOptions.css';
 
 import { Input, InputAdornment } from '@mui/material';
@@ -14,7 +14,6 @@ import AuthContext from '../../auth/auth';
 
 
 export default function NavbarAppOptions(props) {
-
     const WideInput = styled(Input)({
         width: '100%',
         backgroundColor: 'rgba(155, 155, 155, 0.70)',
@@ -33,6 +32,13 @@ export default function NavbarAppOptions(props) {
         )
     }
 
+    useEffect(() => {
+        auth.getLoggedIn(store); 
+        setLoggedIn(auth.user? true:false);
+        console.log(loggedIn)
+    }, []);
+
+    console.log(loggedIn)
     const handleLogin = () => {
         props.changeLoc('/explore')
 
@@ -41,8 +47,9 @@ export default function NavbarAppOptions(props) {
             password: 'iman1234',
         }, store);
         
+        setLoggedIn(true)
         store.changePageToExplore();
-        console.log('fetched the maps');
+        //console.log('fetched the maps');
         navigate("/explore")
     }
 
