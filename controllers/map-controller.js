@@ -637,6 +637,14 @@ var addUserToMap = async (req, res) => {
     }
 
     const chosenMap = await Map.findById(mid);
+    const chosenUser = await User.findById(uid);
+
+    if (!chosenUser) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist"
+        })
+    }
 
     if (!chosenMap) {
         return res.status(400).json({
@@ -652,7 +660,7 @@ var addUserToMap = async (req, res) => {
         })
     }
 
-    if (chosenMap.collaboratorIds.includes(requesterId)) {
+    if (chosenMap.collaboratorIds.includes(uid)) {
         return res.status(400).json({
             success: false,
             message: "You are already a collaborator of this map"
