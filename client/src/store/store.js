@@ -8,7 +8,8 @@ export const GlobalStoreContext = createContext({});
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
-    GET_MAP_OWNER: "GET_MAP_OWNER"
+    GET_MAP_OWNER: "GET_MAP_OWNER",
+    LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS"
 }
 
 
@@ -19,6 +20,7 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
+        projectComments: [],
         currentPage: "explore",
         mapOwner: null
     });
@@ -89,6 +91,20 @@ function GlobalStoreContextProvider(props) {
             });
         } else {
             console.log("API FAILED TO GET THE PUBLIC PROJECTS");
+        }
+
+    }
+
+    store.loadPublicProjectComments = async function () {
+        const response = await api.getAllProjectComments();
+        if (response.data.success) {
+            let projectComments = response.data.comments;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+                payload: projectComments
+            });
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
         }
 
     }
