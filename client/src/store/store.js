@@ -119,6 +119,7 @@ function GlobalStoreContextProvider(props) {
         }
         else {
             console.log("API FAILED TO FETCH USER MAPS.")
+            print(response)
         }
 
     }
