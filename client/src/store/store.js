@@ -124,6 +124,44 @@ function GlobalStoreContextProvider(props) {
     } 
 
 
+    store.updateLikes = async function (id, setLikeDislikeCallback) {
+        await api.getMapById(id).then( response => {
+            console.log(response.data.map)
+            let map = response.data.map;
+            if(map.likes.includes(auth.user._id)){
+                let index = map.likes.indexOf(auth.user._id);
+                map.likes.splice(index, 1); 
+            } else if (map.dislikes.includes(auth.user._id)){
+                let index = map.dislikes.indexOf(auth.user._id);
+                map.dislikes.splice(index, 1); 
+                map.likes.push(auth.user._id); 
+            } else {
+                map.likes.push(auth.user._id); 
+            }
+
+
+            async function updatingMap(map){
+                let payload = {
+                    likes: map.likes,
+                    dislikes: map.dislikes
+                };
+
+                let query = {
+                    id: map._id,
+                    ownerId: auth.user._id
+                }
+                response = await api.updateMap(query, payload); 
+                if(response.data.success){
+                    setLikeDislikeCallback(map.likes, map.dislikes);
+                    store.loadPublicProjects(); 
+                }
+            }
+
+            updatingMap(map)
+        });
+    }
+
+
     return (
         <GlobalStoreContext.Provider value={{
             store

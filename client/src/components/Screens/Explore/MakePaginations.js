@@ -14,14 +14,17 @@ const StyledPagination = styled(Pagination)({
 });
 export default function MakePaginations(props) {
     const [page, setPage] = useState(1);
+    
+
     const handleChange = (event, value) => {
         setPage(value);
         // TODO: render new projects based on page number
+        // store.loadPublicProjects(page)
     };
     return (
         <Box sx={{
-            display: 'flex', justifyContent: 'center', position: 'sticky', bottom: '0',
-            color: 'white', backgroundColor: '#1F293A', width: '80vw'
+            display: 'flex', justifyContent: 'center', position: 'relative', bottom: '0',
+            color: 'white', backgroundColor: '#1F293A', width: '75vw'
         }}>
             <StyledPagination count={props.count} page={page} onChange={handleChange}/>
         </Box>
