@@ -59,7 +59,7 @@ createTileset = async (req, res) => {
         const tiles = []
 
         let newTileset = new Tileset({
-            tilesetName: tilesetName, 
+            tilesetName: tilesetName,
             tilesetDesc: tilesetDesc,
             tilesetTags: tilesetTags,
             tilesetBackgroundColor: tilesetBackgroundColor,
@@ -73,7 +73,12 @@ createTileset = async (req, res) => {
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
             isLocked: isLocked,
-            tiles: tiles
+            tiles: tiles,
+            likes: [],
+            dislikes: [],
+            comments: [],
+            favs: [],
+            downloads: 0
         });
 
         newTileset.save().then(() => {
