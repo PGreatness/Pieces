@@ -622,7 +622,21 @@ var addUserToMap = async (req, res) => {
         })
     }
 
-    const chosenMap = await Map.findById(mapId);
+    var mid;
+    var uid;
+
+    try {
+        mid = mongoose.Types.ObjectId(mapId);
+        uid = mongoose.Types.ObjectId(requesterId);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Map ID or User ID format",
+            error: err
+        })
+    }
+
+    const chosenMap = await Map.findById(mid);
 
     if (!chosenMap) {
         return res.status(400).json({
@@ -631,7 +645,7 @@ var addUserToMap = async (req, res) => {
         })
     }
 
-    if (chosenMap.ownerId == requesterId) {
+    if (chosenMap.ownerId.equals(uid)) {
         return res.status(400).json({
             success: false,
             message: "You are already the owner of this map"
