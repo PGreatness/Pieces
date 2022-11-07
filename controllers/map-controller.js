@@ -1,4 +1,5 @@
 const Map = require('../models/map-model')
+const User = require('../models/user-model')
 const ProjectComment = require('../models/project-comment-model')
 const mongoose = require('mongoose')
 
