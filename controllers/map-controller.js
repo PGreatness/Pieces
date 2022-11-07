@@ -112,6 +112,7 @@ createMap = async (req, res) => {
         let tiles = []
         let tilesets = []
         let isPublic = false
+        let isEditable = false
 
         map = new Map({
 
@@ -127,12 +128,14 @@ createMap = async (req, res) => {
             ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
+            isEditable: isEditable,
             layers: layers,
             likes: [],
             dislikes: [],
             favs: [],
             downloads: 0,
             comments: [],
+            creationDate: Date.now()
 
         })
 
@@ -260,7 +263,8 @@ updateMap = async (req, res) => {
 
         // Changes all the present fields
         const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
-            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs, downloads, comments } = req.body;
+            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs,
+            downloads, comments, isEditable } = req.body;
 
         if (mapName) {
             if (mapName == "") {
@@ -307,6 +311,8 @@ updateMap = async (req, res) => {
             map.collaboratorIds = collaboratorIds
         if (isPublic)
             map.isPublic = isPublic
+        if (isEditable)
+            map.isEditable = isEditable
         if (layers)
             map.layers = layers
         if (likes)
@@ -446,12 +452,14 @@ getAllUserMaps = async (req, res) => {
                     ownerId: map.ownerId,
                     collaboratorIds: map.collaboratorIds,
                     isPublic: map.isPublic,
+                    isEditable: map.isEditable,
                     layers: map.layers,
                     likes: map.likes,
                     dislikes: map.dislikes,
                     favs: map.favs,
                     downloads: map.downloads,
-                    comments: map.comments
+                    comments: map.comments,
+                    creationDate: map.creationDate
 
                 }
 
@@ -512,12 +520,14 @@ getMapsByName = async (req, res) => {
                         ownerId: map.ownerId,
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
+                        isEditable: map.isEditable,
                         layers: map.layers,
                         likes: map.likes,
                         dislikes: map.dislikes,
                         favs: map.favs,
                         downloads: map.downloads,
-                        comments: map.comments
+                        comments: map.comments,
+                        creationDate: creationDate
 
                     }
 
