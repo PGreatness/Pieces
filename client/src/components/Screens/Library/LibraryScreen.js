@@ -16,7 +16,7 @@ import ArrowUpward from '@mui/icons-material/ArrowUpward';
 import ArrowDownward from '@mui/icons-material/ArrowDownward';
 import { useState, useContext } from 'react'
 import './css/library.css';
-import LibraryItem from './LibraryItem'
+// import LibraryItem from './LibraryItem'
 import GlobalStoreContext from '../../../store/store';
 
 export default function LibraryScreen() {
@@ -119,6 +119,9 @@ export default function LibraryScreen() {
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
     const { store } = useContext(GlobalStoreContext);
+
+    const userMaps = store.loadAllUserMaps('6366fec85d6527b3ccb9b547')
+    console.log(userMaps)
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
