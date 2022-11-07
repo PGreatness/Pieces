@@ -416,6 +416,7 @@ getAllUserMaps = async (req, res) => {
     const { ownerId } = req.query;
     await Map.find({ ownerId: ownerId }, (err, maps) => {
 
+        console.log(ownerId)
         if (err) {
             return res.status(400).json({
                 success: false,
