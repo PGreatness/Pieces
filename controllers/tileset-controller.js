@@ -1,5 +1,7 @@
 const Tileset = require('../models/tileset-model')
 var mongoose = require('mongoose');
+const User = require('../models/user-model')
+const ProjectComments = require('../models/project-comments-model')
 
 createTileset = async (req, res) => {
     try {
@@ -133,6 +135,18 @@ deleteTileset = async (req, res) => {
                 message: 'User does not have ownership of this tileset',
             })
         }
+
+        // Delete all the comments on the tileset
+        ProjectComments.deleteMany({ projectId: id }, (err, comments) => {
+            if (err) {
+                return res.status(400).json({
+                    err,
+                    message: 'Failed to delete comments',
+                })
+            }
+        })
+
+        // TODO: Delete the tileset from the User's favs list
 
         // Finds tileset with given id and deletes it
         Tileset.findByIdAndDelete(id, (err, tileset) => {
@@ -431,6 +445,74 @@ publishTileset = async (req, res) => {
 
     })
 
+}
+
+var addUserToTileset = async (req, res) => {
+
+    const { tilesetId, userId } = req.body;
+
+    if (!tilesetId || !userId) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a tilesetId and userId"
+        })
+    }
+
+    var tid;
+    var uid;
+    try {
+        tid = mongoose.Types.ObjectId(tilesetId);
+        uid = mongoose.Types.ObjectId(userId);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a valid tilesetId and userId"
+        })
+    }
+
+    var user = await User.findById(uid);
+    var tileset = await Tileset.findById(tid);
+
+    if (!user) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist"
+        })
+    }
+
+    if (!tileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Tileset does not exist"
+        })
+    }
+
+    if (tileset.ownerId.equals(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "User is already the owner of this tileset"
+        })
+    }
+
+    if (tileset.collaboratorIds.includes(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "User is already a collaborator of this tileset"
+        })
+    }
+
+    tileset.collaboratorIds.push(uid);
+    tileset.save().then(() => {
+        return res.status(200).json({
+            success: true,
+            message: "User was successfully added to tileset"
+        })
+    }).catch(err => {
+        return res.status(400).json({
+            success: false,
+            message: "User was not added to tileset"
+        })
+    })
 }
 
 module.exports = {
