@@ -11,7 +11,7 @@
     position:fixed;
     width:100%;
     height: calc(100vh - 80px);
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .contentBody-nosocial {

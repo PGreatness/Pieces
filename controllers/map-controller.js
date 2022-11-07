@@ -1,4 +1,5 @@
 const Map = require('../models/map-model')
+const User = require('../models/user-model')
 const ProjectComment = require('../models/project-comment-model')
 const mongoose = require('mongoose')
 
@@ -557,7 +558,7 @@ getAllPublicMapsOnPage = async (req, res) => {
     if (Number.isNaN(+page) || Number.isNaN(+limit)) {
         return res.status(400).json({
             success: false,
-            error: "Page and limit must be numbers"
+            message: "Page and limit must be numbers"
         })
     }
 
@@ -567,14 +568,14 @@ getAllPublicMapsOnPage = async (req, res) => {
     if (page < 1) {
         return res.status(400).json({
             success: false,
-            error: "Page must be greater than 0"
+            message: "Page must be greater than 0"
         })
     }
 
     if (limit < 1) {
         return res.status(400).json({
             success: false,
-            error: "Limit must be greater than 0"
+            message: "Limit must be greater than 0"
         })
     }
 
@@ -604,6 +605,88 @@ getAllPublicMapsOnPage = async (req, res) => {
     }).send();
 }
 
+var addUserToMap = async (req, res) => {
+
+    const { mapId, requesterId } = req.body;
+
+    if (!mapId) {
+        return res.status(400).json({
+            success: false,
+            error: "Map ID is required"
+        })
+    }
+
+    if (!requesterId) {
+        return res.status(400).json({
+            success: false,
+            error: "Requester ID is required"
+        })
+    }
+
+    var mid;
+    var uid;
+
+    try {
+        mid = mongoose.Types.ObjectId(mapId);
+        uid = mongoose.Types.ObjectId(requesterId);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Map ID or User ID format",
+            error: err
+        })
+    }
+
+    const chosenMap = await Map.findById(mid);
+    const chosenUser = await User.findById(uid);
+
+    if (!chosenUser) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist"
+        })
+    }
+
+    if (!chosenMap) {
+        return res.status(400).json({
+            success: false,
+            message: "Map does not exist"
+        })
+    }
+
+    if (chosenMap.ownerId.equals(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "You are already the owner of this map"
+        })
+    }
+
+    if (chosenMap.collaboratorIds.includes(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "You are already a collaborator of this map"
+        })
+    }
+
+    chosenMap.collaboratorIds.push(requesterId);
+
+    chosenMap.save()
+    .then((map) => {
+        return res.status(200).json({
+            success: true,
+            message: "User added to map",
+            map: map
+        })
+    })
+    .catch((err) => {
+        return res.status(400).json({
+            success: false,
+            message: "Error adding user to map",
+            error: err
+        })
+    })
+}
+
 module.exports = {
     getAllUserMaps,
     getMapsByName,
@@ -612,5 +695,6 @@ module.exports = {
     deleteMap,
     updateMap,
     publishMap,
-    getAllPublicMapsOnPage
+    getAllPublicMapsOnPage,
+    addUserToMap
 }
