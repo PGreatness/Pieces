@@ -7,6 +7,7 @@ export const GlobalStoreContext = createContext({});
 
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
+    LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
     GET_MAP_OWNER: "GET_MAP_OWNER"
 }
@@ -19,6 +20,7 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
+        userMaps: [],
         currentPage: "explore",
         mapOwner: null
     });
@@ -41,14 +43,25 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_PUBLIC_PROJECTS: {
                 return setStore({
                     publicProjects: payload,
+                    userMaps: store.userMaps,
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner
                 });
             }
 
+            case GlobalStoreActionType.LOAD_ALL_USER_MAPS: {
+                return setStore({
+                    publicProjects: store.publicProjects,
+                    userMaps: payload,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner
+                })
+            }
+
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 return setStore({
                     publicProjects: payload.publicProjects,
+                    userMaps: store.userMaps,
                     currentPage: payload.currentPage,
                     mapOwner: store.mapOwner
                 });
@@ -57,6 +70,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.GET_MAP_OWNER: {
                 return setStore({
                     publicProjects: store.publicProjects,
+                    userMaps: store.userMaps,
                     currentPage: store.currentPage,
                     mapOwner: payload
                 });
@@ -89,6 +103,22 @@ function GlobalStoreContextProvider(props) {
             });
         } else {
             console.log("API FAILED TO GET THE PUBLIC PROJECTS");
+        }
+
+    }
+
+    store.loadAllUserMaps = async function(id) {
+
+        const response = await api.getAllUserMaps(id);
+        if (response.data.success) {
+            let userMaps = response.data.maps;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_ALL_USER_MAPS,
+                payload: userMaps
+            })
+        }
+        else {
+            console.log("API FAILED TO FETCH USER MAPS.")
         }
 
     }
