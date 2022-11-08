@@ -1,0 +1,208 @@
+.map_toolbar, .tile_toolbar {
+    height: calc(100vh - 80px);
+    margin-top: 5px;
+    border-radius: 0px 10px 10px 0px;
+}
+
+.map_rightbar, .tile_rightbar {
+    height: calc(100vh - 80px);
+    margin-top: 5px;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.toolbar_mui_icon {
+    transform: scale(1.5);
+    color: #2dd4cf;
+}
+
+.toolbar_fa_icon {
+    transform: scale(2);
+    color: #2dd4cf;
+}
+
+.toolbar_grid_item {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.toolbar_header {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    color: azure;
+}
+
+/* .editor_typography {
+    font-size: 30px;
+} */
+
+.brush_selection {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: black;
+}
+
+.brush_selections_container {
+    position: relative;
+    margin-top: 40px;
+    height: 150px;
+    width: 150px;
+}
+
+.brush_selection_tileset {
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: black;
+}
+
+.brush_selections_container_tileset {
+    position: relative;
+    margin-top: 40px;
+    height: 100px;
+    width: 100px;
+}
+
+.previewWindow {
+    height: 275px;
+    width: 250px;
+    border-radius: 3px;
+}
+
+.layersContainer, .suggestionsContainer, .conferenceContainer, .properties_container {
+    height: 225px;
+    width: 250px;
+    background-color: #444444;
+    margin-top: 15px;
+    border-radius: 3px;
+}
+
+.layer_item, .suggestion_item {
+    background-color: aliceblue;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.add_layer_container {
+    background-color: "#1f293a";
+}
+
+.canvas_container {
+    width: 100%;
+    position: relative;
+    text-align: center;
+}
+
+.tileset_container {
+    position: absolute;
+    width: 90%;
+    border-radius: 0px 10px 0px 0px;
+    margin-left: 5%;
+    background-color: "#11182a";
+    bottom: 0%;
+    height: 18%;
+}
+
+.palettes_container {
+    position: absolute;
+    width: 90%;
+    border-radius: 10px 10px 0px 0px;
+    margin-left: 5%;
+    background-color: "#11182a";
+    bottom: 0%;
+}
+
+.palette_option {
+    width: 50px;
+    height: 50px;
+}
+
+.tile_option {
+    width: 80px;
+    height: 80px;
+}
+
+#tile_primary {
+    left: 10px;
+    top: 10px;
+    z-index: 2;
+}
+
+#tile_secondary {
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+#swap_primary {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    max-height: 30px;
+    max-width: 30px;
+    min-height: 30px;
+    min-width: 30px;
+    color: #2dd4cf;
+}
+
+#color_primary {
+    z-index: 2;
+}
+
+#color_secondary {
+    bottom: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+#swap_primary_color {
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    max-height: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    color: #2dd4cf;
+}
+
+#map_preview, #tile_preview {
+    height: 250px;
+    width: 250px;
+    background-color: blueviolet;
+}
+ 
+#map_canvas, #tile_canvas {
+    width: 500px;
+    height: 500px;
+    background-color: white;
+    margin-top: 5%;
+}
+
+#cursor_coord {
+    position: absolute;
+    right: 3%;
+    top: 3%;
+}
+
+#map_undo_button, #tile_undo_button {
+    position: absolute;
+    right:8%;
+    top: 8%;
+}
+
+#map_redo_button, #tile_redo_button {
+    position: absolute;
+    right:3%;
+    top: 8%;
+}
+
+/* #importTileSetModal {
+
+} */

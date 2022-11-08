@@ -25,32 +25,46 @@ router.post('/resetPassword', UserController.resetPassword)
 
 
 // Map Routes
-router.get('/map/:ownerId', MapController.getAllUserMaps)
-router.get('/map/:username', MapController.getUserMapsByName)
-router.get('/map/:id', MapController.getMapbyId)
+router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
+router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
+router.get('/map/getMapById/:id', MapController.getMapbyId)
+router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
+router.get('/map/getAllProjectComments', MapController.getAllProjectCommentsOnPage)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', MapController.updateMap)
+router.post('/map/publishMap', MapController.publishMap)
 
 
 
 // // TileSet Routes
-router.get('/tileset/:ownerId', TilesetController.getAllUserTilesets)
-router.get('/tileset/:username', TilesetController.getUserTilesetsByName)
-router.get('/tileset/:id', TilesetController.getTilesetbyId)
+router.get('/tileset/userMaps/:ownerId', TilesetController.getAllUserTilesets)
+router.get('/tileset/userMapsByName/:tilesetName', TilesetController.getUserTilesetsByName)
+router.get('/tileset/userMapsById/:id', TilesetController.getTilesetbyId)
 
 router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
-
+router.post('/tileset/publishTileset', TilesetController.publishTileset)
 
 
 // Tile Routes
+router.get('/tile/all', TileController.getAllTiles)
+router.get('/tile/:id', TileController.getTileById)
+
+router.post('/tile/newTile', TileController.createTile)
+router.post('/tile/deleteTile', TileController.deleteTile)
+router.post('/tile/updateTile', TileController.updateTile)
 
 // Thread Routes
+router.post('/thread/newThread', ThreadController.createThread)
+router.post('/thread/deleteThread', ThreadController.deleteThread)
 
 // Chat Routes
-
+router.get('/chat/fetchChat', ChatController.fetchChat)
+router.post('/chat/newChat', ChatController.createChat)
+router.post('/chat/deleteChat', ChatController.deleteChat)
+router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
 
 module.exports = router

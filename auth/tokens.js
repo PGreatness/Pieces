@@ -9,10 +9,11 @@ function authManager() {
                 return res.status(401).json({
                     loggedIn: false,
                     user: null,
-                    errorMessage: "Unauthorized"
+                    message: "Unauthorized"
                 })
             }
 
+            // this line is causing the stupid error when refreshing
             const verified = jwt.verify(token, config.get("secrets.access_token"))
             req.userId = verified.userId;
 
@@ -20,13 +21,13 @@ function authManager() {
         } catch (err) {
             console.error(err);
             return res.status(401).json({
-                errorMessage: "Unauthorized"
+                message: "Unauthorized"
             });
         }
     };
 
     signToken = function (user) {
-        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "1h" });
+        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "3h" });
     };
 
     verifyPasswordResetToken = function (user, token) {

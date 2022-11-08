@@ -44,8 +44,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: payload,
                     currentPage: store.currentPage,
+<<<<<<< HEAD
                     mapOwner: store.mapOwner,
                     projectComments: store.projectComments
+=======
+                    mapOwner: store.mapOwner
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
                 });
             }
 
@@ -53,8 +57,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: payload.publicProjects,
                     currentPage: payload.currentPage,
+<<<<<<< HEAD
                     mapOwner: store.mapOwner,
                     projectComments: store.projectComments
+=======
+                    mapOwner: store.mapOwner
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
                 });
             }
 
@@ -62,6 +70,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: store.publicProjects,
                     currentPage: store.currentPage,
+<<<<<<< HEAD
                     mapOwner: payload,
                     projectComments: store.projectComments
                 });
@@ -73,6 +82,9 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
                     projectComments: payload
+=======
+                    mapOwner: payload
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
                 });
             }
 
@@ -82,6 +94,13 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.

@@ -1,0 +1,103 @@
+.welcome_body {
+    background-color: #1f293a;
+    color: aliceblue;
+    text-align: center;
+    width: 100vw;
+    padding-top: 25px;
+}
+
+.welcome_flexbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.welcome_title_card {
+    padding-top: 50px;
+    align-items: center;
+    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.welcome_title_description {
+    font-size: 25px;
+}
+
+.welcome_call_to_action {
+    padding-top: 25px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #2dd4cf;
+}
+
+.welcome_title {
+    font-size: 75px;
+    font-weight: bolder;
+    color: #06b4d5;
+}
+
+.welcome_preview_maps {
+    background-color: #11182A;
+    top: 0;
+    width: 100vw;
+    z-index: 1;
+}
+
+.welcome_vertical_align {
+    vertical-align: center;
+    text-align: left;
+}
+
+.welcome_section {
+    padding-top: 75px;
+    font-size: 40px;
+}
+
+.welcome_section_title {
+    font-weight: bold;
+}
+
+.welcome_section_subtitle {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.welcome_section_description {
+    font-size: 18px;
+    padding-left: 200px;
+    padding-right: 200px;
+}
+
+.welcome_stats { 
+    display: inline-block;
+    width: 50px;
+    padding-left: 30%;
+    /* display: flex; */
+    vertical-align: center;
+}
+
+.welcome_image {
+    border-radius: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    object-fit: cover;
+}
+
+.welcome_overlay {
+    position: absolute; 
+    bottom: 0; 
+    background: rgba(0, 0, 7, 0.70); /* Black see-through */
+    width: 100%;
+    height: 20%;
+    color: white;
+    opacity: 1;
+    border-radius: 20px;
+}
+
+.welcome_project_title {
+    font-size: 20px;
+    padding-left: 15px;
+    padding-top: 7px;
+    padding-bottom: 0px;
+}

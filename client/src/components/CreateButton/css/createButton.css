@@ -1,0 +1,101 @@
+.create-button > .MuiSvgIcon-root {
+    width: inherit;
+    height: inherit;
+    z-index: inherit;
+    transition: all 0.1s !important;
+}
+
+.create-button {
+    --color:rgb(25,118,210);
+    background-color: var(--createButtonColor, var(--color));
+    transform: rotate(90deg);
+    scale: 1;
+    transition: all 0.1s !important;
+}
+
+.create-button:hover {
+    transform: scale(1.2) rotate(90deg);
+    background-color: var(--createButtonColor, var(--color));
+    transition: all 0.1s !important;
+}
+
+.create-button-container > .active:hover {
+    transform: scale(1.2);
+    background-color: red;
+    transform: rotate(225deg);
+    transition: all 0.1s !important;
+}
+.create-button-container > .active {
+    background-color: #f00;
+    transform: rotate(225deg);
+    transition: all 0.1s !important;
+}
+
+.create-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: fixed;
+    bottom: 20px;
+    right: 1vw;
+    width: 2vw;
+}
+
+.create-button-menu {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 1;
+    margin-right: 10vw !important;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.create-menu-popper {
+    position: relative !important;
+    top: 0;
+    right: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    z-index: 100;
+}
+
+.create-button-popper-arrow,
+.create-button-popper-arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: 100;
+}
+
+.create-button-popper-arrow {
+    visibility: hidden;
+}
+
+
+.create-button-popper-arrow::before {
+    visibility: visible;
+    content: '';
+    background: white;
+    transform: rotate(45deg);
+}
+
+.create-button-container[data-popper-placement^='top'] > .create-button-popper-arrow {
+    bottom: -4px;
+}
+
+.create-button-container[data-popper-placement^='bottom'] > .create-button-popper-arrow {
+    top: -4px;
+}
+
+.create-button-container[data-popper-placement^='left'] > .create-button-popper-arrow {
+    right: -4px;
+}
+
+.create-button-container[data-popper-placement^='right'] > .create-button-popper-arrow {
+    left: -4px;
+}

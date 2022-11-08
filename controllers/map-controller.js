@@ -1,4 +1,6 @@
 const Map = require('../models/map-model')
+const ProjectComment = require('../models/project-comment-model')
+const mongoose = require('mongoose')
 
 createMap = async (req, res) => {
 
@@ -15,26 +17,30 @@ createMap = async (req, res) => {
     try {
 
         // Get data from request
-        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers } = req.body;
+        let { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
 
-        if (!_id || !mapName || !mapDescription || !tags || !mapBackgroundColor || !mapHeight || !mapWidth || !tileHeight || !tileWidth || !tiles || !tilesets || !ownerId || !collaboratorIds || !isPublic || !layers) {
+        if (!mapHeight || !mapWidth || !ownerId) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({
+                    message: "Please enter all required fields."
+                });
         }
+
+        let ownerObjectId = mongoose.Types.ObjectId(ownerId)
 
         // Checks if another one of the user's maps already has the given name
         // If so, map is not created
         const existingMap = await Map.findOne({
-            _id: _id,
-            mapName, mapName
+            ownerId: ownerObjectId,
+            mapName: mapName
         });
         if (existingMap) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "Another Map owned by the same User already has this name"
+                    message: "Another Map owned by the same User already has this name"
                 })
         }
 
@@ -44,28 +50,28 @@ createMap = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a height of zero or less pixels."
+                    message: "Map can not have a height of zero or less pixels."
                 });
         }
         if (mapWidth <= 0) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a width of zero or less pixels."
+                    message: "Map can not have a width of zero or less pixels."
                 });
         }
         if (tileHeight <= 0) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a height of zero or less tiles."
+                    message: "Map can not have a height of zero or less tiles."
                 });
         }
         if (tileWidth <= 0) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Map can not have a width of zero or less tiles."
+                    message: "Map can not have a width of zero or less tiles."
                 });
         }
 
@@ -77,12 +83,18 @@ createMap = async (req, res) => {
             let untitled_num = 1
 
             const existingUntitledMap = await Map.findOne({
-                _id: _id,
+                ownerId: ownerObjectId,
                 mapName: mapName
             });
 
             while (existingUntitledMap) {
                 mapName = "Untitled" + untitled_num
+
+                const existingUntitledMap = await Map.findOne({
+                    ownerId: ownerObjectId,
+                    mapName: mapName
+                });
+
                 untitled_num++
             }
 
@@ -95,8 +107,14 @@ createMap = async (req, res) => {
 
         // Creates Map
         let map = null
+        let layers = []
+        let collaboratorIds = []
+        let tiles = []
+        let tilesets = []
+        let isPublic = false
+
         map = new Map({
-            _id: _id,
+
             mapName: mapName,
             mapDescription: mapDescription,
             mapBackgroundColor: mapBackgroundColor,
@@ -106,17 +124,23 @@ createMap = async (req, res) => {
             tileWidth: tileWidth,
             tiles: tiles,
             tilesets: tilesets,
-            ownerId: ownerId,
+            ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
-            layers: layers
+            layers: layers,
+            likes: [],
+            dislikes: [],
+            favs: [],
+            downloads: 0,
+            comments: [],
+
         })
 
         if (!map) {
             return res
                 .status(400)
                 .json({
-                    errorMessage: "Ran into an error when creating Map"
+                    message: "Ran into an error when creating Map"
                 });
         }
 
@@ -127,6 +151,7 @@ createMap = async (req, res) => {
                 return res.status(201).json({
                     success: true,
                     map: map,
+                    id: map._id,
                     message: 'Map was successfully created.'
                 })
             })
@@ -147,7 +172,10 @@ createMap = async (req, res) => {
 
 deleteMap = async (req, res) => {
 
-    Map.findById({ _id: req.params.id }, (err, map) => {
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    Map.findById({ _id: id }, (err, map) => {
 
         // Checks if Map with given id exists
         if (err) {
@@ -157,27 +185,45 @@ deleteMap = async (req, res) => {
             })
         }
 
+        if (!map) {
+            return res.status(404).json({
+                message: 'Map not found'
+            })
+        }
+
         // Checks if Map belongs to the User who is trying to delete it
-        if (map.ownerId != req.params.ownerId) {
+        if (!map.ownerId.equals(ownerObjectId)) {
             return res.status(401).json({
                 err,
                 message: 'User does not have ownership of this Map',
             })
         }
 
-        // Finds Map with given id and deletes it
-        Map.findByIdAndDelete(req.params.id, (err, map) => {
-            return res.status(200).json({
-                success: true,
-                data: map
-            })
-        }).catch(err => console.log(err))
-
+        // Deletes Map comments
+        const comments = ProjectComment.deleteMany({ projectId: id })
+        comments.then((deleted) => {
+            if (!deleted) {
+                return res.status(400).json({
+                    err,
+                    message: 'Comments were not deleted',
+                })
+            }
+            // Finds Map with given id and deletes it
+            Map.findByIdAndDelete(id, (err, map) => {
+                return res.status(200).json({
+                    success: true,
+                    data: map
+                })
+            }).catch(err => console.log(err))
+        })
     })
 
 }
 
 updateMap = async (req, res) => {
+
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
 
     // Checks if request contains any body data
     const body = req.body
@@ -188,7 +234,7 @@ updateMap = async (req, res) => {
         })
     }
 
-    Map.findOne({ _id: req.params.id }, async (err, map) => {
+    Map.findOne({ _id: id }, async (err, map) => {
 
         // Checks if Map exists
         if (err) {
@@ -198,8 +244,23 @@ updateMap = async (req, res) => {
             })
         }
 
+        if (!map) {
+            return res.status(404).json({
+                message: 'Map not found'
+            })
+        }
+
+        // Checks if Map belongs to the User who is trying to delete it
+        if (!map.ownerId.equals(ownerObjectId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this Map',
+            })
+        }
+
         // Changes all the present fields
-        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers } = req.body;
+        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
+            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs, downloads, comments } = req.body;
 
         if (mapName) {
             if (mapName == "") {
@@ -242,14 +303,86 @@ updateMap = async (req, res) => {
             map.tiles = tiles
         if (tilesets)
             map.tilesets = tilesets
-        if (ownerId)
-            map.ownerId = ownerId
         if (collaboratorIds)
             map.collaboratorIds = collaboratorIds
         if (isPublic)
             map.isPublic = isPublic
         if (layers)
             map.layers = layers
+        if (likes)
+            map.likes = likes
+        if (dislikes)
+            map.dislikes = dislikes
+        if (favs)
+            map.favs = favs
+        if (downloads)
+            map.downloads = downloads
+        if (comments)
+            map.comments = comments
+
+        // Attempts to save updated map
+        map
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: map._id,
+                    message: 'Map was successfully updated',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Map was not updated',
+                })
+            })
+
+
+        //
+    })
+
+}
+
+publishMap = async (req, res) => {
+
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    // Checks if request contains any body data
+    const body = req.body
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: "No body was given by the client",
+        })
+    }
+
+    Map.findOne({ _id: id }, async (err, map) => {
+
+        // Checks if Map exists
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: "Map not found"
+            })
+        }
+
+        if (!map) {
+            return res.status(404).json({
+                message: 'Map not found'
+            })
+        }
+
+        // Checks if Map belongs to the User who is trying to delete it
+        if (!map.ownerId.equals(ownerObjectId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this Map',
+            })
+        }
+
+        // Change public
+        map.isPublic = req.body.isPublic
 
         // Attempts to save updated map
         map
@@ -313,7 +446,12 @@ getAllUserMaps = async (req, res) => {
                     ownerId: map.ownerId,
                     collaboratorIds: map.collaboratorIds,
                     isPublic: map.isPublic,
-                    layers: map.layers
+                    layers: map.layers,
+                    likes: map.likes,
+                    dislikes: map.dislikes,
+                    favs: map.favs,
+                    downloads: map.downloads,
+                    comments: map.comments
 
                 }
 
@@ -329,10 +467,10 @@ getAllUserMaps = async (req, res) => {
 
 }
 
-getUserMapsByName = async (req, res) => {
+getMapsByName = async (req, res) => {
 
-    const { userName, name } = req.query;
-    await Map.find({ userName: userName }, (err, maps) => {
+    const { mapName } = req.query;
+    await Map.find({}, (err, maps) => {
 
         if (err) {
             return res.status(400).json({
@@ -354,10 +492,10 @@ getUserMapsByName = async (req, res) => {
             let mapsData = [];
             for (key in maps) {
 
-                map = maps[key]
+                let map = maps[key]
 
                 //Checks if Map matches or begins with the wanted name/search
-                if (map.name.toLowerCase().startsWith(name.toLowerCase()) && name) {
+                if (map.mapName.toLowerCase().startsWith(mapName.toLowerCase()) && mapName) {
 
                     let mapData = {
 
@@ -374,7 +512,12 @@ getUserMapsByName = async (req, res) => {
                         ownerId: map.ownerId,
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
-                        layers: map.layers
+                        layers: map.layers,
+                        likes: map.likes,
+                        dislikes: map.dislikes,
+                        favs: map.favs,
+                        downloads: map.downloads,
+                        comments: map.comments
 
                     }
 
@@ -389,20 +532,85 @@ getUserMapsByName = async (req, res) => {
         }
     }).catch(err => console.log(err));
 
+    // console.log("RANDOM CONSOLE LOG")
 }
 
 getMapbyId = async (req, res) => {
-    const savedMap = await Map.findById(req.params.id);
+    const savedMap = await Map.findById(req.query.id);
     return res.status(200).json({
         map: savedMap
     }).send();
 }
 
+getAllPublicMapsOnPage = async (req, res) => {
+    var { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        page = 1;
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            error: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Limit must be greater than 0"
+        })
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
+    const rangeMap = await Map.aggregate([
+        { $match: { isPublic: true } },
+        { $skip: startIndex },
+        {
+            $addFields: {
+                "ratio": {
+                    $cond: {
+                        if: { $eq: [{ $size: "$dislikes" }, 0] },
+                        then: { $size: "$likes" },
+                        else: { $divide: [{ $size: "$likes" }, { $size: "$dislikes" }] }
+                    }
+                }
+            }
+        },
+        { $limit: limit },
+        { $sort: { ratio: -1 } }
+    ])
+    return res.status(200).json({
+        success: true,
+        count: rangeMap.length,
+        maps: rangeMap
+    }).send();
+}
+
 module.exports = {
     getAllUserMaps,
-    getUserMapsByName,
+    getMapsByName,
     getMapbyId,
     createMap,
     deleteMap,
-    updateMap
+    updateMap,
+    publishMap,
+    getAllPublicMapsOnPage
 }

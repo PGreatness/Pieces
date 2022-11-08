@@ -4,24 +4,34 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm start --prefix tests",
     "start": "node index.js",
-    "server": "nodemon index.js",
-    "client": "cd client && npm start",
-    "dev": "concurrently --kill-others \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "dev": "concurrently --kill-others \"npm start\" \"npm start --prefix client\"",
+    "build": "npm install && npm run build --prefix client",
+    "prod": "node index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mui/lab": "^5.0.0-alpha.105",
+    "@mui/material": "^5.10.11",
     "bcryptjs": "^2.4.3",
+    "concurrently": "^7.5.0",
     "config": "^3.3.8",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.6.7",
-    "nodemailer": "^6.8.0"
+    "mongoose": "^6.7.0",
+    "nodemailer": "^6.8.0",
+    "nodemon": "^2.0.20",
+    "react-color": "^2.19.3"
   }
 }

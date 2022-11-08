@@ -1,0 +1,51 @@
+.profile_body {
+    background-color: #1f293a;
+    color: aliceblue;
+    /* text-align: center; */
+    width: 100vw;
+    height: 100vh;
+    padding-top: 15px;
+}
+
+.profile_title {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.profile_picture {
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile_padding {
+    padding-top: 25px;
+}
+
+.profile_content {
+    padding-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.profile_fields {
+    padding-left: 5%;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.profile_flexbox {
+    display: flex;
+    align-items: center;
+}
+
+.profile_fields_text { 
+    display: inline-block;
+    width: 150px;
+}

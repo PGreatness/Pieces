@@ -1,10 +1,7 @@
 const { model, Schema, ObjectId } = require("mongoose");
 
 const chatSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
+
     senderId: {
         type: ObjectId,
         required: true,

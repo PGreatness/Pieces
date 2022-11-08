@@ -2,10 +2,6 @@ const { model, Schema, ObjectId } = require("mongoose");
 const Layer = require("./layer-model").schema;
 
 const mapSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
     mapName: {
         type: String,
         required: true,
@@ -61,7 +57,27 @@ const mapSchema = new Schema({
     layers: {
         type: [Layer],
         required: false
-    }
+    },
+    likes: {
+        type: [ObjectId],
+        required: true,
+    },
+    dislikes: {
+        type: [ObjectId],
+        required: false,
+    },
+    favs: {
+        type: [ObjectId],
+        required: false,
+    },
+    downloads: {
+        type: Number,
+        required: false,
+    },
+    comments: {
+        type: [ObjectId],
+        required: false,
+    },
 });
 
 const Map = model("Map", mapSchema);
