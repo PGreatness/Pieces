@@ -635,8 +635,7 @@ var getAllPublicProjects = async (req, res) => {
     limit = Number(limit);
     const rangeProject = await Map.aggregate([
         { $match: { isPublic: true } },
-        { $unionWith: { coll: "tilesets", pipeline: [{ $match: { isPublic: true } }] } },
-        { $sort: { creationDate: -1 } },
+        { $sort: { createdAt: -1 } },
         { $skip: startIndex },
         { $limit: limit },
     ]);
