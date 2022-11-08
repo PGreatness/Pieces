@@ -41,6 +41,7 @@ export default function ExploreCommentsItem(props) {
 
 
     const handleLikeClick = (event) => {
+        console.log("hello");
         event.stopPropagation();
         store.updateCommentLikes(comment._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
