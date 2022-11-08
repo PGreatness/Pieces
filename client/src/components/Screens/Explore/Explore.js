@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import SortIcon from '@mui/icons-material/Sort';
 import Box from '@mui/material/Box';
 import ExploreItem from './ExploreItem'
+import MakePaginations from './MakePaginations';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState, useContext } from 'react';
@@ -115,10 +116,13 @@ export default function Explore(props) {
             }}>
                 {projects.map((entry) => (
                     <ExploreItem
+                        setLoc={props.setLoc}
                         setShowComments={props.setShowComments}
                         project={entry}
                     />))
                 }
+                {/* Shouldnt count here be projects.length/limit(=10) */}
+                <MakePaginations count={projects.length}/>
 
             </Box>
 

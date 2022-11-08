@@ -12,9 +12,11 @@ export default function ExploreScreen(props) {
     const { auth } = useContext(AuthContext);
 
     return (
+        <>
         <Box style={{height: '100%', width: '80vw', color: 'white', backgroundColor: '#1F293A',
          display:'flex', zIndex:0, position: 'relative'}}>
-            {!showComments? (<Explore setLoc={props.setLoc}
+            {!showComments? (<Explore 
+                setLoc={props.setLoc}
                 setShowComments={() => {
                     setShowComments(true);
                 }}
@@ -24,5 +26,6 @@ export default function ExploreScreen(props) {
                 }}
             />)}
         </Box>
+        </>
     )
 }

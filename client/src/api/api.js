@@ -10,6 +10,10 @@ const api = axios.create({
 
 // Api.get getAllPublicProjects instead of getAllPublicMaps
 export const getAllPublicProjects = () => api.get(`/map/getAllPublicMaps/`)
+export const getMapById = (id) => api.get(`/map/getMapById/${id}/`)
+export const updateMap = (query, payload) => api.post(`/map/updateMap/`, payload, {params: query})
+
+
 
 export const getAllUserMaps = (id) => api.get('/map/getAllUserMap/${id}')
 
@@ -23,6 +27,8 @@ export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 const apis = {
     getAllPublicProjects,
     getAllUserMaps,
+    getMapById,
+    updateMap,
 
     getLoggedIn,
     registerUser,
