@@ -381,6 +381,35 @@ resetPassword = async (req, res) => {
     }
 }
 
+var getOwnerAndCollaboratorOfMaps = async (req, res) => {
+
+    const { id } = req.body;
+
+    if (!id) {
+        return res
+            .status(400)
+            .json({ message: "Must Provide All Required Arguments to Get Owner and Collaborators of Maps" });
+    }
+
+    var uid;
+    try {
+        uid = mongoose.Types.ObjectId(id);
+    } catch (err) {
+        return res
+            .status(400)
+            .json({ message: "Invalid User ID" });
+    }
+
+    const owner = await Map.find({ owner: uid });
+    const collaborator = await Map.find({ collaboratorIds: { $elemMatch: {$eq: uid }} });
+
+    return res.status(200).json({
+        success: true,
+        owner: owner,
+        collaborator: collaborator,
+        message: 'Owner and Collaborators of Maps have been retrieved'
+    })
+}
 
 
 module.exports = {
@@ -393,5 +422,6 @@ module.exports = {
     updateUser,
     changePassword,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getOwnerAndCollaboratorOfMaps
 }

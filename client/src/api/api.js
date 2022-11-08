@@ -26,6 +26,8 @@ export const logoutUser = () => api.get(`/logout/`)
 
 export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 
+export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
+
 const apis = {
     getAllPublicProjects,
     getMapById,
@@ -37,7 +39,9 @@ const apis = {
     registerUser,
     loginUser,
     logoutUser,
-    getUserById
+    getUserById,
+
+    changePage,
 }
 
 export default apis
