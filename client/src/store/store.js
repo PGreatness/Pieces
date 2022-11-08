@@ -12,7 +12,8 @@ export const GlobalStoreActionType = {
     LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
     GET_MAP_OWNER: "GET_MAP_OWNER",
-    SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST"
+    SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
+    SET_EXPLORE_SORT: "SET_EXPLORE_SORT"
 }
 
 
@@ -28,6 +29,8 @@ function GlobalStoreContextProvider(props) {
         userAndCollabMaps: [],
         librarySortOption: "",
         librarySortDirection: "",
+        projSortOpt: "",
+        projSortDir: "",
         sortedLibraryList: [],
         currentPage: "explore",
         mapOwner: null
@@ -57,6 +60,8 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: store.sortedLibraryList
                 });
             }
@@ -70,6 +75,8 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: store.sortedLibraryList
                 })
             }
@@ -83,6 +90,8 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: store.sortedLibraryList
                 })
             }
@@ -96,6 +105,8 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: store.sortedLibraryList
                 })
             }
@@ -109,6 +120,8 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: store.sortedLibraryList
                 });
             }
@@ -122,6 +135,8 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: payload,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: store.sortedLibraryList
                 });
             }
@@ -135,7 +150,24 @@ function GlobalStoreContextProvider(props) {
                     mapOwner: store.mapOwner,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
                     sortedLibraryList: payload.allMaps
+                })
+            }
+
+            case GlobalStoreActionType.SET_EXPLORE_SORT: {
+                return setStore({
+                    publicProjects: payload.publicProjects,
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.sortOpt,
+                    librarySortDirection: store.sortDir,
+                    projSortOpt: payload.projSortOpt,
+                    projSortDir: payload.projSortDir,
+                    sortedLibraryList: store.sortedLibraryList
                 })
             }
 
@@ -351,9 +383,11 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+
     store.setLibrarySort = async function (sortOpt, sortDir) {
 
         let allMaps = store.collabMaps.concat(store.userMaps)
+
         switch (sortOpt) {
             case 'name':
                 if (sortDir === "up") {
@@ -625,6 +659,199 @@ function GlobalStoreContextProvider(props) {
                         }
                     })
                 }
+        }
+
+    }
+
+
+    store.changeExploreSort = function (projSortOpt, projSortDir) {
+
+        console.log(projSortOpt)
+        console.log(projSortDir)
+        let sortedProjects = store.sortProjects(store.publicProjects, projSortOpt, projSortDir);
+        console.log(sortedProjects)
+
+        storeReducer({
+            type: GlobalStoreActionType.SET_EXPLORE_SORT,
+            payload: {
+                projSortOpt: projSortOpt,
+                projSortDir: projSortDir,
+                publicProjects: sortedProjects
+            }
+        });
+    }
+
+
+
+    store.sortProjects = function (list, sortOpt, sortDir) {
+
+        console.log(sortOpt)
+        console.log(sortDir)
+
+        switch (sortOpt) {
+            case 'Project Name':
+                console.log("inside here at least")
+                if (sortDir === "up") {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.mapName ? proj1.mapName : proj1.tilesetName
+                        let b = proj1.mapName ? proj2.mapName : proj2.tilesetName
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) {
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                else {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.mapName ? proj1.mapName : proj1.tilesetName
+                        let b = proj1.mapName ? proj2.mapName : proj2.tilesetName
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) {
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                return list;
+            case 'Creation Date':
+                if (sortDir === "up") {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.createdAt
+                        let b = proj2.createdAt
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) {
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                else {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.createdAt
+                        let b = proj2.createdAt
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) {
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                return list;
+            case 'Most Liked':
+                if (sortDir === "up") {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.likes.length
+                        let b = proj2.likes.length
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) {
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                else {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.likes.length
+                        let b = proj2.likes.length
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) {
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                return list;
+
+            case 'Most Downloaded':
+                if (sortDir === "up") {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.downloads.length
+                        let b = proj2.downloads.length
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) {
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                else {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.downloads.length
+                        let b = proj2.downloads.length
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) {
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                return list;
+            // Probably change this to download size
+            case 'Size':
+                if (sortDir === "up") {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.mapHeight ? proj1.mapHeight * proj2.mapWidth : proj1.tiles.length * proj1.tileHeight * proj1.tileWidth;
+                        let b = proj2.mapHeight ? proj2.mapHeight * proj2.mapWidth : proj2.tiles.length * proj2.tileHeight * proj2.tileWidth;
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) {
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                else {
+                    list.sort((proj1, proj2) => {
+                        let a = proj1.mapHeight ? proj1.mapHeight * proj2.mapWidth : proj1.tiles.length * proj1.tileHeight * proj1.tileWidth;
+                        let b = proj2.mapHeight ? proj2.mapHeight * proj2.mapWidth : proj2.tiles.length * proj2.tileHeight * proj2.tileWidth;
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) {
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                }
+                return list;
         }
 
     }

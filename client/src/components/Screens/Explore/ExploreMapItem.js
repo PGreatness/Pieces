@@ -60,6 +60,7 @@ export default function ExploreMapItem(props) {
     }
 
     const handleFavClick = (event) => {
+        console.log('whats the fucking problem')
         event.stopPropagation();
         store.updateMapFav(project._id, (fav_arr) => {
             setIsFav(fav_arr.includes(auth.user?._id));
