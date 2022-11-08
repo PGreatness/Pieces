@@ -187,15 +187,16 @@ updateTileset = async (req, res) => {
         }
 
         // Checks if tileset belongs to the User who is trying to update it
-        if (!tileset.ownerId.equals(ObjectOwnerId)) {
-            return res.status(401).json({
-                err,
-                message: 'User does not have ownership of this tileset',
-            })
-        }
+        // if (!tileset.ownerId.equals(ObjectOwnerId)) {
+        //     return res.status(401).json({
+        //         err,
+        //         message: 'User does not have ownership of this tileset',
+        //     })
+        // }
 
         // Changes all the present fields
-        const { tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles } = req.body;
+        const { tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, 
+            padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles } = req.body;
 
         if (tilesetName) {
             if (tilesetName == "") {
@@ -388,10 +389,10 @@ getUserTilesetsByName = async (req, res) => {
 }
 
 getTilesetbyId = async (req, res) => {
-    const savedTileset = await Tileset.findById(req.query.id);
+    console.log(req.params)
+    const savedTileset = await Tileset.findById(req.params.id);
     if (savedTileset == null) {
         return res.status(404).json({
-            err,
             message: "Tileset not found"
         }).send();
     }
