@@ -47,7 +47,7 @@ loginUser = async (req, res) => {
 
             res.set("Set-Cookie", [
                 `token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
-                ]);
+            ]);
             res.status(200).json({
                 success: true,
                 user: foundUser,
@@ -401,12 +401,28 @@ var getOwnerAndCollaboratorOfMaps = async (req, res) => {
     }
 
     const owner = await Map.find({ owner: uid });
-    const collaborator = await Map.find({ collaboratorIds: { $elemMatch: {$eq: uid }} });
+    const collaborator = await Map.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
+
+    const aggregation = [
+        // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
+        {
+            $match: {
+                $and: [
+                    { collaboratorIds: { $nin: [uid] } },
+                    { ownerId: { $ne: uid } },
+                    { favs: { $in: [uid] } },
+                ],
+            },
+        },
+    ];
+
+    const favs = await Map.aggregate(aggregation);
 
     return res.status(200).json({
         success: true,
         owner: owner,
         collaborator: collaborator,
+        favs: favs,
         message: 'Owner and Collaborators of Maps have been retrieved'
     })
 }
