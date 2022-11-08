@@ -35,6 +35,7 @@ router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
+router.post('/map/addUserToMap', MapController.addUserToMap)
 
 
 
