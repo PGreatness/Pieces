@@ -31,7 +31,7 @@ function GlobalStoreContextProvider(props) {
         projSortOpt: "",
         projSortDir: "",
         sortedLibraryList: [],
-        currentPage: "explore",
+        currentPage: "",
         mapOwner: null,
         searchName: ""
     });
@@ -48,6 +48,7 @@ function GlobalStoreContextProvider(props) {
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
         const { type, payload } = action;
+        console.log(type)
         switch (type) {
 
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
@@ -104,7 +105,7 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: store.publicProjects,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
-                    currentPage: store.currentPage,
+                    currentPage: payload.currentPage,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
@@ -116,6 +117,7 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
+                console.log(payload.currentPage)
                 return setStore({
                     publicProjects: payload.publicProjects,
                     userMaps: payload.userMaps,
@@ -166,8 +168,8 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_SEARCH_NAME: {
                 return setStore({
                     publicProjects: payload.publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
+                    userMaps: payload.userMaps,
+                    collabMaps: payload.collabMaps,
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.sortOpt,
@@ -255,6 +257,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS,
                 payload: {
+                    currentPage: "library",
                     userMaps: userMaps,
                     collabMaps: collabMaps
                 }
@@ -314,6 +317,7 @@ function GlobalStoreContextProvider(props) {
 
 
     store.changeSearchName = async function (search) {
+        console.log(store.currentPage)
         
         switch(store.currentPage){
 
@@ -325,7 +329,9 @@ function GlobalStoreContextProvider(props) {
                         type: GlobalStoreActionType.SET_SEARCH_NAME,
                         payload: {
                             publicProjects: publicProjects,
-                            newSearch: search
+                            newSearch: search,
+                            userMaps: store.userMaps,
+                            collabMaps: store.collabMaps
                         }
                     });
                 } else {
@@ -334,27 +340,34 @@ function GlobalStoreContextProvider(props) {
                 break;
             }
 
-            // case "library" : {
-            //     let query = {
-            //         name: search
-            //     }
-            //     const response = await api.getTop5Lists(query);
-            //     if(response.data.success){
-            //         console.log("success" + response); 
-            //         let top5lists = response.data.top5lists;
-            //         let sortedLists = store.sortLists(top5lists, store.sorting); 
-            //         storeReducer({
-            //             type: GlobalStoreActionType.SET_SEARCH_NAME,
-            //             payload: {
-            //                 top5lists: sortedLists,
-            //                 newSearch: search
-            //             }
-            //         });
-            //     } else {
-            //         console.log("API FAILED TO GET THE LIST PAIRS");
-            //     }
-            //     break;
-            // }
+            case "library" : {
+                console.log("what the heck")
+                let payload = {
+                    id: "6357194e0a81cb803bbb913e",
+                    name: search
+                }
+                const response = await api.getLibraryMapsByName(payload);
+                
+                if(response.data.success){
+                    console.log("success" + response); 
+                    let userMaps = response.data.owner;
+                    let collabMaps = response.data.collaborator; 
+                    console.log(response.data)
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SEARCH_NAME,
+                        payload: {
+                            publicProjects: store.publicProjects,
+                            newSearch: search,
+                            userMaps: userMaps,
+                            collabMaps: collabMaps
+
+                        }
+                    });
+                } else {
+                    console.log("API FAILED TO GET THE LIST PAIRS");
+                }
+                break;
+            }
 
             
 

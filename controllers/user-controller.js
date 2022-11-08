@@ -430,6 +430,65 @@ getOwnerAndCollaboratorOfMaps = async (req, res) => {
 }
 
 
+getLibraryMapsByName = async (req, res) => {
+    console.log("good")
+
+    const { id, name } = req.query;
+
+    if (!id) {
+        return res
+            .status(400)
+            .json({ message: "Must Provide All Required Arguments to Get Owner and Collaborators of Maps" });
+    }
+
+    var uid;
+    try {
+        uid = new ObjectId(id);
+    } catch (err) {
+        return res
+            .status(400)
+            .json({ message: "Invalid User ID" });
+    }
+
+    const owner = await Map.find({ ownerId: uid });
+    let filteredOwner = owner.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+
+    // let filteredOwner = owner.filter(obj => {
+    //     return obj.mapName.includes(name)
+    //   });
+      
+    //   console.log(filteredOwner)
+    
+    const collaborator = await Map.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
+    let filteredCollaborator = collaborator.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+
+    const aggregation = [
+        // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
+        {
+            $match: {
+                $and: [
+                    { collaboratorIds: { $nin: [uid] } },
+                    { ownerId: { $ne: uid } },
+                    { favs: { $in: [uid] } },
+                    
+                ],
+            },
+        },
+    ];
+
+    const favs = await Map.aggregate(aggregation);
+    filteredFavs = favs.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+
+    return res.status(200).json({
+        success: true,
+        owner: filteredOwner,
+        collaborator: filteredCollaborator,
+        favs: filteredFavs,
+        message: 'Owner and Collaborators of Maps have been retrieved'
+    })
+}
+
+
 module.exports = {
     getLoggedIn,
     registerUser,
@@ -441,5 +500,6 @@ module.exports = {
     changePassword,
     forgotPassword,
     resetPassword,
-    getOwnerAndCollaboratorOfMaps
+    getOwnerAndCollaboratorOfMaps,
+    getLibraryMapsByName
 }

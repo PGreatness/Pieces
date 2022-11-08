@@ -52,7 +52,7 @@ function AuthContextProvider(props) {
     auth.getLoggedIn = async function (store) {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
-            store.changePageToExplore(); 
+            //store.changePageToExplore(); 
             console.log("user is signed in signed in")
 
             authReducer({
