@@ -113,6 +113,7 @@ createMap = async (req, res) => {
         let tiles = []
         let tilesets = []
         let isPublic = false
+        let isEditable = false
 
         map = new Map({
 
@@ -128,12 +129,14 @@ createMap = async (req, res) => {
             ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
+            isEditable: isEditable,
             layers: layers,
             likes: [],
             dislikes: [],
             favs: [],
             downloads: 0,
             comments: [],
+            creationDate: Date.now()
 
         })
 
@@ -166,7 +169,7 @@ createMap = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        res.status(500).send()
+        return res.status(500).send()
     }
 
 }
@@ -262,7 +265,8 @@ updateMap = async (req, res) => {
 
         // Changes all the present fields
         const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
-            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs, downloads, comments } = req.body;
+            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs,
+            downloads, comments, isEditable } = req.body;
 
         if (mapName) {
             if (mapName == "") {
@@ -309,6 +313,8 @@ updateMap = async (req, res) => {
             map.collaboratorIds = collaboratorIds
         if (isPublic)
             map.isPublic = isPublic
+        if (isEditable)
+            map.isEditable = isEditable
         if (layers)
             map.layers = layers
         if (likes)
@@ -409,7 +415,8 @@ publishMap = async (req, res) => {
 
 getAllUserMaps = async (req, res) => {
 
-    const { ownerId } = req.query;
+    console.log("GETTING ALL USER MAPS...")
+    const { ownerId } = req.params;
     await Map.find({ ownerId: ownerId }, (err, maps) => {
 
         if (err) {
@@ -448,18 +455,88 @@ getAllUserMaps = async (req, res) => {
                     ownerId: map.ownerId,
                     collaboratorIds: map.collaboratorIds,
                     isPublic: map.isPublic,
+                    isEditable: map.isEditable,
                     layers: map.layers,
                     likes: map.likes,
                     dislikes: map.dislikes,
                     favs: map.favs,
                     downloads: map.downloads,
-                    comments: map.comments
+                    comments: map.comments,
+                    creationDate: map.creationDate
 
                 }
 
                 mapsData.push(mapData)
 
             }
+            console.log(mapsData)
+            return res.status(200).json({
+                success: true,
+                maps: mapsData
+            })
+        }
+    }).catch(err => console.log(err));
+
+}
+
+getAllUserAsCollaboratorMaps = async (req, res) => {
+
+    let { id } = req.params;
+    // id = mongoose.Types.ObjectId(id)
+    await Map.find({}, (err, maps) => {
+
+        if (err) {
+            return res.status(400).json({
+                success: false,
+                error: err
+            })
+        }
+
+        if (!maps) {
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    error: "Maps could not be found"
+                })
+        }
+        else {
+            // Alls all User's Maps to array of data
+            let mapsData = [];
+            for (key in maps) {
+
+                let map = maps[key]
+                let mapData = null
+
+                if (map.collaboratorIds.includes(id)) {
+                    mapData = {
+                        _id: map._id,
+                        mapName: map.mapName,
+                        mapDescription: map.mapDescription,
+                        mapBackgroundColor: map.mapBackgroundColor,
+                        mapHeight: map.mapHeight,
+                        mapWidth: map.mapWidth,
+                        tileHeight: map.tileHeight,
+                        tileWidth: map.tileWidth,
+                        tiles: map.tiles,
+                        tilesets: map.tilesets,
+                        ownerId: map.ownerId,
+                        collaboratorIds: map.collaboratorIds,
+                        isPublic: map.isPublic,
+                        isEditable: map.isEditable,
+                        layers: map.layers,
+                        likes: map.likes,
+                        dislikes: map.dislikes,
+                        favs: map.favs,
+                        downloads: map.downloads,
+                        comments: map.comments,
+                        creationDate: map.creationDate
+                    }
+                    mapsData.push(mapData)
+                }
+
+            }
+
             return res.status(200).json({
                 success: true,
                 maps: mapsData
@@ -514,12 +591,14 @@ getMapsByName = async (req, res) => {
                         ownerId: map.ownerId,
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
+                        isEditable: map.isEditable,
                         layers: map.layers,
                         likes: map.likes,
                         dislikes: map.dislikes,
                         favs: map.favs,
                         downloads: map.downloads,
-                        comments: map.comments
+                        comments: map.comments,
+                        creationDate: creationDate
 
                     }
 
@@ -588,11 +667,11 @@ getAllPublicMapsOnPage = async (req, res) => {
         { $limit: limit },
         { $sort: { ratio: -1 } }
     ])
-    return res.status(200).json({
-        success: true,
-        count: rangeMap.length,
-        maps: rangeMap
-    }).send();
+    // return res.status(200).json({
+    //     success: true,
+    //     count: rangeMap.length,
+    //     maps: rangeMap
+    // }).send();
 }
 
 var getAllPublicProjects = async (req, res) => {
@@ -733,6 +812,7 @@ var addUserToMap = async (req, res) => {
 
 module.exports = {
     getAllUserMaps,
+    getAllUserAsCollaboratorMaps,
     getMapsByName,
     getMapbyId,
     createMap,

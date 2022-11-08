@@ -54,6 +54,10 @@ const mapSchema = new Schema({
         type: Boolean,
         required: true,
     },
+    isEditable: {
+        type: Boolean,
+        required: true,
+    },
     layers: {
         type: [Layer],
         required: false

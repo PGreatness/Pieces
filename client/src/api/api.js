@@ -3,8 +3,8 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    //baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 
@@ -19,6 +19,11 @@ export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 
 
+export const getAllUserMaps = (userId) => api.get(`/map/getAllUserMaps/${userId}/`)
+export const getAllUserAsCollaboratorMaps = (id) => api.get(`/map/getAllUserAsCollaboratorMaps/${id}/`)
+export const getUserAndCollabMaps = (id) => api.get(`/ownerAndCollabOf/`, {params: id})
+
+
 export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const registerUser = (payload) => api.post(`/register/`, payload)
 export const loginUser = (payload) => api.get(`/login/`, {params: payload})
@@ -30,6 +35,8 @@ export const changePage = (page, limit) => api.get(`/changePage`, page, {params:
 
 const apis = {
     getAllPublicProjects,
+    getAllUserMaps,
+    getUserAndCollabMaps,
     getMapById,
     updateMap,
     getTilesetById,

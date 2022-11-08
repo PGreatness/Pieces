@@ -4,6 +4,7 @@ const Notification = require('../models/notification-model')
 const Image = require('../models/image-model')
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcryptjs')
+const mongoose = require('mongoose')
 const nodemailer = require("nodemailer");
 const emailUtil = require("../utils/emails");
 const config = require("config");
@@ -61,7 +62,7 @@ loginUser = async (req, res) => {
         }
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        return res.status(500).send();
     }
 }
 
@@ -136,7 +137,7 @@ forgotPassword = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        return res.status(500).send();
     }
 }
 
@@ -382,7 +383,7 @@ resetPassword = async (req, res) => {
     }
 }
 
-var getOwnerAndCollaboratorOfMaps = async (req, res) => {
+getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
     const { id } = req.query;
 
@@ -394,7 +395,7 @@ var getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
     var uid;
     try {
-        uid = ObjectId(id);
+        uid = new ObjectId(id);
     } catch (err) {
         return res
             .status(400)
