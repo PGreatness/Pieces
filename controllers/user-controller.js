@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 const nodemailer = require("nodemailer");
 const emailUtil = require("../utils/emails");
 const config = require("config");
+const Map = require('../models/map-model');
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
