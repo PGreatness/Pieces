@@ -178,7 +178,7 @@ function GlobalStoreContextProvider(props) {
                 
                 if(response.data.success){
                     setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjects(); 
+                    store.loadPublicProjectComments(); 
                 }
             }
 

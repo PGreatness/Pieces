@@ -23,26 +23,26 @@ import AuthContext from '../../../auth/auth';
 export default function ExploreCommentsItem(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    const comments = props.project;
+    const comment = props.comment;
     console.log("Am I making it here?")
-    console.log(comments)
+    console.log(comment)
 
-    const [likes, setLikes] = useState(comments.likes.length); 
-    const [dislikes, setDislikes] = useState(comments.dislikes.length);
-    const [isLiked, setIsLiked] = useState(comments.likes.includes(auth.user?._id));
-    const [isDisliked, setIsDisliked] = useState(comments.dislikes.includes(auth.user?._id));
+    const [likes, setLikes] = useState(comment.likes.length); 
+    const [dislikes, setDislikes] = useState(comment.dislikes.length);
+    const [isLiked, setIsLiked] = useState(comment.likes.includes(auth.user?._id));
+    const [isDisliked, setIsDisliked] = useState(comment.dislikes.includes(auth.user?._id));
 
     useEffect(() => {
-        setLikes(comments.likes.length);
-        setDislikes(comments.dislikes.length);
-        setIsLiked(comments.likes.includes(auth.user?._id));
-        setIsDisliked(comments.dislikes.includes(auth.user?._id));
+        setLikes(comment.likes.length);
+        setDislikes(comment.dislikes.length);
+        setIsLiked(comment.likes.includes(auth.user?._id));
+        setIsDisliked(comment.dislikes.includes(auth.user?._id));
     },[]);
 
 
     const handleLikeClick = (event) => {
         event.stopPropagation();
-        store.updateCommentLikes(comments._id, (like_arr, dislike_arr) => {
+        store.updateCommentLikes(comment._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?.userName));
@@ -62,12 +62,12 @@ export default function ExploreCommentsItem(props) {
                 </ListItemAvatar>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >{comments.userId}</ListItem>
-                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@{comments.userId}</ListItem>
+                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >{comment.userId}</ListItem>
+                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@{comment.userId}</ListItem>
                 </ListItem>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{comments.dateCreated}</div>
+                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{comment.dateCreated}</div>
                     <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
                         <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }} onClick={handleLikeClick}></ThumbUpIcon>
                         <div>{likes}</div>
@@ -82,7 +82,7 @@ export default function ExploreCommentsItem(props) {
 
             <ListItem style={{ paddingTop: "0px"}}>
                 <ListItem sx={{ fontSize: "20px", px: 1}}>
-                    {comments.text}
+                    {comment.text}
                 </ListItem>
             </ListItem>
 

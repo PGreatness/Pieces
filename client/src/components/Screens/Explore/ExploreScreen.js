@@ -18,11 +18,11 @@ export default function ExploreScreen(props) {
          display:'flex', zIndex:0, position: 'relative'}}>
             {!showComments? (<Explore setLoc={props.setLoc}
                 setShowComments={() => {
+                    store.loadPublicProjectComments();
                     setShowComments(true);
                 }}
             />): (<ExploreComments
                 setShowComments={() => {
-                    store.loadPublicProjectComments();
                     setShowComments(false);
                 }}
             />)}

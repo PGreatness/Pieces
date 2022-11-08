@@ -20,9 +20,6 @@ export default function Explore(props) {
     const { auth } = useContext(AuthContext);
 
     const projects = store.publicProjects
-    //console.log(projects)
-    const comments = store.projectComments
-    console.log(comments)
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);

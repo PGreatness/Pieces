@@ -25,9 +25,8 @@ export default function ExploreComments(props) {
     // console.log("hello");
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    // useEffect(() => {
-    //     store.loadPublicProjectComments();
-    // }, [])
+
+    let test = props.loadStore;
     const comments = store.projectComments;
     console.log(comments)
     return (
@@ -89,8 +88,7 @@ export default function ExploreComments(props) {
 
                     {comments.map((entry) => (
                         <ExploreCommentsItem
-                            setShowComments={props.setShowComments}
-                            project={entry}
+                            comment={entry}
                         />))
                     }
 
