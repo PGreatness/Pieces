@@ -616,7 +616,7 @@ var getAllPublicProjects = async (req, res) => {
     }
 
     if (!limit) {
-        limit = 10;
+        limit = 20;
     }
 
     if (Number.isNaN(+page) || Number.isNaN(+limit)) {
@@ -647,6 +647,7 @@ var getAllPublicProjects = async (req, res) => {
     limit = Number(limit);
     const rangeProject = await Map.aggregate([
         { $match: { isPublic: true } },
+        { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
         { $sort: { createdAt: -1 } },
         { $skip: startIndex },
         { $limit: limit },

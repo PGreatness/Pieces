@@ -16,6 +16,7 @@ router.get('/logout/', UserController.logoutUser)
 router.get('/users/userId/:id', UserController.getUserbyId)
 router.get('/users/username/:username', UserController.getUserbyUsername)
 router.get('/forgotPassword', UserController.forgotPassword)
+router.get('/ownerAndCollabOf', UserController.getOwnerAndCollaboratorOfMaps)
 
 router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
@@ -66,5 +67,8 @@ router.get('/chat/fetchChat', ChatController.fetchChat)
 router.post('/chat/newChat', ChatController.createChat)
 router.post('/chat/deleteChat', ChatController.deleteChat)
 router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
+
+// Other Routes
+router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
 
 module.exports = router
