@@ -16,12 +16,16 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import img from '../../images/map.jpg'
 import './css/explore.css';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 
 export default function ExploreComments(props) {
+    console.log("hello");
     const { store } = useContext(GlobalStoreContext);
-    const comments = store.projectComments
+    useEffect(() => {
+        store.loadPublicProjectComments();
+    }, [])
+    const comments = store.projectComments;
     console.log(comments)
     return (
         <Box style={{ width: '100%', display: 'flex', alignItems: 'flex-start', 
