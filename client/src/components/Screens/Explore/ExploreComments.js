@@ -18,6 +18,7 @@ import img from '../../images/map.jpg'
 import './css/explore.css';
 import { useContext, useEffect } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
+import ExploreCommentsItem from './ExploreCommentsItem'
 
 export default function ExploreComments(props) {
     console.log("hello");
@@ -87,47 +88,12 @@ export default function ExploreComments(props) {
                     <List style={{ display: 'flex', flexDirection: 'column', width: "100%"}}>
 
 
-                        <ListItem style={{
-                            display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
-                            backgroundColor: "rgb(217, 217, 217, 0.1)", borderRadius: '30px'
-                        }}>
-
-                            <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
-                                <ListItemAvatar >
-                                    <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
-                                </ListItemAvatar>
-
-                                <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >Mitchel Lockwood</ListItem>
-                                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@mitchL4</ListItem>
-                                </ListItem>
-
-                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                                    <div style={{ fontSize: "20px", marginRight: "15px"}}>10d</div>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                                        <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbUpIcon>
-                                        <div>30</div>
-                                    </ListItem>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                                        <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
-                                        <div>4</div>
-                                    </ListItem>
-                                </ListItem>
-
-                            </ListItem>
-
-                            <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItem sx={{ fontSize: "20px", px: 1}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
-                                Aliquam in hendrerit urna.  Pellentesque commodo lacus at sodales sodales.
-                                Quisque sagittis orci ut diam condimentum, vel euismod erat placerat.
-                                    Pellentesque sit amet sapien fringilla, mattis ligula magna...</ListItem>
-                            </ListItem>
-
-                        </ListItem>
-
-
-
-
+                    {comments.map((entry) => (
+                        <ExploreCommentsItem
+                            setShowComments={props.setShowComments}
+                            project={entry}
+                        />))
+                    }
 
                         <ListItem style={{
                             display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
