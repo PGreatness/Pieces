@@ -16,6 +16,7 @@ router.get('/logout/', UserController.logoutUser)
 router.get('/users/userId/:id', UserController.getUserbyId)
 router.get('/users/username/:username', UserController.getUserbyUsername)
 router.get('/forgotPassword', UserController.forgotPassword)
+router.get('/ownerAndCollabOf', UserController.getOwnerAndCollaboratorOfMaps)
 
 router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
