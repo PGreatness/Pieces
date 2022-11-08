@@ -60,7 +60,7 @@ const mapSchema = new Schema({
     },
     likes: {
         type: [ObjectId],
-        required: true,
+        required: false,
     },
     dislikes: {
         type: [ObjectId],

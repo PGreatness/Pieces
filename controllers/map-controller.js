@@ -246,18 +246,19 @@ updateMap = async (req, res) => {
         }
 
         if (!map) {
+            console.log('otherwise here')
             return res.status(404).json({
                 message: 'Map not found'
             })
         }
 
         // Checks if Map belongs to the User who is trying to delete it
-        if (!map.ownerId.equals(ownerObjectId)) {
-            return res.status(401).json({
-                err,
-                message: 'User does not have ownership of this Map',
-            })
-        }
+        // if (!map.ownerId.equals(ownerObjectId) && !map.collaboratorIds.includes(ownerObjectId)) {
+        //     return res.status(401).json({
+        //         err,
+        //         message: 'User does not have ownership of this Map',
+        //     })
+        // }
 
         // Changes all the present fields
         const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
@@ -537,7 +538,7 @@ getMapsByName = async (req, res) => {
 }
 
 getMapbyId = async (req, res) => {
-    const savedMap = await Map.findById(req.query.id);
+    const savedMap = await Map.findById(req.params.id);
     return res.status(200).json({
         map: savedMap
     }).send();
