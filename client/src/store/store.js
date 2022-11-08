@@ -150,6 +150,7 @@ function GlobalStoreContextProvider(props) {
 
     store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
         await api.getCommentbyId(id).then( response => {
+            console.log(response)
             let comment = response.data.comment;
             if(comment.likes.includes(auth.user._id)){
                 let index = comment.likes.indexOf(auth.user._id);

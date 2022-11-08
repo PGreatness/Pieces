@@ -96,7 +96,7 @@ getCommentbyId = async (req, res) => {
     const savedComment = await ProjectComment.findById(req.query.id);
     return res.status(200).json({
         comment: savedComment
-    }).send();
+    });
 }
 
 updateComment = async (req, res) => {
@@ -225,7 +225,7 @@ getAllProjectCommentsOnPage = async (req, res) => {
         success: true,
         count: rangeComments.length,
         comments: rangeComments
-    }).send();
+    });
 }
 
 module.exports = {
