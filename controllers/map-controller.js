@@ -415,10 +415,10 @@ publishMap = async (req, res) => {
 
 getAllUserMaps = async (req, res) => {
 
-    const { ownerId } = req.query;
+    console.log("GETTING ALL USER MAPS...")
+    const { ownerId } = req.params;
     await Map.find({ ownerId: ownerId }, (err, maps) => {
 
-        console.log(ownerId)
         if (err) {
             return res.status(400).json({
                 success: false,
@@ -469,6 +469,74 @@ getAllUserMaps = async (req, res) => {
                 mapsData.push(mapData)
 
             }
+            console.log(mapsData)
+            return res.status(200).json({
+                success: true,
+                maps: mapsData
+            })
+        }
+    }).catch(err => console.log(err));
+
+}
+
+getAllUserAsCollaboratorMaps = async (req, res) => {
+
+    let { id } = req.params;
+    // id = mongoose.Types.ObjectId(id)
+    await Map.find({}, (err, maps) => {
+
+        if (err) {
+            return res.status(400).json({
+                success: false,
+                error: err
+            })
+        }
+
+        if (!maps) {
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    error: "Maps could not be found"
+                })
+        }
+        else {
+            // Alls all User's Maps to array of data
+            let mapsData = [];
+            for (key in maps) {
+
+                let map = maps[key]
+                let mapData = null
+
+                if (map.collaboratorIds.includes(id)) {
+                    mapData = {
+                        _id: map._id,
+                        mapName: map.mapName,
+                        mapDescription: map.mapDescription,
+                        mapBackgroundColor: map.mapBackgroundColor,
+                        mapHeight: map.mapHeight,
+                        mapWidth: map.mapWidth,
+                        tileHeight: map.tileHeight,
+                        tileWidth: map.tileWidth,
+                        tiles: map.tiles,
+                        tilesets: map.tilesets,
+                        ownerId: map.ownerId,
+                        collaboratorIds: map.collaboratorIds,
+                        isPublic: map.isPublic,
+                        isEditable: map.isEditable,
+                        layers: map.layers,
+                        likes: map.likes,
+                        dislikes: map.dislikes,
+                        favs: map.favs,
+                        downloads: map.downloads,
+                        comments: map.comments,
+                        creationDate: map.creationDate
+                    }
+                    mapsData.push(mapData)
+                }
+
+            }
+
             return res.status(200).json({
                 success: true,
                 maps: mapsData
@@ -599,11 +667,11 @@ getAllPublicMapsOnPage = async (req, res) => {
         { $limit: limit },
         { $sort: { ratio: -1 } }
     ])
-    return res.status(200).json({
-        success: true,
-        count: rangeMap.length,
-        maps: rangeMap
-    }).send();
+    // return res.status(200).json({
+    //     success: true,
+    //     count: rangeMap.length,
+    //     maps: rangeMap
+    // }).send();
 }
 
 var getAllPublicProjects = async (req, res) => {
@@ -744,6 +812,7 @@ var addUserToMap = async (req, res) => {
 
 module.exports = {
     getAllUserMaps,
+    getAllUserAsCollaboratorMaps,
     getMapsByName,
     getMapbyId,
     createMap,

@@ -8,8 +8,11 @@ export const GlobalStoreContext = createContext({});
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
     LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
+    LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
+    LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
-    GET_MAP_OWNER: "GET_MAP_OWNER"
+    GET_MAP_OWNER: "GET_MAP_OWNER",
+    SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST"
 }
 
 
@@ -21,6 +24,11 @@ function GlobalStoreContextProvider(props) {
     const [store, setStore] = useState({
         publicProjects: [],
         userMaps: [],
+        collabMaps: [],
+        userAndCollabMaps: [],
+        librarySortOption: "",
+        librarySortDirection: "",
+        sortedLibraryList: [],
         currentPage: "explore",
         mapOwner: null
     });
@@ -44,8 +52,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: payload,
                     userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
-                    mapOwner: store.mapOwner
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.librarySortOption,
+                    librarySortDirection: store.librarySortDirection,
+                    sortedLibraryList: store.sortedLibraryList
                 });
             }
 
@@ -53,8 +65,38 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: store.publicProjects,
                     userMaps: payload,
+                    collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
-                    mapOwner: store.mapOwner
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.librarySortOption,
+                    librarySortDirection: store.librarySortDirection,
+                    sortedLibraryList: store.sortedLibraryList
+                })
+            }
+
+            case GlobalStoreActionType.LOAD_ALL_USER_AS_COLLABORATOR_MAPS: {
+                return setStore({
+                    publicProjects: store.publicProjects,
+                    userMaps: store.userMaps,
+                    collabMaps: payload,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.librarySortOption,
+                    librarySortDirection: store.librarySortDirection,
+                    sortedLibraryList: store.sortedLibraryList
+                })
+            }
+
+            case GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS: {
+                return setStore({
+                    publicProjects: store.publicProjects,
+                    userMaps: payload.userMaps,
+                    collabMaps: payload.collabMaps,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.librarySortOption,
+                    librarySortDirection: store.librarySortDirection,
+                    sortedLibraryList: store.sortedLibraryList
                 })
             }
 
@@ -62,8 +104,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: payload.publicProjects,
                     userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
                     currentPage: payload.currentPage,
-                    mapOwner: store.mapOwner
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.librarySortOption,
+                    librarySortDirection: store.librarySortDirection,
+                    sortedLibraryList: store.sortedLibraryList
                 });
             }
 
@@ -71,9 +117,26 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: store.publicProjects,
                     userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
-                    mapOwner: payload
+                    mapOwner: payload,
+                    librarySortOption: store.librarySortOption,
+                    librarySortDirection: store.librarySortDirection,
+                    sortedLibraryList: store.sortedLibraryList
                 });
+            }
+
+            case GlobalStoreActionType.SET_LIBRARY_SORTED_LIST: {
+                return setStore({
+                    publicProjects: store.publicProjects,
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    librarySortOption: payload.sortOpt,
+                    librarySortDirection: payload.sortDir,
+                    sortedLibraryList: payload.allMaps
+                })
             }
 
             default:
@@ -107,21 +170,59 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.loadAllUserMaps = async function(id) {
+    store.loadAllUserMaps = async function(userId) {
 
-        const response = await api.getAllUserMaps(id);
+        const response = await api.getAllUserMaps(userId);
         if (response.data.success) {
             let userMaps = response.data.maps;
             storeReducer({
                 type: GlobalStoreActionType.LOAD_ALL_USER_MAPS,
                 payload: userMaps
             })
+            return userMaps;
         }
         else {
             console.log("API FAILED TO FETCH USER MAPS.")
             console.log(response)
         }
 
+    }
+
+    store.loadAllUserAsCollaboratorMaps = async function(id) {
+        const response = await api.getAllUserAsCollaboratorMaps(id);
+        if (response.data.success) {
+            let collabMaps = response.data.maps;
+            console.log(collabMaps)
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_ALL_USER_AS_COLLABORATOR_MAPS,
+                payload: collabMaps
+            })
+            return collabMaps;
+        }
+        else {
+            console.log("API FAILED TO FETCH USER AS COLLABORATOR MAPS.")
+            console.log(response)
+        }
+
+    }
+
+    store.loadUserAndCollabMaps = async function(id) {
+
+        const response = await api.getUserAndCollabMaps({"id": id});
+        if (response.data.success) {
+            let userMaps = response.data.owner;
+            let collabMaps = response.data.collaborator;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS,
+                payload: {
+                    userMaps: userMaps,
+                    collabMaps: collabMaps
+                }
+            })
+        }
+        else {
+            console.log("API FAILED TO FETCH USER AND COLLAB MAPS")
+        }
     }
 
 
@@ -255,6 +356,283 @@ function GlobalStoreContextProvider(props) {
             }
             updatingMap(map)
         });
+    }
+
+    store.setLibrarySort = async function (sortOpt, sortDir) {
+
+        let allMaps = store.collabMaps.concat(store.userMaps)
+        switch(sortOpt) {
+            case 'name':
+                if (sortDir === "up") {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.mapName
+                        let b = map2.mapName
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) { 
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                else {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.mapName
+                        let b = map2.mapName
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) { 
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                break;
+            case 'date':
+                if (sortDir === "up") {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.createdAt
+                        let b = map2.createdAt
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) { 
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                else {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.createdAt
+                        let b = map2.createdAt
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) { 
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                break;
+            // case 'popular':
+            //     if (sortDir === 'up') {
+            //         allMaps.sort((map1, map2) => {
+            //             let a = 0
+            //             let b = 0
+            //             if (map1.dislikes.length > 0) {
+            //                 a = map1.likes.length / map1.dislikes.length
+            //             }
+            //             else {
+            //                 a = map1.likes.length
+            //             }
+            //             if (map2.dislikes.length > 0) {
+            //                 b = map2.likes.length / map2.dislikes.length
+            //             }
+            //             else {
+            //                 b = map2.likes.length
+            //             }
+            //             if (a > b) {
+            //                 return -1;
+            //             }
+            //             else if (b > a) { 
+            //                 return 1;
+            //             }
+            //             else {
+            //                 return 0
+            //             }
+            //         });
+            //         storeReducer({
+            //             type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+            //             payload: {
+            //                 "allMaps": allMaps,
+            //                 "sortDir": sortDir,
+            //                 "sortOpt": sortOpt
+            //             }
+            //         })
+            //     }
+            //     else {
+            //         allMaps.sort((map1, map2) => {
+            //             let a = 0
+            //             let b = 0
+            //             if (map1.dislikes.length > 0) {
+            //                 a = map1.likes.length / map1.dislikes.length
+            //             }
+            //             else {
+            //                 a = map1.likes.length
+            //             }
+            //             if (map2.dislikes.length > 0) {
+            //                 b = map2.likes.length / map2.dislikes.length
+            //             }
+            //             else {
+            //                 b = map2.likes.length
+            //             }
+            //             if (a > b) {
+            //                 return 1;
+            //             }
+            //             else if (b > a) { 
+            //                 return -1;
+            //             }
+            //             else {
+            //                 return 0
+            //             }
+            //         });
+            //         storeReducer({
+            //             type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+            //             payload: {
+            //                 "allMaps": allMaps,
+            //                 "sortDir": sortDir,
+            //                 "sortOpt": sortOpt
+            //             }
+            //         })
+            //     }
+            //     break;
+            case 'liked':
+                if (sortDir === "up") {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.likes.length
+                        let b = map2.likes.length
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) { 
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                else {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.likes.length
+                        let b = map2.likes.length
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) { 
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                break;
+            case 'size':
+                if (sortDir === "up") {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.mapHeight * map1.mapWidth
+                        let b = map2.mapHeight * map2.mapWidth
+                        if (a > b) {
+                            return 1;
+                        }
+                        else if (b > a) { 
+                            return -1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+                else {
+                    allMaps.sort((map1, map2) => {
+                        let a = map1.mapHeight * map1.mapWidth
+                        let b = map2.mapHeight * map2.mapWidth
+                        if (a > b) {
+                            return -1;
+                        }
+                        else if (b > a) { 
+                            return 1;
+                        }
+                        else {
+                            return 0
+                        }
+                    });                    
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
+                        payload: {
+                            "allMaps": allMaps,
+                            "sortDir": sortDir,
+                            "sortOpt": sortOpt
+                        }
+                    })
+                }
+        }
     }
 
     return (

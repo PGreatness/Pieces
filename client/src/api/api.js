@@ -3,8 +3,8 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    //baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 
@@ -15,7 +15,10 @@ export const updateMap = (query, payload) => api.post(`/map/updateMap/`, payload
 
 
 
-export const getAllUserMaps = (id) => api.get('/map/getAllUserMap/${id}')
+export const getAllUserMaps = (userId) => api.get(`/map/getAllUserMaps/${userId}/`)
+export const getAllUserAsCollaboratorMaps = (id) => api.get(`/map/getAllUserAsCollaboratorMaps/${id}/`)
+export const getUserAndCollabMaps = (id) => api.get(`/ownerAndCollabOf/`, {params: id})
+
 
 export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const registerUser = (payload) => api.post(`/register/`, payload)
@@ -27,6 +30,7 @@ export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 const apis = {
     getAllPublicProjects,
     getAllUserMaps,
+    getUserAndCollabMaps,
     getMapById,
     updateMap,
 

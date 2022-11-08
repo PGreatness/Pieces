@@ -4,9 +4,11 @@ const Notification = require('../models/notification-model')
 const Image = require('../models/image-model')
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcryptjs')
+const mongoose = require('mongoose')
 const nodemailer = require("nodemailer");
 const emailUtil = require("../utils/emails");
 const config = require("config");
+const Map = require('../models/map-model')
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -381,9 +383,9 @@ resetPassword = async (req, res) => {
     }
 }
 
-var getOwnerAndCollaboratorOfMaps = async (req, res) => {
+getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
-    const { id } = req.body;
+    const { id } = req.query;
 
     if (!id) {
         return res
@@ -393,14 +395,14 @@ var getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
     var uid;
     try {
-        uid = mongoose.Types.ObjectId(id);
+        uid = new ObjectId(id);
     } catch (err) {
         return res
             .status(400)
             .json({ message: "Invalid User ID" });
     }
 
-    const owner = await Map.find({ owner: uid });
+    const owner = await Map.find({ ownerId: uid });
     const collaborator = await Map.find({ collaboratorIds: { $elemMatch: {$eq: uid }} });
 
     return res.status(200).json({
