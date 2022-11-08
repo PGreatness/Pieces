@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Check, Clear } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import SortIcon from '@mui/icons-material/Sort';
 import Box from '@mui/material/Box';
@@ -9,7 +10,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowUpward from '@mui/icons-material/ArrowUpward';
 import ArrowDownward from '@mui/icons-material/ArrowDownward';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth';
 
@@ -24,6 +25,59 @@ export default function Explore(props) {
     const isFilterMenuOpen = Boolean(anchorEl2);
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+
+    // Filtering stuff
+    const [filterOptions, setFilterOptions] = useState([0, 0])
+    const [filterActive, setFilterActive] = useState(false)
+    const [filteredProjects, setFilteredProjects] = useState()
+
+    useEffect(() => {
+        if (filterActive || !filterActive) {
+            setSortDir("")
+            setSortOpt("")
+
+            let projs = store.publicProjects
+            let filtered = []
+
+            if (filterOptions[0] === 0 && filterOptions[1] === 0) {
+                filtered = projs
+            }
+            else {
+                // Filters by basic filters (check boxes)
+                for (let i = 0; i < projs.length; i++) {
+                    let proj = projs[i]
+
+                    // If project does not belong to user, remove
+                    if (filterOptions[0] === 1) {
+                        if (proj.ownerId.toString() === "6357194e0a81cb803bbb913e") {
+                            filtered.push(proj)
+                        }
+                    }
+                    // If project belongs to user, remove
+                    else if (filterOptions[0] === -1) {
+                        if (proj.ownerId.toString() !== "6357194e0a81cb803bbb913e") {
+                            filtered.push(proj)
+                        }
+                    }
+
+                    if (filterOptions[1] === 1) {
+                        if (proj.isPublic) {
+                            filtered.push(proj)
+                        }
+                    }
+                    else if (filterOptions[1] === -1) {
+                        if (!proj.isPublic) {
+                            filtered.push(proj)
+                        }
+                    }
+                }
+            }
+
+            console.log(filtered)
+            setFilteredProjects(filtered)
+        
+        }
+    }, [filterOptions])
 
     const projects = store.publicProjects
 
@@ -42,6 +96,39 @@ export default function Explore(props) {
     const handleFilterMenuClose = () => {
         setAnchorEl2(null);
     };
+
+    const handleFilterOwnedClick = () => {
+        
+        if (filterOptions[0] === 0) {
+            setFilterOptions([1, 0])
+            setFilterActive(true)
+        }
+        else if (filterOptions[0] === 1) {
+            setFilterOptions([-1, 0])
+            setFilterActive(true)
+        }
+        else if (filterOptions[0] === -1) {
+            setFilterOptions([0, 0])
+            setFilterActive(false)
+            setFilteredProjects(store.publicProjects)
+        }
+    }
+
+    // const handleFilterPublicClick = () => {
+    //     if (filterOptions[1] === 0) {
+    //         setFilterOptions([0, 1])
+    //         setFilterActive(true)
+    //     }
+    //     else if (filterOptions[1] === 1) {
+    //         setFilterOptions([0, -1])
+    //         setFilterActive(true)
+    //     }
+    //     else if (filterOptions[1] === -1) {
+    //         setFilterOptions([0, 0])
+    //         setFilterActive(false)
+    //         setFilteredProjects(store.publicProjects)
+    //     }
+    // }
 
     const handleSortClick = (event) => {
         handleSortMenuClose();
@@ -183,11 +270,18 @@ export default function Explore(props) {
                 open={isFilterMenuOpen}
                 onClose={handleFilterMenuClose}
             >
-                <MenuItem>Rating</MenuItem>
-                <MenuItem>Size</MenuItem>
-                <MenuItem>Tags</MenuItem>
-                <MenuItem>Owned</MenuItem>
-                <MenuItem>Shared</MenuItem>
+                {filterOptions[0] === 0
+                    ? <MenuItem onClick={handleFilterOwnedClick}>Owned</MenuItem>
+                    : filterOptions[0] === 1
+                        ? <MenuItem onClick={handleFilterOwnedClick}>Owned <Check/></MenuItem>
+                        : <MenuItem onClick={handleFilterOwnedClick}>Owned <Clear/></MenuItem>
+                }
+                {/* {filterOptions[1] === 0
+                    ? <MenuItem onClick={handleFilterPublicClick}>Is Public</MenuItem>
+                    : filterOptions[1] === 1
+                        ? <MenuItem onClick={handleFilterPublicClick}>Is Public <Check/></MenuItem>
+                        : <MenuItem onClick={handleFilterPublicClick}>Is Public <Clear/></MenuItem>
+                } */}
             </Menu>
 
 
@@ -198,18 +292,31 @@ export default function Explore(props) {
                 display: 'flex', alignItems: 'flex-start', flexDirection: 'column', maxHeight: '100%',
                 width: '100%', overflow: 'auto', paddingLeft: '10px', borderRadius: '30px'
             }}>
-                {projects.map((entry) => (
-
-                    entry.mapName ? (<ExploreMapItem
-                        setLoc={props.setLoc}
-                        setShowComments={props.setShowComments}
-                        project={entry}
-                    />) : (<ExploreTilesetItem
-                        setLoc={props.setLoc}
-                        setShowComments={props.setShowComments}
-                        project={entry}
-                    />)
-                ))}
+                {
+                    !filterActive
+                    ?   projects.map((entry) => (
+                            entry.mapName ? (<ExploreMapItem
+                                setLoc={props.setLoc}
+                                setShowComments={props.setShowComments}
+                                project={entry}
+                            />) : (<ExploreTilesetItem
+                                setLoc={props.setLoc}
+                                setShowComments={props.setShowComments}
+                                project={entry}
+                            />)
+                        ))
+                    :   filteredProjects.map((entry) => (
+                            entry.mapName ? (<ExploreMapItem
+                                setLoc={props.setLoc}
+                                setShowComments={props.setShowComments}
+                                project={entry}
+                            />) : (<ExploreTilesetItem
+                                setLoc={props.setLoc}
+                                setShowComments={props.setShowComments}
+                                project={entry}
+                            />)
+                        ))
+                }
                 {/* Shouldnt count here be projects.length/limit(=10) */}
                 <MakePaginations count={projects.length} />
 
