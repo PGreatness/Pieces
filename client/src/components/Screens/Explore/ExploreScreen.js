@@ -22,6 +22,7 @@ export default function ExploreScreen(props) {
                 }}
             />): (<ExploreComments
                 setShowComments={() => {
+                    store.loadPublicProjectComments();
                     setShowComments(false);
                 }}
             />)}

@@ -22,12 +22,12 @@ import ExploreCommentsItem from './ExploreCommentsItem'
 import AuthContext from '../../../auth/auth';
 
 export default function ExploreComments(props) {
-    console.log("hello");
+    // console.log("hello");
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    useEffect(() => {
-        store.loadPublicProjectComments();
-    }, [])
+    // useEffect(() => {
+    //     store.loadPublicProjectComments();
+    // }, [])
     const comments = store.projectComments;
     console.log(comments)
     return (
@@ -38,9 +38,6 @@ export default function ExploreComments(props) {
                 <KeyboardBackspaceIcon className="back_icon" onClick={props.setShowComments}></KeyboardBackspaceIcon>
                 <div className="comment_title">Comments</div>
             </Box>
-
-
-
 
             <Box style={{
                 display: 'flex', flexDirection: 'column',
