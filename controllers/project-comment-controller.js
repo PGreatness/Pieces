@@ -16,6 +16,8 @@ var createComment = function(req, res) {
         userId,
         text,
         dateCreated,
+        likes: [],
+        dislikes: [],
     });
     newComment.save()
     .then((comment) => {
@@ -90,6 +92,79 @@ var deleteCommentsOfProject = function(req, res) {
     });
 }
 
+updateComment = async (req, res) => {
+
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    // Checks if request contains any body data
+    const body = req.body
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: "No body was given by the client",
+        })
+    }
+
+    ProjectComment.findOne({ _id: id }, async (err, comment) => {
+
+        // Checks if comment exists
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: "Comment not found"
+            })
+        }
+
+        if (!comment) {
+            return res.status(404).json({
+                message: 'comment not found'
+            })
+        }
+
+        // Changes all the present fields
+        const { _id, text, likes, dislikes } = req.body;
+        if (text) {
+            // Checks if comment belongs to the User who is trying to delete it
+            if (!comment.ownerId.equals(ownerObjectId)) {
+                return res.status(401).json({
+                    err,
+                    message: 'User does not have ownership of this comment',
+                })
+            }
+            if (text == "") {
+                text = "Comment left blank."
+            }
+            comment.text = text
+        }
+        if (likes)
+            comment.likes = likes
+        if (dislikes)
+            comment.dislikes = dislikes
+
+        // Attempts to save updated comment
+        comment
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: comment._id,
+                    message: 'Comment was successfully updated',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Comment was not updated',
+                })
+            })
+
+
+        //
+    })
+
+}
+
 getAllProjectCommentsOnPage = async (req, res) => {
     var { page } = req.query;
     var { limit } = req.body;
@@ -151,4 +226,6 @@ module.exports = {
     deleteComment,
     deleteCommentsOfProject,
     getComments,
+    updateComment,
+    getAllProjectCommentsOnPage
 };

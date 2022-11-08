@@ -30,7 +30,9 @@ router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
 router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
 router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
-router.get('/map/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
+
+router.post('/comments/updateComment', ProjectCommentController.updateComment)
+router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
