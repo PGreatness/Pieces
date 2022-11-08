@@ -1,7 +1,7 @@
 const Tileset = require('../models/tileset-model')
 var mongoose = require('mongoose');
 const User = require('../models/user-model')
-const ProjectComments = require('../models/project-comments-model')
+const ProjectComments = require('../models/project-comment-model')
 
 createTileset = async (req, res) => {
     try {
