@@ -34,11 +34,18 @@ export default function NavbarAppOptions(props) {
 
     useEffect(() => {
         auth.getLoggedIn(store); 
-        setLoggedIn(auth.user? true:false);
-        console.log(loggedIn)
+        console.log(auth.user)
+        if (auth.user == null){
+            setLoggedIn(false);
+        } else {
+            props.changeLoc('/explore')
+            setLoggedIn(true);
+            navigate("/explore")
+        }
+
     }, []);
 
-    console.log(loggedIn)
+
     const handleLogin = () => {
         props.changeLoc('/explore')
 
@@ -49,7 +56,6 @@ export default function NavbarAppOptions(props) {
         
         setLoggedIn(true)
         store.changePageToExplore();
-        //console.log('fetched the maps');
         navigate("/explore")
     }
 
@@ -61,8 +67,10 @@ export default function NavbarAppOptions(props) {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={() => {props.changeLoc('/explore');navigate("/explore")}} >Explore</h1>
-                    <h1 onClick={() => {props.changeLoc('/library');navigate("/library")}} >Library</h1>
+                    <h1 onClick={() => {props.changeLoc('/explore');
+                    navigate("/explore"); store.changePageToExplore(); }} >Explore</h1>
+                    <h1 onClick={() => {props.changeLoc('/library');
+                    navigate("/library"); store.changePageToLibrary()}} >Library</h1>
                     <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>
             )
@@ -99,6 +107,14 @@ export default function NavbarAppOptions(props) {
     }
 
     const createSearchBar = () => {
+
+
+        const handleSearchChange = (e) => {
+            if(e.keyCode == 13){
+                store.changeSearchName(e.target.value)
+            }
+        }
+
         const createSearchIcon = () => {
             return (
                 <InputAdornment position="start">
@@ -108,7 +124,7 @@ export default function NavbarAppOptions(props) {
         }
         return loggedIn ? (
             <>
-                <WideInput placeholder="Search" startAdornment={createSearchIcon()}/>
+                <WideInput placeholder="Search..." onKeyDown={handleSearchChange} startAdornment={createSearchIcon()}/>
             </>
         ) : (<></>);
     }

@@ -5,7 +5,6 @@ import Explore from './Explore'
 import ExploreComments from './ExploreComments'
 import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth';
-import MakePaginations from './MakePaginations';
 
 export default function ExploreScreen(props) {
     const [showComments, setShowComments] = useState(false);
@@ -16,7 +15,8 @@ export default function ExploreScreen(props) {
         <>
         <Box style={{height: '100%', width: '80vw', color: 'white', backgroundColor: '#1F293A',
          display:'flex', zIndex:0, position: 'relative'}}>
-            {!showComments? (<Explore setLoc={props.setLoc}
+            {!showComments? (<Explore 
+                setLoc={props.setLoc}
                 setShowComments={() => {
                     store.loadPublicProjectComments();
                     setShowComments(true);
@@ -27,7 +27,6 @@ export default function ExploreScreen(props) {
                 }}
             />)}
         </Box>
-            <MakePaginations count={store.publicProjects.length}/>
         </>
     )
 }

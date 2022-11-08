@@ -62,7 +62,27 @@ const tilesetSchema = new Schema({
         type: [Tile],
         required: true,
     },
-});
+    likes: {
+        type: [ObjectId],
+        required: true,
+    },
+    comments: {
+        type: [ObjectId],
+        required: true,
+    },
+    dislikes: {
+        type: [ObjectId],
+        required: true,
+    },
+    favs: {
+        type: [ObjectId],
+        required: true,
+    },
+    downloads: {
+        type: Number,
+        required: true,
+    },
+}, { timestamps: true });
 
 const Tileset = model("Tileset", tilesetSchema);
 module.exports = Tileset;

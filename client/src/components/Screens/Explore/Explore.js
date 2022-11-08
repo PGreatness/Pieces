@@ -2,9 +2,13 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import SortIcon from '@mui/icons-material/Sort';
 import Box from '@mui/material/Box';
-import ExploreItem from './ExploreItem'
+import ExploreMapItem from './ExploreMapItem'
+import ExploreTilesetItem from './ExploreTilesetItem'
+import MakePaginations from './MakePaginations';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import ArrowUpward from '@mui/icons-material/ArrowUpward';
+import ArrowDownward from '@mui/icons-material/ArrowDownward';
 import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth';
@@ -12,6 +16,8 @@ import AuthContext from '../../../auth/auth';
 import './css/explore.css';
 
 export default function Explore(props) {
+    const [sortOpt, setSortOpt] = useState("");
+    const [sortDir, setSortDir] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
     const isSortMenuOpen = Boolean(anchorEl);
@@ -36,6 +42,30 @@ export default function Explore(props) {
     const handleFilterMenuClose = () => {
         setAnchorEl2(null);
     };
+
+    const handleSortClick = (event) => {
+        handleSortMenuClose();
+        console.log(event.target.innerText)
+
+        if (sortOpt != event.target.innerText) {
+            console.log('setting now?')
+            setSortOpt(event.target.innerText);
+            setSortDir("up");
+            store.changeExploreSort(event.target.innerText, "up");
+        }
+        else {
+            if (sortDir === "up") {
+                setSortDir("down");
+                store.changeExploreSort(event.target.innerText, "down");
+            }
+            else {
+                setSortDir("up");
+                store.changeExploreSort(event.target.innerText, "up");
+            }
+        }
+
+    }
+
 
     return (
         <Box style={{
@@ -74,12 +104,68 @@ export default function Explore(props) {
                 open={isSortMenuOpen}
                 onClose={handleSortMenuClose}
             >
-                <MenuItem>Project Name</MenuItem>
-                <MenuItem >Creation Date</MenuItem>
-                <MenuItem >Most Popular</MenuItem>
-                <MenuItem >Most Liked</MenuItem>
-                <MenuItem >Size</MenuItem>
-                <MenuItem >Creator Name</MenuItem>
+                {sortOpt === 'Project Name'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Project Name</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Project Name</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Project Name</MenuItem>
+                }
+                {sortOpt === 'Creation Date'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Creation Date</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Creation Date</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Creation Date</MenuItem>
+                }
+                {sortOpt === 'Most Downloaded'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Most Downloaded</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Most Downloaded</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Most Downloaded</MenuItem>
+                }
+                {sortOpt === 'Most Liked'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
+                }
+                {sortOpt === 'Size'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Size</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Size</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Size</MenuItem>
+                }
+
+
             </Menu>
 
             <Menu
@@ -113,15 +199,23 @@ export default function Explore(props) {
                 width: '100%', overflow: 'auto', paddingLeft: '10px', borderRadius: '30px'
             }}>
                 {projects.map((entry) => (
-                    <ExploreItem
+
+                    entry.mapName ? (<ExploreMapItem
+                        setLoc={props.setLoc}
                         setShowComments={props.setShowComments}
                         project={entry}
-                    />))
-                }
+                    />) : (<ExploreTilesetItem
+                        setLoc={props.setLoc}
+                        setShowComments={props.setShowComments}
+                        project={entry}
+                    />)
+                ))}
+                {/* Shouldnt count here be projects.length/limit(=10) */}
+                <MakePaginations count={projects.length} />
 
             </Box>
 
 
-        </Box>
+        </Box >
     )
 }

@@ -1,5 +1,7 @@
 const Tileset = require('../models/tileset-model')
 var mongoose = require('mongoose');
+const User = require('../models/user-model')
+const ProjectComments = require('../models/project-comment-model')
 
 createTileset = async (req, res) => {
     try {
@@ -9,7 +11,7 @@ createTileset = async (req, res) => {
                 .status(400)
                 .json({ message: "Empty required fields." })
         }
-        
+
         const objectOwnerId = mongoose.Types.ObjectId(ownerId)
         console.log(objectOwnerId)
 
@@ -59,7 +61,7 @@ createTileset = async (req, res) => {
         const tiles = []
 
         let newTileset = new Tileset({
-            tilesetName: tilesetName, 
+            tilesetName: tilesetName,
             tilesetDesc: tilesetDesc,
             tilesetTags: tilesetTags,
             tilesetBackgroundColor: tilesetBackgroundColor,
@@ -73,7 +75,12 @@ createTileset = async (req, res) => {
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
             isLocked: isLocked,
-            tiles: tiles
+            tiles: tiles,
+            likes: [],
+            dislikes: [],
+            comments: [],
+            favs: [],
+            downloads: 0
         });
 
         newTileset.save().then(() => {
@@ -90,7 +97,7 @@ createTileset = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        return res.status(500).send();
     }
 }
 
@@ -129,6 +136,18 @@ deleteTileset = async (req, res) => {
             })
         }
 
+        // Delete all the comments on the tileset
+        ProjectComments.deleteMany({ projectId: id }, (err, comments) => {
+            if (err) {
+                return res.status(400).json({
+                    err,
+                    message: 'Failed to delete comments',
+                })
+            }
+        })
+
+        // TODO: Delete the tileset from the User's favs list
+
         // Finds tileset with given id and deletes it
         Tileset.findByIdAndDelete(id, (err, tileset) => {
             return res.status(200).json({
@@ -143,13 +162,11 @@ deleteTileset = async (req, res) => {
 updateTileset = async (req, res) => {
     if (req.query.id == undefined) {
         return res.status(404).json({
-            err,
             message: 'ID empty',
         })
     }
     if (req.query.ownerId == undefined) {
         return res.status(404).json({
-            err,
             message: 'ownerId empty',
         })
     }
@@ -168,15 +185,16 @@ updateTileset = async (req, res) => {
         }
 
         // Checks if tileset belongs to the User who is trying to update it
-        if (!tileset.ownerId.equals(ObjectOwnerId)) {
-            return res.status(401).json({
-                err,
-                message: 'User does not have ownership of this tileset',
-            })
-        }
+        // if (!tileset.ownerId.equals(ObjectOwnerId)) {
+        //     return res.status(401).json({
+        //         err,
+        //         message: 'User does not have ownership of this tileset',
+        //     })
+        // }
 
         // Changes all the present fields
-        const { tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles } = req.body;
+        const { tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth,
+            padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles, likes, dislikes, favs, downloads, comments } = req.body;
 
         if (tilesetName) {
             if (tilesetName == "") {
@@ -233,6 +251,17 @@ updateTileset = async (req, res) => {
             tileset.isLocked = isLocked
         if (tiles)
             tileset.tiles = tiles
+        if (likes)
+            tileset.likes = likes
+        if (dislikes)
+            tileset.dislikes = dislikes
+        if (favs)
+            tileset.favs = favs
+        if (downloads)
+            tileset.downloads = downloads
+        if (comments)
+            tileset.comments = comments
+
 
         // Attempts to save updated tileset
         tileset.save().then(() => {
@@ -242,12 +271,12 @@ updateTileset = async (req, res) => {
                 message: 'Tileset was successfully updated',
             })
         })
-        .catch(error => {
-            return res.status(404).json({
-                error,
-                message: 'Tileset was not updated',
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Tileset was not updated',
+                })
             })
-        })
 
     })
 
@@ -369,10 +398,10 @@ getUserTilesetsByName = async (req, res) => {
 }
 
 getTilesetbyId = async (req, res) => {
-    const savedTileset = await Tileset.findById(req.query.id);
+    console.log(req.params)
+    const savedTileset = await Tileset.findById(req.params.id);
     if (savedTileset == null) {
         return res.status(404).json({
-            err,
             message: "Tileset not found"
         }).send();
     }
@@ -426,6 +455,74 @@ publishTileset = async (req, res) => {
 
     })
 
+}
+
+var addUserToTileset = async (req, res) => {
+
+    const { tilesetId, userId } = req.body;
+
+    if (!tilesetId || !userId) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a tilesetId and userId"
+        })
+    }
+
+    var tid;
+    var uid;
+    try {
+        tid = mongoose.Types.ObjectId(tilesetId);
+        uid = mongoose.Types.ObjectId(userId);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a valid tilesetId and userId"
+        })
+    }
+
+    var user = await User.findById(uid);
+    var tileset = await Tileset.findById(tid);
+
+    if (!user) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist"
+        })
+    }
+
+    if (!tileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Tileset does not exist"
+        })
+    }
+
+    if (tileset.ownerId.equals(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "User is already the owner of this tileset"
+        })
+    }
+
+    if (tileset.collaboratorIds.includes(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "User is already a collaborator of this tileset"
+        })
+    }
+
+    tileset.collaboratorIds.push(uid);
+    tileset.save().then(() => {
+        return res.status(200).json({
+            success: true,
+            message: "User was successfully added to tileset"
+        })
+    }).catch(err => {
+        return res.status(400).json({
+            success: false,
+            message: "User was not added to tileset"
+        })
+    })
 }
 
 module.exports = {

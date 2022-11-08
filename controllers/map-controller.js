@@ -134,6 +134,7 @@ createMap = async (req, res) => {
             favs: [],
             downloads: 0,
             comments: [],
+            creationDate: Date.now()
 
         })
 
@@ -166,7 +167,7 @@ createMap = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        res.status(500).send()
+        return res.status(500).send()
     }
 
 }
@@ -246,22 +247,24 @@ updateMap = async (req, res) => {
         }
 
         if (!map) {
+            console.log('otherwise here')
             return res.status(404).json({
                 message: 'Map not found'
             })
         }
 
         // Checks if Map belongs to the User who is trying to delete it
-        if (!map.ownerId.equals(ownerObjectId)) {
-            return res.status(401).json({
-                err,
-                message: 'User does not have ownership of this Map',
-            })
-        }
+        // if (!map.ownerId.equals(ownerObjectId) && !map.collaboratorIds.includes(ownerObjectId)) {
+        //     return res.status(401).json({
+        //         err,
+        //         message: 'User does not have ownership of this Map',
+        //     })
+        // }
 
         // Changes all the present fields
         const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
-            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs, downloads, comments } = req.body;
+            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs,
+            downloads, comments} = req.body;
 
         if (mapName) {
             if (mapName == "") {
@@ -408,7 +411,8 @@ publishMap = async (req, res) => {
 
 getAllUserMaps = async (req, res) => {
 
-    const { ownerId } = req.query;
+    console.log("GETTING ALL USER MAPS...")
+    const { ownerId } = req.params;
     await Map.find({ ownerId: ownerId }, (err, maps) => {
 
         if (err) {
@@ -452,13 +456,81 @@ getAllUserMaps = async (req, res) => {
                     dislikes: map.dislikes,
                     favs: map.favs,
                     downloads: map.downloads,
-                    comments: map.comments
+                    comments: map.comments,
+                    creationDate: map.creationDate
 
                 }
 
                 mapsData.push(mapData)
 
             }
+            console.log(mapsData)
+            return res.status(200).json({
+                success: true,
+                maps: mapsData
+            })
+        }
+    }).catch(err => console.log(err));
+
+}
+
+getAllUserAsCollaboratorMaps = async (req, res) => {
+
+    let { id } = req.params;
+    // id = mongoose.Types.ObjectId(id)
+    await Map.find({}, (err, maps) => {
+
+        if (err) {
+            return res.status(400).json({
+                success: false,
+                error: err
+            })
+        }
+
+        if (!maps) {
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    error: "Maps could not be found"
+                })
+        }
+        else {
+            // Alls all User's Maps to array of data
+            let mapsData = [];
+            for (key in maps) {
+
+                let map = maps[key]
+                let mapData = null
+
+                if (map.collaboratorIds.includes(id)) {
+                    mapData = {
+                        _id: map._id,
+                        mapName: map.mapName,
+                        mapDescription: map.mapDescription,
+                        mapBackgroundColor: map.mapBackgroundColor,
+                        mapHeight: map.mapHeight,
+                        mapWidth: map.mapWidth,
+                        tileHeight: map.tileHeight,
+                        tileWidth: map.tileWidth,
+                        tiles: map.tiles,
+                        tilesets: map.tilesets,
+                        ownerId: map.ownerId,
+                        collaboratorIds: map.collaboratorIds,
+                        isPublic: map.isPublic,
+                        layers: map.layers,
+                        likes: map.likes,
+                        dislikes: map.dislikes,
+                        favs: map.favs,
+                        downloads: map.downloads,
+                        comments: map.comments,
+                        creationDate: map.creationDate
+                    }
+                    mapsData.push(mapData)
+                }
+
+            }
+
             return res.status(200).json({
                 success: true,
                 maps: mapsData
@@ -518,7 +590,8 @@ getMapsByName = async (req, res) => {
                         dislikes: map.dislikes,
                         favs: map.favs,
                         downloads: map.downloads,
-                        comments: map.comments
+                        comments: map.comments,
+                        creationDate: creationDate
 
                     }
 
@@ -537,10 +610,10 @@ getMapsByName = async (req, res) => {
 }
 
 getMapbyId = async (req, res) => {
-    const savedMap = await Map.findById(req.query.id);
+    const savedMap = await Map.findById(req.params.id);
     return res.status(200).json({
         map: savedMap
-    }).send();
+    });
 }
 
 getAllPublicMapsOnPage = async (req, res) => {
@@ -584,28 +657,140 @@ getAllPublicMapsOnPage = async (req, res) => {
     const rangeMap = await Map.aggregate([
         { $match: { isPublic: true } },
         { $skip: startIndex },
-        {
-            $addFields: {
-                "ratio": {
-                    $cond: {
-                        if: { $eq: [{ $size: "$dislikes" }, 0] },
-                        then: { $size: "$likes" },
-                        else: { $divide: [{ $size: "$likes" }, { $size: "$dislikes" }] }
-                    }
-                }
-            }
-        },
         { $limit: limit },
         { $sort: { ratio: -1 } }
     ])
-    return res.status(200).json({
-        success: true,
-        count: rangeMap.length,
-        maps: rangeMap
-    }).send();
+    // return res.status(200).json({
+    //     success: true,
+    //     count: rangeMap.length,
+    //     maps: rangeMap
+    // }).send();
 }
 
-var addUserToMap = async (req, res) => {
+getAllPublicProjects = async (req, res) => {
+
+    var { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        page = 1;
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            message: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Limit must be greater than 0"
+        })
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
+    const rangeProject = await Map.aggregate([
+        { $match: { isPublic: true } },
+        { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
+        { $sort: { createdAt: -1 } },
+        { $skip: startIndex },
+        { $limit: limit },
+    ]);
+
+    return res.status(200).json({
+        success: true,
+        count: rangeProject.length,
+        projects: rangeProject
+    });
+}
+
+
+getPublicProjectsByName = async (req, res) => {
+    console.log('req.params')
+    console.log(req.params)
+
+    var name = req.params.name
+    var { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        page = 1;
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            message: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Limit must be greater than 0"
+        })
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
+    const rangeProject = await Map.aggregate([
+        { $match: { isPublic: true, mapName: { $regex: name, $options: "i"} }},
+        { $unionWith: { coll: 'tilesets', pipeline: [
+            { $match: {
+                isPublic: true,
+                tilesetName: {
+                    $regex: name,
+                    $options: "i"
+                }
+            }}
+        ] }},
+        { $sort: { createdAt: -1 } },
+        { $skip: startIndex },
+        { $limit: limit },
+    ]);
+
+    console.log("please god")
+    console.log(rangeProject)
+
+    return res.status(200).json({
+        success: true,
+        count: rangeProject.length,
+        projects: rangeProject
+    });
+}
+
+addUserToMap = async (req, res) => {
 
     const { mapId, requesterId } = req.body;
 
@@ -671,24 +856,25 @@ var addUserToMap = async (req, res) => {
     chosenMap.collaboratorIds.push(requesterId);
 
     chosenMap.save()
-    .then((map) => {
-        return res.status(200).json({
-            success: true,
-            message: "User added to map",
-            map: map
+        .then((map) => {
+            return res.status(200).json({
+                success: true,
+                message: "User added to map",
+                map: map
+            })
         })
-    })
-    .catch((err) => {
-        return res.status(400).json({
-            success: false,
-            message: "Error adding user to map",
-            error: err
+        .catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Error adding user to map",
+                error: err
+            })
         })
-    })
 }
 
 module.exports = {
     getAllUserMaps,
+    getAllUserAsCollaboratorMaps,
     getMapsByName,
     getMapbyId,
     createMap,
@@ -696,5 +882,7 @@ module.exports = {
     updateMap,
     publishMap,
     getAllPublicMapsOnPage,
-    addUserToMap
+    addUserToMap,
+    getAllPublicProjects,
+    getPublicProjectsByName
 }

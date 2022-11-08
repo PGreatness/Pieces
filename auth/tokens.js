@@ -17,7 +17,7 @@ function authManager() {
             const verified = jwt.verify(token, config.get("secrets.access_token"))
             req.userId = verified.userId;
 
-            next();
+            return next();
         } catch (err) {
             console.error(err);
             return res.status(401).json({
@@ -27,7 +27,7 @@ function authManager() {
     };
 
     signToken = function (user) {
-        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "3h" });
+        return jwt.sign({ userId: user._id }, config.get("secrets.access_token"), { expiresIn: "7d" });
     };
 
     verifyPasswordResetToken = function (user, token) {

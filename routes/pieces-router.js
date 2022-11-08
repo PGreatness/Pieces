@@ -17,6 +17,7 @@ router.get('/logout/', UserController.logoutUser)
 router.get('/users/userId/:id', UserController.getUserbyId)
 router.get('/users/username/:username', UserController.getUserbyUsername)
 router.get('/forgotPassword', UserController.forgotPassword)
+router.get('/ownerAndCollabOf', UserController.getOwnerAndCollaboratorOfMaps)
 
 router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
@@ -27,6 +28,7 @@ router.post('/resetPassword', UserController.resetPassword)
 
 // Map Routes
 router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
+router.get('/map/getAllUserAsCollaboratorMaps/:id', MapController.getAllUserAsCollaboratorMaps)
 router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
 router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
@@ -45,9 +47,9 @@ router.post('/map/addUserToMap', MapController.addUserToMap)
 
 
 // // TileSet Routes
-router.get('/tileset/userMaps/:ownerId', TilesetController.getAllUserTilesets)
-router.get('/tileset/userMapsByName/:tilesetName', TilesetController.getUserTilesetsByName)
-router.get('/tileset/userMapsById/:id', TilesetController.getTilesetbyId)
+router.get('/tileset/getAllUserTilesets/:ownerId', TilesetController.getAllUserTilesets)
+router.get('/tileset/getUserTilesetsByName/:tilesetName', TilesetController.getUserTilesetsByName)
+router.get('/tileset/getTilesetsById/:id', TilesetController.getTilesetbyId)
 
 router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
@@ -72,5 +74,10 @@ router.get('/chat/fetchChat', ChatController.fetchChat)
 router.post('/chat/newChat', ChatController.createChat)
 router.post('/chat/deleteChat', ChatController.deleteChat)
 router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
+
+// Other Routes
+router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
+router.get('/getPublicProjectsByName/:name', MapController.getPublicProjectsByName)
+router.get('/changePage', MapController.getAllPublicProjects)
 
 module.exports = router
