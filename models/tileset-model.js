@@ -82,7 +82,7 @@ const tilesetSchema = new Schema({
         type: Number,
         required: true,
     },
-});
+}, { timestamps: true });
 
 const Tileset = model("Tileset", tilesetSchema);
 module.exports = Tileset;

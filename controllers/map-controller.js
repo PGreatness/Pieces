@@ -585,17 +585,6 @@ getAllPublicMapsOnPage = async (req, res) => {
     const rangeMap = await Map.aggregate([
         { $match: { isPublic: true } },
         { $skip: startIndex },
-        {
-            $addFields: {
-                "ratio": {
-                    $cond: {
-                        if: { $eq: [{ $size: "$dislikes" }, 0] },
-                        then: { $size: "$likes" },
-                        else: { $divide: [{ $size: "$likes" }, { $size: "$dislikes" }] }
-                    }
-                }
-            }
-        },
         { $limit: limit },
         { $sort: { ratio: -1 } }
     ])
@@ -647,19 +636,7 @@ var getAllPublicProjects = async (req, res) => {
     limit = Number(limit);
     const rangeProject = await Map.aggregate([
         { $match: { isPublic: true } },
-        { $unionWith: { coll: "tilesets", pipeline: [{ $match: { isPublic: true } }] } },
-        {
-            $addFields: {
-                "ratio": {
-                    $cond: {
-                        if: { $eq: [{ $size: "$dislikes" }, 0] },
-                        then: { $size: "$likes" },
-                        else: { $divide: [{ $size: "$likes" }, { $size: "$dislikes" }] }
-                    }
-                }
-            }
-        },
-        { $sort: { ratio: -1 } },
+        { $sort: { createdAt: -1 } },
         { $skip: startIndex },
         { $limit: limit },
     ]);
