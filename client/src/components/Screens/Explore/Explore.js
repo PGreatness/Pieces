@@ -2,7 +2,8 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import SortIcon from '@mui/icons-material/Sort';
 import Box from '@mui/material/Box';
-import ExploreItem from './ExploreItem'
+import ExploreMapItem from './ExploreMapItem'
+import ExploreTilesetItem from './ExploreTilesetItem'
 import MakePaginations from './MakePaginations';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -115,14 +116,19 @@ export default function Explore(props) {
                 width: '100%', overflow: 'auto', paddingLeft: '10px', borderRadius: '30px'
             }}>
                 {projects.map((entry) => (
-                    <ExploreItem
+
+                    entry.mapName ? (<ExploreMapItem
                         setLoc={props.setLoc}
                         setShowComments={props.setShowComments}
                         project={entry}
-                    />))
-                }
+                    />) : (<ExploreTilesetItem
+                        setLoc={props.setLoc}
+                        setShowComments={props.setShowComments}
+                        project={entry}
+                    />)
+                ))}
                 {/* Shouldnt count here be projects.length/limit(=10) */}
-                <MakePaginations count={projects.length}/>
+                <MakePaginations count={projects.length} />
 
             </Box>
 

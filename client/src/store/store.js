@@ -159,7 +159,7 @@ function GlobalStoreContextProvider(props) {
         // Ahnaf is writing the getAllPublicProjects in the backend
         const response = await api.getAllPublicProjects();
         if (response.data.success) {
-            let publicProjects = response.data.maps;
+            let publicProjects = response.data.projects;
             storeReducer({
                 type: GlobalStoreActionType.LOAD_PUBLIC_PROJECTS,
                 payload: publicProjects
@@ -230,7 +230,7 @@ function GlobalStoreContextProvider(props) {
         const response = await api.getAllPublicProjects();
         if(response.data.success){
             console.log(response.data)
-            let publicProjects = response.data.maps;
+            let publicProjects = response.data.projects;
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
@@ -244,16 +244,8 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.getUserById = async function (id) {
-        const response = await api.getUserById(id);
-        if(response.status === 200){
-            console.log(response.data)
-            return response.data.user;
-        }
-    } 
 
-
-    store.updateLikes = async function (id, setLikeDislikeCallback) {
+    store.updateMapLikes = async function (id, setLikeDislikeCallback) {
         await api.getMapById(id).then( response => {
             let map = response.data.map;
             if(map.likes.includes(auth.user._id)){
@@ -293,7 +285,7 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    store.updateDislikes = async function (id, setLikeDislikeCallback) {
+    store.updateMapDislikes = async function (id, setLikeDislikeCallback) {
         await api.getMapById(id).then( response => {
             let map = response.data.map;
             if(map.dislikes.includes(auth.user._id)){
@@ -328,7 +320,7 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.updateFav = async function (id, setFavCallback) {
+    store.updateMapFav = async function (id, setFavCallback) {
         await api.getMapById(id).then( response => {
             let map = response.data.map;
             if(map.favs.includes(auth.user._id)){
@@ -357,6 +349,7 @@ function GlobalStoreContextProvider(props) {
             updatingMap(map)
         });
     }
+
 
     store.setLibrarySort = async function (sortOpt, sortDir) {
 
@@ -633,6 +626,114 @@ function GlobalStoreContextProvider(props) {
                     })
                 }
         }
+
+
+
+
+    store.updateTilesetLikes = async function (id, setLikeDislikeCallback) {
+        await api.getTilesetById(id).then( response => {
+            let tileset = response.data.tileset;
+            if(tileset.likes.includes(auth.user._id)){
+                let index = tileset.likes.indexOf(auth.user._id);
+                tileset.likes.splice(index, 1); 
+            } else if (tileset.dislikes.includes(auth.user._id)){
+                let index = tileset.dislikes.indexOf(auth.user._id);
+                tileset.dislikes.splice(index, 1); 
+                tileset.likes.push(auth.user._id); 
+            } else {
+                tileset.likes.push(auth.user._id); 
+            }
+
+
+            async function updatingTileset(tileset){
+                let payload = {
+                    likes: tileset.likes,
+                    dislikes: tileset.dislikes
+                };
+
+                let query = {
+                    id: tileset._id,
+                    ownerId: auth.user._id
+                }
+                console.log(tileset._id)
+                response = await api.updateTileset(query, payload); 
+                
+                if(response.data.success){
+                    setLikeDislikeCallback(tileset.likes, tileset.dislikes);
+                    store.loadPublicProjects(); 
+                }
+            }
+
+            updatingTileset(tileset)
+        });
+    }
+
+
+
+    store.updateTilesetDislikes = async function (id, setLikeDislikeCallback) {
+        await api.getTilesetById(id).then( response => {
+            let tileset = response.data.tileset;
+            if(tileset.dislikes.includes(auth.user._id)){
+                let index = tileset.dislikes.indexOf(auth.user._id);
+                tileset.dislikes.splice(index, 1); 
+            } else if (tileset.likes.includes(auth.user._id)){
+                let index = tileset.likes.indexOf(auth.user._id);
+                tileset.likes.splice(index, 1); 
+                tileset.dislikes.push(auth.user._id); 
+            } else {
+                tileset.dislikes.push(auth.user._id); 
+            }
+            async function updatingTileset(tileset){
+                let payload = {
+                    likes: tileset.likes,
+                    dislikes: tileset.dislikes
+                };
+                let query = {
+                    id: tileset._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateTileset(query, payload);
+                
+                if(response.data.success){
+                    setLikeDislikeCallback(tileset.likes, tileset.dislikes);
+                    store.loadPublicProjects();  
+                }
+            }
+            updatingTileset(tileset)
+        });
+    }
+
+
+    store.updateTilesetFav = async function (id, setFavCallback) {
+        await api.getTilesetById(id).then( response => {
+            let tileset = response.data.tileset;
+            if(tileset.favs.includes(auth.user._id)){
+                let index = tileset.favs.indexOf(auth.user._id);
+                tileset.favs.splice(index, 1); 
+            } else {
+                tileset.favs.push(auth.user._id); 
+            }
+
+            async function updatingTileset(tileset){
+                let payload = {
+                    favs: tileset.favs
+                };
+                let query = {
+                    id: tileset._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateTileset(query, payload);
+                
+                if(response.data.success){
+                    setFavCallback(tileset.favs);
+                    store.loadPublicProjects();  
+                }
+            }
+            updatingTileset(tileset)
+        });
+
     }
 
     return (

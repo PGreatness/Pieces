@@ -16,7 +16,7 @@ import api from '../../../api/api';
 import './css/explore.css';
 
 
-export default function ExploreItem(props) {
+export default function ExploreTilesetItem(props) {
     const navigate = useNavigate();
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
@@ -28,25 +28,12 @@ export default function ExploreItem(props) {
     const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
     const [isCollaborator, setIsCollaborator] = useState(project.collaboratorIds.includes(auth.user?._id));
-    const [mapOwner, setMapOwner] = useState(null);
 
-    useEffect(() => {
-
-        // setLikes(project.likes.length);
-        // setDislikes(project.dislikes.length);
-        // setIsLiked(project.likes.includes(auth.user?._id));
-        // setIsDisliked(project.dislikes.includes(auth.user?._id));
-        // setIsFav(project.favs.includes(auth.user?._id));
-
-        store.getUserById(project.ownerId)
-        setMapOwner(store.mapOwner);
-        
-    },[]);
 
 
     const handleLikeClick = (event) => {
         event.stopPropagation();
-        store.updateLikes(project._id, (like_arr, dislike_arr) => {
+        store.updateTilesetLikes(project._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?._id));
@@ -56,7 +43,7 @@ export default function ExploreItem(props) {
 
     const handleDislikeClick = (event) => {
         event.stopPropagation();
-        store.updateDislikes(project._id, (like_arr, dislike_arr) => {
+        store.updateTilesetDislikes(project._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?._id));
@@ -66,7 +53,7 @@ export default function ExploreItem(props) {
 
     const handleFavClick = (event) => {
         event.stopPropagation();
-        store.updateFav(project._id, (fav_arr) => {
+        store.updateTilesetFav(project._id, (fav_arr) => {
             setIsFav(fav_arr.includes(auth.user?._id));
         });
     }
@@ -82,7 +69,7 @@ export default function ExploreItem(props) {
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
-            <img class='image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+            <img class='image' src={require("../../images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
             {isCollaborator? 
             <LockOpenIcon className='lock_icon'></LockOpenIcon> :
             <LockIcon className='lock_icon'></LockIcon>
@@ -90,8 +77,8 @@ export default function ExploreItem(props) {
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <div class="project_title">{project.mapName}</div>
-                        <div class="project_username">{mapOwner}</div>
+                        <div class="project_title">{project.tilesetName}</div>
+                        <div class="project_desc">{project.tilesetDesc}</div>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>

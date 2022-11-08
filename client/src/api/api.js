@@ -8,11 +8,15 @@ const api = axios.create({
 })
 
 
-// Api.get getAllPublicProjects instead of getAllPublicMaps
-export const getAllPublicProjects = () => api.get(`/map/getAllPublicMaps/`)
+
+export const getAllPublicProjects = () => api.get(`/getAllPublicProjects/`)
+
+
 export const getMapById = (id) => api.get(`/map/getMapById/${id}/`)
 export const updateMap = (query, payload) => api.post(`/map/updateMap/`, payload, {params: query})
 
+export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
+export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 
 
 export const getAllUserMaps = (userId) => api.get(`/map/getAllUserMaps/${userId}/`)
@@ -27,18 +31,24 @@ export const logoutUser = () => api.get(`/logout/`)
 
 export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 
+export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
+
 const apis = {
     getAllPublicProjects,
     getAllUserMaps,
     getUserAndCollabMaps,
     getMapById,
     updateMap,
+    getTilesetById,
+    updateTileset,
 
     getLoggedIn,
     registerUser,
     loginUser,
     logoutUser,
-    getUserById
+    getUserById,
+
+    changePage,
 }
 
 export default apis
