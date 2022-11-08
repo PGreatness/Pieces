@@ -16,14 +16,13 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import img from '../../images/map.jpg'
 import './css/explore.css';
+import { useContext } from 'react';
+import { GlobalStoreContext } from '../../../store/store'
 
 export default function ExploreComments(props) {
-<<<<<<< HEAD
     const { store } = useContext(GlobalStoreContext);
     const comments = store.projectComments
     console.log(comments)
-=======
->>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
     return (
         <Box style={{ width: '100%', display: 'flex', alignItems: 'flex-start', 
             flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative' }}>
