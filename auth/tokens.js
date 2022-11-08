@@ -17,7 +17,7 @@ function authManager() {
             const verified = jwt.verify(token, config.get("secrets.access_token"))
             req.userId = verified.userId;
 
-            next();
+            return next();
         } catch (err) {
             console.error(err);
             return res.status(401).json({
