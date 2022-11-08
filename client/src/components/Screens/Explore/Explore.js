@@ -21,6 +21,11 @@ export default function Explore(props) {
 
     const projects = store.publicProjects
     //console.log(projects)
+<<<<<<< HEAD
+=======
+    const comments = store.projectComments
+    console.log(comments)
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);

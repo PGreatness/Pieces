@@ -8,7 +8,8 @@ export const GlobalStoreContext = createContext({});
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
-    GET_MAP_OWNER: "GET_MAP_OWNER"
+    GET_MAP_OWNER: "GET_MAP_OWNER",
+    LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS"
 }
 
 
@@ -19,6 +20,7 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
+        projectComments: [],
         currentPage: "explore",
         mapOwner: null
     });
@@ -42,7 +44,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: payload,
                     currentPage: store.currentPage,
+<<<<<<< HEAD
+                    mapOwner: store.mapOwner,
+                    projectComments: store.projectComments
+=======
                     mapOwner: store.mapOwner
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
                 });
             }
 
@@ -50,7 +57,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: payload.publicProjects,
                     currentPage: payload.currentPage,
+<<<<<<< HEAD
+                    mapOwner: store.mapOwner,
+                    projectComments: store.projectComments
+=======
                     mapOwner: store.mapOwner
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
                 });
             }
 
@@ -58,7 +70,21 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     publicProjects: store.publicProjects,
                     currentPage: store.currentPage,
+<<<<<<< HEAD
+                    mapOwner: payload,
+                    projectComments: store.projectComments
+                });
+            }
+
+            case GlobalStoreActionType.LOAD_PROJECT_COMMENTS: {
+                return setStore({
+                    publicProjects: store.publicProjects,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    projectComments: payload
+=======
                     mapOwner: payload
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
                 });
             }
 
@@ -68,10 +94,13 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+<<<<<<< HEAD
+=======
 
 
 
 
+>>>>>>> b1e94ef62a72c967bdf55c665101b78cf2329919
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
@@ -89,6 +118,20 @@ function GlobalStoreContextProvider(props) {
             });
         } else {
             console.log("API FAILED TO GET THE PUBLIC PROJECTS");
+        }
+
+    }
+
+    store.loadPublicProjectComments = async function () {
+        const response = await api.getAllProjectComments();
+        if (response.data.success) {
+            let projectComments = response.data.comments;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+                payload: projectComments
+            });
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
         }
 
     }
