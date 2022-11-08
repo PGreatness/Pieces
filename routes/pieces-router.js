@@ -5,6 +5,7 @@ const TilesetController = require('../controllers/tileset-controller')
 const TileController = require('../controllers/tile-controller')
 const ThreadController = require('../controllers/thread-controller')
 const ChatController = require('../controllers/chat-controller')
+const ProjectCommentController = require('../controllers/project-comment-controller')
 
 const router = express.Router()
 
@@ -29,7 +30,7 @@ router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
 router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
 router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
-router.get('/map/getAllProjectComments', MapController.getAllProjectCommentsOnPage)
+router.get('/map/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
