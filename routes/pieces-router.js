@@ -40,9 +40,9 @@ router.post('/map/addUserToMap', MapController.addUserToMap)
 
 
 // // TileSet Routes
-router.get('/tileset/userMaps/:ownerId', TilesetController.getAllUserTilesets)
-router.get('/tileset/userMapsByName/:tilesetName', TilesetController.getUserTilesetsByName)
-router.get('/tileset/userMapsById/:id', TilesetController.getTilesetbyId)
+router.get('/tileset/getAllUserTilesets/:ownerId', TilesetController.getAllUserTilesets)
+router.get('/tileset/getUserTilesetsByName/:tilesetName', TilesetController.getUserTilesetsByName)
+router.get('/tileset/getTilesetsById/:id', TilesetController.getTilesetbyId)
 
 router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
@@ -71,4 +71,5 @@ router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
 // Other Routes
 router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
 router.get('/changePage', MapController.getAllPublicProjects)
+
 module.exports = router
