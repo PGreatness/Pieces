@@ -765,8 +765,16 @@ getPublicProjectsByName = async (req, res) => {
     const startIndex = page > 0 ? (page - 1) * limit : 0;
     limit = Number(limit);
     const rangeProject = await Map.aggregate([
-        { $match: { isPublic: true, mapName: name } },
-        { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true, tilesetName: name } } ] } },
+        { $match: { isPublic: true, mapName: { $regex: name, $options: "i"} }},
+        { $unionWith: { coll: 'tilesets', pipeline: [
+            { $match: {
+                isPublic: true,
+                tilesetName: {
+                    $regex: name,
+                    $options: "i"
+                }
+            }}
+        ] }},
         { $sort: { createdAt: -1 } },
         { $skip: startIndex },
         { $limit: limit },
