@@ -67,4 +67,7 @@ router.post('/chat/newChat', ChatController.createChat)
 router.post('/chat/deleteChat', ChatController.deleteChat)
 router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
 
+// Other Routes
+router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
+
 module.exports = router
