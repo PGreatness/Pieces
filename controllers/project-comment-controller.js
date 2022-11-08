@@ -93,7 +93,8 @@ var deleteCommentsOfProject = function(req, res) {
 }
 
 getCommentbyId = async (req, res) => {
-    const savedComment = await ProjectComment.findById(req.query.id);
+    const savedComment = await ProjectComment.findById(req.params.id);
+    console.log(savedComment)
     return res.status(200).json({
         comment: savedComment
     });
