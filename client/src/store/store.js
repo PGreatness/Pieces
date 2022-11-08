@@ -170,7 +170,7 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.loadAllUserMaps = async function(userId) {
+    store.loadAllUserMaps = async function (userId) {
 
         const response = await api.getAllUserMaps(userId);
         if (response.data.success) {
@@ -188,7 +188,7 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.loadAllUserAsCollaboratorMaps = async function(id) {
+    store.loadAllUserAsCollaboratorMaps = async function (id) {
         const response = await api.getAllUserAsCollaboratorMaps(id);
         if (response.data.success) {
             let collabMaps = response.data.maps;
@@ -206,9 +206,9 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.loadUserAndCollabMaps = async function(id) {
+    store.loadUserAndCollabMaps = async function (id) {
 
-        const response = await api.getUserAndCollabMaps({"id": id});
+        const response = await api.getUserAndCollabMaps({ "id": id });
         if (response.data.success) {
             let userMaps = response.data.owner;
             let collabMaps = response.data.collaborator;
@@ -228,7 +228,7 @@ function GlobalStoreContextProvider(props) {
 
     store.changePageToExplore = async function () {
         const response = await api.getAllPublicProjects();
-        if(response.data.success){
+        if (response.data.success) {
             console.log(response.data)
             let publicProjects = response.data.projects;
             storeReducer({
@@ -246,21 +246,21 @@ function GlobalStoreContextProvider(props) {
 
 
     store.updateMapLikes = async function (id, setLikeDislikeCallback) {
-        await api.getMapById(id).then( response => {
+        await api.getMapById(id).then(response => {
             let map = response.data.map;
-            if(map.likes.includes(auth.user._id)){
+            if (map.likes.includes(auth.user._id)) {
                 let index = map.likes.indexOf(auth.user._id);
-                map.likes.splice(index, 1); 
-            } else if (map.dislikes.includes(auth.user._id)){
+                map.likes.splice(index, 1);
+            } else if (map.dislikes.includes(auth.user._id)) {
                 let index = map.dislikes.indexOf(auth.user._id);
-                map.dislikes.splice(index, 1); 
-                map.likes.push(auth.user._id); 
+                map.dislikes.splice(index, 1);
+                map.likes.push(auth.user._id);
             } else {
-                map.likes.push(auth.user._id); 
+                map.likes.push(auth.user._id);
             }
 
 
-            async function updatingMap(map){
+            async function updatingMap(map) {
                 let payload = {
                     likes: map.likes,
                     dislikes: map.dislikes
@@ -271,11 +271,11 @@ function GlobalStoreContextProvider(props) {
                     ownerId: auth.user._id
                 }
                 console.log(map._id)
-                response = await api.updateMap(query, payload); 
-                
-                if(response.data.success){
+                response = await api.updateMap(query, payload);
+
+                if (response.data.success) {
                     setLikeDislikeCallback(map.likes, map.dislikes);
-                    store.loadPublicProjects(); 
+                    store.loadPublicProjects();
                 }
             }
 
@@ -286,19 +286,19 @@ function GlobalStoreContextProvider(props) {
 
 
     store.updateMapDislikes = async function (id, setLikeDislikeCallback) {
-        await api.getMapById(id).then( response => {
+        await api.getMapById(id).then(response => {
             let map = response.data.map;
-            if(map.dislikes.includes(auth.user._id)){
+            if (map.dislikes.includes(auth.user._id)) {
                 let index = map.dislikes.indexOf(auth.user._id);
-                map.dislikes.splice(index, 1); 
-            } else if (map.likes.includes(auth.user._id)){
+                map.dislikes.splice(index, 1);
+            } else if (map.likes.includes(auth.user._id)) {
                 let index = map.likes.indexOf(auth.user._id);
-                map.likes.splice(index, 1); 
-                map.dislikes.push(auth.user._id); 
+                map.likes.splice(index, 1);
+                map.dislikes.push(auth.user._id);
             } else {
-                map.dislikes.push(auth.user._id); 
+                map.dislikes.push(auth.user._id);
             }
-            async function updatingMap(map){
+            async function updatingMap(map) {
                 let payload = {
                     likes: map.likes,
                     dislikes: map.dislikes
@@ -309,10 +309,10 @@ function GlobalStoreContextProvider(props) {
                 }
 
                 response = await api.updateMap(query, payload);
-                
-                if(response.data.success){
+
+                if (response.data.success) {
                     setLikeDislikeCallback(map.likes, map.dislikes);
-                    store.loadPublicProjects();  
+                    store.loadPublicProjects();
                 }
             }
             updatingMap(map)
@@ -321,16 +321,16 @@ function GlobalStoreContextProvider(props) {
 
 
     store.updateMapFav = async function (id, setFavCallback) {
-        await api.getMapById(id).then( response => {
+        await api.getMapById(id).then(response => {
             let map = response.data.map;
-            if(map.favs.includes(auth.user._id)){
+            if (map.favs.includes(auth.user._id)) {
                 let index = map.favs.indexOf(auth.user._id);
-                map.favs.splice(index, 1); 
+                map.favs.splice(index, 1);
             } else {
-                map.favs.push(auth.user._id); 
+                map.favs.push(auth.user._id);
             }
 
-            async function updatingMap(map){
+            async function updatingMap(map) {
                 let payload = {
                     favs: map.favs
                 };
@@ -340,10 +340,10 @@ function GlobalStoreContextProvider(props) {
                 }
 
                 response = await api.updateMap(query, payload);
-                
-                if(response.data.success){
+
+                if (response.data.success) {
                     setFavCallback(map.favs);
-                    store.loadPublicProjects();  
+                    store.loadPublicProjects();
                 }
             }
             updatingMap(map)
@@ -354,7 +354,7 @@ function GlobalStoreContextProvider(props) {
     store.setLibrarySort = async function (sortOpt, sortDir) {
 
         let allMaps = store.collabMaps.concat(store.userMaps)
-        switch(sortOpt) {
+        switch (sortOpt) {
             case 'name':
                 if (sortDir === "up") {
                     allMaps.sort((map1, map2) => {
@@ -363,7 +363,7 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return 1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return -1;
                         }
                         else {
@@ -386,7 +386,7 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return -1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return 1;
                         }
                         else {
@@ -411,7 +411,7 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return 1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return -1;
                         }
                         else {
@@ -434,7 +434,7 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return -1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return 1;
                         }
                         else {
@@ -531,7 +531,7 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return 1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return -1;
                         }
                         else {
@@ -554,7 +554,7 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return -1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return 1;
                         }
                         else {
@@ -579,13 +579,13 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return 1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return -1;
                         }
                         else {
                             return 0
                         }
-                    });                    storeReducer({
+                    }); storeReducer({
                         type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
                         payload: {
                             "allMaps": allMaps,
@@ -601,13 +601,13 @@ function GlobalStoreContextProvider(props) {
                         if (a > b) {
                             return -1;
                         }
-                        else if (b > a) { 
+                        else if (b > a) {
                             return 1;
                         }
                         else {
                             return 0
                         }
-                    });                    
+                    });
                     storeReducer({
                         type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
                         payload: {
@@ -627,25 +627,27 @@ function GlobalStoreContextProvider(props) {
                 }
         }
 
+    }
+
 
 
 
     store.updateTilesetLikes = async function (id, setLikeDislikeCallback) {
-        await api.getTilesetById(id).then( response => {
+        await api.getTilesetById(id).then(response => {
             let tileset = response.data.tileset;
-            if(tileset.likes.includes(auth.user._id)){
+            if (tileset.likes.includes(auth.user._id)) {
                 let index = tileset.likes.indexOf(auth.user._id);
-                tileset.likes.splice(index, 1); 
-            } else if (tileset.dislikes.includes(auth.user._id)){
+                tileset.likes.splice(index, 1);
+            } else if (tileset.dislikes.includes(auth.user._id)) {
                 let index = tileset.dislikes.indexOf(auth.user._id);
-                tileset.dislikes.splice(index, 1); 
-                tileset.likes.push(auth.user._id); 
+                tileset.dislikes.splice(index, 1);
+                tileset.likes.push(auth.user._id);
             } else {
-                tileset.likes.push(auth.user._id); 
+                tileset.likes.push(auth.user._id);
             }
 
 
-            async function updatingTileset(tileset){
+            async function updatingTileset(tileset) {
                 let payload = {
                     likes: tileset.likes,
                     dislikes: tileset.dislikes
@@ -656,11 +658,11 @@ function GlobalStoreContextProvider(props) {
                     ownerId: auth.user._id
                 }
                 console.log(tileset._id)
-                response = await api.updateTileset(query, payload); 
-                
-                if(response.data.success){
+                response = await api.updateTileset(query, payload);
+
+                if (response.data.success) {
                     setLikeDislikeCallback(tileset.likes, tileset.dislikes);
-                    store.loadPublicProjects(); 
+                    store.loadPublicProjects();
                 }
             }
 
@@ -671,19 +673,19 @@ function GlobalStoreContextProvider(props) {
 
 
     store.updateTilesetDislikes = async function (id, setLikeDislikeCallback) {
-        await api.getTilesetById(id).then( response => {
+        await api.getTilesetById(id).then(response => {
             let tileset = response.data.tileset;
-            if(tileset.dislikes.includes(auth.user._id)){
+            if (tileset.dislikes.includes(auth.user._id)) {
                 let index = tileset.dislikes.indexOf(auth.user._id);
-                tileset.dislikes.splice(index, 1); 
-            } else if (tileset.likes.includes(auth.user._id)){
+                tileset.dislikes.splice(index, 1);
+            } else if (tileset.likes.includes(auth.user._id)) {
                 let index = tileset.likes.indexOf(auth.user._id);
-                tileset.likes.splice(index, 1); 
-                tileset.dislikes.push(auth.user._id); 
+                tileset.likes.splice(index, 1);
+                tileset.dislikes.push(auth.user._id);
             } else {
-                tileset.dislikes.push(auth.user._id); 
+                tileset.dislikes.push(auth.user._id);
             }
-            async function updatingTileset(tileset){
+            async function updatingTileset(tileset) {
                 let payload = {
                     likes: tileset.likes,
                     dislikes: tileset.dislikes
@@ -694,10 +696,10 @@ function GlobalStoreContextProvider(props) {
                 }
 
                 response = await api.updateTileset(query, payload);
-                
-                if(response.data.success){
+
+                if (response.data.success) {
                     setLikeDislikeCallback(tileset.likes, tileset.dislikes);
-                    store.loadPublicProjects();  
+                    store.loadPublicProjects();
                 }
             }
             updatingTileset(tileset)
@@ -706,16 +708,16 @@ function GlobalStoreContextProvider(props) {
 
 
     store.updateTilesetFav = async function (id, setFavCallback) {
-        await api.getTilesetById(id).then( response => {
+        await api.getTilesetById(id).then(response => {
             let tileset = response.data.tileset;
-            if(tileset.favs.includes(auth.user._id)){
+            if (tileset.favs.includes(auth.user._id)) {
                 let index = tileset.favs.indexOf(auth.user._id);
-                tileset.favs.splice(index, 1); 
+                tileset.favs.splice(index, 1);
             } else {
-                tileset.favs.push(auth.user._id); 
+                tileset.favs.push(auth.user._id);
             }
 
-            async function updatingTileset(tileset){
+            async function updatingTileset(tileset) {
                 let payload = {
                     favs: tileset.favs
                 };
@@ -725,10 +727,10 @@ function GlobalStoreContextProvider(props) {
                 }
 
                 response = await api.updateTileset(query, payload);
-                
-                if(response.data.success){
+
+                if (response.data.success) {
                     setFavCallback(tileset.favs);
-                    store.loadPublicProjects();  
+                    store.loadPublicProjects();
                 }
             }
             updatingTileset(tileset)
