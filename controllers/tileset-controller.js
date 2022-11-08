@@ -6,7 +6,7 @@ const ProjectComments = require('../models/project-comment-model')
 createTileset = async (req, res) => {
     try {
         const { tilesetName, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, source, ownerId, isPublic, isLocked } = req.body;
-        if (!tilesetName || !imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !source || !ownerId || (isPublic == null) || (isLocked == null)) {
+        if (!tilesetName || !imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !ownerId || (isPublic == null) || (isLocked == null)) {
             return res
                 .status(400)
                 .json({ message: "Empty required fields." })

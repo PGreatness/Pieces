@@ -525,6 +525,41 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
+    store.createNewMap = async function(mapName, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
+        console.log("handling create map in store...")
+        let payload = {
+            mapName: mapName,
+            mapHeight: mapHeight,
+            mapWidth: mapWidth,
+            tileHeight: tileHeight,
+            tileWidth: tileWidth,
+            ownerId: ownerId
+        };
+        let response = await api.createNewMap(payload)
+        console.log(response)
+    }
+
+    store.createNewTileset = async function(tilesetName, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+        console.log("handling create map in store...")
+        console.log(tilesetName)
+        console.log(tilesetHeight)
+        console.log(tilesetWidth)
+        console.log(tileHeight)
+        console.log(tileWidth)
+        console.log(ownerId)
+        let payload = {
+            tilesetName: tilesetName,
+            imagePixelHeight: tilesetHeight,
+            imagePixelWidth: tilesetWidth,
+            tileHeight: tileHeight,
+            tileWidth: tileWidth,
+            ownerId: ownerId,
+            isLocked: true,
+            isPublic: false
+        };
+        let response = await api.createNewTileset(payload)
+        console.log(response)
+    }
 
 
     store.setLibrarySort = async function (sortOpt, sortDir) {

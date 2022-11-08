@@ -72,7 +72,7 @@ export default function NavbarAppOptions(props) {
                     <h1 onClick={() => {props.changeLoc('/explore');
                     navigate("/explore"); store.changePageToExplore(); }} >Explore</h1>
                     <h1 onClick={() => {props.changeLoc('/library');
-                    navigate("/library"); store.changePageToLibrary(); }} >Library</h1>
+                    navigate("/library"); store.changePageToLibrary(); store.loadUserAndCollabMaps("6357194e0a81cb803bbb913e")}} >Library</h1>
                     <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>
             )
