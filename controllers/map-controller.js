@@ -605,7 +605,7 @@ var getAllPublicProjects = async (req, res) => {
     }
 
     if (!limit) {
-        limit = 10;
+        limit = 20;
     }
 
     if (Number.isNaN(+page) || Number.isNaN(+limit)) {
