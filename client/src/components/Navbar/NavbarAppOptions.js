@@ -43,10 +43,9 @@ export default function NavbarAppOptions(props) {
             navigate("/explore")
         }
 
-        console.log(loggedIn)
     }, []);
 
-    console.log(loggedIn)
+
     const handleLogin = () => {
         props.changeLoc('/explore')
 
@@ -57,7 +56,6 @@ export default function NavbarAppOptions(props) {
         
         setLoggedIn(true)
         store.changePageToExplore();
-        //console.log('fetched the maps');
         navigate("/explore")
     }
 
@@ -71,7 +69,8 @@ export default function NavbarAppOptions(props) {
                 <>
                     <h1 onClick={() => {props.changeLoc('/explore');
                     navigate("/explore"); store.changePageToExplore(); }} >Explore</h1>
-                    <h1 onClick={() => {props.changeLoc('/library');navigate("/library")}} >Library</h1>
+                    <h1 onClick={() => {props.changeLoc('/library');
+                    navigate("/library"); store.changePageToLibrary()}} >Library</h1>
                     <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>
             )

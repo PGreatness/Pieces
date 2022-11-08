@@ -11,7 +11,6 @@ export const GlobalStoreActionType = {
     LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
     LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
-    GET_MAP_OWNER: "GET_MAP_OWNER",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
     SET_EXPLORE_SORT: "SET_EXPLORE_SORT"
 }
@@ -119,26 +118,10 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 return setStore({
                     publicProjects: payload.publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
+                    userMaps: payload.userMaps,
+                    collabMaps: payload.collabMaps,
                     currentPage: payload.currentPage,
                     mapOwner: store.mapOwner,
-                    librarySortOption: store.librarySortOption,
-                    librarySortDirection: store.librarySortDirection,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
-                });
-            }
-
-            case GlobalStoreActionType.GET_MAP_OWNER: {
-                return setStore({
-                    publicProjects: store.publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
-                    currentPage: store.currentPage,
-                    mapOwner: payload,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
@@ -284,6 +267,7 @@ function GlobalStoreContextProvider(props) {
 
 
     store.changePageToExplore = async function () {
+        
         const response = await api.getAllPublicProjects();
         if (response.data.success) {
             console.log(response.data)
@@ -292,7 +276,9 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentPage: "explore",
-                    publicProjects: publicProjects
+                    publicProjects: publicProjects,
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps
                 }
             });
         } else {
@@ -301,9 +287,34 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+    store.changePageToLibrary = async function () {
+
+        let id = "6357194e0a81cb803bbb913e"
+        //let id = auth.user?._id
+
+        const response = await api.getUserAndCollabMaps({ "id": id });
+        if (response.data.success) {
+            let userMaps = response.data.owner;
+            let collabMaps = response.data.collaborator;
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentPage: "library",
+                    userMaps: userMaps,
+                    collabMaps: collabMaps,
+                    publicProjects: store.publicProjects
+                }
+            })
+        }
+        else {
+            console.log("API FAILED TO FETCH USER AND COLLAB MAPS")
+        }
+    }
+
+
 
     store.changeSearchName = async function (search) {
-        console.log('inside search ok')
+        
         switch(store.currentPage){
 
             case "explore" : {
