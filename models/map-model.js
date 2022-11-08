@@ -78,7 +78,7 @@ const mapSchema = new Schema({
         type: [ObjectId],
         required: false,
     },
-});
+}, { timestamps: true });
 
 const Map = model("Map", mapSchema);
 module.exports = Map;
