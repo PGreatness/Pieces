@@ -605,6 +605,71 @@ getAllPublicMapsOnPage = async (req, res) => {
     }).send();
 }
 
+var getAllPublicProjects = async (req, res) => {
+
+    var { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        page = 1;
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            message: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Limit must be greater than 0"
+        })
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
+    const rangeProject = await Map.aggregate([
+        { $match: { isPublic: true } },
+        { $unionWith: { coll: "tilesets", pipeline: [{ $match: { isPublic: true } }] } },
+        {
+            $addFields: {
+                "ratio": {
+                    $cond: {
+                        if: { $eq: [{ $size: "$dislikes" }, 0] },
+                        then: { $size: "$likes" },
+                        else: { $divide: [{ $size: "$likes" }, { $size: "$dislikes" }] }
+                    }
+                }
+            }
+        },
+        { $sort: { ratio: -1 } },
+        { $skip: startIndex },
+        { $limit: limit },
+    ]);
+
+    return res.status(200).json({
+        success: true,
+        count: rangeProject.length,
+        projects: rangeProject
+    }).send();
+}
+
 var addUserToMap = async (req, res) => {
 
     const { mapId, requesterId } = req.body;
@@ -671,20 +736,20 @@ var addUserToMap = async (req, res) => {
     chosenMap.collaboratorIds.push(requesterId);
 
     chosenMap.save()
-    .then((map) => {
-        return res.status(200).json({
-            success: true,
-            message: "User added to map",
-            map: map
+        .then((map) => {
+            return res.status(200).json({
+                success: true,
+                message: "User added to map",
+                map: map
+            })
         })
-    })
-    .catch((err) => {
-        return res.status(400).json({
-            success: false,
-            message: "Error adding user to map",
-            error: err
+        .catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Error adding user to map",
+                error: err
+            })
         })
-    })
 }
 
 module.exports = {
@@ -696,5 +761,6 @@ module.exports = {
     updateMap,
     publishMap,
     getAllPublicMapsOnPage,
-    addUserToMap
+    addUserToMap,
+    getAllPublicProjects
 }
