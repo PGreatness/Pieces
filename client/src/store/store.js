@@ -33,7 +33,8 @@ function GlobalStoreContextProvider(props) {
         projSortDir: "",
         sortedLibraryList: [],
         currentPage: "explore",
-        mapOwner: null
+        mapOwner: null,
+        searchName: ""
     });
 
 
@@ -62,7 +63,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 });
             }
 
@@ -77,7 +79,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 })
             }
 
@@ -92,7 +95,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 })
             }
 
@@ -107,7 +111,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 })
             }
 
@@ -122,7 +127,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 });
             }
 
@@ -137,7 +143,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 });
             }
 
@@ -152,7 +159,8 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: payload.sortDir,
                     projSortOpt: store.projSortOpt,
                     projSortDir: store.projSortDir,
-                    sortedLibraryList: payload.allMaps
+                    sortedLibraryList: payload.allMaps,
+                    searchName: store.searchName
                 })
             }
 
@@ -167,8 +175,25 @@ function GlobalStoreContextProvider(props) {
                     librarySortDirection: store.sortDir,
                     projSortOpt: payload.projSortOpt,
                     projSortDir: payload.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: store.searchName
                 })
+            }
+
+            case GlobalStoreActionType.SET_SEARCH_NAME: {
+                return setStore({
+                    publicProjects: payload.publicProjects,
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    librarySortOption: store.sortOpt,
+                    librarySortDirection: store.sortDir,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
+                    sortedLibraryList: store.sortedLibraryList,
+                    searchName: payload.newSearch
+                });
             }
 
             default:
@@ -276,6 +301,61 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+
+    store.changeSearchName = async function (search) {
+        console.log('inside search ok')
+        switch(store.currentPage){
+
+            case "explore" : {
+                const response = await api.getPublicProjectsByName(search);
+                if(response.data.success){
+                    let publicProjects = response.data.projects;  
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SEARCH_NAME,
+                        payload: {
+                            publicProjects: publicProjects,
+                            newSearch: search
+                        }
+                    });
+                } else {
+                    console.log("API FAILED TO GET THE LIST PAIRS");
+                }
+                break;
+            }
+
+            // case "library" : {
+            //     let query = {
+            //         name: search
+            //     }
+            //     const response = await api.getTop5Lists(query);
+            //     if(response.data.success){
+            //         console.log("success" + response); 
+            //         let top5lists = response.data.top5lists;
+            //         let sortedLists = store.sortLists(top5lists, store.sorting); 
+            //         storeReducer({
+            //             type: GlobalStoreActionType.SET_SEARCH_NAME,
+            //             payload: {
+            //                 top5lists: sortedLists,
+            //                 newSearch: search
+            //             }
+            //         });
+            //     } else {
+            //         console.log("API FAILED TO GET THE LIST PAIRS");
+            //     }
+            //     break;
+            // }
+
+            
+
+            // case "community" : {
+            //     break;
+            // }
+
+            default: {
+                return; 
+            }
+        }
+    }
 
     store.updateMapLikes = async function (id, setLikeDislikeCallback) {
         await api.getMapById(id).then(response => {
