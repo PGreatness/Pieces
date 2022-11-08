@@ -207,9 +207,9 @@ getAllProjectCommentsOnPage = async (req, res) => {
         { $skip : startIndex },
         { $addFields: {
             "ratio": { $cond: [
-                { $eq: [ "$dislikes", 0 ] },
-                    "$likes",
-                    { $divide: [ "$likes", "$dislikes" ] } ] }
+                { $eq: [ {$size: "$dislikes"}, 0 ] },
+                    { $size: "$likes" },
+                    { $divide: [ {$size: "$likes"}, {$size: "$dislikes"} ] } ] }
         }},
         { $limit: limit },
         { $sort: { "ratio": -1 } },
