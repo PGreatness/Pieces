@@ -1,0 +1,11 @@
+.project_title {
+    width: 45vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project_desc {
+    width: 45vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
