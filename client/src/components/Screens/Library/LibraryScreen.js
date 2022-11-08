@@ -38,9 +38,9 @@ export default function LibraryScreen() {
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
 
-    console.log("ALL MAPS")
-    console.log(store.userMaps)
-    console.log(allMaps)
+    //console.log("ALL MAPS")
+    //console.log(store.userMaps)
+    //console.log(allMaps)
 
     useEffect(() => {
         store.setLibrarySort(sortOption, sortDirection);

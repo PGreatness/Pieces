@@ -25,6 +25,8 @@ export default function NavbarAppOptions(props) {
     const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = React.useState(false);
+    
+    
     const createLogo = () => {
         return (
             <div className='navbar_logo' onClick={()=>{props.changeLoc('/');navigate('/')}}>
@@ -70,7 +72,7 @@ export default function NavbarAppOptions(props) {
                     <h1 onClick={() => {props.changeLoc('/explore');
                     navigate("/explore"); store.changePageToExplore(); }} >Explore</h1>
                     <h1 onClick={() => {props.changeLoc('/library');
-                    navigate("/library"); store.changePageToLibrary()}} >Library</h1>
+                    navigate("/library"); store.changePageToLibrary(); }} >Library</h1>
                     <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
                 </>
             )
