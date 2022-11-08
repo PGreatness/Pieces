@@ -15,6 +15,8 @@ import AuthContext from '../../../auth/auth';
 import api from '../../../api/api';
 import './css/explore.css';
 
+import './css/exploreItem.css';
+
 
 export default function ExploreMapItem(props) {
     const navigate = useNavigate();
