@@ -36,15 +36,39 @@ export default function ExploreItem(props) {
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
     const [isCollaborator, setIsCollaborator] = useState(project.collaboratorIds.includes(auth.user?._id));
 
+    useEffect(() => {
+        setLikes(project.likes.length);
+        setDislikes(project.dislikes.length);
+        setIsLiked(project.likes.includes(auth.user?._id));
+        setIsDisliked(project.dislikes.includes(auth.user?._id));
+        setIsFav(project.favs.includes(auth.user?._id));
+    },[]);
+
 
     const handleLikeClick = (event) => {
-        console.log('clicked')
         event.stopPropagation();
         store.updateLikes(project._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?.userName));
             setIsDisliked(dislike_arr.includes(auth.user?.userName));
+        });
+    }
+
+    const handleDislikeClick = (event) => {
+        event.stopPropagation();
+        store.updateDislikes(project._id, (like_arr, dislike_arr) => {
+            setLikes(like_arr.length);
+            setDislikes(dislike_arr.length);
+            setIsLiked(like_arr.includes(auth.user?.userName));
+            setIsDisliked(dislike_arr.includes(auth.user?.userName));
+        });
+    }
+
+    const handleFavClick = (event) => {
+        event.stopPropagation();
+        store.updateFav(project._id, (fav_arr) => {
+            setIsFav(fav_arr.includes(auth.user?._id));
         });
     }
 
@@ -80,14 +104,14 @@ export default function ExploreItem(props) {
 
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
                             <ThumbDownIcon sx={{ fontSize: 50, px: 2, pt: 1, color:`${isDisliked ? "#2dd4cf" : "white"}` }}
-                            onClick={() => handleLikeClick} 
-                            ></ThumbDownIcon>
+                            onClick={handleDislikeClick} ></ThumbDownIcon>
                             <div class="like_num">{dislikes}</div>
                         </Box>
 
                         <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={props.setShowComments}></CommentIcon>
                         <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
-                        <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}></FavoriteIcon>
+                        <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
+                        onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color:`${isCollaborator? "white" : "gray"}`}}
                         onClick={isCollaborator? () => setLocation('/map/1') : () => showRequestModal} ></EditIcon>
                     </Box>
