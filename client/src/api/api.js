@@ -3,11 +3,16 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL: 'http://localhost:4000/api',
-    //baseURL: 'https://pieces-316.herokuapp.com/api',
+
+    // baseURL: 'http://localhost:4000/api',
+    baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 
+// Api.get getAllPublicProjects instead of getAllPublicMaps
+export const getAllProjectComments = () => api.get(`/comments/getAllProjectComments/`)
+export const getCommentbyId = (id) => api.get(`/comments/getCommentbyId/${id}`)
+export const updateComment = (query, payload) => api.post(`/comments/updateComment/`, payload, {params: query})
 
 export const getAllPublicProjects = () => api.get(`/getAllPublicProjects/`)
 export const getPublicProjectsByName = (name) => api.get(`/getPublicProjectsByName/${name}/`)
@@ -37,6 +42,9 @@ export const changePage = (page, limit) => api.get(`/changePage`, page, {params:
 
 const apis = {
     getAllPublicProjects,
+    getAllProjectComments,
+    getCommentbyId,
+    updateComment,
     getPublicProjectsByName,
     getLibraryMapsByName,
 

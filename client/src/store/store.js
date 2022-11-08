@@ -11,6 +11,8 @@ export const GlobalStoreActionType = {
     LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
     LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
+    GET_MAP_OWNER: "GET_MAP_OWNER",
+    LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
     SET_EXPLORE_SORT: "SET_EXPLORE_SORT"
 }
@@ -23,6 +25,7 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
+        projectComments: [],
         userMaps: [],
         collabMaps: [],
         userAndCollabMaps: [],
@@ -59,6 +62,7 @@ function GlobalStoreContextProvider(props) {
                     collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
+                    projectComments: store.projectComments,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
@@ -74,6 +78,7 @@ function GlobalStoreContextProvider(props) {
                     userMaps: payload,
                     collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
+                    projectComments: store.projectComments,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
@@ -90,6 +95,7 @@ function GlobalStoreContextProvider(props) {
                     userMaps: store.userMaps,
                     collabMaps: payload,
                     currentPage: store.currentPage,
+                    projectComments: store.projectComments,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
@@ -105,6 +111,7 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: store.publicProjects,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
+                    projectComments: store.projectComments,
                     currentPage: payload.currentPage,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.librarySortOption,
@@ -124,6 +131,7 @@ function GlobalStoreContextProvider(props) {
                     collabMaps: payload.collabMaps,
                     currentPage: payload.currentPage,
                     mapOwner: store.mapOwner,
+                    projectComments: store.projectComments,
                     librarySortOption: store.librarySortOption,
                     librarySortDirection: store.librarySortDirection,
                     projSortOpt: store.projSortOpt,
@@ -140,6 +148,26 @@ function GlobalStoreContextProvider(props) {
                     collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
+                    projectComments: store.projectComments,
+                    mapOwner: store.mapOwner,
+                    librarySortOption: payload.sortOpt,
+                    librarySortDirection: payload.sortDir,
+                    projSortOpt: store.projSortOpt,
+                    projSortDir: store.projSortDir,
+                    sortedLibraryList: payload.allMaps,
+                    searchName: store.searchName
+                });
+            }
+
+            case GlobalStoreActionType.LOAD_PROJECT_COMMENTS: {
+                return setStore({
+                    publicProjects: store.publicProjects,
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    currentPage: store.currentPage,
+                    mapOwner: store.mapOwner,
+                    projectComments: payload,
+                    mapOwner: store.mapOwner,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
                     projSortOpt: store.projSortOpt,
@@ -155,6 +183,7 @@ function GlobalStoreContextProvider(props) {
                     userMaps: store.userMaps,
                     collabMaps: store.collabMaps,
                     currentPage: store.currentPage,
+                    projectComments: store.projectComments,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.sortOpt,
                     librarySortDirection: store.sortDir,
@@ -171,6 +200,7 @@ function GlobalStoreContextProvider(props) {
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
                     currentPage: store.currentPage,
+                    projectComments: store.projectComments,
                     mapOwner: store.mapOwner,
                     librarySortOption: store.sortOpt,
                     librarySortDirection: store.sortDir,
@@ -185,10 +215,6 @@ function GlobalStoreContextProvider(props) {
                 return store;
         }
     }
-
-
-
-
 
 
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
@@ -212,6 +238,19 @@ function GlobalStoreContextProvider(props) {
 
     }
 
+    store.loadPublicProjectComments = async function () {
+        const response = await api.getAllProjectComments();
+        if (response.data.success) {
+            let projectComments = response.data.comments;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+                payload: projectComments
+            });
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
+        }
+    }
+    
     store.loadAllUserMaps = async function (userId) {
 
         const response = await api.getAllUserMaps(userId);
@@ -1067,6 +1106,80 @@ function GlobalStoreContextProvider(props) {
             updatingTileset(tileset)
         });
 
+    }
+
+    store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
+        await api.getCommentbyId(id).then( response => {
+            // console.log(response)
+            let comment = response.data.comment;
+            if(comment.likes.includes(auth.user._id)){
+                let index = comment.likes.indexOf(auth.user._id);
+                comment.likes.splice(index, 1); 
+            } else if (comment.dislikes.includes(auth.user._id)){
+                let index = comment.dislikes.indexOf(auth.user._id);
+                comment.dislikes.splice(index, 1); 
+                comment.likes.push(auth.user._id); 
+            } else {
+                comment.likes.push(auth.user._id); 
+            }
+
+
+            async function updatingComment(comment){
+                let payload = {
+                    likes: comment.likes,
+                    dislikes: comment.dislikes
+                };
+
+                let query = {
+                    id: comment._id,
+                    ownerId: auth.user._id
+                }
+                console.log(comment._id)
+                response = await api.updateComment(query, payload); 
+                
+                if(response.data.success){
+                    setLikeDislikeCallback(comment.likes, comment.dislikes);
+                    store.loadPublicProjectComments(); 
+                }
+            }
+
+            updatingComment(comment)
+        });
+    }
+
+    store.updateCommentDislikes = async function (id, setLikeDislikeCallback) {
+        await api.getCommentbyId(id).then(response => {
+            console.log("hello");
+            let comment = response.data.comment;
+            if (comment.dislikes.includes(auth.user._id)) {
+                let index = comment.dislikes.indexOf(auth.user._id);
+                comment.dislikes.splice(index, 1);
+            } else if (comment.likes.includes(auth.user._id)) {
+                let index = comment.likes.indexOf(auth.user._id);
+                comment.likes.splice(index, 1);
+                comment.dislikes.push(auth.user._id);
+            } else {
+                comment.dislikes.push(auth.user._id);
+            }
+            async function updatiCngomment(comment) {
+                let payload = {
+                    likes: comment.likes,
+                    dislikes: comment.dislikes
+                };
+                let query = {
+                    id: comment._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateComment(query, payload);
+
+                if (response.data.success) {
+                    setLikeDislikeCallback(comment.likes, comment.dislikes);
+                    store.loadPublicProjectComments();
+                }
+            }
+            updatingComment(comment)
+        });
     }
 
     return (

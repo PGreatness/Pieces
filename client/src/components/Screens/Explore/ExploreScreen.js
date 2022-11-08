@@ -18,6 +18,7 @@ export default function ExploreScreen(props) {
             {!showComments? (<Explore 
                 setLoc={props.setLoc}
                 setShowComments={() => {
+                    store.loadPublicProjectComments();
                     setShowComments(true);
                 }}
             />): (<ExploreComments

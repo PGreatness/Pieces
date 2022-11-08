@@ -22,6 +22,14 @@ const projectCommentSchema = new Schema({
         type: Date,
         required: true,
     },
+    likes: {
+        type: [ObjectId],
+        required: true,
+    },
+    dislikes: {
+        type: [ObjectId],
+        required: false,
+    },
 });
 
 const ProjectComment = model("ProjectComment", projectCommentSchema);
