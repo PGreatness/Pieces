@@ -383,7 +383,7 @@ resetPassword = async (req, res) => {
 
 var getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
-    const { id } = req.body;
+    const { id } = req.query;
 
     if (!id) {
         return res
@@ -393,14 +393,14 @@ var getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
     var uid;
     try {
-        uid = mongoose.Types.ObjectId(id);
+        uid = ObjectId(id);
     } catch (err) {
         return res
             .status(400)
             .json({ message: "Invalid User ID" });
     }
 
-    const owner = await Map.find({ owner: uid });
+    const owner = await Map.find({ ownerId: uid });
     const collaborator = await Map.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
 
     const aggregation = [
