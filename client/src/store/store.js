@@ -1161,7 +1161,7 @@ function GlobalStoreContextProvider(props) {
             } else {
                 comment.dislikes.push(auth.user._id);
             }
-            async function updatiCngomment(comment) {
+            async function updatingComment(comment) {
                 let payload = {
                     likes: comment.likes,
                     dislikes: comment.dislikes
