@@ -41,13 +41,23 @@ export default function ExploreCommentsItem(props) {
 
 
     const handleLikeClick = (event) => {
-        console.log("hello");
+        // console.log("hello");
         event.stopPropagation();
         store.updateCommentLikes(comment._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?.userName));
             setIsDisliked(dislike_arr.includes(auth.user?.userName));
+        });
+    }
+
+    const handleDislikeClick = (event) => {
+        event.stopPropagation();
+        store.updateCommentDislikes(comment._id, (like_arr, dislike_arr) => {
+            setLikes(like_arr.length);
+            setDislikes(dislike_arr.length);
+            setIsLiked(like_arr.includes(auth.user?._id));
+            setIsDisliked(dislike_arr.includes(auth.user?._id));
         });
     }
 
@@ -74,7 +84,7 @@ export default function ExploreCommentsItem(props) {
                         <div>{likes}</div>
                     </ListItem>
                     <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                        <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
+                        <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }} onClick={handleDislikeClick}></ThumbDownIcon>
                         <div>{dislikes}</div>
                     </ListItem>
                 </ListItem>

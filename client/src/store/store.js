@@ -1097,7 +1097,7 @@ function GlobalStoreContextProvider(props) {
 
     store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
         await api.getCommentbyId(id).then( response => {
-            console.log(response)
+            // console.log(response)
             let comment = response.data.comment;
             if(comment.likes.includes(auth.user._id)){
                 let index = comment.likes.indexOf(auth.user._id);
@@ -1131,6 +1131,41 @@ function GlobalStoreContextProvider(props) {
             }
 
             updatingComment(comment)
+        });
+    }
+
+    store.updateCommentDislikes = async function (id, setLikeDislikeCallback) {
+        await api.getCommentbyId(id).then(response => {
+            console.log("hello");
+            let comment = response.data.comment;
+            if (comment.dislikes.includes(auth.user._id)) {
+                let index = comment.dislikes.indexOf(auth.user._id);
+                comment.dislikes.splice(index, 1);
+            } else if (comment.likes.includes(auth.user._id)) {
+                let index = comment.likes.indexOf(auth.user._id);
+                comment.likes.splice(index, 1);
+                comment.dislikes.push(auth.user._id);
+            } else {
+                comment.dislikes.push(auth.user._id);
+            }
+            async function updateComment(comment) {
+                let payload = {
+                    likes: comment.likes,
+                    dislikes: comment.dislikes
+                };
+                let query = {
+                    id: comment._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateComment(query, payload);
+
+                if (response.data.success) {
+                    setLikeDislikeCallback(comment.likes, comment.dislikes);
+                    store.loadPublicProjectComments();
+                }
+            }
+            updateComment(comment)
         });
     }
 
