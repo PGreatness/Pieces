@@ -73,7 +73,6 @@ export default function ExploreItem(props) {
     }
 
     const setLocation = (loc) => {
-        console.log('here here')
         props.setLoc(loc);
         navigate(loc);
     }
