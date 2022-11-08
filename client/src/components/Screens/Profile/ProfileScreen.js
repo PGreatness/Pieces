@@ -1,13 +1,23 @@
 import React from 'react';
 import './css/profile.css';
+import { useState, useContext, useEffect } from 'react';
 import TextField from "@mui/material/TextField"
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import Avatar from '@mui/material/Avatar';
+import AuthContext from '../../../auth/auth';
+import { GlobalStoreContext } from '../../../store/store'
 import { deepOrange, deepPurple } from '@mui/material/colors';
 
 export default function ProfileScreen() {
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+
+    const handleLogout = () => {
+        auth.logoutUser(store);
+    }
+
     return (
         <div className="profile_body">
             <div className="profile_title">
@@ -72,6 +82,7 @@ export default function ProfileScreen() {
                     <Stack direction="row" spacing={2}>
                     <Button disabled>Clear</Button>
                     <Button>Save</Button>
+                    <Button onClick={handleLogout}>Logout</Button>
                     </Stack>
                 </div>
             </div>

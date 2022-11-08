@@ -7,8 +7,7 @@ export const GlobalStoreContext = createContext({});
 
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
-    SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
-    GET_MAP_OWNER: "GET_MAP_OWNER"
+    SET_CURRENT_PAGE: "SET_CURRENT_PAGE"
 }
 
 
@@ -19,8 +18,7 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
-        currentPage: "explore",
-        mapOwner: null
+        currentPage: "explore"
     });
 
 
@@ -41,26 +39,17 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_PUBLIC_PROJECTS: {
                 return setStore({
                     publicProjects: payload,
-                    currentPage: store.currentPage,
-                    mapOwner: store.mapOwner
+                    currentPage: store.currentPage
                 });
             }
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 return setStore({
                     publicProjects: payload.publicProjects,
-                    currentPage: payload.currentPage,
-                    mapOwner: store.mapOwner
+                    currentPage: payload.currentPage
                 });
             }
 
-            case GlobalStoreActionType.GET_MAP_OWNER: {
-                return setStore({
-                    publicProjects: store.publicProjects,
-                    currentPage: store.currentPage,
-                    mapOwner: payload
-                });
-            }
 
             default:
                 return store;
@@ -95,7 +84,6 @@ function GlobalStoreContextProvider(props) {
 
 
     store.changePageToExplore = async function () {
-        console.log("in store")
         const response = await api.getAllPublicProjects();
         if(response.data.success){
             console.log(response.data)
@@ -116,13 +104,116 @@ function GlobalStoreContextProvider(props) {
     store.getUserById = async function (id) {
         const response = await api.getUserById(id);
         if(response.status === 200){
-            storeReducer({
-                type: GlobalStoreActionType.GET_MAP_OWNER,
-                payload: response.data.user
-            });
+            console.log(response.data)
+            return response.data.user;
         }
     } 
 
+
+    store.updateLikes = async function (id, setLikeDislikeCallback) {
+        await api.getMapById(id).then( response => {
+            let map = response.data.map;
+            if(map.likes.includes(auth.user._id)){
+                let index = map.likes.indexOf(auth.user._id);
+                map.likes.splice(index, 1); 
+            } else if (map.dislikes.includes(auth.user._id)){
+                let index = map.dislikes.indexOf(auth.user._id);
+                map.dislikes.splice(index, 1); 
+                map.likes.push(auth.user._id); 
+            } else {
+                map.likes.push(auth.user._id); 
+            }
+
+
+            async function updatingMap(map){
+                let payload = {
+                    likes: map.likes,
+                    dislikes: map.dislikes
+                };
+
+                let query = {
+                    id: map._id,
+                    ownerId: auth.user._id
+                }
+                console.log(map._id)
+                response = await api.updateMap(query, payload); 
+                
+                if(response.data.success){
+                    setLikeDislikeCallback(map.likes, map.dislikes);
+                    store.loadPublicProjects(); 
+                }
+            }
+
+            updatingMap(map)
+        });
+    }
+
+
+
+    store.updateDislikes = async function (id, setLikeDislikeCallback) {
+        await api.getMapById(id).then( response => {
+            let map = response.data.map;
+            if(map.dislikes.includes(auth.user._id)){
+                let index = map.dislikes.indexOf(auth.user._id);
+                map.dislikes.splice(index, 1); 
+            } else if (map.likes.includes(auth.user._id)){
+                let index = map.likes.indexOf(auth.user._id);
+                map.likes.splice(index, 1); 
+                map.dislikes.push(auth.user._id); 
+            } else {
+                map.dislikes.push(auth.user._id); 
+            }
+            async function updatingMap(map){
+                let payload = {
+                    likes: map.likes,
+                    dislikes: map.dislikes
+                };
+                let query = {
+                    id: map._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateMap(query, payload);
+                
+                if(response.data.success){
+                    setLikeDislikeCallback(map.likes, map.dislikes);
+                    store.loadPublicProjects();  
+                }
+            }
+            updatingMap(map)
+        });
+    }
+
+
+    store.updateFav = async function (id, setFavCallback) {
+        await api.getMapById(id).then( response => {
+            let map = response.data.map;
+            if(map.favs.includes(auth.user._id)){
+                let index = map.favs.indexOf(auth.user._id);
+                map.favs.splice(index, 1); 
+            } else {
+                map.favs.push(auth.user._id); 
+            }
+
+            async function updatingMap(map){
+                let payload = {
+                    favs: map.favs
+                };
+                let query = {
+                    id: map._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateMap(query, payload);
+                
+                if(response.data.success){
+                    setFavCallback(map.favs);
+                    store.loadPublicProjects();  
+                }
+            }
+            updatingMap(map)
+        });
+    }
 
     return (
         <GlobalStoreContext.Provider value={{
