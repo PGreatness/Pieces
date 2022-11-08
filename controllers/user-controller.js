@@ -24,7 +24,7 @@ getLoggedIn = async (req, res) => {
         return res.status(200).json({
             loggedIn: true,
             user: loggedInUser
-        }).send();
+        });
     })
 }
 
@@ -53,7 +53,7 @@ loginUser = async (req, res) => {
             res.status(200).json({
                 success: true,
                 user: foundUser,
-            }).send();
+            });
             console.log("cookies", res.cookies)
             return res;
         }
@@ -62,7 +62,7 @@ loginUser = async (req, res) => {
         }
     } catch (err) {
         console.error(err);
-        return res.status(500).send();
+        return res.status(500);
     }
 }
 
@@ -81,14 +81,14 @@ getUserbyId = async (req, res) => {
     const savedUser = await User.findById(req.params.id);
     return res.status(200).json({
         user: savedUser
-    }).send();
+    });
 }
 
 getUserbyUsername = async (req, res) => {
     const savedUser = await User.findOne({ userName: req.params.username });
     return res.status(200).json({
         user: savedUser
-    }).send();
+    });
 }
 
 forgotPassword = async (req, res) => {

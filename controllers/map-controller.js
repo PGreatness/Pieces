@@ -613,7 +613,7 @@ getMapbyId = async (req, res) => {
     const savedMap = await Map.findById(req.params.id);
     return res.status(200).json({
         map: savedMap
-    }).send();
+    });
 }
 
 getAllPublicMapsOnPage = async (req, res) => {
@@ -667,7 +667,7 @@ getAllPublicMapsOnPage = async (req, res) => {
     // }).send();
 }
 
-var getAllPublicProjects = async (req, res) => {
+getAllPublicProjects = async (req, res) => {
 
     var { page } = req.query;
     var { limit } = req.body;
@@ -677,7 +677,7 @@ var getAllPublicProjects = async (req, res) => {
     }
 
     if (!limit) {
-        limit = 20;
+        limit = 10;
     }
 
     if (Number.isNaN(+page) || Number.isNaN(+limit)) {
@@ -718,10 +718,71 @@ var getAllPublicProjects = async (req, res) => {
         success: true,
         count: rangeProject.length,
         projects: rangeProject
-    }).send();
+    });
 }
 
-var addUserToMap = async (req, res) => {
+
+getPublicProjectsByName = async (req, res) => {
+    console.log('req.params')
+    console.log(req.params)
+
+    var name = req.params.name
+    var { page } = req.query;
+    var { limit } = req.body;
+
+    if (!page) {
+        page = 1;
+    }
+
+    if (!limit) {
+        limit = 10;
+    }
+
+    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+        return res.status(400).json({
+            success: false,
+            message: "Page and limit must be numbers"
+        })
+    }
+
+    page = +page;
+    limit = +limit;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Page must be greater than 0"
+        })
+    }
+
+    if (limit < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Limit must be greater than 0"
+        })
+    }
+
+    const startIndex = page > 0 ? (page - 1) * limit : 0;
+    limit = Number(limit);
+    const rangeProject = await Map.aggregate([
+        { $match: { isPublic: true, mapName: name } },
+        { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true, tilesetName: name } } ] } },
+        { $sort: { createdAt: -1 } },
+        { $skip: startIndex },
+        { $limit: limit },
+    ]);
+
+    console.log("please god")
+    console.log(rangeProject)
+
+    return res.status(200).json({
+        success: true,
+        count: rangeProject.length,
+        projects: rangeProject
+    });
+}
+
+addUserToMap = async (req, res) => {
 
     const { mapId, requesterId } = req.body;
 
@@ -814,5 +875,6 @@ module.exports = {
     publishMap,
     getAllPublicMapsOnPage,
     addUserToMap,
-    getAllPublicProjects
+    getAllPublicProjects,
+    getPublicProjectsByName
 }

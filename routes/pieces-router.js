@@ -71,6 +71,7 @@ router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
 
 // Other Routes
 router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
+router.get('/getPublicProjectsByName/:name', MapController.getPublicProjectsByName)
 router.get('/changePage', MapController.getAllPublicProjects)
 
 module.exports = router
