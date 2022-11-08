@@ -34,6 +34,7 @@ export default function NavbarAppOptions(props) {
 
     useEffect(() => {
         auth.getLoggedIn(store); 
+        console.log(auth.user)
         if (auth.user == null){
             setLoggedIn(false);
         } else {

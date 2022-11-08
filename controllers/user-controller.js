@@ -60,7 +60,7 @@ loginUser = async (req, res) => {
         }
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        return res.status(500).send();
     }
 }
 
@@ -135,7 +135,7 @@ forgotPassword = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        return res.status(500).send();
     }
 }
 
