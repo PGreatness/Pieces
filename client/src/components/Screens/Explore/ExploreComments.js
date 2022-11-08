@@ -19,10 +19,12 @@ import './css/explore.css';
 import { useContext, useEffect } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 import ExploreCommentsItem from './ExploreCommentsItem'
+import AuthContext from '../../../auth/auth';
 
 export default function ExploreComments(props) {
     console.log("hello");
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     useEffect(() => {
         store.loadPublicProjectComments();
     }, [])

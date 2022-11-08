@@ -16,13 +16,39 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import img from '../../images/map.jpg'
 import './css/explore.css';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth';
 
 export default function ExploreCommentsItem(props) {
     const { store } = useContext(GlobalStoreContext);
-    const comments = props.comments;
+    const { auth } = useContext(AuthContext);
+    const comments = props.project;
+    console.log("Am I making it here?")
     console.log(comments)
+
+    const [likes, setLikes] = useState(comments.likes.length); 
+    const [dislikes, setDislikes] = useState(comments.dislikes.length);
+    const [isLiked, setIsLiked] = useState(comments.likes.includes(auth.user?._id));
+    const [isDisliked, setIsDisliked] = useState(comments.dislikes.includes(auth.user?._id));
+
+    useEffect(() => {
+        setLikes(comments.likes.length);
+        setDislikes(comments.dislikes.length);
+        setIsLiked(comments.likes.includes(auth.user?._id));
+        setIsDisliked(comments.dislikes.includes(auth.user?._id));
+    },[]);
+
+
+    const handleLikeClick = (event) => {
+        event.stopPropagation();
+        store.updateCommentLikes(comments._id, (like_arr, dislike_arr) => {
+            setLikes(like_arr.length);
+            setDislikes(dislike_arr.length);
+            setIsLiked(like_arr.includes(auth.user?.userName));
+            setIsDisliked(dislike_arr.includes(auth.user?.userName));
+        });
+    }
 
     return (
         <ListItem style={{
@@ -36,29 +62,28 @@ export default function ExploreCommentsItem(props) {
                 </ListItemAvatar>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >Mitchel Lockwood</ListItem>
-                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@mitchL4</ListItem>
+                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >{comments.userId}</ListItem>
+                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@{comments.userId}</ListItem>
                 </ListItem>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                    <div style={{ fontSize: "20px", marginRight: "15px"}}>10d</div>
+                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{comments.dateCreated}</div>
                     <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                        <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbUpIcon>
-                        <div>30</div>
+                        <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }} onClick={handleLikeClick}></ThumbUpIcon>
+                        <div>{likes}</div>
                     </ListItem>
                     <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
                         <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
-                        <div>4</div>
+                        <div>{dislikes}</div>
                     </ListItem>
                 </ListItem>
 
             </ListItem>
 
             <ListItem style={{ paddingTop: "0px"}}>
-                <ListItem sx={{ fontSize: "20px", px: 1}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi.
-                Aliquam in hendrerit urna.  Pellentesque commodo lacus at sodales sodales.
-                Quisque sagittis orci ut diam condimentum, vel euismod erat placerat.
-                    Pellentesque sit amet sapien fringilla, mattis ligula magna...</ListItem>
+                <ListItem sx={{ fontSize: "20px", px: 1}}>
+                    {comments.text}
+                </ListItem>
             </ListItem>
 
         </ListItem>

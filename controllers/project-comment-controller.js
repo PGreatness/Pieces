@@ -92,6 +92,13 @@ var deleteCommentsOfProject = function(req, res) {
     });
 }
 
+getCommentbyId = async (req, res) => {
+    const savedComment = await ProjectComment.findById(req.query.id);
+    return res.status(200).json({
+        comment: savedComment
+    }).send();
+}
+
 updateComment = async (req, res) => {
 
     let id = mongoose.Types.ObjectId(req.query.id)
@@ -226,6 +233,7 @@ module.exports = {
     deleteComment,
     deleteCommentsOfProject,
     getComments,
+    getCommentbyId,
     updateComment,
     getAllProjectCommentsOnPage
 };
