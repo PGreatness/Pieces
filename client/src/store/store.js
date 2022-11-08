@@ -7,8 +7,7 @@ export const GlobalStoreContext = createContext({});
 
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
-    SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
-    GET_MAP_OWNER: "GET_MAP_OWNER"
+    SET_CURRENT_PAGE: "SET_CURRENT_PAGE"
 }
 
 
@@ -19,8 +18,7 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
-        currentPage: "explore",
-        mapOwner: null
+        currentPage: "explore"
     });
 
 
@@ -41,26 +39,17 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_PUBLIC_PROJECTS: {
                 return setStore({
                     publicProjects: payload,
-                    currentPage: store.currentPage,
-                    mapOwner: store.mapOwner
+                    currentPage: store.currentPage
                 });
             }
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 return setStore({
                     publicProjects: payload.publicProjects,
-                    currentPage: payload.currentPage,
-                    mapOwner: store.mapOwner
+                    currentPage: payload.currentPage
                 });
             }
 
-            case GlobalStoreActionType.GET_MAP_OWNER: {
-                return setStore({
-                    publicProjects: store.publicProjects,
-                    currentPage: store.currentPage,
-                    mapOwner: payload
-                });
-            }
 
             default:
                 return store;
@@ -95,7 +84,6 @@ function GlobalStoreContextProvider(props) {
 
 
     store.changePageToExplore = async function () {
-        console.log("in store")
         const response = await api.getAllPublicProjects();
         if(response.data.success){
             console.log(response.data)
@@ -116,10 +104,8 @@ function GlobalStoreContextProvider(props) {
     store.getUserById = async function (id) {
         const response = await api.getUserById(id);
         if(response.status === 200){
-            storeReducer({
-                type: GlobalStoreActionType.GET_MAP_OWNER,
-                payload: response.data.user
-            });
+            console.log(response.data)
+            return response.data.user;
         }
     } 
 

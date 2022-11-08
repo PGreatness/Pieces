@@ -21,13 +21,6 @@ export default function ExploreItem(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
     const project = props.project;
-    console.log(project)
-    console.log(auth.user)
-
-    // store.getUserById(project.ownerId)
-    // const mapOwner = store.mapOwner;
-    // console.log(mapOwner.userName)
-
 
     const [likes, setLikes] = useState(project.likes.length); 
     const [dislikes, setDislikes] = useState(project.dislikes.length);  
@@ -35,13 +28,19 @@ export default function ExploreItem(props) {
     const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
     const [isCollaborator, setIsCollaborator] = useState(project.collaboratorIds.includes(auth.user?._id));
+    const [mapOwner, setMapOwner] = useState(null);
 
     useEffect(() => {
-        setLikes(project.likes.length);
-        setDislikes(project.dislikes.length);
-        setIsLiked(project.likes.includes(auth.user?._id));
-        setIsDisliked(project.dislikes.includes(auth.user?._id));
-        setIsFav(project.favs.includes(auth.user?._id));
+
+        // setLikes(project.likes.length);
+        // setDislikes(project.dislikes.length);
+        // setIsLiked(project.likes.includes(auth.user?._id));
+        // setIsDisliked(project.dislikes.includes(auth.user?._id));
+        // setIsFav(project.favs.includes(auth.user?._id));
+
+        store.getUserById(project.ownerId)
+        setMapOwner(store.mapOwner);
+        
     },[]);
 
 
@@ -50,8 +49,8 @@ export default function ExploreItem(props) {
         store.updateLikes(project._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
-            setIsLiked(like_arr.includes(auth.user?.userName));
-            setIsDisliked(dislike_arr.includes(auth.user?.userName));
+            setIsLiked(like_arr.includes(auth.user?._id));
+            setIsDisliked(dislike_arr.includes(auth.user?._id));
         });
     }
 
@@ -60,8 +59,8 @@ export default function ExploreItem(props) {
         store.updateDislikes(project._id, (like_arr, dislike_arr) => {
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
-            setIsLiked(like_arr.includes(auth.user?.userName));
-            setIsDisliked(dislike_arr.includes(auth.user?.userName));
+            setIsLiked(like_arr.includes(auth.user?._id));
+            setIsDisliked(dislike_arr.includes(auth.user?._id));
         });
     }
 
@@ -92,7 +91,7 @@ export default function ExploreItem(props) {
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
                         <div class="project_title">{project.mapName}</div>
-                        <div class="project_username">by @</div>
+                        <div class="project_username">{mapOwner}</div>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
