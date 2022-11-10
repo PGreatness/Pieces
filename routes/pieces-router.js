@@ -20,12 +20,13 @@ router.get('/forgotPassword', UserController.forgotPassword)
 router.get('/ownerAndCollabOf', UserController.getOwnerAndCollaboratorOfMaps)
 router.get('/getLibraryMapsByName', UserController.getLibraryMapsByName)
 
-
-
 router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
+
+router.post('/requestMapEditAccess', UserController.requestMapEditAccess)
+
 
 
 
@@ -36,20 +37,20 @@ router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
 router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
 
-router.post('/comments/updateComment', ProjectCommentController.updateComment)
-router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
-router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
-router.post('/comments/updateComment/', ProjectCommentController.updateComment)
-
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
 
+router.post('/comments/updateComment', ProjectCommentController.updateComment)
+router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
+router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
+router.post('/comments/updateComment/', ProjectCommentController.updateComment)
 
 
-// // TileSet Routes
+
+// TileSet Routes
 router.get('/tileset/getAllUserTilesets/:ownerId', TilesetController.getAllUserTilesets)
 router.get('/tileset/getUserTilesetsByName/:tilesetName', TilesetController.getUserTilesetsByName)
 router.get('/tileset/getTilesetsById/:id', TilesetController.getTilesetbyId)

@@ -24,12 +24,13 @@ export default function ExploreTilesetItem(props) {
     const { auth } = useContext(AuthContext);
     const project = props.project;
 
+    const [showRequestModal, setShowRequestModal] = useState(false);
     const [likes, setLikes] = useState(project.likes.length); 
     const [dislikes, setDislikes] = useState(project.dislikes.length);  
     const [isLiked, setIsLiked] = useState(project.likes.includes(auth.user?._id));
     const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
-    const [isCollaborator, setIsCollaborator] = useState(project.collaboratorIds.includes(auth.user?._id));
+    const [isUnlocked, setIsUnlocked] = useState(project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id)
 
 
 
@@ -40,6 +41,7 @@ export default function ExploreTilesetItem(props) {
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?._id));
             setIsDisliked(dislike_arr.includes(auth.user?._id));
+            setIsUnlocked(project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id)
         });
     }
 
@@ -65,14 +67,19 @@ export default function ExploreTilesetItem(props) {
         navigate(loc);
     }
 
-    const showRequestModal = () => {
+    const handleAccessRequest = () => {
+        setShowRequestModal(true)
+    }
+
+    const handleCloseAccessRequest = () => {
+        setShowRequestModal(false)
     }
 
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
             <img class='image' src={require("../../images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
-            {isCollaborator? 
+            {isUnlocked? 
             <LockOpenIcon className='lock_icon'></LockOpenIcon> :
             <LockIcon className='lock_icon'></LockIcon>
             }
@@ -99,8 +106,8 @@ export default function ExploreTilesetItem(props) {
                         <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
                         onClick={handleFavClick}></FavoriteIcon>
-                        <EditIcon sx={{ fontSize: 50, color:`${isCollaborator? "white" : "gray"}`}}
-                        onClick={isCollaborator? () => setLocation('/map/1') : () => showRequestModal} ></EditIcon>
+                        <EditIcon sx={{ fontSize: 50, color:`${isUnlocked? "white" : "gray"}`}}
+                        onClick={isUnlocked? () => setLocation('/tileset/1') : () => handleAccessRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>

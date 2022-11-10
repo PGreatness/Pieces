@@ -1,10 +1,6 @@
 const { model, Schema, ObjectId } = require("mongoose");
 
 const notificationSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
     senderId: {
         type: String,
         required: true,
@@ -12,6 +8,14 @@ const notificationSchema = new Schema({
     seen: {
         type: Boolean,
         required: true,
+    },
+    mapId: {
+        type: String,
+        required: false,
+    }, 
+    tilesetId: {
+        type: String,
+        required: false,
     },
     notificationMsg: {
         type: String,

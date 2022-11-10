@@ -91,11 +91,20 @@ export default function NavbarAppOptions(props) {
         if (isLoggedIn) {
             return (
                 <>
-                    <h1 onClick={() => {props.changeLoc('/explore');
-                    navigate("/explore"); store.changePageToExplore(); }} >Explore</h1>
-                    <h1 onClick={() => {props.changeLoc('/library');
-                    navigate("/library"); store.changePageToLibrary(); store.loadUserAndCollabMaps("6357194e0a81cb803bbb913e")}} >Library</h1>
-                    <h1 onClick={() => {props.changeLoc('/community');navigate("/community")}} >Community</h1>
+                    <h1 style={{color:`${store.currentPage === 'explore' ? "#2dd4cf" : "white"}`}}
+                    onClick={() => {props.changeLoc('/explore');
+                    navigate("/explore"); store.changePageToExplore(); }} 
+                    >Explore</h1>
+                    
+                    <h1 style={{color:`${store.currentPage === 'library' ? "#2dd4cf" : "white"}`}}
+                    onClick={() => {props.changeLoc('/library');
+                    navigate("/library"); store.changePageToLibrary(); }} 
+                    >Library</h1>
+
+                    <h1 style={{color:`${store.currentPage === 'community' ? "#2dd4cf" : "white"}`}}
+                    onClick={() => {props.changeLoc('/community'); 
+                    navigate("/community"); store.changePageToCommunity();}} 
+                    >Community</h1>
                 </>
             )
         }
