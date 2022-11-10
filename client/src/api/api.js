@@ -14,7 +14,7 @@ export const getAllProjectComments = () => api.get(`/comments/getAllProjectComme
 export const getCommentbyId = (id) => api.get(`/comments/getCommentbyId/${id}`)
 export const updateComment = (query, payload) => api.post(`/comments/updateComment/`, payload, {params: query})
 
-export const getAllPublicProjects = () => api.get(`/getAllPublicProjects/`)
+export const getAllPublicProjects = (query) => api.get(`/getAllPublicProjects/`, {params: query})
 export const getPublicProjectsByName = (name) => api.get(`/getPublicProjectsByName/${name}/`)
 
 

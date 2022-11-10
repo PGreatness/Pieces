@@ -6,12 +6,6 @@ import { styled } from '@mui/material/styles';
 import { GlobalStoreContext } from '../../../store/store';
 
 const StyledPagination = styled(TablePagination)({
-    '& .MuiPaginationItem-root': {
-        color: 'white',
-    },
-    '& .MuiPaginationItem-page.Mui-selected': {
-        backgroundColor: '#11182A',
-    },
     '& .MuiTablePagination-displayedRows': {
         color: 'white',
     },
@@ -36,25 +30,24 @@ export default function MakePaginations(props) {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const { store } = useContext(GlobalStoreContext);
 
-    useEffect(() => {
-        store.changePagination(page, rowsPerPage);
-    }, [page, rowsPerPage]);
-
     const handleRowChange = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        store.changePagination(0, parseInt(event.target.value, 10));
     };
 
     const handlePageChange = (event, value) => {
         setPage(value);
+        store.changePagination(value, rowsPerPage);
     };
     return (
         <Box sx={{
-            display: 'flex', justifyContent: 'center', position: 'relative', bottom: '0',
+            display: 'flex', justifyContent: 'center', position: 'sticky', bottom: '0',
             color: 'white', backgroundColor: '#1F293A', width: '75vw'
         }}>
-            <StyledPagination count={props.count} page={page} onPageChange={handlePageChange}
-            rowsPerPage={rowsPerPage} onRowsPerPageChange={handleRowChange} labelRowsPerPage={'Public Projects Per Page'}/>
+            <StyledPagination count={-1} page={page} onPageChange={handlePageChange} labelDisplayedRows={()=>''}
+            rowsPerPage={rowsPerPage} onRowsPerPageChange={handleRowChange} labelRowsPerPage={'Public Projects Per Page'}
+            nextIconButtonProps={{disabled: store.pagination.stopPagination}}/>
         </Box>
     )
 }

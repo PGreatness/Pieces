@@ -39,8 +39,9 @@ function GlobalStoreContextProvider(props) {
         mapOwner: null,
         searchName: "",
         pagination: {
-            page: 0,
+            page: 1,
             limit: 10,
+            stopPagination: false
         }
     });
 
@@ -91,7 +92,7 @@ function GlobalStoreContextProvider(props) {
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 console.log(store);
-                console.log(payload.currentPage)
+                console.log("in gsat", payload)
                 return setStore({
                     ...store,
                     publicProjects: payload.publicProjects,
@@ -141,7 +142,8 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_PAGINATION: {
                 return setStore({
                     ...store,
-                    pagination: payload.pagination
+                    pagination: payload.pagination,
+                    publicProjects: payload.publicProjects,
                 });
             }
             default:
@@ -157,8 +159,11 @@ function GlobalStoreContextProvider(props) {
 
     store.loadPublicProjects = async function () {
 
+        let page = store.pagination.page;
+        let limit = store.pagination.limit;
+
         // Ahnaf is writing the getAllPublicProjects in the backend
-        const response = await api.getAllPublicProjects();
+        const response = await api.getAllPublicProjects({ page: page, limit: limit });
         console.log(response);
         if (response.data.success) {
             let publicProjects = response.data.projects;
@@ -184,7 +189,7 @@ function GlobalStoreContextProvider(props) {
             console.log("API FAILED TO GET THE PROJECT COMMENTS");
         }
     }
-    
+
     store.loadAllUserMaps = async function (userId) {
 
         const response = await api.getAllUserMaps(userId);
@@ -243,8 +248,9 @@ function GlobalStoreContextProvider(props) {
 
 
     store.changePageToExplore = async function () {
-        
-        const response = await api.getAllPublicProjects();
+        let page = store.pagination.page;
+        let limit = store.pagination.limit;
+        const response = await api.getAllPublicProjects({ page: page, limit: limit });
         if (response.data.success) {
             console.log(response.data)
             let publicProjects = response.data.projects;
@@ -254,7 +260,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: "explore",
                     publicProjects: publicProjects,
                     userMaps: store.userMaps,
-                    collabMaps: store.collabMaps
+                    collabMaps: store.collabMaps,
                 }
             });
         } else {
@@ -291,13 +297,13 @@ function GlobalStoreContextProvider(props) {
 
     store.changeSearchName = async function (search) {
         console.log(store.currentPage)
-        
-        switch(store.currentPage){
 
-            case "explore" : {
+        switch (store.currentPage) {
+
+            case "explore": {
                 const response = await api.getPublicProjectsByName(search);
-                if(response.data.success){
-                    let publicProjects = response.data.projects;  
+                if (response.data.success) {
+                    let publicProjects = response.data.projects;
                     storeReducer({
                         type: GlobalStoreActionType.SET_SEARCH_NAME,
                         payload: {
@@ -313,18 +319,18 @@ function GlobalStoreContextProvider(props) {
                 break;
             }
 
-            case "library" : {
+            case "library": {
                 console.log("what the heck")
                 let payload = {
                     id: "6357194e0a81cb803bbb913e",
                     name: search
                 }
                 const response = await api.getLibraryMapsByName(payload);
-                
-                if(response.data.success){
-                    console.log("success" + response); 
+
+                if (response.data.success) {
+                    console.log("success" + response);
                     let userMaps = response.data.owner;
-                    let collabMaps = response.data.collaborator; 
+                    let collabMaps = response.data.collaborator;
                     console.log(response.data)
                     storeReducer({
                         type: GlobalStoreActionType.SET_SEARCH_NAME,
@@ -342,14 +348,14 @@ function GlobalStoreContextProvider(props) {
                 break;
             }
 
-            
+
 
             // case "community" : {
             //     break;
             // }
 
             default: {
-                return; 
+                return;
             }
         }
     }
@@ -459,7 +465,7 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createNewMap = async function(mapName, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewMap = async function (mapName, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
         console.log("handling create map in store...")
         let payload = {
             mapName: mapName,
@@ -473,7 +479,7 @@ function GlobalStoreContextProvider(props) {
         console.log(response)
     }
 
-    store.createNewTileset = async function(tilesetName, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewTileset = async function (tilesetName, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
         console.log("handling create map in store...")
         console.log(tilesetName)
         console.log(tilesetHeight)
@@ -1078,22 +1084,22 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
-        await api.getCommentbyId(id).then( response => {
+        await api.getCommentbyId(id).then(response => {
             // console.log(response)
             let comment = response.data.comment;
-            if(comment.likes.includes(auth.user._id)){
+            if (comment.likes.includes(auth.user._id)) {
                 let index = comment.likes.indexOf(auth.user._id);
-                comment.likes.splice(index, 1); 
-            } else if (comment.dislikes.includes(auth.user._id)){
+                comment.likes.splice(index, 1);
+            } else if (comment.dislikes.includes(auth.user._id)) {
                 let index = comment.dislikes.indexOf(auth.user._id);
-                comment.dislikes.splice(index, 1); 
-                comment.likes.push(auth.user._id); 
+                comment.dislikes.splice(index, 1);
+                comment.likes.push(auth.user._id);
             } else {
-                comment.likes.push(auth.user._id); 
+                comment.likes.push(auth.user._id);
             }
 
 
-            async function updatingComment(comment){
+            async function updatingComment(comment) {
                 let payload = {
                     likes: comment.likes,
                     dislikes: comment.dislikes
@@ -1104,11 +1110,11 @@ function GlobalStoreContextProvider(props) {
                     ownerId: auth.user._id
                 }
                 console.log(comment._id)
-                response = await api.updateComment(query, payload); 
-                
-                if(response.data.success){
+                response = await api.updateComment(query, payload);
+
+                if (response.data.success) {
                     setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjectComments(); 
+                    store.loadPublicProjectComments();
                 }
             }
 
@@ -1152,7 +1158,19 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.changePagination = async function (page, limit) {
-        setStore({ ...store, pagination: { page: page, limit: limit } });
+        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit });
+        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit });
+        let paginate = { page: page + 1, limit: limit, stopPagination: false };
+        if (nextResponse.data.projects.length === 0) {
+            paginate = { ...paginate, page: page, stopPagination: true };
+        }
+        storeReducer({
+            type: GlobalStoreActionType.SET_PAGINATION,
+            payload: {
+                publicProjects: response.data.projects,
+                pagination: paginate
+            }
+        });
     }
 
     return (

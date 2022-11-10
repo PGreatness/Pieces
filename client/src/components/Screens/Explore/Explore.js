@@ -80,17 +80,11 @@ export default function Explore(props) {
     }, [filterOptions])
 
     const [projects, setProjects] = useState(store.publicProjects)
-    const [paginatedProjects, setPaginatedProjects] = useState(projects.slice(0, 10))
 
     useEffect(() => {
         setProjects(store.publicProjects)
     }, [store.publicProjects])
 
-    useEffect(() => {
-        let start = store.pagination.page * store.pagination.limit
-        let end = start + store.pagination.limit
-        setPaginatedProjects(projects.slice(start, end))
-    }, [store.pagination.page, store.pagination.limit, projects])
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -305,7 +299,7 @@ export default function Explore(props) {
             }}>
                 {
                     !filterActive
-                    ?   paginatedProjects.map((entry) => (
+                    ?   projects.map((entry) => (
                             entry.mapName ? (<ExploreMapItem
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
