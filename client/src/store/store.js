@@ -14,7 +14,8 @@ export const GlobalStoreActionType = {
     GET_MAP_OWNER: "GET_MAP_OWNER",
     LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
-    SET_EXPLORE_SORT: "SET_EXPLORE_SORT"
+    SET_EXPLORE_SORT: "SET_EXPLORE_SORT",
+    SET_PAGINATION: "SET_PAGINATION",
 }
 
 
@@ -36,7 +37,11 @@ function GlobalStoreContextProvider(props) {
         sortedLibraryList: [],
         currentPage: "",
         mapOwner: null,
-        searchName: ""
+        searchName: "",
+        pagination: {
+            page: 0,
+            limit: 10,
+        }
     });
 
 
@@ -57,160 +62,88 @@ function GlobalStoreContextProvider(props) {
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
             case GlobalStoreActionType.LOAD_PUBLIC_PROJECTS: {
                 return setStore({
+                    ...store,
                     publicProjects: payload,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
-                    currentPage: store.currentPage,
-                    mapOwner: store.mapOwner,
-                    projectComments: store.projectComments,
-                    librarySortOption: store.librarySortOption,
-                    librarySortDirection: store.librarySortDirection,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
                 });
             }
 
             case GlobalStoreActionType.LOAD_ALL_USER_MAPS: {
                 return setStore({
-                    publicProjects: store.publicProjects,
+                    ...store,
                     userMaps: payload,
-                    collabMaps: store.collabMaps,
-                    currentPage: store.currentPage,
-                    projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
-                    librarySortOption: store.librarySortOption,
-                    librarySortDirection: store.librarySortDirection,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
                 })
             }
 
             case GlobalStoreActionType.LOAD_ALL_USER_AS_COLLABORATOR_MAPS: {
                 return setStore({
-                    publicProjects: store.publicProjects,
-                    userMaps: store.userMaps,
+                    ...store,
                     collabMaps: payload,
-                    currentPage: store.currentPage,
-                    projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
-                    librarySortOption: store.librarySortOption,
-                    librarySortDirection: store.librarySortDirection,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
                 })
             }
 
             case GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS: {
                 return setStore({
-                    publicProjects: store.publicProjects,
+                    ...store,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
-                    projectComments: store.projectComments,
-                    currentPage: payload.currentPage,
-                    mapOwner: store.mapOwner,
-                    librarySortOption: store.librarySortOption,
-                    librarySortDirection: store.librarySortDirection,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
                 })
             }
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
+                console.log(store);
                 console.log(payload.currentPage)
                 return setStore({
+                    ...store,
                     publicProjects: payload.publicProjects,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
                     currentPage: payload.currentPage,
-                    mapOwner: store.mapOwner,
-                    projectComments: store.projectComments,
-                    librarySortOption: store.librarySortOption,
-                    librarySortDirection: store.librarySortDirection,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
                 });
             }
 
             case GlobalStoreActionType.SET_LIBRARY_SORTED_LIST: {
                 return setStore({
-                    publicProjects: store.publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
-                    currentPage: store.currentPage,
-                    mapOwner: store.mapOwner,
-                    projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
+                    ...store,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
                     sortedLibraryList: payload.allMaps,
-                    searchName: store.searchName
                 });
             }
 
             case GlobalStoreActionType.LOAD_PROJECT_COMMENTS: {
                 return setStore({
-                    publicProjects: store.publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
-                    currentPage: store.currentPage,
-                    mapOwner: store.mapOwner,
-                    projectComments: payload,
-                    mapOwner: store.mapOwner,
+                    ...store,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
                     sortedLibraryList: payload.allMaps,
-                    searchName: store.searchName
                 })
             }
 
             case GlobalStoreActionType.SET_EXPLORE_SORT: {
                 return setStore({
+                    ...store,
                     publicProjects: payload.publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
-                    currentPage: store.currentPage,
-                    projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
-                    librarySortOption: store.sortOpt,
-                    librarySortDirection: store.sortDir,
                     projSortOpt: payload.projSortOpt,
                     projSortDir: payload.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
-                    searchName: store.searchName
                 })
             }
 
             case GlobalStoreActionType.SET_SEARCH_NAME: {
                 return setStore({
+                    ...store,
                     publicProjects: payload.publicProjects,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
-                    currentPage: store.currentPage,
-                    projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
-                    librarySortOption: store.sortOpt,
-                    librarySortDirection: store.sortDir,
-                    projSortOpt: store.projSortOpt,
-                    projSortDir: store.projSortDir,
-                    sortedLibraryList: store.sortedLibraryList,
                     searchName: payload.newSearch
                 });
             }
 
+            case GlobalStoreActionType.SET_PAGINATION: {
+                return setStore({
+                    ...store,
+                    pagination: payload.pagination
+                });
+            }
             default:
                 return store;
         }
@@ -226,6 +159,7 @@ function GlobalStoreContextProvider(props) {
 
         // Ahnaf is writing the getAllPublicProjects in the backend
         const response = await api.getAllPublicProjects();
+        console.log(response);
         if (response.data.success) {
             let publicProjects = response.data.projects;
             storeReducer({
@@ -1215,6 +1149,10 @@ function GlobalStoreContextProvider(props) {
             }
             updatingComment(comment)
         });
+    }
+
+    store.changePagination = async function (page, limit) {
+        setStore({ ...store, pagination: { page: page, limit: limit } });
     }
 
     return (

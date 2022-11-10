@@ -1,8 +1,9 @@
 import React from 'react';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Box from '@mui/material/Box';
 import TablePagination from '@mui/material/TablePagination';
 import { styled } from '@mui/material/styles';
+import { GlobalStoreContext } from '../../../store/store';
 
 const StyledPagination = styled(TablePagination)({
     '& .MuiPaginationItem-root': {
@@ -33,16 +34,19 @@ const StyledPagination = styled(TablePagination)({
 export default function MakePaginations(props) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const { store } = useContext(GlobalStoreContext);
+
+    useEffect(() => {
+        store.changePagination(page, rowsPerPage);
+    }, [page, rowsPerPage]);
 
     const handleRowChange = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(1);
+        setPage(0);
     };
 
     const handlePageChange = (event, value) => {
         setPage(value);
-        // TODO: render new projects based on page number
-        // store.loadPublicProjects(page)
     };
     return (
         <Box sx={{
