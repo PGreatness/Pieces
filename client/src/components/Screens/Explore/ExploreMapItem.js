@@ -127,7 +127,7 @@ export default function ExploreMapItem(props) {
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
                             onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color: `${isUnlocked ? "white" : "gray"}` }}
-                            onClick={isUnlocked ? () => setLocation('/map/1') : handleConfirmRequest} ></EditIcon>
+                            onClick={isUnlocked ? () => {setLocation('/map/1'); store.changePageToMapEditor()} : handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>
