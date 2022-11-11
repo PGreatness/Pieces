@@ -1,11 +1,12 @@
 import React from 'react';
-import { useRef } from 'react';
+import { useRef, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import './css/notificationSidebar.css';
 import NotificationList from './NotificationList';
+import AuthContext from '../../auth/auth';
 
 const startAnimation = () => {
     let target = document.getElementsByClassName('notification-sidebar-cover')[0];
@@ -22,6 +23,7 @@ const endAnimation = () => {
 // props.user is the currently logged in user object
 export default function NotificationSidebar(props) {
 
+    const { auth } = useContext(AuthContext);
     const [open, setOpen] = React.useState(false);
     const containerRef = useRef(null);
     const toggleDrawer = (open) => (event) => {
@@ -46,6 +48,7 @@ export default function NotificationSidebar(props) {
         setOpen(open);
     };
 
+
     return (
         <>
             <IconButton className='notification-open-button' onClick={toggleDrawer(true)} >
@@ -57,7 +60,7 @@ export default function NotificationSidebar(props) {
                     sx={{ width: 250 }}
                     role="presentation"
                 >
-                    <NotificationList notifications={props.user?.notifications}/>
+                    <NotificationList notifications={auth.user?.notifications}/>
                 </Box>
             </Drawer>
         </>

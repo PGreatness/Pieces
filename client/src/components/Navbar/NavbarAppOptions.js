@@ -12,28 +12,6 @@ import NotificationSidebar from '../NotificationSidebar/NotificationSidebar';
 import { GlobalStoreContext } from '../../store/store'
 import AuthContext from '../../auth/auth';
 
-const sampleUser = {
-    userName: "ImanAli",
-    profilePic: "https://i.imgur.com/0cQ3X4X.png",
-    notifications: [
-        {
-            _id: "1",
-            senderId: '2',
-            seen: false,
-            notificationMsg: "this is a demo notification",
-            sentAt: "2021-10-01T00:00:00.000Z",
-        },
-    ],
-    friends: [],
-    chats: [],
-    firstName: "Iman",
-    lastName: "Ali",
-    email: "iman@ali.sbu.edu",
-    bio: "test bio",
-    createdAt: "2021-10-01T00:00:00.000Z",
-    updatedAt: "2021-10-01T00:00:00.000Z",
-    passwordHash: "test hash",
-}
 
 export default function NavbarAppOptions(props) {
     const WideInput = styled(Input)({
@@ -91,10 +69,12 @@ export default function NavbarAppOptions(props) {
         if (isLoggedIn) {
             return (
                 <>
+                
                     <h1 style={{color:`${store.currentPage === 'explore' ? "#2dd4cf" : "white"}`}}
                     onClick={() => {props.changeLoc('/explore');
                     navigate("/explore"); store.changePageToExplore(); }} 
                     >Explore</h1>
+                
                     
                     <h1 style={{color:`${store.currentPage === 'library' ? "#2dd4cf" : "white"}`}}
                     onClick={() => {props.changeLoc('/library');
@@ -124,7 +104,7 @@ export default function NavbarAppOptions(props) {
             return (
                 <>
                     {/* add user information once they are logged in here */}
-                    <NotificationSidebar user={sampleUser}/>
+                    <NotificationSidebar/>
                     <h1 onClick={() => {props.changeLoc('/profile');navigate("/profile")}} >Profile</h1>
                 </>
             )

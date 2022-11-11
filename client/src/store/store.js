@@ -149,7 +149,6 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
                     projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
                     projSortOpt: store.projSortOpt,
@@ -167,7 +166,6 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
                     projectComments: payload,
-                    mapOwner: store.mapOwner,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
                     projSortOpt: store.projSortOpt,
@@ -537,10 +535,10 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createNewMap = async function (mapName, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewMap = async function (title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
         console.log("handling create map in store...")
         let payload = {
-            mapName: mapName,
+            title: title,
             mapHeight: mapHeight,
             mapWidth: mapWidth,
             tileHeight: tileHeight,
@@ -551,16 +549,16 @@ function GlobalStoreContextProvider(props) {
         console.log(response)
     }
 
-    store.createNewTileset = async function (tilesetName, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
         console.log("handling create map in store...")
-        console.log(tilesetName)
+        console.log(title)
         console.log(tilesetHeight)
         console.log(tilesetWidth)
         console.log(tileHeight)
         console.log(tileWidth)
         console.log(ownerId)
         let payload = {
-            tilesetName: tilesetName,
+            title: title,
             imagePixelHeight: tilesetHeight,
             imagePixelWidth: tilesetWidth,
             tileHeight: tileHeight,
@@ -582,8 +580,8 @@ function GlobalStoreContextProvider(props) {
             case 'name':
                 if (sortDir === "up") {
                     allMaps.sort((map1, map2) => {
-                        let a = map1.mapName
-                        let b = map2.mapName
+                        let a = map1.title
+                        let b = map2.title
                         if (a > b) {
                             return 1;
                         }
@@ -605,8 +603,8 @@ function GlobalStoreContextProvider(props) {
                 }
                 else {
                     allMaps.sort((map1, map2) => {
-                        let a = map1.mapName
-                        let b = map2.mapName
+                        let a = map1.title
+                        let b = map2.title
                         if (a > b) {
                             return -1;
                         }
@@ -883,8 +881,8 @@ function GlobalStoreContextProvider(props) {
                 console.log("inside here at least")
                 if (sortDir === "up") {
                     list.sort((proj1, proj2) => {
-                        let a = proj1.mapName ? proj1.mapName : proj1.tilesetName
-                        let b = proj1.mapName ? proj2.mapName : proj2.tilesetName
+                        let a = proj1.title ? proj1.title : proj1.title
+                        let b = proj1.title ? proj2.title : proj2.title
                         if (a > b) {
                             return 1;
                         }
@@ -898,8 +896,8 @@ function GlobalStoreContextProvider(props) {
                 }
                 else {
                     list.sort((proj1, proj2) => {
-                        let a = proj1.mapName ? proj1.mapName : proj1.tilesetName
-                        let b = proj1.mapName ? proj2.mapName : proj2.tilesetName
+                        let a = proj1.title ? proj1.title : proj1.title
+                        let b = proj1.title ? proj2.title : proj2.title
                         if (a > b) {
                             return -1;
                         }
@@ -1237,6 +1235,44 @@ function GlobalStoreContextProvider(props) {
             //return response.data.user;
         }
     } 
+
+
+    store.editMapRequest = async function (receiverId, mapId, title) {
+        let payload = {
+            senderId: auth.user._id, 
+            receiverId: receiverId, 
+            mapId: mapId, 
+            title: title
+        }
+
+        const response = await api.requestMapEdit(payload);
+        if (response.data.success) {
+            console.log(response)
+            return
+        }
+        else {
+            console.log("API FAILED TO SEND NOTIFICATION")
+        }
+    }
+
+
+    store.editMapRequest = async function (receiverId, tilesetId, title) {
+        let payload = {
+            senderId: auth.user._id, 
+            receiverId: receiverId, 
+            tilsetId: tilesetId, 
+            title: title
+        }
+
+        const response = await api.requestTilesetEdit(payload); 
+        if (response.data.success) {
+            console.log(response)
+            return
+        }
+        else {
+            console.log("API FAILED TO SEND NOTIFICATION")
+        }
+    }
 
     return (
         <GlobalStoreContext.Provider value={{

@@ -451,16 +451,16 @@ getLibraryMapsByName = async (req, res) => {
     }
 
     const owner = await Map.find({ ownerId: uid });
-    let filteredOwner = owner.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+    let filteredOwner = owner.filter(function (str) { return str.title.toUpperCase().includes(name.toUpperCase()) });
 
     // let filteredOwner = owner.filter(obj => {
-    //     return obj.mapName.includes(name)
+    //     return obj.title.includes(name)
     //   });
 
     //   console.log(filteredOwner)
 
     const collaborator = await Map.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
-    let filteredCollaborator = collaborator.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+    let filteredCollaborator = collaborator.filter(function (str) { return str.title.toUpperCase().includes(name.toUpperCase()) });
 
     const aggregation = [
         // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
@@ -477,7 +477,7 @@ getLibraryMapsByName = async (req, res) => {
     ];
 
     const favs = await Map.aggregate(aggregation);
-    filteredFavs = favs.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+    filteredFavs = favs.filter(function (str) { return str.title.toUpperCase().includes(name.toUpperCase()) });
 
     return res.status(200).json({
         success: true,
@@ -488,64 +488,6 @@ getLibraryMapsByName = async (req, res) => {
     })
 }
 
-
-// Sends a notification to map Owner
-requestMapEditAccess = async (req, res) => {
-    const { senderId, receiverId, mapId, mapName } = req.body;
-
-    const objectSenderId = new ObjectId(senderId);
-    const sender = await User.findById(objectSenderId);
-    if (!sender)
-        return res
-            .status(400)
-            .json({ message: "Account with specified id not found. (Sender)" });
-
-    const objectReceiverId = new ObjectId(receiverId);
-    const receiver = await User.findOne({ _id: objectReceiverId });
-    if (!receiver)
-        return res
-            .status(400)
-            .json({ message: "Account with specified id not found. (Receiver)" });
-
-    var d = new Date();
-    let options = {
-        weekday: "long", year: "numeric", month: "long",
-        day: "numeric", hour: "2-digit", minute: "2-digit",
-        timeZone: "UTC",
-    };
-    var d = new Date().toLocaleString("en-US", options);
-
-    const notification = new Notification({
-        senderId: senderId,
-        seen: false,
-        mapId: mapId,
-        notificationMsg:
-            sender.firstName +
-            " " +
-            sender.lastName +
-            " is requesting access to edit map '" +
-            mapName +
-            "' with you.",
-        sentAt: d,
-    });
-
-
-    receiver.notifications.push(notification);
-    await receiver.save().then(() => {
-        return res.status(200).json({
-            success: true,
-            user: receiver,
-            message: 'Notification has been sent!'
-        })
-    }).catch((err) => {
-        console.log(err)
-        return res.status(404).json({
-            success: false,
-            message: 'Failed to send notification'
-        })
-
-    })
-}
 
 module.exports = {
             getLoggedIn,
@@ -559,6 +501,5 @@ module.exports = {
             forgotPassword,
             resetPassword,
             getOwnerAndCollaboratorOfMaps,
-            getLibraryMapsByName,
-            requestMapEditAccess
+            getLibraryMapsByName
         }

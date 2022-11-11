@@ -5,6 +5,7 @@ const TilesetController = require('../controllers/tileset-controller')
 const TileController = require('../controllers/tile-controller')
 const ThreadController = require('../controllers/thread-controller')
 const ChatController = require('../controllers/chat-controller')
+const NotificationController = require('../controllers/notification-controller')
 const ProjectCommentController = require('../controllers/project-comment-controller')
 
 const router = express.Router()
@@ -25,15 +26,13 @@ router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
 
-router.post('/requestMapEditAccess', UserController.requestMapEditAccess)
-
 
 
 
 // Map Routes
 router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
 router.get('/map/getAllUserAsCollaboratorMaps/:id', MapController.getAllUserAsCollaboratorMaps)
-router.get('/map/getMapsByName/:mapName', MapController.getMapsByName)
+router.get('/map/getMapsByName/:title', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
 router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
 
@@ -52,7 +51,7 @@ router.post('/comments/updateComment/', ProjectCommentController.updateComment)
 
 // TileSet Routes
 router.get('/tileset/getAllUserTilesets/:ownerId', TilesetController.getAllUserTilesets)
-router.get('/tileset/getUserTilesetsByName/:tilesetName', TilesetController.getUserTilesetsByName)
+router.get('/tileset/getUserTilesetsByName/:title', TilesetController.getUserTilesetsByName)
 router.get('/tileset/getTilesetsById/:id', TilesetController.getTilesetbyId)
 
 router.post('/tileset/newTileset', TilesetController.createTileset)
@@ -72,6 +71,12 @@ router.post('/tile/updateTile', TileController.updateTile)
 // Thread Routes
 router.post('/thread/newThread', ThreadController.createThread)
 router.post('/thread/deleteThread', ThreadController.deleteThread)
+
+
+// Notification Routes
+router.post('/notification/requestMapEdit', NotificationController.requestMapEdit)
+router.post('/notification/requestTilesetEdit', NotificationController.requestTilesetEdit)
+
 
 // Chat Routes
 router.get('/chat/fetchChat', ChatController.fetchChat)

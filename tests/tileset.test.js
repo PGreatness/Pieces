@@ -1,6 +1,6 @@
 const request = require("supertest");
 
-let tilesetName = "testTilesetJest2"
+let title = "testTilesetJest2"
 let objectIdOfDeleted = null
 let ownerIdOfDeleted = null
 
@@ -39,7 +39,7 @@ let ownerIdOfDeleted = null
 
 //     it("Should add a Tileset to the database", async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
-//             "tilesetName": tilesetName,
+//             "title": title,
 //             "imagePixelHeight": 64,
 //             "imagePixelWidth": 64,
 //             "tileHeight": 8,
@@ -51,7 +51,7 @@ let ownerIdOfDeleted = null
 //         });
 //         expect(res.status).toBe(200);
 //         console.log(res.body)
-//         expect(res.body.tileset.tilesetName).toBe(tilesetName);
+//         expect(res.body.tileset.title).toBe(title);
 //         expect(res.body.message).toBe("A tileset has been created!")
 //         objectIdOfDeleted = res.body.id.toString();
 //         ownerIdOfDeleted = res.body.tileset.ownerId;
@@ -61,7 +61,7 @@ let ownerIdOfDeleted = null
 // describe("POST /api/tileset/newTileset", () => {
 //     beforeAll(async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
-//             "tilesetName": tilesetName,
+//             "title": title,
 //             "imagePixelHeight": 64,
 //             "imagePixelWidth": 64,
 //             "tileHeight": 8,
@@ -84,7 +84,7 @@ let ownerIdOfDeleted = null
 
 //     it("Should fail to add a Tileset of the same name to the database", async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
-//             "tilesetName": tilesetName,
+//             "title": title,
 //             "imagePixelHeight": 64,
 //             "imagePixelWidth": 64,
 //             "tileHeight": 8,
@@ -102,7 +102,7 @@ let ownerIdOfDeleted = null
 // describe("POST /api/tileset/updateTileset", () => {
 //     beforeAll(async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
-//             "tilesetName": tilesetName,
+//             "title": title,
 //             "imagePixelHeight": 64,
 //             "imagePixelWidth": 64,
 //             "tileHeight": 8,
@@ -138,7 +138,7 @@ let ownerIdOfDeleted = null
 // describe("POST /api/tileset/deleteTileset", () => {
 //     beforeAll(async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/tileset/newTileset").send({
-//             "tilesetName": tilesetName,
+//             "title": title,
 //             "imagePixelHeight": 64,
 //             "imagePixelWidth": 64,
 //             "tileHeight": 8,
@@ -158,6 +158,6 @@ let ownerIdOfDeleted = null
 //             "ownerId": ownerIdOfDeleted
 //         })
 //         expect(res.status).toBe(200);
-//         expect(res.body.data.tilesetName).toBe(tilesetName);
+//         expect(res.body.data.title).toBe(title);
 //     });
 // });

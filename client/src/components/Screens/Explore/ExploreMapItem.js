@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useContext, useEffect } from 'react';
-import { Modal, Grid, TextField, Button, Typography, Backdrop } from '@mui/material';
+import { Modal, Grid, Button, Typography} from '@mui/material';
 import Box from '@mui/material/Box';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -90,7 +90,7 @@ export default function ExploreMapItem(props) {
     }
 
     const handleRequestAccess = () => {
-        //here add backend fucntionality to send owner notification
+        store.editMapRequest(mapOwner._id, project._id, project.title)
         setShowRequestModal(false)
     }
 
@@ -106,7 +106,7 @@ export default function ExploreMapItem(props) {
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <div class="project_title">{project.mapName}</div>
+                        <div class="project_title">{project.title}</div>
                         <div class="project_desc">{project.mapDescription}</div>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
@@ -144,7 +144,7 @@ export default function ExploreMapItem(props) {
                         </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'10px'}} item xs={12}>
                             <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Name:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.mapName}</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.title}</Typography>
                         </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
                             <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Owner:</Typography>
@@ -168,7 +168,6 @@ export default function ExploreMapItem(props) {
                         <Grid item xs={2}></Grid>
                     </Grid>
                 </Box>
-
             </Modal>
 
         </Box>
