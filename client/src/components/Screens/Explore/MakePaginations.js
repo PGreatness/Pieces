@@ -27,8 +27,8 @@ const StyledPagination = styled(TablePagination)({
 });
 export default function MakePaginations(props) {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
     const { store } = useContext(GlobalStoreContext);
+    const [rowsPerPage, setRowsPerPage] = useState(store.pagination.limit);
 
     useEffect(() => {setPage(0)}, [store.pagination.sort, store.pagination.order]);
 
