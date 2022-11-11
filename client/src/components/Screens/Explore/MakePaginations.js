@@ -30,6 +30,8 @@ export default function MakePaginations(props) {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const { store } = useContext(GlobalStoreContext);
 
+    useEffect(() => {setPage(0)}, [store.pagination.sort, store.pagination.order]);
+
     const handleRowChange = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);

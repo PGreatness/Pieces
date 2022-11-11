@@ -41,7 +41,9 @@ function GlobalStoreContextProvider(props) {
         pagination: {
             page: 1,
             limit: 10,
-            stopPagination: false
+            stopPagination: false,
+            sort: 'date',
+            order: -1
         }
     });
 
@@ -123,7 +125,6 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_EXPLORE_SORT: {
                 return setStore({
                     ...store,
-                    publicProjects: payload.publicProjects,
                     projSortOpt: payload.projSortOpt,
                     projSortDir: payload.projSortDir,
                 })
@@ -795,199 +796,27 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.changeExploreSort = function (projSortOpt, projSortDir) {
+    store.changeExploreSort = async function (projSortOpt, projSortDir) {
 
         console.log(projSortOpt)
         console.log(projSortDir)
-        let sortedProjects = store.sortProjects(store.publicProjects, projSortOpt, projSortDir);
-        console.log(sortedProjects)
 
+        let sortOpt;
+        if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
+        if (projSortOpt.toLowerCase().includes('download')) sortOpt = 'downloads';
+        if (projSortOpt.toLowerCase().includes('like')) sortOpt = 'likes';
+        if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
+
+        let pagination = { ...store.pagination, page: 0, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 };
+        store.changePagination(pagination.page, pagination.limit,pagination.sort,pagination.order);
         storeReducer({
             type: GlobalStoreActionType.SET_EXPLORE_SORT,
             payload: {
                 projSortOpt: projSortOpt,
-                projSortDir: projSortDir,
-                publicProjects: sortedProjects
+                projSortDir: projSortDir
             }
         });
     }
-
-
-
-    store.sortProjects = function (list, sortOpt, sortDir) {
-
-        console.log(sortOpt)
-        console.log(sortDir)
-
-        switch (sortOpt) {
-            case 'Project Name':
-                console.log("inside here at least")
-                if (sortDir === "up") {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.title ? proj1.title : proj1.title
-                        let b = proj1.title ? proj2.title : proj2.title
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                else {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.title ? proj1.title : proj1.title
-                        let b = proj1.title ? proj2.title : proj2.title
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                return list;
-            case 'Creation Date':
-                if (sortDir === "up") {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.createdAt
-                        let b = proj2.createdAt
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                else {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.createdAt
-                        let b = proj2.createdAt
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                return list;
-            case 'Most Liked':
-                if (sortDir === "up") {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.likes.length
-                        let b = proj2.likes.length
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                else {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.likes.length
-                        let b = proj2.likes.length
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                return list;
-
-            case 'Most Downloaded':
-                if (sortDir === "up") {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.downloads.length
-                        let b = proj2.downloads.length
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                else {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.downloads.length
-                        let b = proj2.downloads.length
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                return list;
-            // Probably change this to download size
-            case 'Size':
-                if (sortDir === "up") {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.mapHeight ? proj1.mapHeight * proj2.mapWidth : proj1.tiles.length * proj1.tileHeight * proj1.tileWidth;
-                        let b = proj2.mapHeight ? proj2.mapHeight * proj2.mapWidth : proj2.tiles.length * proj2.tileHeight * proj2.tileWidth;
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                else {
-                    list.sort((proj1, proj2) => {
-                        let a = proj1.mapHeight ? proj1.mapHeight * proj2.mapWidth : proj1.tiles.length * proj1.tileHeight * proj1.tileWidth;
-                        let b = proj2.mapHeight ? proj2.mapHeight * proj2.mapWidth : proj2.tiles.length * proj2.tileHeight * proj2.tileWidth;
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                }
-                return list;
-        }
-
-    }
-
-
 
 
     store.updateTilesetLikes = async function (id, setLikeDislikeCallback) {
@@ -1170,10 +999,12 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.changePagination = async function (page, limit) {
-        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit });
-        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit });
-        let paginate = { page: page + 1, limit: limit, stopPagination: false };
+    store.changePagination = async function (page, limit, sort, order) {
+        sort = sort ? sort : store.pagination.sort;
+        order = order ? order : store.pagination.order;
+        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit, sort: sort, order: order });
+        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit, sort: sort, order: order });
+        let paginate = { page: page + 1, limit: limit, stopPagination: false, sort: sort, order: order };
         if (nextResponse.data.projects.length === 0) {
             paginate = { ...paginate, page: page, stopPagination: true };
         }
@@ -1184,21 +1015,22 @@ function GlobalStoreContextProvider(props) {
                 pagination: paginate
             }
         });
+    }
     store.getUserById = async function (id, setOwnerCallback) {
         const response = await api.getUserById(id);
-        if(response.status === 200){
+        if (response.status === 200) {
             console.log(response.data)
             setOwnerCallback(response.data.user)
             //return response.data.user;
         }
-    } 
+    }
 
 
     store.editMapRequest = async function (receiverId, mapId, title) {
         let payload = {
-            senderId: auth.user._id, 
-            receiverId: receiverId, 
-            mapId: mapId, 
+            senderId: auth.user._id,
+            receiverId: receiverId,
+            mapId: mapId,
             title: title
         }
 
@@ -1215,13 +1047,13 @@ function GlobalStoreContextProvider(props) {
 
     store.editMapRequest = async function (receiverId, tilesetId, title) {
         let payload = {
-            senderId: auth.user._id, 
-            receiverId: receiverId, 
-            tilsetId: tilesetId, 
+            senderId: auth.user._id,
+            receiverId: receiverId,
+            tilsetId: tilesetId,
             title: title
         }
 
-        const response = await api.requestTilesetEdit(payload); 
+        const response = await api.requestTilesetEdit(payload);
         if (response.data.success) {
             console.log(response)
             return

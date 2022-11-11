@@ -671,9 +671,25 @@ getAllPublicProjects = async (req, res) => {
 
     var { page } = req.query;
     var { limit } = req.query;
+    var { sort } = req.query;
+    var { order } = req.query;
 
     if (!page) {
         page = 1;
+    }
+
+    // console.log(order)
+    order = order === 'asc' || +order === 1 ? 1 : -1;
+    if (!sort || sort === 'date') {
+        sort = { createdAt: order };
+    } else if (sort === "likes") {
+        sort = { numLikes: order };
+    } else if (sort === "name") {
+        sort = { title: order };
+    } else if (sort === "downloads") {
+        sort = { downloads: order };
+    } else {
+        sort = { createdAt: order };
     }
 
     if (limit && !Number.isNaN(+limit)) {
@@ -698,12 +714,14 @@ getAllPublicProjects = async (req, res) => {
 
     var startIndex;
     var rangeProject;
+    // console.log("sorting by: ", sort)
     if (limit) {
         startIndex = (page - 1) * limit;
         rangeProject = await Map.aggregate([
             { $match: { isPublic: true } },
             { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
-            { $sort: { createdAt: -1 } },
+            { $addFields: { numLikes: { $size: "$likes"} } },
+            { $sort: sort },
             { $skip: startIndex },
             { $limit: limit },
         ]);
@@ -712,7 +730,8 @@ getAllPublicProjects = async (req, res) => {
         rangeProject = await Map.aggregate([
             { $match: { isPublic: true } },
             { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
-            { $sort: { createdAt: -1 } },
+            { $addFields: { numLikes: { $size: "$likes"} } },
+            { $sort: sort },
             { $skip: startIndex },
         ]);
     }
