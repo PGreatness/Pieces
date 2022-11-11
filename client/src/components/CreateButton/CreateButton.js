@@ -40,7 +40,7 @@ export default function CreateButton(props) {
     }
 
     const handleCreateNewMap = () => {
-        let mapName = document.getElementById('map_name_input').value
+        let title = document.getElementById('title_input').value
         let mapHeight = Number(document.getElementById('map_height_input').value)
         let mapWidth = Number(document.getElementById('map_width_input').value)
         let tileHeight = Number(document.getElementById('tile_height_input').value)
@@ -51,7 +51,7 @@ export default function CreateButton(props) {
             console.log("Not a valid number.")
         }
         else {
-            let response = store.createNewMap(mapName, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
+            let response = store.createNewMap(title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
             if (response.data.success) 
                 setLocation('/map/1')
         }
@@ -59,7 +59,7 @@ export default function CreateButton(props) {
     }
     
     const handleCreateNewTileset = () => {
-        let tilesetName = document.getElementById('tileset_name_input').value
+        let title = document.getElementById('tileset_name_input').value
         let tilesetHeight = Number(document.getElementById('tileset_height_input').value)
         let tilesetWidth = Number(document.getElementById('tileset_width_input').value)
         let tileHeight = Number(document.getElementById('ts_tile_height_input').value)
@@ -70,7 +70,7 @@ export default function CreateButton(props) {
             console.log("Not a valid number.")
         }
         else {
-            store.createNewTileset(tilesetName, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+            store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
             // setLocation('/tileset/1')
         }
         setOpenCreateTilesetModal(false)

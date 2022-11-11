@@ -149,7 +149,6 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
                     projectComments: store.projectComments,
-                    mapOwner: store.mapOwner,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
                     projSortOpt: store.projSortOpt,
@@ -167,7 +166,6 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     mapOwner: store.mapOwner,
                     projectComments: payload,
-                    mapOwner: store.mapOwner,
                     librarySortOption: payload.sortOpt,
                     librarySortDirection: payload.sortDir,
                     projSortOpt: store.projSortOpt,
@@ -224,7 +222,6 @@ function GlobalStoreContextProvider(props) {
 
     store.loadPublicProjects = async function () {
 
-        // Ahnaf is writing the getAllPublicProjects in the backend
         const response = await api.getAllPublicProjects();
         if (response.data.success) {
             let publicProjects = response.data.projects;
@@ -250,7 +247,7 @@ function GlobalStoreContextProvider(props) {
             console.log("API FAILED TO GET THE PROJECT COMMENTS");
         }
     }
-    
+
     store.loadAllUserMaps = async function (userId) {
 
         const response = await api.getAllUserMaps(userId);
@@ -309,7 +306,7 @@ function GlobalStoreContextProvider(props) {
 
 
     store.changePageToExplore = async function () {
-        
+
         const response = await api.getAllPublicProjects();
         if (response.data.success) {
             console.log(response.data)
@@ -353,17 +350,30 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.changePageToCommunity = async function () {
+
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+            payload: {
+                currentPage: "community",
+                userMaps: store.userMaps,
+                collabMaps: store.collabMaps,
+                publicProjects: store.publicProjects
+            }
+        })
+    }
+
 
 
     store.changeSearchName = async function (search) {
         console.log(store.currentPage)
-        
-        switch(store.currentPage){
 
-            case "explore" : {
+        switch (store.currentPage) {
+
+            case "explore": {
                 const response = await api.getPublicProjectsByName(search);
-                if(response.data.success){
-                    let publicProjects = response.data.projects;  
+                if (response.data.success) {
+                    let publicProjects = response.data.projects;
                     storeReducer({
                         type: GlobalStoreActionType.SET_SEARCH_NAME,
                         payload: {
@@ -379,18 +389,18 @@ function GlobalStoreContextProvider(props) {
                 break;
             }
 
-            case "library" : {
+            case "library": {
                 console.log("what the heck")
                 let payload = {
                     id: "6357194e0a81cb803bbb913e",
                     name: search
                 }
                 const response = await api.getLibraryMapsByName(payload);
-                
-                if(response.data.success){
-                    console.log("success" + response); 
+
+                if (response.data.success) {
+                    console.log("success" + response);
                     let userMaps = response.data.owner;
-                    let collabMaps = response.data.collaborator; 
+                    let collabMaps = response.data.collaborator;
                     console.log(response.data)
                     storeReducer({
                         type: GlobalStoreActionType.SET_SEARCH_NAME,
@@ -408,14 +418,14 @@ function GlobalStoreContextProvider(props) {
                 break;
             }
 
-            
+
 
             // case "community" : {
             //     break;
             // }
 
             default: {
-                return; 
+                return;
             }
         }
     }
@@ -525,10 +535,10 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createNewMap = async function(mapName, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewMap = async function (title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
         console.log("handling create map in store...")
         let payload = {
-            mapName: mapName,
+            title: title,
             mapHeight: mapHeight,
             mapWidth: mapWidth,
             tileHeight: tileHeight,
@@ -539,16 +549,16 @@ function GlobalStoreContextProvider(props) {
         console.log(response)
     }
 
-    store.createNewTileset = async function(tilesetName, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
         console.log("handling create map in store...")
-        console.log(tilesetName)
+        console.log(title)
         console.log(tilesetHeight)
         console.log(tilesetWidth)
         console.log(tileHeight)
         console.log(tileWidth)
         console.log(ownerId)
         let payload = {
-            tilesetName: tilesetName,
+            title: title,
             imagePixelHeight: tilesetHeight,
             imagePixelWidth: tilesetWidth,
             tileHeight: tileHeight,
@@ -570,8 +580,8 @@ function GlobalStoreContextProvider(props) {
             case 'name':
                 if (sortDir === "up") {
                     allMaps.sort((map1, map2) => {
-                        let a = map1.mapName
-                        let b = map2.mapName
+                        let a = map1.title
+                        let b = map2.title
                         if (a > b) {
                             return 1;
                         }
@@ -593,8 +603,8 @@ function GlobalStoreContextProvider(props) {
                 }
                 else {
                     allMaps.sort((map1, map2) => {
-                        let a = map1.mapName
-                        let b = map2.mapName
+                        let a = map1.title
+                        let b = map2.title
                         if (a > b) {
                             return -1;
                         }
@@ -871,8 +881,8 @@ function GlobalStoreContextProvider(props) {
                 console.log("inside here at least")
                 if (sortDir === "up") {
                     list.sort((proj1, proj2) => {
-                        let a = proj1.mapName ? proj1.mapName : proj1.tilesetName
-                        let b = proj1.mapName ? proj2.mapName : proj2.tilesetName
+                        let a = proj1.title ? proj1.title : proj1.title
+                        let b = proj1.title ? proj2.title : proj2.title
                         if (a > b) {
                             return 1;
                         }
@@ -886,8 +896,8 @@ function GlobalStoreContextProvider(props) {
                 }
                 else {
                     list.sort((proj1, proj2) => {
-                        let a = proj1.mapName ? proj1.mapName : proj1.tilesetName
-                        let b = proj1.mapName ? proj2.mapName : proj2.tilesetName
+                        let a = proj1.title ? proj1.title : proj1.title
+                        let b = proj1.title ? proj2.title : proj2.title
                         if (a > b) {
                             return -1;
                         }
@@ -1144,22 +1154,22 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
-        await api.getCommentbyId(id).then( response => {
+        await api.getCommentbyId(id).then(response => {
             // console.log(response)
             let comment = response.data.comment;
-            if(comment.likes.includes(auth.user._id)){
+            if (comment.likes.includes(auth.user._id)) {
                 let index = comment.likes.indexOf(auth.user._id);
-                comment.likes.splice(index, 1); 
-            } else if (comment.dislikes.includes(auth.user._id)){
+                comment.likes.splice(index, 1);
+            } else if (comment.dislikes.includes(auth.user._id)) {
                 let index = comment.dislikes.indexOf(auth.user._id);
-                comment.dislikes.splice(index, 1); 
-                comment.likes.push(auth.user._id); 
+                comment.dislikes.splice(index, 1);
+                comment.likes.push(auth.user._id);
             } else {
-                comment.likes.push(auth.user._id); 
+                comment.likes.push(auth.user._id);
             }
 
 
-            async function updatingComment(comment){
+            async function updatingComment(comment) {
                 let payload = {
                     likes: comment.likes,
                     dislikes: comment.dislikes
@@ -1170,11 +1180,11 @@ function GlobalStoreContextProvider(props) {
                     ownerId: auth.user._id
                 }
                 console.log(comment._id)
-                response = await api.updateComment(query, payload); 
-                
-                if(response.data.success){
+                response = await api.updateComment(query, payload);
+
+                if (response.data.success) {
                     setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjectComments(); 
+                    store.loadPublicProjectComments();
                 }
             }
 
@@ -1215,6 +1225,53 @@ function GlobalStoreContextProvider(props) {
             }
             updatingComment(comment)
         });
+    }
+
+    store.getUserById = async function (id, setOwnerCallback) {
+        const response = await api.getUserById(id);
+        if(response.status === 200){
+            console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    } 
+
+
+    store.editMapRequest = async function (receiverId, mapId, title) {
+        let payload = {
+            senderId: auth.user._id, 
+            receiverId: receiverId, 
+            mapId: mapId, 
+            title: title
+        }
+
+        const response = await api.requestMapEdit(payload);
+        if (response.data.success) {
+            console.log(response)
+            return
+        }
+        else {
+            console.log("API FAILED TO SEND NOTIFICATION")
+        }
+    }
+
+
+    store.editMapRequest = async function (receiverId, tilesetId, title) {
+        let payload = {
+            senderId: auth.user._id, 
+            receiverId: receiverId, 
+            tilsetId: tilesetId, 
+            title: title
+        }
+
+        const response = await api.requestTilesetEdit(payload); 
+        if (response.data.success) {
+            console.log(response)
+            return
+        }
+        else {
+            console.log("API FAILED TO SEND NOTIFICATION")
+        }
     }
 
     return (

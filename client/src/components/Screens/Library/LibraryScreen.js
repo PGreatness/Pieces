@@ -416,7 +416,7 @@ export default function LibraryScreen() {
                             <div className="library_overlay">
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                     <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                        <div className="library_project_title">{project.mapName}</div>
+                                        <div className="library_project_title">{project.title}</div>
                                         <div className="library_project_author">by @{project.ownerId}</div>
                                     </Box>
                                     <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
@@ -439,7 +439,7 @@ export default function LibraryScreen() {
                                 <div className="library_overlay">
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                         <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                            <div className="library_project_title">{project.mapName}</div>
+                                            <div className="library_project_title">{project.title}</div>
                                             <div className="library_project_author">by @{project.ownerId}</div>
                                         </Box>
                                         <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
@@ -461,7 +461,7 @@ export default function LibraryScreen() {
                                 <div className="library_overlay">
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                         <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                            <div className="library_project_title">{project.mapName}</div>
+                                            <div className="library_project_title">{project.title}</div>
                                             <div className="library_project_author">by @{project.ownerId}</div>
                                         </Box>
                                         <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >

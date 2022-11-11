@@ -295,7 +295,7 @@ export default function Explore(props) {
                 {
                     !filterActive
                     ?   projects.map((entry) => (
-                            entry.mapName ? (<ExploreMapItem
+                            entry.mapHeight ? (<ExploreMapItem
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
                                 project={entry}
@@ -306,7 +306,7 @@ export default function Explore(props) {
                             />)
                         ))
                     :   filteredProjects.map((entry) => (
-                            entry.mapName ? (<ExploreMapItem
+                            entry.mapHeight ? (<ExploreMapItem
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
                                 project={entry}
