@@ -11,6 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ExploreIcon from '@mui/icons-material/Explore';
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import PeopleIcon from '@mui/icons-material/People';
+import { Avatar } from "@mui/material";
 
 import NotificationSidebar from '../NotificationSidebar/NotificationSidebar';
 import { GlobalStoreContext } from '../../store/store'
@@ -25,7 +26,7 @@ export default function NavbarAppOptions(props) {
         height: '60%',
         fontSize: '21px',
         color: 'rgba(200, 200, 200, 1)',
-        placeholder: "Search for map or tilesets"
+        paddingLeft: '15px'
     });
 
     const { store } = useContext(GlobalStoreContext);
@@ -96,7 +97,7 @@ export default function NavbarAppOptions(props) {
                         props.changeLoc('/library'); navigate("/library"); store.changePageToLibrary();
                     }}>
                         <CollectionsBookmarkIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></CollectionsBookmarkIcon>
-                        <Typography fontSize='26px'>Library</Typography>      
+                        <Typography fontSize='26px'>Library</Typography>
                     </Box>
 
 
@@ -129,10 +130,21 @@ export default function NavbarAppOptions(props) {
                 <>
                     {/* add user information once they are logged in here */}
                     <NotificationSidebar />
-                    <Typography fontSize='26px' marginRight='20px' style={{color: `${store.currentPage === 'profile' ? "#2dd4cf" : "white"}`}} 
-                    onClick={() => {
-                        props.changeLoc('/profile'); navigate("/profile"); store.changePageToProfile();
-                    }}>Profile</Typography>
+                    <Avatar
+                        sx={{
+                            width: 50,
+                            height: 50,
+                            fontSize: "20px",
+                            bgcolor: "rgb(2, 0, 36)",
+                            border: "rgba(59, 130, 206, 1) 2px solid",
+                            cursor: "pointer",
+                            marginRight: "30px"
+                        }}
+                        onClick={() => {
+                            props.changeLoc('/profile'); navigate("/profile"); store.changePageToProfile();
+                        }}>
+                        IA
+                    </Avatar>
                 </>
             )
         }
@@ -157,14 +169,14 @@ export default function NavbarAppOptions(props) {
 
         const createSearchIcon = () => {
             return (
-                <InputAdornment position="start">
+                <InputAdornment position="end">
                     <SearchIcon sx={{ fontSize: 30, px: 1, color: 'rgba(200, 200, 200, 1)' }} />
                 </InputAdornment>
             )
         }
         return loggedIn ? (
             <>
-                <WideInput placeholder="Search..." onKeyDown={handleSearchChange} startAdornment={createSearchIcon()} />
+                <WideInput placeholder="Search for maps and tilesets..." onKeyDown={handleSearchChange} endAdornment={createSearchIcon()} />
             </>
         ) : (<></>);
     }
