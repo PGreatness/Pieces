@@ -307,6 +307,45 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+    store.changePageToProfile = async function () {
+
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+            payload: {
+                currentPage: "profile",
+                userMaps: store.userMaps,
+                collabMaps: store.collabMaps,
+                publicProjects: store.publicProjects
+            }
+        })
+    }
+
+    store.changePageToMapEditor = async function () {
+
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+            payload: {
+                currentPage: "mapEditor",
+                userMaps: store.userMaps,
+                collabMaps: store.collabMaps,
+                publicProjects: store.publicProjects
+            }
+        })
+    }
+
+    store.changePageToTilesetEditor = async function () {
+
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+            payload: {
+                currentPage: "tilesetEditor",
+                userMaps: store.userMaps,
+                collabMaps: store.collabMaps,
+                publicProjects: store.publicProjects
+            }
+        })
+    }
+
 
 
     store.changeSearchName = async function (search) {
