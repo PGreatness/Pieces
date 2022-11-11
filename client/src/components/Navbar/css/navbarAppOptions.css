@@ -51,7 +51,7 @@ h1:active {
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    width: calc(100% - 40vw);
+    width: calc(100% - 50vw);
     height: 100%;
 }
 

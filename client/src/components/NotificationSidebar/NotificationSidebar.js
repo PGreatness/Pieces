@@ -52,7 +52,7 @@ export default function NotificationSidebar(props) {
     return (
         <>
             <IconButton className='notification-open-button' onClick={toggleDrawer(true)} >
-                <NotificationsIcon sx={{ color: 'white', fill: 'white' }} />
+                <NotificationsIcon sx={{ color: 'white', fill: 'white', fontSize: 30, px: 1 }} />
             </IconButton>
             <div className='notification-sidebar-cover' onAnimationEnd={toggler(true)} ref={containerRef}></div>
             <Drawer anchor="right" open={open} onClose={toggler(false)} transitionDuration={{ enter: 0.1, exit: 500 }} PaperProps={{ sx: { backgroundColor: '#11182A' } }}>
