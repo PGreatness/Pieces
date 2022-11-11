@@ -79,7 +79,12 @@ export default function Explore(props) {
         }
     }, [filterOptions])
 
-    const projects = store.publicProjects
+    const [projects, setProjects] = useState(store.publicProjects)
+
+    useEffect(() => {
+        setProjects(store.publicProjects)
+    }, [store.publicProjects])
+
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);

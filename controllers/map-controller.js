@@ -670,17 +670,33 @@ getAllPublicMapsOnPage = async (req, res) => {
 getAllPublicProjects = async (req, res) => {
 
     var { page } = req.query;
-    var { limit } = req.body;
+    var { limit } = req.query;
+    var { sort } = req.query;
+    var { order } = req.query;
 
     if (!page) {
         page = 1;
     }
 
-    if (!limit) {
-        limit = 10;
+    // console.log(order)
+    order = order === 'asc' || +order === 1 ? 1 : -1;
+    if (!sort || sort === 'date') {
+        sort = { createdAt: order };
+    } else if (sort === "likes") {
+        sort = { numLikes: order };
+    } else if (sort === "name") {
+        sort = { title: order };
+    } else if (sort === "downloads") {
+        sort = { downloads: order };
+    } else {
+        sort = { createdAt: order };
     }
 
-    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
+    if (limit && !Number.isNaN(+limit)) {
+        limit = +limit;
+    }
+
+    if (Number.isNaN(+page)) {
         return res.status(400).json({
             success: false,
             message: "Page and limit must be numbers"
@@ -688,7 +704,6 @@ getAllPublicProjects = async (req, res) => {
     }
 
     page = +page;
-    limit = +limit;
 
     if (page < 1) {
         return res.status(400).json({
@@ -697,22 +712,29 @@ getAllPublicProjects = async (req, res) => {
         })
     }
 
-    if (limit < 1) {
-        return res.status(400).json({
-            success: false,
-            message: "Limit must be greater than 0"
-        })
+    var startIndex;
+    var rangeProject;
+    // console.log("sorting by: ", sort)
+    if (limit) {
+        startIndex = (page - 1) * limit;
+        rangeProject = await Map.aggregate([
+            { $match: { isPublic: true } },
+            { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
+            { $addFields: { numLikes: { $size: "$likes"} } },
+            { $sort: sort },
+            { $skip: startIndex },
+            { $limit: limit },
+        ]);
+    } else {
+        startIndex = page - 1;
+        rangeProject = await Map.aggregate([
+            { $match: { isPublic: true } },
+            { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
+            { $addFields: { numLikes: { $size: "$likes"} } },
+            { $sort: sort },
+            { $skip: startIndex },
+        ]);
     }
-
-    const startIndex = page > 0 ? (page - 1) * limit : 0;
-    limit = Number(limit);
-    const rangeProject = await Map.aggregate([
-        { $match: { isPublic: true } },
-        { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
-        { $sort: { createdAt: -1 } },
-        { $skip: startIndex },
-        { $limit: limit },
-    ]);
 
     return res.status(200).json({
         success: true,
