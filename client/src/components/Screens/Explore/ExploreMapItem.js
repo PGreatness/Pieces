@@ -142,13 +142,17 @@ export default function ExploreMapItem(props) {
                         <Grid item xs={12}>
                             <Typography style={{textAlign:'center', marginBottom:'50px'}} variant='h3' color='azure'>Request Access to Edit Map</Typography>
                         </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
+                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Name:</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.title}</Typography>
+                        </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'10px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Name:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.title}</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>Current Collaborators:</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>{project.collaboratorIds.length + 1}</Typography>
                         </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Owner:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>{mapOwner?.firstName} {mapOwner?.lastName}</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Owner:</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{mapOwner?.firstName} {mapOwner?.lastName}</Typography>
                         </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'50px'}} item xs={12}>
                             <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>Username:</Typography>
