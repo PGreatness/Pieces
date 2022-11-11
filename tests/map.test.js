@@ -1,6 +1,6 @@
 const request = require("supertest");
 
-// let mapName = "JEST 2"
+// let title = "JEST 2"
 
 // let objectIdOfDeleted = null
 // let ownerIdOfDeleted = null
@@ -20,11 +20,11 @@ const request = require("supertest");
 
 //     let mapId;
 //     let ownerId;
-//     let mapName = 'JEST 99 MAP NAME'
+//     let title = 'JEST 99 MAP NAME'
 
 //     it("Should add a Map to the database", async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-//             "mapName": mapName,
+//             "title": title,
 //             "mapDescription": "This map will be deleted vert shortly!",
 //             "tags": ["188", "Scary"],
 //             "mapBackgroundColor": "#188188",
@@ -35,7 +35,7 @@ const request = require("supertest");
 //             "ownerId": "6355e171286afe702190fe10"
 //         });
 //         expect(res.status).toBe(201);
-//         expect(res.body.map.mapName).toBe(mapName);
+//         expect(res.body.map.title).toBe(title);
 //         mapId = res.body.id.toString();
 //         ownerId = res.body.map.ownerId;
 //     });
@@ -53,7 +53,7 @@ const request = require("supertest");
 // describe("POST /api/map/newMap", () => {
 //     it("Can't add Map with name already taken", async () => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-//             "mapName": mapName,
+//             "title": title,
 //             "mapDescription": "This map will be deleted vert shortly!",
 //             "tags": ["188", "Scary"],
 //             "mapBackgroundColor": "#188188",
@@ -72,7 +72,7 @@ const request = require("supertest");
 describe("POST /api/map/newMap", () => {
     it("Can't have negative height", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-            "mapName": "nojwoqjwojqowqjwqo",
+            "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
             "mapBackgroundColor": "#188188",
@@ -91,7 +91,7 @@ describe("POST /api/map/newMap", () => {
 describe("POST /api/map/newMap", () => {
     it("Can't have negative width", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-            "mapName": "nojwoqjwojqowqjwqo",
+            "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
             "mapBackgroundColor": "#188188",
@@ -110,7 +110,7 @@ describe("POST /api/map/newMap", () => {
 describe("POST /api/map/newMap", () => {
     it("Can't have negative tile height", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-            "mapName": "nojwoqjwojqowqjwqo",
+            "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
             "mapBackgroundColor": "#188188",
@@ -129,7 +129,7 @@ describe("POST /api/map/newMap", () => {
 describe("POST /api/map/newMap", () => {
     it("Can't have negative tile width", async () => {
         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-            "mapName": "nojwoqjwojqowqjwqo",
+            "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
             "mapBackgroundColor": "#188188",
@@ -149,11 +149,11 @@ describe("POST /api/map/newMap", () => {
     
 //     let mapId;
 //     let ownerId;
-//     let mapName = "JEST 98 MAP NAME"
+//     let title = "JEST 98 MAP NAME"
 
 //     beforeAll(async() => {
 //         const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
-//             "mapName": mapName,
+//             "title": title,
 //             "mapDescription": "This map will be deleted vert shortly!",
 //             "tags": ["188", "Scary"],
 //             "mapBackgroundColor": "#188188",
@@ -212,7 +212,7 @@ describe("POST /api/map/newMap", () => {
 //             "ownerId": ownerIdOfDeleted
 //         })
 //         expect(res.status).toBe(200);
-//         expect(res.body.data.mapName).toBe(mapName);
+//         expect(res.body.data.title).toBe(title);
 //     });
 // });
 

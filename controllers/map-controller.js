@@ -18,7 +18,7 @@ createMap = async (req, res) => {
     try {
 
         // Get data from request
-        let { mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
+        let { title, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight, tileWidth, ownerId } = req.body;
 
         if (!mapHeight || !mapWidth || !ownerId) {
             return res
@@ -34,7 +34,7 @@ createMap = async (req, res) => {
         // If so, map is not created
         const existingMap = await Map.findOne({
             ownerId: ownerObjectId,
-            mapName: mapName
+            title: title
         });
         if (existingMap) {
             return res
@@ -78,22 +78,22 @@ createMap = async (req, res) => {
 
         // If name is not specified, "Untitled" is given as default
         // If "Untitled" is already taken, "Untitled1" is given instead and so on
-        if (mapName == "") {
+        if (title == "") {
 
-            mapName = "Untitled"
+            title = "Untitled"
             let untitled_num = 1
 
             const existingUntitledMap = await Map.findOne({
                 ownerId: ownerObjectId,
-                mapName: mapName
+                title: title
             });
 
             while (existingUntitledMap) {
-                mapName = "Untitled" + untitled_num
+                title = "Untitled" + untitled_num
 
                 const existingUntitledMap = await Map.findOne({
                     ownerId: ownerObjectId,
-                    mapName: mapName
+                    title: title
                 });
 
                 untitled_num++
@@ -116,7 +116,7 @@ createMap = async (req, res) => {
 
         map = new Map({
 
-            mapName: mapName,
+            title: title,
             mapDescription: mapDescription,
             mapBackgroundColor: mapBackgroundColor,
             mapHeight: mapHeight,
@@ -262,28 +262,28 @@ updateMap = async (req, res) => {
         // }
 
         // Changes all the present fields
-        const { _id, mapName, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
+        const { _id, title, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
             tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs,
             downloads, comments} = req.body;
 
-        if (mapName) {
-            if (mapName == "") {
+        if (title) {
+            if (title == "") {
 
-                mapName = "Untitled"
+                title = "Untitled"
                 let untitled_num = 1
 
                 const existingUntitledMap = await Map.findOne({
                     _id: _id,
-                    mapName: mapName
+                    title: title
                 });
 
                 while (existingUntitledMap) {
-                    mapName = "Untitled" + untitled_num
+                    title = "Untitled" + untitled_num
                     untitled_num++
                 }
 
             }
-            map.mapName = mapName
+            map.title = title
         }
         if (mapDescription) {
             if (mapDescription == "") {
@@ -439,7 +439,7 @@ getAllUserMaps = async (req, res) => {
                 let mapData = {
 
                     _id: map._id,
-                    mapName: map.mapName,
+                    title: map.title,
                     mapDescription: map.mapDescription,
                     mapBackgroundColor: map.mapBackgroundColor,
                     mapHeight: map.mapHeight,
@@ -506,7 +506,7 @@ getAllUserAsCollaboratorMaps = async (req, res) => {
                 if (map.collaboratorIds.includes(id)) {
                     mapData = {
                         _id: map._id,
-                        mapName: map.mapName,
+                        title: map.title,
                         mapDescription: map.mapDescription,
                         mapBackgroundColor: map.mapBackgroundColor,
                         mapHeight: map.mapHeight,
@@ -542,7 +542,7 @@ getAllUserAsCollaboratorMaps = async (req, res) => {
 
 getMapsByName = async (req, res) => {
 
-    const { mapName } = req.query;
+    const { title } = req.query;
     await Map.find({}, (err, maps) => {
 
         if (err) {
@@ -568,12 +568,12 @@ getMapsByName = async (req, res) => {
                 let map = maps[key]
 
                 //Checks if Map matches or begins with the wanted name/search
-                if (map.mapName.toLowerCase().startsWith(mapName.toLowerCase()) && mapName) {
+                if (map.title.toLowerCase().startsWith(title.toLowerCase()) && title) {
 
                     let mapData = {
 
                         _id: map._id,
-                        mapName: map.mapName,
+                        title: map.title,
                         mapDescription: map.mapDescription,
                         mapBackgroundColor: map.mapBackgroundColor,
                         mapHeight: map.mapHeight,
@@ -768,11 +768,11 @@ getPublicProjectsByName = async (req, res) => {
     const startIndex = page > 0 ? (page - 1) * limit : 0;
     limit = Number(limit);
     const rangeProject = await Map.aggregate([
-        { $match: { isPublic: true, mapName: { $regex: name, $options: "i"} }},
+        { $match: { isPublic: true, title: { $regex: name, $options: "i"} }},
         { $unionWith: { coll: 'tilesets', pipeline: [
             { $match: {
                 isPublic: true,
-                tilesetName: {
+                title: {
                     $regex: name,
                     $options: "i"
                 }

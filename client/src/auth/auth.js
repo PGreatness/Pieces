@@ -93,7 +93,7 @@ function AuthContextProvider(props) {
         
     }
 
-    auth.registerUser = async function(userData, store) {
+    auth.registerUser = async function(userData) {
         await api.registerUser(userData).then(response => {
             navigate("/");
         })

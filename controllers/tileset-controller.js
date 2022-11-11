@@ -5,8 +5,8 @@ const ProjectComments = require('../models/project-comment-model')
 
 createTileset = async (req, res) => {
     try {
-        const { tilesetName, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, source, ownerId, isPublic, isLocked } = req.body;
-        if (!tilesetName || !imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !ownerId || (isPublic == null) || (isLocked == null)) {
+        const { title, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth, source, ownerId, isPublic, isLocked } = req.body;
+        if (!title || !imagePixelHeight || !imagePixelWidth || !tileHeight || !tileWidth || !ownerId || (isPublic == null) || (isLocked == null)) {
             return res
                 .status(400)
                 .json({ message: "Empty required fields." })
@@ -19,7 +19,7 @@ createTileset = async (req, res) => {
         // If so, tileset is not created.
         const existingTileset = await Tileset.findOne({
             ownerId: objectOwnerId,
-            tilesetName: tilesetName
+            title: title
         });
         if (existingTileset) {
             return res
@@ -32,21 +32,21 @@ createTileset = async (req, res) => {
 
         // If name is not specified, "Untitled" is given as default
         // If "Untitled" is already taken, "Untitled1" is given instead and so on
-        if (tilesetName == "") {
+        if (title == "") {
 
-            tilesetName = "Untitled"
+            title = "Untitled"
             let untitled_num = 1
 
             let existingUntitledTileset = await Tileset.findOne({
                 ownerId: objectOwnerId,
-                tilesetName: tilesetName
+                title: title
             });
 
             while (existingUntitledTileset) {
-                tilesetName = "Untitled" + untitled_num
+                title = "Untitled" + untitled_num
                 existingUntitledTileset = await Tileset.findOne({
                     ownerId: objectOwnerId,
-                    tilesetName: tilesetName
+                    title: title
                 });
                 untitled_num++
             }
@@ -61,7 +61,7 @@ createTileset = async (req, res) => {
         const tiles = []
 
         let newTileset = new Tileset({
-            tilesetName: tilesetName,
+            title: title,
             tilesetDesc: tilesetDesc,
             tilesetTags: tilesetTags,
             tilesetBackgroundColor: tilesetBackgroundColor,
@@ -193,31 +193,31 @@ updateTileset = async (req, res) => {
         // }
 
         // Changes all the present fields
-        const { tilesetName, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth,
+        const { title, tilesetDesc, tilesetBackgroundColor, tilesetTags, imagePixelHeight, imagePixelWidth, tileHeight, tileWidth,
             padding, source, ownerId, collaboratorIds, isPublic, isLocked, tiles, likes, dislikes, favs, downloads, comments } = req.body;
 
-        if (tilesetName) {
-            if (tilesetName == "") {
+        if (title) {
+            if (title == "") {
 
-                tilesetName = "Untitled"
+                title = "Untitled"
                 let untitled_num = 1
 
                 let existingUntitledTileset = await Tileset.findOne({
                     _id: id,
-                    tilesetName: tilesetName
+                    title: title
                 });
 
                 while (existingUntitledTileset) {
-                    tilesetName = "Untitled" + untitled_num
+                    title = "Untitled" + untitled_num
                     existingUntitledTileset = await Tileset.findOne({
                         _id: id,
-                        tilesetName: tilesetName
+                        title: title
                     });
                     untitled_num++
                 }
 
             }
-            tileset.tilesetName = tilesetName
+            tileset.title = title
         }
         if (tilesetDesc) {
             if (tilesetDesc == "") {
@@ -311,7 +311,7 @@ getAllUserTilesets = async (req, res) => {
                 let tilesetData = {
 
                     _id: tileset._id,
-                    tilesetName: tileset.tilesetName,
+                    title: tileset.title,
                     tilesetDesc: tileset.tilesetDesc,
                     tilesetBackgroundColor: tileset.tilesetBackgroundColor,
                     imagePixelHeight: tileset.imagePixelHeight,
@@ -340,7 +340,7 @@ getAllUserTilesets = async (req, res) => {
 
 getUserTilesetsByName = async (req, res) => {
 
-    const { tilesetName } = req.query;
+    const { title } = req.query;
     await Tileset.find({}, (err, tilesets) => {
 
         if (err) {
@@ -366,11 +366,11 @@ getUserTilesetsByName = async (req, res) => {
                 let tileset = tilesets[key]
 
                 //Checks if Tileset matches or begins with the wanted name/search
-                if (tileset.tilesetName.toLowerCase().startsWith(tilesetName.toLowerCase()) && tilesetName) {
+                if (tileset.title.toLowerCase().startsWith(title.toLowerCase()) && title) {
                     let tilesetData = {
 
                         _id: tileset._id,
-                        tilesetName: tileset.tilesetName,
+                        title: tileset.title,
                         tilesetDesc: tileset.tilesetDesc,
                         tilesetBackgroundColor: tileset.tilesetBackgroundColor,
                         imagePixelHeight: tileset.imagePixelHeight,

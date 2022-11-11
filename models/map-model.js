@@ -2,7 +2,7 @@ const { model, Schema, ObjectId } = require("mongoose");
 const Layer = require("./layer-model").schema;
 
 const mapSchema = new Schema({
-    mapName: {
+    title: {
         type: String,
         required: true,
     },

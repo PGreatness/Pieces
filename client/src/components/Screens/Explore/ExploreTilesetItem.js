@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useContext, useEffect } from 'react';
+import { Modal, Grid, TextField, Button, Typography, Backdrop } from '@mui/material';
 import Box from '@mui/material/Box';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -24,12 +25,15 @@ export default function ExploreTilesetItem(props) {
     const { auth } = useContext(AuthContext);
     const project = props.project;
 
+    const [showRequestModal, setShowRequestModal] = useState(false);
+    const [mapOwner, setMapOwner] = useState(null);
+
     const [likes, setLikes] = useState(project.likes.length); 
     const [dislikes, setDislikes] = useState(project.dislikes.length);  
     const [isLiked, setIsLiked] = useState(project.likes.includes(auth.user?._id));
     const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
-    const [isCollaborator, setIsCollaborator] = useState(project.collaboratorIds.includes(auth.user?._id));
+    const [isUnlocked, setIsUnlocked] = useState(project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id)
 
 
 
@@ -40,6 +44,7 @@ export default function ExploreTilesetItem(props) {
             setDislikes(dislike_arr.length);
             setIsLiked(like_arr.includes(auth.user?._id));
             setIsDisliked(dislike_arr.includes(auth.user?._id));
+            setIsUnlocked(project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id)
         });
     }
 
@@ -65,21 +70,34 @@ export default function ExploreTilesetItem(props) {
         navigate(loc);
     }
 
-    const showRequestModal = () => {
+    const handleConfirmRequest = () => {
+        store.getUserById(project.ownerId, (ownerUser) => {
+            setMapOwner(ownerUser);
+        });
+        setShowRequestModal(true)
+    }
+
+    const handleCloseAccessRequest = () => {
+        setShowRequestModal(false)
+    }
+
+    const handleRequestAccess = () => {
+        store.editMapRequest(mapOwner._id, project._id, project.title)
+        setShowRequestModal(false)
     }
 
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
             <img class='image' src={require("../../images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
-            {isCollaborator? 
+            {isUnlocked? 
             <LockOpenIcon className='lock_icon'></LockOpenIcon> :
             <LockIcon className='lock_icon'></LockIcon>
             }
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <div class="project_title">{project.tilesetName}</div>
+                        <div class="project_title">{project.title}</div>
                         <div class="project_desc">{project.tilesetDesc}</div>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
@@ -99,11 +117,52 @@ export default function ExploreTilesetItem(props) {
                         <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
                         onClick={handleFavClick}></FavoriteIcon>
-                        <EditIcon sx={{ fontSize: 50, color:`${isCollaborator? "white" : "gray"}`}}
-                        onClick={isCollaborator? () => setLocation('/map/1') : () => showRequestModal} ></EditIcon>
+                        <EditIcon sx={{ fontSize: 50, color:`${isUnlocked? "white" : "gray"}`}}
+                        onClick={isUnlocked? () => setLocation('/tileset/1') : handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>
+
+
+            <Modal
+                open={showRequestModal}
+                onClose={handleCloseAccessRequest}
+                closeAfterTransition
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='30%' left='30%'>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Typography style={{textAlign:'center', marginBottom:'50px'}} variant='h3' color='azure'>Request Access to Edit Tileset</Typography>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'10px'}} item xs={12}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>Tileset Name:</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.title}</Typography>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>Tileset Owner:</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '30px'}} color='azure'>{mapOwner?.firstName} {mapOwner?.lastName}</Typography>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'50px'}} item xs={12}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>Username:</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>@{mapOwner?.userName}</Typography>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Button onClick={handleCloseAccessRequest}>
+                                Close
+                            </Button>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Button onClick={handleRequestAccess}>
+                                Request Access
+                            </Button>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                    </Grid>
+                </Box>
+            </Modal>
+
+
         </Box>
     )
 }
