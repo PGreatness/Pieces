@@ -451,16 +451,16 @@ getLibraryMapsByName = async (req, res) => {
     }
 
     const owner = await Map.find({ ownerId: uid });
-    let filteredOwner = owner.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+    let filteredOwner = owner.filter(function (str) { return str.title.toUpperCase().includes(name.toUpperCase()) });
 
     // let filteredOwner = owner.filter(obj => {
-    //     return obj.mapName.includes(name)
+    //     return obj.title.includes(name)
     //   });
-      
+
     //   console.log(filteredOwner)
-    
+
     const collaborator = await Map.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
-    let filteredCollaborator = collaborator.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+    let filteredCollaborator = collaborator.filter(function (str) { return str.title.toUpperCase().includes(name.toUpperCase()) });
 
     const aggregation = [
         // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
@@ -470,14 +470,14 @@ getLibraryMapsByName = async (req, res) => {
                     { collaboratorIds: { $nin: [uid] } },
                     { ownerId: { $ne: uid } },
                     { favs: { $in: [uid] } },
-                    
+
                 ],
             },
         },
     ];
 
     const favs = await Map.aggregate(aggregation);
-    filteredFavs = favs.filter(function (str) { return str.mapName.toUpperCase().includes(name.toUpperCase()) });
+    filteredFavs = favs.filter(function (str) { return str.title.toUpperCase().includes(name.toUpperCase()) });
 
     return res.status(200).json({
         success: true,
@@ -490,16 +490,16 @@ getLibraryMapsByName = async (req, res) => {
 
 
 module.exports = {
-    getLoggedIn,
-    registerUser,
-    loginUser,
-    logoutUser,
-    getUserbyId,
-    getUserbyUsername,
-    updateUser,
-    changePassword,
-    forgotPassword,
-    resetPassword,
-    getOwnerAndCollaboratorOfMaps,
-    getLibraryMapsByName
-}
+            getLoggedIn,
+            registerUser,
+            loginUser,
+            logoutUser,
+            getUserbyId,
+            getUserbyUsername,
+            updateUser,
+            changePassword,
+            forgotPassword,
+            resetPassword,
+            getOwnerAndCollaboratorOfMaps,
+            getLibraryMapsByName
+        }

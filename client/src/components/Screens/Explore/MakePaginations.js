@@ -1,16 +1,11 @@
 import React from 'react';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Box from '@mui/material/Box';
 import TablePagination from '@mui/material/TablePagination';
 import { styled } from '@mui/material/styles';
+import { GlobalStoreContext } from '../../../store/store';
 
 const StyledPagination = styled(TablePagination)({
-    '& .MuiPaginationItem-root': {
-        color: 'white',
-    },
-    '& .MuiPaginationItem-page.Mui-selected': {
-        backgroundColor: '#11182A',
-    },
     '& .MuiTablePagination-displayedRows': {
         color: 'white',
     },
@@ -32,25 +27,29 @@ const StyledPagination = styled(TablePagination)({
 });
 export default function MakePaginations(props) {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const { store } = useContext(GlobalStoreContext);
+    const [rowsPerPage, setRowsPerPage] = useState(store.pagination.limit);
+
+    useEffect(() => {setPage(0)}, [store.pagination.sort, store.pagination.order]);
 
     const handleRowChange = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(1);
+        setPage(0);
+        store.changePagination(0, parseInt(event.target.value, 10));
     };
 
     const handlePageChange = (event, value) => {
         setPage(value);
-        // TODO: render new projects based on page number
-        // store.loadPublicProjects(page)
+        store.changePagination(value, rowsPerPage);
     };
     return (
         <Box sx={{
-            display: 'flex', justifyContent: 'center', position: 'relative', bottom: '0',
+            display: 'flex', justifyContent: 'center', position: 'sticky', bottom: '0',
             color: 'white', backgroundColor: '#1F293A', width: '75vw'
         }}>
-            <StyledPagination count={props.count} page={page} onPageChange={handlePageChange}
-            rowsPerPage={rowsPerPage} onRowsPerPageChange={handleRowChange} labelRowsPerPage={'Public Projects Per Page'}/>
+            <StyledPagination count={-1} page={page} onPageChange={handlePageChange} labelDisplayedRows={()=>''}
+            rowsPerPage={rowsPerPage} onRowsPerPageChange={handleRowChange} labelRowsPerPage={'Public Projects Per Page'}
+            nextIconButtonProps={{disabled: store.pagination.stopPagination}}/>
         </Box>
     )
 }

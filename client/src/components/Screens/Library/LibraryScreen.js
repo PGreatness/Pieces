@@ -5,18 +5,20 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Box from '@mui/material/Box';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { Grid, Modal, Typography, Checkbox } from '@mui/material'
 import PublicIcon from '@mui/icons-material/Public';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowUpward from '@mui/icons-material/ArrowUpward';
 import ArrowDownward from '@mui/icons-material/ArrowDownward';
 import { useState, useContext, useEffect } from 'react'
 import './css/library.css';
-// import LibraryItem from './LibraryItem'
 import GlobalStoreContext from '../../../store/store';
 import AuthContext from '../../../auth/auth';
 
@@ -31,16 +33,28 @@ export default function LibraryScreen() {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
+
     const [sortOption, setSortOption] = useState("");
     const [sortDirection, setSortDirection] = useState("")
-    const [filterOptions, setFilterOptions] = useState([])
+
+    const [filterOptions, setFilterOptions] = useState([0, 0])
+    const [filterActive, setFilterActive] = useState(false)
+    const [filteredMaps, setFilteredMaps] = useState()
+
+    const [tagFilters, setTagFilters] = useState({
+        'rpg_checkbox': true,
+        'space_checkbox': true,
+        'adventure_checkbox': true,
+        'nature_checkbox': true,
+        'shooter_checkbox': true,
+        'arcade_checkbox': true
+    })
+    const [openTagsFilterModal, setOpenTagsFilterModal] = useState(false)
+
     const [allMaps, setAllMaps] = useState()
+
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
-
-    //console.log("ALL MAPS")
-    //console.log(store.userMaps)
-    //console.log(allMaps)
 
     useEffect(() => {
         store.setLibrarySort(sortOption, sortDirection);
@@ -50,7 +64,90 @@ export default function LibraryScreen() {
         setAllMaps(store.userMaps.concat(store.collabMaps))
     }, [store.userMaps])
 
-    // setAllMaps(store.userMaps.concat(store.collabMaps))
+    useEffect(() => {
+        if (filterActive) {
+            setSortDirection("")
+            setSortOption("")
+
+            let maps = allMaps
+            let filtered = []
+
+            if (filterOptions[0] === 0 && filterOptions[1] === 0) {
+                filtered = maps
+            }
+            else {
+                // Filters by basic filters (check boxes)
+                for (let i = 0; i < allMaps.length; i++) {
+                    let map = maps[i]
+
+                    // If map does not belong to user, remove
+                    if (filterOptions[0] === 1) {
+                        if (map.ownerId.toString() === "6357194e0a81cb803bbb913e") {
+                            filtered.push(map)
+                        }
+                    }
+                    // If map belongs to user, remove
+                    else if (filterOptions[0] === -1) {
+                        if (map.ownerId.toString() !== "6357194e0a81cb803bbb913e") {
+                            filtered.push(map)
+                        }
+                    }
+
+                    if (filterOptions[1] === 1) {
+                        if (map.isPublic) {
+                            filtered.push(map)
+                        }
+                    }
+                    else if (filterOptions[1] === -1) {
+                        if (!map.isPublic) {
+                            filtered.push(map)
+                        }
+                    }
+                }
+            }
+
+            setFilteredMaps(filtered)
+        
+        }
+        else {
+            setAllMaps(store.userMaps.concat(store.collabMaps))
+        }
+    }, [filterOptions])
+
+    // useEffect(() => {
+        
+    //     console.log("You changed a tag!")
+    //     var maps;
+    //     if (!filterActive) {
+    //         setAllMaps(store.userMaps.concat(store.collabMaps))
+    //         setFilterActive(true)
+    //     }
+    //     else {
+    //         maps = filteredMaps
+    //     }
+
+    //     console.log(maps)
+
+    //     let tagsList = []
+    //     for (const [key, val] of Object.entries(tagFilters)) {
+    //         if (val) {
+    //             tagsList.push(key.replace("_checkbox", ""))
+    //         }
+    //     }
+    //     console.log(tagsList)
+    //     if (tagsList.length === 6) {
+    //         return
+    //     }
+
+    //     // let filtered = maps[0]
+    //     // // for (let i = 0; i < maps.length; i++) {
+    //     // //     console.log("")
+    //     // // }
+        
+    //     // setFilteredMaps(filtered)
+        
+    // }, [tagFilters])
+
 
     const handleSortMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -100,22 +197,6 @@ export default function LibraryScreen() {
         }
     }
 
-    const handleSortByMostPopularClick = () => {
-        if (sortOption !== "popularity") {
-            setSortOption("popularity");
-            setSortDirection("up");
-        }
-        else {
-            if (sortDirection === "up") {
-                setSortDirection("down");
-            }
-            else {
-                setSortOption("name");
-                setSortDirection("up");
-            }
-        }
-    }
-
     const handleSortByMostLikedClick = () => {
         if (sortOption !== "liked") {
             setSortOption("liked");
@@ -148,20 +229,65 @@ export default function LibraryScreen() {
         }
     }
 
-    const handleSortByCreatorNameClick = () => {
-        if (sortOption !== "creator") {
-            setSortOption("creator");
-            setSortDirection("up");
+    const handleFilterOwnedClick = () => {
+        if (filterOptions[0] === 0) {
+            setFilterOptions([1, 0])
+            setFilterActive(true)
         }
-        else {
-            if (sortDirection === "up") {
-                setSortDirection("down");
-            }
-            else {
-                setSortOption("name");
-                setSortDirection("up");
-            }
+        else if (filterOptions[0] === 1) {
+            setFilterOptions([-1, 0])
+            setFilterActive(true)
         }
+        else if (filterOptions[0] === -1) {
+            setFilterOptions([0, 0])
+            setFilterActive(false)
+            setFilteredMaps(store.userMaps.concat(store.collabMaps))
+        }
+    }
+
+    const handleFilterPublicClick = () => {
+        if (filterOptions[1] === 0) {
+            setFilterOptions([0, 1])
+            setFilterActive(true)
+        }
+        else if (filterOptions[1] === 1) {
+            setFilterOptions([0, -1])
+            setFilterActive(true)
+        }
+        else if (filterOptions[1] === -1) {
+            setFilterOptions([0, 0])
+            setFilterActive(false)
+            setFilteredMaps(store.userMaps.concat(store.collabMaps))
+            console.log(store.userMaps)
+        }
+    }
+
+    const handleOpenTagsFilterModal = () => {
+        setOpenTagsFilterModal(true)
+    }
+    
+    const handleCloseTagsFilterModal = () => {
+        setOpenTagsFilterModal(false)
+        setTagFilters({
+            'rpg_checkbox': document.getElementById('rpg_checkbox').checked,
+            'space_checkbox': document.getElementById('space_checkbox').checked,
+            'adventure_checkbox': document.getElementById('adventure_checkbox').checked,
+            'nature_checkbox': document.getElementById('nature_checkbox').checked,
+            'shooter_checkbox': document.getElementById('shooter_checkbox').checked,
+            'arcade_checkbox': document.getElementById('arcade_checkbox').checked
+        })
+    }
+
+    const handleConfirmTagFilters = (e) => {
+        console.log(e.target)
+    }
+
+    const handleTagOnChange = (e) => {
+        // let id = e.target.id
+        // let newFilter = tagFilters
+        // newFilter[id] = e.target.checked
+        // setFilterActive(true)
+        // setTagFilters(newFilter)
     }
 
     return (
@@ -220,12 +346,6 @@ export default function LibraryScreen() {
                         : <MenuItem onClick={handleSortByCreationDateClick}>Creation Date <ArrowDownward /></MenuItem>
                     : <MenuItem onClick={handleSortByCreationDateClick}>Creation Date</MenuItem>
                 }
-                {/* {sortOption === 'popularity'
-                    ? sortDirection === 'up'
-                        ? <MenuItem onClick={handleSortByMostPopularClick}>Popularity <ArrowUpward /></MenuItem>
-                        : <MenuItem onClick={handleSortByMostPopularClick}>Popularity <ArrowDownward /></MenuItem>
-                    : <MenuItem onClick={handleSortByMostPopularClick}>Popularity</MenuItem>
-                } */}
                 {sortOption === 'liked'
                     ? sortDirection === 'up'
                         ? <MenuItem onClick={handleSortByMostLikedClick}>Most Liked <ArrowUpward /></MenuItem>
@@ -238,12 +358,6 @@ export default function LibraryScreen() {
                         : <MenuItem onClick={handleSortBySizeClick}>Size <ArrowDownward /></MenuItem>
                     : <MenuItem onClick={handleSortBySizeClick}>Size</MenuItem>
                 }
-                {/* {sortOption === 'creator'
-                    ? sortDirection === 'up'
-                        ? <MenuItem onClick={handleSortByCreatorNameClick}>Creator Name <ArrowUpward /></MenuItem>
-                        : <MenuItem onClick={handleSortByCreatorNameClick}>Creator Name <ArrowDownward /></MenuItem>
-                    : <MenuItem onClick={handleSortByCreatorNameClick}>Creator Name</MenuItem>
-                } */}
             </Menu>
 
             <Menu
@@ -261,9 +375,19 @@ export default function LibraryScreen() {
                 open={isFilterMenuOpen}
                 onClose={handleFilterMenuClose}
             >
-                <MenuItem>Tags</MenuItem>
-                <MenuItem>Owned</MenuItem>
-                <MenuItem>Shared</MenuItem>
+                <MenuItem onClick={handleOpenTagsFilterModal}>Tags</MenuItem>
+                {filterOptions[0] === 0
+                    ? <MenuItem onClick={handleFilterOwnedClick}>Owned</MenuItem>
+                    : filterOptions[0] === 1
+                        ? <MenuItem onClick={handleFilterOwnedClick}>Owned <CheckIcon/></MenuItem>
+                        : <MenuItem onClick={handleFilterOwnedClick}>Owned <ClearIcon/></MenuItem>
+                }
+                {filterOptions[1] === 0
+                    ? <MenuItem onClick={handleFilterPublicClick}>Is Public</MenuItem>
+                    : filterOptions[1] === 1
+                        ? <MenuItem onClick={handleFilterPublicClick}>Is Public <CheckIcon/></MenuItem>
+                        : <MenuItem onClick={handleFilterPublicClick}>Is Public <ClearIcon/></MenuItem>
+                }
             </Menu>
 
             <Box height="20px"></Box>
@@ -281,7 +405,7 @@ export default function LibraryScreen() {
                 }}
             >
 
-                {sortOption === ""
+                {sortOption === "" && !filterActive
                     ? (allMaps && allMaps.map((project) => (
                         <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
                             <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
@@ -292,7 +416,7 @@ export default function LibraryScreen() {
                             <div className="library_overlay">
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                     <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                        <div className="library_project_title">{project.mapName}</div>
+                                        <div className="library_project_title">{project.title}</div>
                                         <div className="library_project_author">by @{project.ownerId}</div>
                                     </Box>
                                     <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
@@ -304,31 +428,103 @@ export default function LibraryScreen() {
                             </div>
                         </Box>
                     )))
-                    : (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
-                        <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
-                            <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
-                            {project.isPublic
-                                ? <LockIcon className='library_lock_icon'></LockIcon>
-                                : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
-                            }
-                            <div className="library_overlay">
-                                <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                                    <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                        <div className="library_project_title">{project.mapName}</div>
-                                        <div className="library_project_author">by @{project.ownerId}</div>
+                    : !filterActive
+                        ? (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
+                                <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                                {project.isPublic
+                                    ? <LockIcon className='library_lock_icon'></LockIcon>
+                                    : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                }
+                                <div className="library_overlay">
+                                    <Box style={{ display: 'flex', flexDirection: 'row' }} >
+                                        <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
+                                            <div className="library_project_title">{project.title}</div>
+                                            <div className="library_project_author">by @{project.ownerId}</div>
+                                        </Box>
+                                        <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
+                                            <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
+                                            <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
+                                            <EditIcon sx={{ fontSize: 20, color: 'gray' }}></EditIcon>
+                                        </Box>
                                     </Box>
-                                    <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
-                                        <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
-                                        <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
-                                        <EditIcon sx={{ fontSize: 20, color: 'gray' }}></EditIcon>
+                                </div>
+                            </Box>
+                        )))
+                        : (filteredMaps && filteredMaps.map((project) => (
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
+                                <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                                {project.isPublic
+                                    ? <LockIcon className='library_lock_icon'></LockIcon>
+                                    : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                }
+                                <div className="library_overlay">
+                                    <Box style={{ display: 'flex', flexDirection: 'row' }} >
+                                        <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
+                                            <div className="library_project_title">{project.title}</div>
+                                            <div className="library_project_author">by @{project.ownerId}</div>
+                                        </Box>
+                                        <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
+                                            <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
+                                            <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
+                                            <EditIcon sx={{ fontSize: 20, color: 'gray' }}></EditIcon>
+                                        </Box>
                                     </Box>
-                                </Box>
-                            </div>
-                        </Box>
-                    )))
+                                </div>
+                            </Box>
+                        )))
                 }
 
             </Box>
+
+            <Modal
+                open={openTagsFilterModal}
+                onClose={handleCloseTagsFilterModal}
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='30%' left='30%'>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} variant='h5' color='azure'>Tags Filter</Typography>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>RPG</Typography>
+                            <Checkbox id='rpg_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} style={{contentAlign:'center'}} defaultChecked={tagFilters['rpg_checkbox']}></Checkbox>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Adventure</Typography>
+                            <Checkbox id='adventure_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['adventure_checkbox']}></Checkbox>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Space</Typography>
+                            <Checkbox id='space_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['space_checkbox']}></Checkbox>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Nature</Typography>
+                            <Checkbox id='nature_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} bgcolor='azure' defaultChecked={tagFilters['nature_checkbox']}></Checkbox>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Shooter</Typography>
+                            <Checkbox id='shooter_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['shooter_checkbox']}></Checkbox>
+                        </Grid>
+                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Arcade</Typography>
+                            <Checkbox id='arcade_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['arcade_checkbox']}></Checkbox>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={4}>
+                            <Button>
+                                Close
+                            </Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button onClick={handleConfirmTagFilters}>
+                                Confirm
+                            </Button>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                    </Grid>
+                </Box>
+            </Modal>
         </Box>
     )
 }
