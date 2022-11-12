@@ -44,11 +44,11 @@ export default function MakePaginations(props) {
     };
     return (
         <Box sx={{
-            display: 'flex', justifyContent: 'center', position: 'sticky', bottom: '0',
+            display: 'flex', justifyContent: 'center', bottom: '0',
             color: 'white', backgroundColor: '#1F293A', width: '75vw'
         }}>
             <StyledPagination count={-1} page={page} onPageChange={handlePageChange} labelDisplayedRows={()=>''}
-            rowsPerPage={rowsPerPage} onRowsPerPageChange={handleRowChange} labelRowsPerPage={'Public Projects Per Page'}
+            rowsPerPage={rowsPerPage} onRowsPerPageChange={handleRowChange} labelRowsPerPage={'Projects Per Page'}
             nextIconButtonProps={{disabled: store.pagination.stopPagination}}/>
         </Box>
     )

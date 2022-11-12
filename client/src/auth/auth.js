@@ -76,8 +76,8 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            //store.changePageToExplore();
-            //navigate("/explore");
+            store.changePageToExplore();
+            navigate("/explore");
         })
         .catch(({response}) => {
             console.log('error error')

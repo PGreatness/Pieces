@@ -21,9 +21,10 @@ import { useState, useContext, useEffect } from 'react'
 import './css/library.css';
 import GlobalStoreContext from '../../../store/store';
 import AuthContext from '../../../auth/auth';
+import { useNavigate } from 'react-router-dom';
 
-export default function LibraryScreen() {
-
+export default function LibraryScreen(props) {
+    const navigate = useNavigate();
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
 
@@ -290,6 +291,11 @@ export default function LibraryScreen() {
         // setTagFilters(newFilter)
     }
 
+    const setLocation = (loc) => {
+        props.setLoc(loc);
+        navigate(loc);
+    }
+
     return (
         <Box
             style={{
@@ -297,7 +303,7 @@ export default function LibraryScreen() {
                 alignItems: 'flex-start',
                 flexDirection: 'column',
                 width: '100%',
-                height: '100vh',
+                height: '100%',
                 backgroundColor: '#1f293a',
                 padding: '20px'
             }}
@@ -395,79 +401,67 @@ export default function LibraryScreen() {
             <Box
                 style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    //alignItems: 'center',
                     flexDirection: 'row',
-                    maxHeight: '100%',
-                    width: '100%',
+                    height: '100vh',
+                    width: '96%',
                     flexWrap: 'wrap',
                     maxWidth: '100%',
-                    overflowX: "scroll"
+                    overflowX: "scroll",
+                    marginBottom: '10px'
                 }}
             >
 
                 {sortOption === "" && !filterActive
                     ? (allMaps && allMaps.map((project) => (
-                        <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
+                        <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
+                        style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                        onClick={() => {setLocation('/map/1'); store.changePageToMapEditor()}}>
                             <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
-                            {project.isPublic
+                            {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                 ? <LockIcon className='library_lock_icon'></LockIcon>
                                 : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                             }
                             <div className="library_overlay">
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                                    <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
+                                    <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                         <div className="library_project_title">{project.title}</div>
-                                        <div className="library_project_author">by @{project.ownerId}</div>
-                                    </Box>
-                                    <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
-                                        <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
-                                        <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
-                                        <EditIcon sx={{ fontSize: 20, color: 'gray' }}></EditIcon>
-                                    </Box>
+                                        <div className="library_project_desc">{project.mapDescription}</div>
+                                    </Box>                            
                                 </Box>
                             </div>
                         </Box>
                     )))
                     : !filterActive
                         ? (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}>
                                 <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
-                                {project.isPublic
+                                {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                     ? <LockIcon className='library_lock_icon'></LockIcon>
                                     : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                                 }
                                 <div className="library_overlay">
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                                        <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
+                                        <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                             <div className="library_project_title">{project.title}</div>
                                             <div className="library_project_author">by @{project.ownerId}</div>
-                                        </Box>
-                                        <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
-                                            <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
-                                            <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
-                                            <EditIcon sx={{ fontSize: 20, color: 'gray' }}></EditIcon>
                                         </Box>
                                     </Box>
                                 </div>
                             </Box>
                         )))
                         : (filteredMaps && filteredMaps.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '78%', position: 'relative' }}>
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}>
                                 <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
-                                {project.isPublic
+                                {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                     ? <LockIcon className='library_lock_icon'></LockIcon>
                                     : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                                 }
                                 <div className="library_overlay">
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                                        <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
+                                        <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                             <div className="library_project_title">{project.title}</div>
                                             <div className="library_project_author">by @{project.ownerId}</div>
-                                        </Box>
-                                        <Box style={{ width: '50%', paddingLeft: '70px', paddingRight: '20px', paddingTop: "10px", display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
-                                            <DownloadIcon sx={{ fontSize: 20 }}></DownloadIcon>
-                                            <FavoriteIcon sx={{ fontSize: 20, px: 1, color: 'cyan' }}></FavoriteIcon>
-                                            <EditIcon sx={{ fontSize: 20, color: 'gray' }}></EditIcon>
                                         </Box>
                                     </Box>
                                 </div>

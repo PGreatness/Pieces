@@ -60,6 +60,7 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         console.log(type)
+        console.log(payload)
         switch (type) {
 
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
@@ -87,6 +88,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS: {
                 return setStore({
                     ...store,
+                    currentPage: payload.currentPage,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
                 })

@@ -1,12 +1,12 @@
 .library_project_title {
-    font-size: 18px;
+    font-size: 25px;
     padding-left: 15px;
     padding-top: 3px;
     padding-bottom: 0px;
 }
 
-.library_project_author {
-    font-size: 12px;
+.library_project_desc {
+    font-size: 18px;
     padding-left: 15px;
     padding-top: 0;
 }
@@ -41,7 +41,7 @@
     bottom: 0; 
     background: rgba(0, 0, 7, 0.70); /* Black see-through */
     width: 100%;
-    height: 20%;
+    height: 25%;
     color: white;
     opacity: 1;
     border-radius: 20px;
