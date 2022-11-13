@@ -29,6 +29,22 @@ export default function ExploreComments(props) {
     let test = props.loadStore;
     const comments = store.projectComments;
     console.log(comments)
+
+    const handleCreateNewComment = () => {
+        let text = document.getElementById('reply_field').value
+        let time = Date();
+        let ownerId = '6357194e0a81cb803bbb913e'
+
+        if (text === "") {
+            console.log("Empty text field.")
+        }
+        else {
+            let response = store.createNewComment(text, time, ownerId)
+            if (response.data.success) 
+                console.log("Comment posted.")
+        }
+    }
+
     return (
         <Box style={{ width: '100%', display: 'flex', alignItems: 'flex-start', 
             flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative' }}>
@@ -192,7 +208,7 @@ export default function ExploreComments(props) {
                     alignItems: 'center'
                 }}>
                     <input id="reply_field" placeholder="Add a reply..." ></input>
-                    <SendIcon sx={{ fontSize: 70, px: 1, paddingRight: '30px' }}></SendIcon>
+                    <SendIcon sx={{ fontSize: 70, px: 1, paddingRight: '30px' }} onClick={handleCreateNewComment}></SendIcon>
 
                 </Box>
             </Box>

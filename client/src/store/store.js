@@ -200,6 +200,17 @@ function GlobalStoreContextProvider(props) {
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
 
+    store.createNewComment = async function (text, time, ownerId) {
+        console.log("handling create comment in store...")
+        let payload = {
+            text: text,
+            time: time,
+            ownerId: ownerId
+        };
+        let response = await api.createNewComment(payload)
+        console.log(response)
+    }
+
     store.loadPublicProjects = async function () {
 
         let page = store.pagination.page;
