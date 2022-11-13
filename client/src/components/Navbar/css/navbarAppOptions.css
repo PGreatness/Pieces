@@ -11,6 +11,25 @@ h1:active {
     color: #0e74a0;
 }
 
+.navbarappoptions-sections-box .navbarappoptions-sections {
+    text-shadow: 2px 2px black;
+    cursor: pointer;
+    animation: 0.1s ease-in-out;
+    user-select: none;
+}
+
+.navbarappoptions-sections-box:hover .navbarappoptions-sections {
+    color: #abe9e9;
+}
+
+
+.navbarappoptions-sections-box:active .navbarappoptions-sections {
+    text-shadow: -4px -4px black;
+    color: #274b4e;
+    transform: scale(0.95);
+    animation: 0.1s ease-in-out;
+}
+
 .navbar_appoptions {
     height: inherit;
     width: inherit;
