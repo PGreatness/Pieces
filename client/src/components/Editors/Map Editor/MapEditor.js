@@ -7,6 +7,8 @@ import MapCanvas from './MapCanvas';
 import MapRightBar from './MapRightBar';
 
 export default function MapEditor() {
+    
+
     return (
         <Box bgcolor={"#1f293a"}>
             <Stack direction="row" justifyContent='space-between'>

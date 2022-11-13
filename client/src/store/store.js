@@ -27,6 +27,7 @@ function GlobalStoreContextProvider(props) {
     const [store, setStore] = useState({
         publicProjects: [],
         projectComments: [],
+        currentProject: null,
         userMaps: [],
         collabMaps: [],
         userAndCollabMaps: [],
@@ -60,6 +61,7 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         console.log(type)
+        console.log(payload)
         switch (type) {
 
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
@@ -87,6 +89,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS: {
                 return setStore({
                     ...store,
+                    currentPage: payload.currentPage,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
                 })
@@ -97,6 +100,7 @@ function GlobalStoreContextProvider(props) {
                 console.log("in gsat", payload)
                 return setStore({
                     ...store,
+                    currentProject: payload.currentProject,
                     publicProjects: payload.publicProjects,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
@@ -248,6 +252,40 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+    store.publishProject = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishMap(query, { isPublic: true });
+        console.log(response.data)
+        if (response.data.success) {
+            store.changePageToMapEditor(response.data.map)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH MAP.")
+            console.log(response)
+        }
+
+    }
+
+    store.unpublishProject = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishMap(query, { isPublic: false });
+        if (response.data.success) {
+            store.changePageToMapEditor(response.data.map)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH MAP.")
+            console.log(response)
+        }
+
+    }
+
+
     store.changePageToExplore = async function () {
         let page = store.pagination.page;
         let limit = store.pagination.limit;
@@ -258,6 +296,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
+                    currentProject: null,
                     currentPage: "explore",
                     publicProjects: publicProjects,
                     userMaps: store.userMaps,
@@ -282,6 +321,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
+                    currentProject: null,
                     currentPage: "library",
                     userMaps: userMaps,
                     collabMaps: collabMaps,
@@ -312,6 +352,7 @@ function GlobalStoreContextProvider(props) {
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
+                currentProject: null,
                 currentPage: "profile",
                 userMaps: store.userMaps,
                 collabMaps: store.collabMaps,
@@ -320,11 +361,12 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
-    store.changePageToMapEditor = async function () {
+    store.changePageToMapEditor = async function (map) {
 
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
+                currentProject: map,
                 currentPage: "mapEditor",
                 userMaps: store.userMaps,
                 collabMaps: store.collabMaps,
@@ -333,11 +375,12 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
-    store.changePageToTilesetEditor = async function () {
+    store.changePageToTilesetEditor = async function (tileset) {
 
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
+                currentProject: tileset,
                 currentPage: "tilesetEditor",
                 userMaps: store.userMaps,
                 collabMaps: store.collabMaps,
@@ -847,7 +890,7 @@ function GlobalStoreContextProvider(props) {
         if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
 
         let pagination = { ...store.pagination, page: 0, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 };
-        store.changePagination(pagination.page, pagination.limit,pagination.sort,pagination.order);
+        store.changePagination(pagination.page, pagination.limit, pagination.sort, pagination.order);
         storeReducer({
             type: GlobalStoreActionType.SET_EXPLORE_SORT,
             payload: {

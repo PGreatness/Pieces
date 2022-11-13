@@ -47,6 +47,15 @@ loginUser = async (req, res) => {
             const token = auth.signToken(foundUser);
             console.log("token", token)
 
+
+            // res.cookie("token", token, {
+            //     httpOnly: true,
+            //     sameSite: 'none',
+            //     maxAge: 6.048e+8
+            //   })
+          
+            // return res.json({ status: 'OK' });
+
             res.set("Set-Cookie", [
                 `token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
             ]);

@@ -43,15 +43,15 @@ export default function NavbarAppOptions(props) {
     }
 
     useEffect(() => {
-        auth.getLoggedIn(store);
-        console.log(auth.user)
-        if (auth.user == null) {
-            setLoggedIn(false);
-        } else {
-            props.changeLoc('/explore')
-            setLoggedIn(true);
-            navigate("/explore")
-        }
+        // auth.getLoggedIn(store);
+        // console.log(auth.user)
+        // if (auth.user == null) {
+        //     setLoggedIn(false);
+        // } else {
+        //     props.changeLoc('/explore')
+        //     setLoggedIn(true);
+        //     navigate("/explore")
+        // }
 
     }, []);
 
@@ -158,8 +158,10 @@ export default function NavbarAppOptions(props) {
         }
     }
 
-    const createSearchBar = () => {
 
+
+
+    const createSearchBar = () => {
 
         const handleSearchChange = (e) => {
             if (e.keyCode == 13) {
@@ -180,6 +182,8 @@ export default function NavbarAppOptions(props) {
             </>
         ) : (<></>);
     }
+
+
 
     // return the logo, app buttons, and login buttons
     // the login buttons should be on the right side of the navbar
