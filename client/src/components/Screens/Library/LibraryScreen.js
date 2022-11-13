@@ -29,7 +29,7 @@ export default function LibraryScreen(props) {
     const { auth } = useContext(AuthContext);
 
     useEffect(() => {
-        store.loadUserAndCollabMaps("6357194e0a81cb803bbb913e")
+        store.loadUserAndCollabMaps(auth.user?._id)
     }, [auth])
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -296,6 +296,11 @@ export default function LibraryScreen(props) {
         navigate(loc);
     }
 
+    const openProject = (project) => {
+        setLocation('/map/'+project._id); 
+        store.changePageToMapEditor(project)
+    }
+
     return (
         <Box
             style={{
@@ -416,11 +421,11 @@ export default function LibraryScreen(props) {
                     ? (allMaps && allMaps.map((project) => (
                         <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
                         style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
-                        onClick={() => {setLocation('/map/1'); store.changePageToMapEditor()}}>
+                        onClick={() => openProject(project)}>
                             <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                             {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
-                                ? <LockIcon className='library_lock_icon'></LockIcon>
-                                : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                : <LockIcon className='library_lock_icon'></LockIcon>
                             }
                             <div className="library_overlay">
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
@@ -434,34 +439,38 @@ export default function LibraryScreen(props) {
                     )))
                     : !filterActive
                         ? (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}>
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
+                            style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                            onClick={() => openProject(project)}>
                                 <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                                 {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
-                                    ? <LockIcon className='library_lock_icon'></LockIcon>
-                                    : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                    ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                    : <LockIcon className='library_lock_icon'></LockIcon>
                                 }
                                 <div className="library_overlay">
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                         <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                             <div className="library_project_title">{project.title}</div>
-                                            <div className="library_project_author">by @{project.ownerId}</div>
+                                            <div className="library_project_desc">{project.mapDescription}</div>
                                         </Box>
                                     </Box>
                                 </div>
                             </Box>
                         )))
                         : (filteredMaps && filteredMaps.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}>
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
+                            style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                            onClick={() => openProject(project)}>
                                 <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                                 {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
-                                    ? <LockIcon className='library_lock_icon'></LockIcon>
-                                    : <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                    ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                                    : <LockIcon className='library_lock_icon'></LockIcon>
                                 }
                                 <div className="library_overlay">
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                         <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                             <div className="library_project_title">{project.title}</div>
-                                            <div className="library_project_author">by @{project.ownerId}</div>
+                                            <div className="library_project_desc">{project.mapDescription}</div>
                                         </Box>
                                     </Box>
                                 </div>

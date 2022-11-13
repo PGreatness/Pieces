@@ -348,6 +348,9 @@ updateMap = async (req, res) => {
 }
 
 publishMap = async (req, res) => {
+    console.log('in backend publish')
+    console.log(req.query)
+    console.log(req.body)
 
     let id = mongoose.Types.ObjectId(req.query.id)
     let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
@@ -394,7 +397,7 @@ publishMap = async (req, res) => {
             .then(() => {
                 return res.status(200).json({
                     success: true,
-                    id: map._id,
+                    map: map,
                     message: 'Map was successfully updated',
                 })
             })

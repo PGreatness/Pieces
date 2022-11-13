@@ -24,6 +24,7 @@ export const getAllUserAsCollaboratorMaps = (id) => api.get(`/map/getAllUserAsCo
 export const getUserAndCollabMaps = (id) => api.get(`/ownerAndCollabOf/`, {params: id})
 export const getLibraryMapsByName = (payload) => api.get(`/getLibraryMapsByName/`, {params: payload})
 export const createNewMap = (payload) => api.post(`/map/newMap/`, payload)
+export const publishMap = (query, payload) => api.post(`/map/publishMap/`, payload, {params: query})
 
 // Tileset
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
@@ -61,6 +62,7 @@ const apis = {
     updateTileset,
     createNewTileset,
     createNewMap,
+    publishMap,
 
     getLoggedIn,
     registerUser,
