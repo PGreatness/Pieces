@@ -16,6 +16,10 @@ export const GlobalStoreActionType = {
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
     SET_EXPLORE_SORT: "SET_EXPLORE_SORT",
     SET_PAGINATION: "SET_PAGINATION",
+    SET_PRIMARY_COLOR: "SET_PRIMARY_COLOR",
+    SET_SECONDARY_COLOR: "SET_SECONDARY_COLOR",
+    SET_TILESET_TOOL: "SET_TILESET_TOOL",
+    SWAP_COLORS: "SWAP_COLORS"
 }
 
 
@@ -44,7 +48,10 @@ function GlobalStoreContextProvider(props) {
             stopPagination: false,
             sort: 'date',
             order: -1
-        }
+        },
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff',
+        tilesetTool: 'brush'
     });
 
 
@@ -147,6 +154,37 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: payload.publicProjects,
                 });
             }
+
+            case GlobalStoreActionType.SET_PRIMARY_COLOR: {
+                return setStore({
+                    ...store,
+                    primaryColor: payload.newPrimaryColor
+                })
+            }
+
+            case GlobalStoreActionType.SET_SECONDARY_COLOR: {
+                return setStore({
+                    ...store,
+                    secondaryColor: payload.newSecondaryColor
+                })
+            }
+
+            case GlobalStoreActionType.SET_TILESET_TOOL: {
+                return setStore({
+                    ...store,
+                    tilesetTool: payload.newTilesetTool
+                })
+            }
+
+            case GlobalStoreActionType.SWAP_COLORS: {
+                
+                return setStore({
+                    ...store,
+                    primaryColor: payload.newPrimary,
+                    secondaryColor: payload.newSecondary
+                })
+            }
+
             default:
                 return store;
         }
@@ -1100,6 +1138,48 @@ function GlobalStoreContextProvider(props) {
         else {
             console.log("API FAILED TO SEND NOTIFICATION")
         }
+    }
+
+    store.setPrimaryColor = async function (newPrimaryColor) {
+        console.log("Setting primary color to " + newPrimaryColor)
+        storeReducer({
+            type: GlobalStoreActionType.SET_PRIMARY_COLOR,
+            payload: {
+                newPrimaryColor: newPrimaryColor
+            }
+        });
+    }
+
+    store.setSecondaryColor = async function (newSecondaryColor) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_SECONDARY_COLOR,
+            payload: {
+                newSecondaryColor: newSecondaryColor
+            }
+        });
+    }
+
+    store.swapColors = async function () {
+        let primary = store.primaryColor.slice()
+        let secondary = store.secondaryColor.slice()
+        storeReducer({
+            type: GlobalStoreActionType.SWAP_COLORS,
+            payload: {
+                newPrimary: secondary,
+                newSecondary: primary
+            }
+        })
+    }
+
+    store.setTilesetTool = async function (newTilesetTool) {
+        console.log("Setting tool to " + newTilesetTool)
+
+        storeReducer({
+            type: GlobalStoreActionType.SET_TILESET_TOOL,
+            payload: {
+                newTilesetTool: newTilesetTool
+            }
+        })
     }
 
     return (
