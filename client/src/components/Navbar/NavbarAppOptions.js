@@ -78,37 +78,37 @@ export default function NavbarAppOptions(props) {
             return (
                 <>
                     <Box style={{
-                        display: 'flex', flexDirection: 'row', marginRight: '10px',
+                        display: 'flex', flexDirection: 'row', marginRight: '10px', bottom: '0',
                         color: `${store.currentPage === 'explore' ? "#2dd4cf" : "white"}`
-                    }} onClick={() => {
+                    }} className='navbarappoptions-sections-box' onClick={() => {
                         props.changeLoc('/explore');
                         navigate("/explore"); store.changePageToExplore();
                     }}>
-                        <ExploreIcon sx={{ fontSize: 29, px: 1, pt: 1 }}></ExploreIcon>
-                        <Typography fontSize='26px'>Explore</Typography>
+                        <ExploreIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></ExploreIcon>
+                        <Typography fontSize='26px' className='navbarappoptions-sections'>Explore</Typography>
                     </Box>
 
 
 
                     <Box style={{
-                        display: 'flex', flexDirection: 'row', marginRight: '10px', marginLeft: '10px',
+                        display: 'flex', flexDirection: 'row', marginRight: '10px', marginLeft: '10px', bottom: '0',
                         color: `${store.currentPage === 'library' ? "#2dd4cf" : "white"}`
-                    }} onClick={() => {
+                    }} className='navbarappoptions-sections-box' onClick={() => {
                         props.changeLoc('/library'); navigate("/library"); store.changePageToLibrary();
                     }}>
-                        <CollectionsBookmarkIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></CollectionsBookmarkIcon>
-                        <Typography fontSize='26px'>Library</Typography>
+                        <CollectionsBookmarkIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></CollectionsBookmarkIcon>
+                        <Typography fontSize='26px' className='navbarappoptions-sections'>Library</Typography>
                     </Box>
 
 
                     <Box style={{
                         display: 'flex', flexDirection: 'row', marginRight: '70px', marginLeft: '10px',
                         color: `${store.currentPage === 'community' ? "#2dd4cf" : "white"}`
-                    }} onClick={() => {
+                    }} className='navbarappoptions-sections-box' onClick={() => {
                         props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity();
                     }}>
-                        <PeopleIcon sx={{ fontSize: 29, px: 1, pt: 1 }}></PeopleIcon>
-                        <Typography fontSize='26px'>Community</Typography>
+                        <PeopleIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></PeopleIcon>
+                        <Typography fontSize='26px' className='navbarappoptions-sections'>Community</Typography>
                     </Box>
                 </>
             )
@@ -151,8 +151,19 @@ export default function NavbarAppOptions(props) {
         else {
             return (
                 <>
-                    <h1 onClick={handleLogin}>Login</h1>
-                    <h1>Signup</h1>
+                    <Box style={{
+                        display: 'flex', flexDirection: 'row', marginRight: '10px', bottom: '0',
+                        color: `${store.currentPage === 'explore' ? "#2dd4cf" : "white"}`
+                    }} className='navbarappoptions-sections-box' onClick={handleLogin}>
+                        <Typography fontSize='26px' className='navbarappoptions-sections'>Login</Typography>
+                    </Box>
+                    {/* TODO add a register onClick event */}
+                    <Box style={{
+                        display: 'flex', flexDirection: 'row', marginRight: '10px', bottom: '0',
+                        color: `${store.currentPage === 'explore' ? "#2dd4cf" : "white"}`
+                    }} className='navbarappoptions-sections-box' >
+                        <Typography fontSize='26px' className='navbarappoptions-sections'>Register</Typography>
+                    </Box>
                 </>
             )
         }
