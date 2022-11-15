@@ -5,17 +5,17 @@ const mongoose = require('mongoose');
 var createComment = function(req, res) {
     // Create a new comment
     const { projectId, userId, text } = req.body;
-    const dateCreated = new Date();
     if (!projectId || !userId || !text) {
         return res
         .status(400)
         .json({ message: "Missing required fields" });
     }
+    let ownerObjectId = mongoose.Types.ObjectId(userId)
+    let projectObjectId = mongoose.Types.ObjectId(projectId)
     const newComment = new ProjectComment({
-        projectId,
-        userId,
+        projectId: projectObjectId,
+        userId: ownerObjectId,
         text,
-        dateCreated,
         likes: [],
         dislikes: [],
     });
@@ -23,12 +23,19 @@ var createComment = function(req, res) {
     .then((comment) => {
         return res
         .status(200)
-        .json(comment);
+        .json({
+            success: true,
+            comment: comment
+        });
     })
     .catch((err) => {
+        console.log(err);
         return res
         .status(500)
-        .json({ message: "Error creating comment" });
+        .json({
+            success: false,
+            message: "Error creating comment"
+        });
     });
 }
 
@@ -213,14 +220,8 @@ getAllProjectCommentsOnPage = async (req, res) => {
     limit = Number(limit);
     const rangeComments = await ProjectComment.aggregate([
         { $skip : startIndex },
-        { $addFields: {
-            "ratio": { $cond: [
-                { $eq: [ {$size: "$dislikes"}, 0 ] },
-                    { $size: "$likes" },
-                    { $divide: [ {$size: "$likes"}, {$size: "$dislikes"} ] } ] }
-        }},
         { $limit: limit },
-        { $sort: { "ratio": -1 } },
+        // { $sort: { createdAt: -1 } },
     ])
     return res.status(200).json({
         success: true,

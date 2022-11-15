@@ -127,9 +127,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_PROJECT_COMMENTS: {
                 return setStore({
                     ...store,
-                    librarySortOption: payload.sortOpt,
-                    librarySortDirection: payload.sortDir,
-                    sortedLibraryList: payload.allMaps,
+                    projectComments: payload,
                 })
             }
 
@@ -199,6 +197,28 @@ function GlobalStoreContextProvider(props) {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+
+    store.createNewComment = async function (projectId, ownerId, text) {
+        console.log("handling create comment in store...")
+        let payload = {
+            projectId: projectId,
+            userId: ownerId,
+            text: text
+        };
+        let response = await api.createNewComment(payload)
+        console.log(response)
+
+        let response1 = await api.getAllProjectComments();
+        if (response1.data.success) {
+            let projectComments = response1.data.comments;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+                payload: projectComments
+            });
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
+        }
+    }
 
     store.loadPublicProjects = async function () {
 

@@ -16,7 +16,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import img from '../../images/map.jpg'
 import './css/explore.css';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 import ExploreCommentsItem from './ExploreCommentsItem'
 import AuthContext from '../../../auth/auth';
@@ -25,13 +25,34 @@ export default function ExploreComments(props) {
     // console.log("hello");
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const [comments, setComments] = useState(store.projectComments);
 
     let test = props.loadStore;
-    const comments = store.projectComments;
     console.log(comments)
+
+    useEffect(() => {setComments(store.projectComments)}, [store.projectComments]);
+
+    const handleCreateNewComment = async () => {
+        let text = document.getElementById('reply_field').value
+        let time = Date();
+        let ownerId = '636942dd04afd5d5f9331583'
+        let projectId = props.projectId
+
+        if (text === "") {
+            console.log("Empty text field.")
+        }
+        else {
+            let response = await store.createNewComment(projectId, ownerId, text)
+            console.log(response)
+            document.getElementById('reply_field').value = "";
+        }
+    }
+
     return (
-        <Box style={{ width: '100%', display: 'flex', alignItems: 'flex-start', 
-            flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative' }}>
+        <Box style={{
+            width: '100%', display: 'flex', alignItems: 'flex-start',
+            flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative'
+        }}>
 
             <Box style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '10%', alignItems: 'center' }}>
                 <KeyboardBackspaceIcon className="back_icon" onClick={props.setShowComments}></KeyboardBackspaceIcon>
@@ -83,99 +104,15 @@ export default function ExploreComments(props) {
 
 
                 <Box style={{ display: 'flex', width: '100%', height: '55%', overflow: 'auto', marginBottom: "10px" }}>
-                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%"}}>
+                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
 
 
-                    {comments.map((entry) => (
-                        <ExploreCommentsItem
-                            comment={entry}
-                        />))
-                    }
-
-                        <ListItem style={{
-                            display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
-                            backgroundColor: "rgb(217, 217, 217, 0.1)", borderRadius: '30px'
-                        }}>
-
-                            <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
-                                
-                                <ListItemAvatar >
-                                    <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
-                                </ListItemAvatar>
-
-                                <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                                <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >Patricia Miller</ListItem>
-                                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@patmiller99</ListItem>
-                                </ListItem>
-
-                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                                    <div style={{ fontSize: "20px", marginRight: "15px"}}>10d</div>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                                        <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbUpIcon>
-                                        <div>30</div>
-                                    </ListItem>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                                        <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
-                                        <div>4</div>
-                                    </ListItem>
-                                </ListItem>
-
-                            </ListItem>
-
-                            <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItemText sx={{ px: 1 }}>Pellentesque commodo lacus at sodales sodales.
-                                Quisque sagittis orci ut diam condimentum, Pellentesque muster sit amet sapien fringilla,
-                                 mattis ligula...</ListItemText>
-                            </ListItem>
-
-                        </ListItem>
-
-
-
-
-
-                        <ListItem style={{
-                            display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
-                            backgroundColor: "rgb(217, 217, 217, 0.1)", borderRadius: '30px'
-                        }}>
-
-                            <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
-                                
-                                <ListItemAvatar >
-                                    <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
-                                </ListItemAvatar>
-
-                                <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >David Hart</ListItem>
-                                    <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@penguin4</ListItem>
-                                </ListItem>
-
-                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                                    <div style={{ fontSize: "20px", marginRight: "15px"}}>10d</div>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                                        <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbUpIcon>
-                                        <div>30</div>
-                                    </ListItem>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
-                                        <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
-                                        <div>4</div>
-                                    </ListItem>
-                                </ListItem>
-
-                            </ListItem>
-
-                            <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItemText sx={{ px: 1}}>Tis ligula lacus at sodales sodat magna...</ListItemText>
-                            </ListItem>
-
-                        </ListItem>
-
-
-
-
-                        
-
-
+                        {comments.map((entry) => 
+                            entry.projectId == props.projectId ?
+                            <ExploreCommentsItem
+                                comment={entry}
+                            />:<></>)
+                        }
                     </List>
                 </Box>
 
@@ -192,7 +129,7 @@ export default function ExploreComments(props) {
                     alignItems: 'center'
                 }}>
                     <input id="reply_field" placeholder="Add a reply..." ></input>
-                    <SendIcon sx={{ fontSize: 70, px: 1, paddingRight: '30px' }}></SendIcon>
+                    <SendIcon sx={{ fontSize: 70, px: 1, paddingRight: '30px' }} onClick={handleCreateNewComment}></SendIcon>
 
                 </Box>
             </Box>

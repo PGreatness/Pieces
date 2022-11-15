@@ -86,6 +86,12 @@ export default function ExploreTilesetItem(props) {
         setShowRequestModal(false)
     }
 
+    const handleComments = () => {
+        props.setShowComments()
+        props.setProjectId(project._id)
+        console.log(props.projectId)
+    }
+
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
@@ -113,7 +119,7 @@ export default function ExploreTilesetItem(props) {
                             <div class="like_num">{dislikes}</div>
                         </Box>
 
-                        <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={props.setShowComments}></CommentIcon>
+                        <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={handleComments}></CommentIcon>
                         <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
                         onClick={handleFavClick}></FavoriteIcon>
