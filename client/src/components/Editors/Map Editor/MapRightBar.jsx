@@ -18,9 +18,10 @@ export default function MapRightBar() {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
 
-  console.log(store.currentProject)
-  const project = store.currentProject;
+  //console.log(store.currentProject)
+  //const project = store.currentProject;
 
+  const [project, setProject] = useState(store.currentProject);
   const [value, setValue] = useState(0);
   const [openImportMap, setOpenImportMap] = useState(false);
   const [openExportMap, setOpenExportMap] = useState(false);
@@ -33,6 +34,7 @@ export default function MapRightBar() {
 
   console.log(owner)
   console.log(collaborators)
+  console.log(store.currentProject)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -105,6 +107,18 @@ export default function MapRightBar() {
   const unpublishMap = () => {
     store.unpublishProject();
     handleCloseUnpublishMap();
+  }
+
+  const removeCollaborator = async function (id) {
+    console.log("in remove frontend")
+    await store.removeMapCollaborator(id);
+    setProject(store.currentProject);
+    console.log(project)
+    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+      setOwner(owner);
+      setCollaborators(collabs);
+      setOpenUserSettings(true);
+    })
   }
 
   return (
@@ -514,7 +528,7 @@ export default function MapRightBar() {
           <Stack direction='column'>
             <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>User Settings</Typography>
 
-            {console.log(owner)}
+        
             <Grid justify='center' container style={{ backgroundColor: "#1f293a" }}>
               <Grid item xs={1}>
                 <AccountCircle />
@@ -533,7 +547,9 @@ export default function MapRightBar() {
               </Grid> :
               collaborators.map((collabUser) => (
                 <UserModalItem
+                  owner={project.ownerId === auth?.user._id ? true : false}
                   user={collabUser}
+                  removeCollaborator={removeCollaborator}
                 ></UserModalItem>
               ))
             }

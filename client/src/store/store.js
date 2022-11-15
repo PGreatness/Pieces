@@ -1112,7 +1112,7 @@ function GlobalStoreContextProvider(props) {
 
 
     // store.getUserByUsername = async function (username, setOwnerCallback) {
-    //     const response = await api.getUserById(id);
+    //     const response = await api.getUserByUsername(id);
     //     //console.log(response)
     //     if (response.status === 200) {
     //         //console.log(response.data)
@@ -1180,12 +1180,7 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.addMapCollaborator= async function (mapId, collaboratorId) {
-        // call the getUserByUsername thing here
-        // What the hell we might have multiple users with sam username???
-        // maybe try email then idk
-        //const response1 = await api.getUserById(payload);
-
+    store.addMapCollaborator = async function (mapId, collaboratorId) {
         let payload = {
             mapId: mapId,
             requesterId: collaboratorId
@@ -1193,11 +1188,93 @@ function GlobalStoreContextProvider(props) {
         
         const response = await api.addMapCollaborator(payload);
         if (response.data.success) {
-            console.log(response)
-            return
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentProject: response.data.map,
+                    currentPage: "mapEditor",
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    publicProjects: store.publicProjects
+                }
+            })
         }
         else {
             console.log("API FAILED TO ADD COLLABORATOR")
+        }
+    }
+
+    store.removeMapCollaborator = async function (mapId, collaboratorId) {
+       let payload = {
+            mapId: mapId,
+            requesterId: collaboratorId
+        }
+        
+        const response = await api.removeMapCollaborator(payload);
+        if (response.data.success) {
+            
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentProject: response.data.map,
+                    currentPage: "mapEditor",
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    publicProjects: store.publicProjects
+                }
+            })
+        }
+        else {
+            console.log("API FAILED TO REMOVE COLLABORATOR")
+        }
+    }
+
+    store.addTilesetCollaborator = async function (mapId, collaboratorId) {
+        let payload = {
+            mapId: mapId,
+            requesterId: collaboratorId
+        }
+        
+        const response = await api.addTilesetCollaborator(payload);
+        if (response.data.success) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentProject: response.data.tileset,
+                    currentPage: "mapEditor",
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    publicProjects: store.publicProjects
+                }
+            })
+        }
+        else {
+            console.log("API FAILED TO ADD COLLABORATOR")
+        }
+    }
+
+    store.removeTilesetCollaborator = async function (mapId, collaboratorId) {
+       let payload = {
+            mapId: mapId,
+            requesterId: collaboratorId
+        }
+        
+        const response = await api.removeTilesetCollaborator(payload);
+        if (response.data.success) {
+            
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentProject: response.data.tileset,
+                    currentPage: "mapEditor",
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    publicProjects: store.publicProjects
+                }
+            })
+        }
+        else {
+            console.log("API FAILED TO REMOVE COLLABORATOR")
         }
     }
 

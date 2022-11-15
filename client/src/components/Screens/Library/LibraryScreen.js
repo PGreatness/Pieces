@@ -83,13 +83,13 @@ export default function LibraryScreen(props) {
 
                     // If map does not belong to user, remove
                     if (filterOptions[0] === 1) {
-                        if (map.ownerId.toString() === "6357194e0a81cb803bbb913e") {
+                        if (map.ownerId.toString() === auth.user?._id) {
                             filtered.push(map)
                         }
                     }
                     // If map belongs to user, remove
                     else if (filterOptions[0] === -1) {
-                        if (map.ownerId.toString() !== "6357194e0a81cb803bbb913e") {
+                        if (map.ownerId.toString() !== auth.user?._id) {
                             filtered.push(map)
                         }
                     }
