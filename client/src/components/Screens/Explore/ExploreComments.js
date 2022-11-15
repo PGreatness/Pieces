@@ -33,14 +33,16 @@ export default function ExploreComments(props) {
     const handleCreateNewComment = () => {
         let text = document.getElementById('reply_field').value
         let time = Date();
-        let ownerId = '6357194e0a81cb803bbb913e'
+        let ownerId = '636942dd04afd5d5f9331583'
+        let projectId = '6369da333c60b432f2bc4853'
 
         if (text === "") {
             console.log("Empty text field.")
         }
         else {
-            let response = store.createNewComment(text, time, ownerId)
-            if (response.data.success) 
+            let response = store.createNewComment(projectId, ownerId, text)
+            console.log(response)
+            if (response.data.success)
                 console.log("Comment posted.")
         }
     }

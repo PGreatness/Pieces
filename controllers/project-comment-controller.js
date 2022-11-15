@@ -11,9 +11,11 @@ var createComment = function(req, res) {
         .status(400)
         .json({ message: "Missing required fields" });
     }
+    let ownerObjectId = mongoose.Types.ObjectId(ownerId)
+    let projectObjectId = mongoose.Types.ObjectId(projectId)
     const newComment = new ProjectComment({
-        projectId,
-        userId,
+        projectObjectId,
+        ownerObjectId,
         text,
         dateCreated,
         likes: [],
@@ -23,12 +25,18 @@ var createComment = function(req, res) {
     .then((comment) => {
         return res
         .status(200)
-        .json(comment);
+        .json({
+            success: true,
+            comment: comment
+        });
     })
     .catch((err) => {
         return res
         .status(500)
-        .json({ message: "Error creating comment" });
+        .json({
+            success: false,
+            message: "Error creating comment"
+        });
     });
 }
 

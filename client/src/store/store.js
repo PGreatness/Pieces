@@ -127,9 +127,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_PROJECT_COMMENTS: {
                 return setStore({
                     ...store,
-                    librarySortOption: payload.sortOpt,
-                    librarySortDirection: payload.sortDir,
-                    sortedLibraryList: payload.allMaps,
+                    projectComments: payload,
                 })
             }
 
@@ -200,12 +198,12 @@ function GlobalStoreContextProvider(props) {
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
 
-    store.createNewComment = async function (text, time, ownerId) {
+    store.createNewComment = async function (projectId, ownerId, text) {
         console.log("handling create comment in store...")
         let payload = {
-            text: text,
-            time: time,
-            ownerId: ownerId
+            projectId: projectId,
+            ownerId: ownerId,
+            text: text
         };
         let response = await api.createNewComment(payload)
         console.log(response)
