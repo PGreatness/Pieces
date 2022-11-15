@@ -30,7 +30,7 @@ export default function ExploreComments(props) {
     const comments = store.projectComments;
     console.log(comments)
 
-    const handleCreateNewComment = () => {
+    const handleCreateNewComment = async () => {
         let text = document.getElementById('reply_field').value
         let time = Date();
         let ownerId = '636942dd04afd5d5f9331583'
@@ -40,16 +40,16 @@ export default function ExploreComments(props) {
             console.log("Empty text field.")
         }
         else {
-            let response = store.createNewComment(projectId, ownerId, text)
+            let response = await store.createNewComment(projectId, ownerId, text)
             console.log(response)
-            if (response.data.success)
-                console.log("Comment posted.")
         }
     }
 
     return (
-        <Box style={{ width: '100%', display: 'flex', alignItems: 'flex-start', 
-            flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative' }}>
+        <Box style={{
+            width: '100%', display: 'flex', alignItems: 'flex-start',
+            flexDirection: 'column', paddingLeft: '40px', paddingRight: '40px', position: 'relative'
+        }}>
 
             <Box style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '10%', alignItems: 'center' }}>
                 <KeyboardBackspaceIcon className="back_icon" onClick={props.setShowComments}></KeyboardBackspaceIcon>
@@ -101,14 +101,14 @@ export default function ExploreComments(props) {
 
 
                 <Box style={{ display: 'flex', width: '100%', height: '55%', overflow: 'auto', marginBottom: "10px" }}>
-                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%"}}>
+                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
 
 
-                    {comments.map((entry) => (
-                        <ExploreCommentsItem
-                            comment={entry}
-                        />))
-                    }
+                        {comments.map((entry) => (
+                            <ExploreCommentsItem
+                                comment={entry}
+                            />))
+                        }
 
                         <ListItem style={{
                             display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
@@ -116,23 +116,23 @@ export default function ExploreComments(props) {
                         }}>
 
                             <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
-                                
+
                                 <ListItemAvatar >
                                     <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
                                 </ListItemAvatar>
 
                                 <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                                <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >Patricia Miller</ListItem>
+                                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >Patricia Miller</ListItem>
                                     <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@patmiller99</ListItem>
                                 </ListItem>
 
-                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                                    <div style={{ fontSize: "20px", marginRight: "15px"}}>10d</div>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
+                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingTop: "0px" }}>
+                                    <div style={{ fontSize: "20px", marginRight: "15px" }}>10d</div>
+                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px" }}>
                                         <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbUpIcon>
                                         <div>30</div>
                                     </ListItem>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
+                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px" }}>
                                         <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
                                         <div>4</div>
                                     </ListItem>
@@ -140,10 +140,10 @@ export default function ExploreComments(props) {
 
                             </ListItem>
 
-                            <ListItem style={{ paddingTop: "0px"}}>
+                            <ListItem style={{ paddingTop: "0px" }}>
                                 <ListItemText sx={{ px: 1 }}>Pellentesque commodo lacus at sodales sodales.
-                                Quisque sagittis orci ut diam condimentum, Pellentesque muster sit amet sapien fringilla,
-                                 mattis ligula...</ListItemText>
+                                    Quisque sagittis orci ut diam condimentum, Pellentesque muster sit amet sapien fringilla,
+                                    mattis ligula...</ListItemText>
                             </ListItem>
 
                         </ListItem>
@@ -158,7 +158,7 @@ export default function ExploreComments(props) {
                         }}>
 
                             <ListItem style={{ display: 'flex', flexDirection: 'row', paddingTop: '0px', paddingBottom: '0px' }}>
-                                
+
                                 <ListItemAvatar >
                                     <Avatar sx={{ height: '80px', width: '80px' }} src={props.profilePic} />
                                 </ListItemAvatar>
@@ -168,13 +168,13 @@ export default function ExploreComments(props) {
                                     <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@penguin4</ListItem>
                                 </ListItem>
 
-                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                                    <div style={{ fontSize: "20px", marginRight: "15px"}}>10d</div>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
+                                <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingTop: "0px" }}>
+                                    <div style={{ fontSize: "20px", marginRight: "15px" }}>10d</div>
+                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px" }}>
                                         <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbUpIcon>
                                         <div>30</div>
                                     </ListItem>
-                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
+                                    <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px" }}>
                                         <ThumbDownIcon sx={{ fontSize: 25, px: 1, pt: 1 }}></ThumbDownIcon>
                                         <div>4</div>
                                     </ListItem>
@@ -182,8 +182,8 @@ export default function ExploreComments(props) {
 
                             </ListItem>
 
-                            <ListItem style={{ paddingTop: "0px"}}>
-                                <ListItemText sx={{ px: 1}}>Tis ligula lacus at sodales sodat magna...</ListItemText>
+                            <ListItem style={{ paddingTop: "0px" }}>
+                                <ListItemText sx={{ px: 1 }}>Tis ligula lacus at sodales sodat magna...</ListItemText>
                             </ListItem>
 
                         </ListItem>
@@ -191,7 +191,7 @@ export default function ExploreComments(props) {
 
 
 
-                        
+
 
 
                     </List>

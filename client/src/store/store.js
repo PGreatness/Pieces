@@ -202,11 +202,12 @@ function GlobalStoreContextProvider(props) {
         console.log("handling create comment in store...")
         let payload = {
             projectId: projectId,
-            ownerId: ownerId,
+            userId: ownerId,
             text: text
         };
         let response = await api.createNewComment(payload)
         console.log(response)
+        return response;
     }
 
     store.loadPublicProjects = async function () {

@@ -5,19 +5,17 @@ const mongoose = require('mongoose');
 var createComment = function(req, res) {
     // Create a new comment
     const { projectId, userId, text } = req.body;
-    const dateCreated = new Date();
     if (!projectId || !userId || !text) {
         return res
         .status(400)
         .json({ message: "Missing required fields" });
     }
-    let ownerObjectId = mongoose.Types.ObjectId(ownerId)
+    let ownerObjectId = mongoose.Types.ObjectId(userId)
     let projectObjectId = mongoose.Types.ObjectId(projectId)
     const newComment = new ProjectComment({
-        projectObjectId,
-        ownerObjectId,
+        projectId: projectObjectId,
+        userId: ownerObjectId,
         text,
-        dateCreated,
         likes: [],
         dislikes: [],
     });
@@ -31,6 +29,7 @@ var createComment = function(req, res) {
         });
     })
     .catch((err) => {
+        console.log(err);
         return res
         .status(500)
         .json({

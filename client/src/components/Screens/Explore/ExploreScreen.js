@@ -17,8 +17,10 @@ export default function ExploreScreen(props) {
          display:'flex', zIndex:0, position: 'relative'}}>
             {!showComments? (<Explore 
                 setLoc={props.setLoc}
-                setShowComments={() => {
-                    store.loadPublicProjectComments();
+                setShowComments={async () => {
+                    await store.loadPublicProjectComments();
+                    console.log("here in setShow: ");
+                    console.log(store);
                     setShowComments(true);
                 }}
             />): (<ExploreComments
