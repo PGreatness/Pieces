@@ -27,8 +27,6 @@ router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
 
 
-
-
 // Map Routes
 router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
 router.get('/map/getAllUserAsCollaboratorMaps/:id', MapController.getAllUserAsCollaboratorMaps)
@@ -41,12 +39,7 @@ router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
-
-router.post('/comments/updateComment', ProjectCommentController.updateComment)
-router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
-router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
-router.post('/comments/updateComment/', ProjectCommentController.updateComment)
-
+router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
 
 
 // TileSet Routes
@@ -58,6 +51,8 @@ router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
+router.post('/map/addUserToTileset', TilesetController.addUserToTileset)
+router.post('/map/removeUserFromTileset', TilesetController.removeUserFromTileset)
 
 
 // Tile Routes
@@ -67,6 +62,14 @@ router.get('/tile/:id', TileController.getTileById)
 router.post('/tile/newTile', TileController.createTile)
 router.post('/tile/deleteTile', TileController.deleteTile)
 router.post('/tile/updateTile', TileController.updateTile)
+
+
+// Project Comments 
+router.post('/comments/updateComment', ProjectCommentController.updateComment)
+router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
+router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
+router.post('/comments/updateComment/', ProjectCommentController.updateComment)
+
 
 // Thread Routes
 router.post('/thread/newThread', ThreadController.createThread)

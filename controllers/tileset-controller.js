@@ -457,7 +457,7 @@ publishTileset = async (req, res) => {
 
 }
 
-var addUserToTileset = async (req, res) => {
+addUserToTileset = async (req, res) => {
 
     const { tilesetId, userId } = req.body;
 
@@ -525,6 +525,76 @@ var addUserToTileset = async (req, res) => {
     })
 }
 
+
+removeUserFromTileset = async (req, res) => {
+
+    const { tilesetId, userId } = req.body;
+
+    if (!tilesetId || !userId) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a tilesetId and userId"
+        })
+    }
+
+    var tid;
+    var uid;
+    try {
+        tid = mongoose.Types.ObjectId(tilesetId);
+        uid = mongoose.Types.ObjectId(userId);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a valid tilesetId and userId"
+        })
+    }
+
+    var user = await User.findById(uid);
+    var tileset = await Tileset.findById(tid);
+
+    if (!user) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist"
+        })
+    }
+
+    if (!tileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Tileset does not exist"
+        })
+    }
+
+    if (tileset.ownerId.equals(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "User is the owner of this tileset"
+        })
+    }
+
+    if (!tileset.collaboratorIds.includes(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "User is not a collaborator of this tileset"
+        })
+    }
+
+    tileset.collaboratorIds.push(uid);
+    tileset.save().then(() => {
+        return res.status(200).json({
+            success: true,
+            message: "User was successfully removed from tileset"
+        })
+    }).catch(err => {
+        return res.status(400).json({
+            success: false,
+            message: "User was not removed from tileset"
+        })
+    })
+}
+
+
 module.exports = {
     getAllUserTilesets,
     getUserTilesetsByName,
@@ -532,5 +602,7 @@ module.exports = {
     createTileset,
     deleteTileset,
     updateTileset,
-    publishTileset
+    publishTileset,
+    addUserToTileset,
+    removeUserFromTileset
 }

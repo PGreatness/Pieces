@@ -26,11 +26,15 @@ export const getLibraryMapsByName = (payload) => api.get(`/getLibraryMapsByName/
 export const createNewMap = (payload) => api.post(`/map/newMap/`, payload)
 export const publishMap = (query, payload) => api.post(`/map/publishMap/`, payload, {params: query})
 export const addMapCollaborator = (payload) => api.post(`/map/addUserToMap/`, payload)
+export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromMap/`, payload)
 
 // Tileset
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 export const createNewTileset = (payload) => api.post(`/tileset/newTileset`, payload)
+
+export const addTilesetCollaborator = (payload) => api.post(`/map/addUserToTileset/`, payload)
+export const removeTilesetCollaborator = (payload) => api.post(`/map/removeUserFromTileset/`, payload)
 
 // User
 export const getLoggedIn = () => api.get(`/loggedIn/`);
@@ -65,6 +69,7 @@ const apis = {
     createNewMap,
     publishMap,
     addMapCollaborator,
+    removeMapCollaborator,
 
     getLoggedIn,
     registerUser,
@@ -74,7 +79,9 @@ const apis = {
 
     changePage,
     requestMapEdit,
-    requestTilesetEdit
+    requestTilesetEdit,
+    addTilesetCollaborator,
+    removeTilesetCollaborator
 }
 
 export default apis
