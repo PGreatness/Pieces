@@ -36,7 +36,7 @@ export default function ExploreComments(props) {
         let text = document.getElementById('reply_field').value
         let time = Date();
         let ownerId = '636942dd04afd5d5f9331583'
-        let projectId = '6369da333c60b432f2bc4853'
+        let projectId = props.projectId
 
         if (text === "") {
             console.log("Empty text field.")
@@ -107,10 +107,11 @@ export default function ExploreComments(props) {
                     <List style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
 
 
-                        {comments.map((entry) => (
+                        {comments.map((entry) => 
+                            entry.projectId == props.projectId ?
                             <ExploreCommentsItem
                                 comment={entry}
-                            />))
+                            />:<></>)
                         }
                     </List>
                 </Box>

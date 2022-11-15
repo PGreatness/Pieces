@@ -304,10 +304,14 @@ export default function Explore(props) {
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
                                 project={entry}
+                                projectId = {props.projectId}
+                                setProjectId = {props.setProjectId}
                             />) : (<ExploreTilesetItem
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
                                 project={entry}
+                                projectId = {props.projectId}
+                                setProjectId = {props.setProjectId}
                             />)
                         ))
                     :   filteredProjects.map((entry) => (
@@ -315,10 +319,14 @@ export default function Explore(props) {
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
                                 project={entry}
+                                projectId = {props.projectId}
+                                setProjectId = {props.setProjectId}
                             />) : (<ExploreTilesetItem
                                 setLoc={props.setLoc}
                                 setShowComments={props.setShowComments}
                                 project={entry}
+                                projectId = {props.projectId}
+                                setProjectId = {props.setProjectId}
                             />)
                         ))
                 }

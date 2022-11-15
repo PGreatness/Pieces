@@ -10,6 +10,7 @@ export default function ExploreScreen(props) {
     const [showComments, setShowComments] = useState(false);
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const [projectId, setProjectId] = useState("6369da333c60b432f2bc4853");
 
     return (
         <>
@@ -23,10 +24,14 @@ export default function ExploreScreen(props) {
                     console.log(store);
                     setShowComments(true);
                 }}
+                projectId = {projectId}
+                setProjectId = {setProjectId}
             />): (<ExploreComments
                 setShowComments={() => {
                     setShowComments(false);
                 }}
+                projectId = {projectId}
+                setProjectId = {setProjectId}
             />)}
         </Box>
         </>
