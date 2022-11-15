@@ -18,6 +18,7 @@ import img from '../../images/map.jpg'
 import './css/explore.css';
 import { useContext, useEffect, useState } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
+import api from '../../../api/api';
 import AuthContext from '../../../auth/auth';
 
 export default function ExploreCommentsItem(props) {
@@ -32,6 +33,11 @@ export default function ExploreCommentsItem(props) {
     const [isLiked, setIsLiked] = useState(comment.likes.includes(auth.user?._id));
     const [isDisliked, setIsDisliked] = useState(comment.dislikes.includes(auth.user?._id));
 
+    const [commentOwner, setCommentOwner] = useState(null);
+    store.getUserById(comment.userId, (ownerUser) => {
+        setCommentOwner(ownerUser);
+    });
+    
     useEffect(() => {
         setLikes(comment.likes.length);
         setDislikes(comment.dislikes.length);
@@ -61,6 +67,7 @@ export default function ExploreCommentsItem(props) {
         });
     }
 
+    let displayDate = new Date(comment.createdAt).toLocaleDateString()
     return (
         <ListItem style={{
             display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
@@ -73,12 +80,12 @@ export default function ExploreCommentsItem(props) {
                 </ListItemAvatar>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'column' }}>
-                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >{comment.userId}</ListItem>
+                    <ListItem sx={{ fontSize: "40px", fontWeight: 'bolder', paddingBottom: '0px' }} >{commentOwner ? commentOwner.firstName : ""} {commentOwner ? commentOwner.lastName: ""}</ListItem>
                     <ListItem sx={{ fontSize: "20px", paddingTop: '0px' }}>@{comment.userId}</ListItem>
                 </ListItem>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{comment.dateCreated}</div>
+                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{displayDate}</div>
                     <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
                         <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }} onClick={handleLikeClick}></ThumbUpIcon>
                         <div>{likes}</div>

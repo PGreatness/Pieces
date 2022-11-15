@@ -17,19 +17,17 @@ const projectCommentSchema = new Schema({
         type: String,
         required: true,
     },
-    // The date that this comment was created
-    dateCreated: {
-        type: Date,
-        required: true,
-    },
     likes: {
         type: [ObjectId],
-        required: true,
+        required: false,
     },
     dislikes: {
         type: [ObjectId],
         required: false,
     },
+},
+{
+    timestamps: true,
 });
 
 const ProjectComment = model("ProjectComment", projectCommentSchema);

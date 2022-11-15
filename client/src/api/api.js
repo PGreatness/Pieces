@@ -12,6 +12,7 @@ const api = axios.create({
 export const getAllProjectComments = () => api.get(`/comments/getAllProjectComments/`)
 export const getCommentbyId = (id) => api.get(`/comments/getCommentbyId/${id}`)
 export const updateComment = (query, payload) => api.post(`/comments/updateComment/`, payload, {params: query})
+export const createNewComment = (payload) => api.post(`/comments/newComment/`, payload)
 
 export const getAllPublicProjects = (query) => api.get(`/getAllPublicProjects/`, {params: query})
 export const getPublicProjectsByName = (name) => api.get(`/getPublicProjectsByName/${name}/`)
@@ -59,6 +60,7 @@ const apis = {
     getAllProjectComments,
     getCommentbyId,
     updateComment,
+    createNewComment,
     getPublicProjectsByName,
     getLibraryMapsByName,
 

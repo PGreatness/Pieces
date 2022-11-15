@@ -108,7 +108,6 @@ createMap = async (req, res) => {
 
         // Creates Map
         let map = null
-        let layers = []
         let collaboratorIds = []
         let tiles = []
         let tilesets = []
@@ -128,7 +127,6 @@ createMap = async (req, res) => {
             ownerId: ownerObjectId,
             collaboratorIds: collaboratorIds,
             isPublic: isPublic,
-            layers: layers,
             likes: [],
             dislikes: [],
             favs: [],
@@ -263,7 +261,7 @@ updateMap = async (req, res) => {
 
         // Changes all the present fields
         const { _id, title, mapDescription, tags, mapBackgroundColor, mapHeight, mapWidth, tileHeight,
-            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, layers, likes, dislikes, favs,
+            tileWidth, tiles, tilesets, ownerId, collaboratorIds, isPublic, likes, dislikes, favs,
             downloads, comments} = req.body;
 
         if (title) {
@@ -311,8 +309,6 @@ updateMap = async (req, res) => {
             map.collaboratorIds = collaboratorIds
         if (isPublic)
             map.isPublic = isPublic
-        if (layers)
-            map.layers = layers
         if (likes)
             map.likes = likes
         if (dislikes)
@@ -454,7 +450,6 @@ getAllUserMaps = async (req, res) => {
                     ownerId: map.ownerId,
                     collaboratorIds: map.collaboratorIds,
                     isPublic: map.isPublic,
-                    layers: map.layers,
                     likes: map.likes,
                     dislikes: map.dislikes,
                     favs: map.favs,
@@ -521,7 +516,6 @@ getAllUserAsCollaboratorMaps = async (req, res) => {
                         ownerId: map.ownerId,
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
-                        layers: map.layers,
                         likes: map.likes,
                         dislikes: map.dislikes,
                         favs: map.favs,
@@ -588,7 +582,6 @@ getMapsByName = async (req, res) => {
                         ownerId: map.ownerId,
                         collaboratorIds: map.collaboratorIds,
                         isPublic: map.isPublic,
-                        layers: map.layers,
                         likes: map.likes,
                         dislikes: map.dislikes,
                         favs: map.favs,

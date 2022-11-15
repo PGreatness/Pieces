@@ -1,5 +1,4 @@
 const { model, Schema, ObjectId } = require("mongoose");
-const Layer = require("./layer-model").schema;
 
 const mapSchema = new Schema({
     title: {
@@ -53,10 +52,6 @@ const mapSchema = new Schema({
     isPublic: {
         type: Boolean,
         required: true,
-    },
-    layers: {
-        type: [Layer],
-        required: false
     },
     likes: {
         type: [ObjectId],

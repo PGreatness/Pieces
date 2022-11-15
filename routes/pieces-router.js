@@ -44,6 +44,14 @@ router.post('/map/addUserToMap', MapController.addUserToMap)
 router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
 
 
+router.post('/comments/updateComment', ProjectCommentController.updateComment)
+router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
+router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
+router.post('/comments/updateComment/', ProjectCommentController.updateComment)
+router.post('/comments/newComment/', ProjectCommentController.createComment)
+
+
+
 // TileSet Routes
 router.get('/tileset/getAllUserTilesets/:ownerId', TilesetController.getAllUserTilesets)
 router.get('/tileset/getUserTilesetsByName/:title', TilesetController.getUserTilesetsByName)
@@ -67,10 +75,6 @@ router.post('/tile/updateTile', TileController.updateTile)
 
 
 // Project Comments 
-router.post('/comments/updateComment', ProjectCommentController.updateComment)
-router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
-router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
-router.post('/comments/updateComment/', ProjectCommentController.updateComment)
 
 
 // Thread Routes

@@ -10,6 +10,7 @@ export default function ExploreScreen(props) {
     const [showComments, setShowComments] = useState(false);
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const [projectId, setProjectId] = useState("6369da333c60b432f2bc4853");
 
     return (
         <>
@@ -17,14 +18,20 @@ export default function ExploreScreen(props) {
          display:'flex', zIndex:0, position: 'relative'}}>
             {!showComments? (<Explore 
                 setLoc={props.setLoc}
-                setShowComments={() => {
-                    store.loadPublicProjectComments();
+                setShowComments={async () => {
+                    await store.loadPublicProjectComments();
+                    console.log("here in setShow: ");
+                    console.log(store);
                     setShowComments(true);
                 }}
+                projectId = {projectId}
+                setProjectId = {setProjectId}
             />): (<ExploreComments
                 setShowComments={() => {
                     setShowComments(false);
                 }}
+                projectId = {projectId}
+                setProjectId = {setProjectId}
             />)}
         </Box>
         </>
