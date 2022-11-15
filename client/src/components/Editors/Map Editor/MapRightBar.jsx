@@ -39,7 +39,16 @@ export default function MapRightBar() {
 
   console.log(owner)
   console.log(collaborators)
-  console.log(store.currentProject)
+  console.log(project)
+
+  useEffect(() => {
+    setProject(store.currentProject)
+    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+      setOwner(owner);
+      setCollaborators(collabs);
+    })
+
+  }, [store.currentProject])  
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -119,15 +128,16 @@ export default function MapRightBar() {
   }
 
   const removeCollaborator = async function (id) {
-    await store.removeMapCollaborator(project._id, id);
-    
-    //setProject(store.currentProject);
-    //console.log(project)
-    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
-      setOwner(owner);
-      setCollaborators(collabs);
-      setOpenUserSettings(true);
-    })
+    let idk = await store.removeMapCollaborator(project._id, id);
+    //console.log(idk)
+    //console.log(store.currentProject)
+    //setProject(idk);
+    console.log(project)
+    // store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+    //   setOwner(owner);
+    //   setCollaborators(collabs);
+    //   setOpenUserSettings(true);
+    // })
   }
 
   return (

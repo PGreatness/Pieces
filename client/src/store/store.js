@@ -1309,20 +1309,21 @@ function GlobalStoreContextProvider(props) {
         const response = await api.removeMapCollaborator(payload);
         if (response.data.success) {
             
-            const newMap = response.data.map
+            let currentMap = response.data.map
+            //console.log(newMap)
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
-                    currentProject: newMap,
+                    currentProject: currentMap,
                     currentPage: "mapEditor",
                     userMaps: store.userMaps,
                     collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
                 }
             })
-            console.log(newMap)
-            console.log(this.currentProject)
-            return response.data.map
+            //store.setPageToMapEditor(currentMap)
+            console.log(store.currentProject)
+            return currentMap;
         }
         else {
             console.log("API FAILED TO REMOVE COLLABORATOR")
