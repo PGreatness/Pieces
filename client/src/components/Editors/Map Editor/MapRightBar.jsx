@@ -13,6 +13,9 @@ import { styled } from "@mui/material/styles";
 import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
 import UserModalItem from './UserModalItem';
 import { Form } from 'react-router-dom';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import './css/mapRightBar.css';
 
 export default function MapRightBar() {
   const { store } = useContext(GlobalStoreContext);
@@ -30,6 +33,7 @@ export default function MapRightBar() {
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
   const [owner, setOwner] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
+  const [openAutocomplete, setOpenAutocomplete] = useState(false);
 
   console.log(owner)
   console.log(collaborators)
@@ -541,11 +545,15 @@ export default function MapRightBar() {
 
             {
               project.ownerId === auth?.user._id ?
-              <form>
-                <Typography color='azure'>Add Collaborators</Typography>
-                <input width="100" type="text" placeholder="Search by Username..."></input>
-                <Button>Add</Button>
-              </form>
+              <Autocomplete
+              className='map-editor-add-collaborators'
+              open={openAutocomplete}
+              onInputChange={(_,value)=>setOpenAutocomplete(value.trim().length > 0)}
+              onClose={()=>setOpenAutocomplete(false)}
+              freeSolo
+              options={['test', 'test2', 'test3']} // TODO: Iman - get list of users from backend and put them here
+              renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
+              />
               :
               <></>
             }
