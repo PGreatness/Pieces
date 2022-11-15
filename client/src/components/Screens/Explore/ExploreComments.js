@@ -44,6 +44,7 @@ export default function ExploreComments(props) {
         else {
             let response = await store.createNewComment(projectId, ownerId, text)
             console.log(response)
+            document.getElementById('reply_field').value = "";
         }
     }
 

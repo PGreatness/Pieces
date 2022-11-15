@@ -61,6 +61,7 @@ export default function ExploreCommentsItem(props) {
         });
     }
 
+    let displayDate = new Date(comment.createdAt).toLocaleDateString()
     return (
         <ListItem style={{
             display: 'flex', flexDirection: 'column', width: "100%", marginBottom: "10px",
@@ -78,7 +79,7 @@ export default function ExploreCommentsItem(props) {
                 </ListItem>
 
                 <ListItem style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-end', paddingTop: "0px"}}>
-                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{comment.dateCreated}</div>
+                    <div style={{ fontSize: "20px", marginRight: "15px"}}>{displayDate}</div>
                     <ListItem style={{ display: 'flex', flexDirection: 'column', width: 'auto', padding: "0px"}}>
                         <ThumbUpIcon sx={{ fontSize: 25, px: 1, pt: 1 }} onClick={handleLikeClick}></ThumbUpIcon>
                         <div>{likes}</div>

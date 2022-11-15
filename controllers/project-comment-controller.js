@@ -220,14 +220,8 @@ getAllProjectCommentsOnPage = async (req, res) => {
     limit = Number(limit);
     const rangeComments = await ProjectComment.aggregate([
         { $skip : startIndex },
-        { $addFields: {
-            "ratio": { $cond: [
-                { $eq: [ {$size: "$dislikes"}, 0 ] },
-                    { $size: "$likes" },
-                    { $divide: [ {$size: "$likes"}, {$size: "$dislikes"} ] } ] }
-        }},
         { $limit: limit },
-        { $sort: { "ratio": -1 } },
+        { $sort: { createdAt: -1 } },
     ])
     return res.status(200).json({
         success: true,
