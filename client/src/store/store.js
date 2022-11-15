@@ -1148,6 +1148,20 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.getUsersByUsername = async function (username) {
+        const response = await api.getUsersByUsername(username);
+        if (response.status === 200) {
+            return response;
+        }
+    }
+
+    store.getAllUsers = async function () {
+        const response = await api.getAllUsers();
+        if (response.status === 200) {
+            return response.data.users;
+        }
+    }
+
 
     // store.getUserByUsername = async function (username, setOwnerCallback) {
     //     const response = await api.getUserByUsername(id);
@@ -1295,16 +1309,20 @@ function GlobalStoreContextProvider(props) {
         const response = await api.removeMapCollaborator(payload);
         if (response.data.success) {
             
+            const newMap = response.data.map
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
-                    currentProject: response.data.map,
+                    currentProject: newMap,
                     currentPage: "mapEditor",
                     userMaps: store.userMaps,
                     collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
                 }
             })
+            console.log(newMap)
+            console.log(this.currentProject)
+            return response.data.map
         }
         else {
             console.log("API FAILED TO REMOVE COLLABORATOR")

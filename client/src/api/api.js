@@ -42,6 +42,9 @@ export const registerUser = (payload) => api.post(`/register/`, payload)
 export const loginUser = (payload) => api.get(`/login/`, {params: payload})
 export const logoutUser = () => api.get(`/logout/`)
 export const getUserById = (id) => api.get(`/users/userId/${id}/`)
+export const getUserByUsername = (username) => api.get(`/users/username/${username}/`)
+export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
+export const getAllUsers = () => api.get(`/users/all/`)
 
 // Pagination
 export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
@@ -76,6 +79,7 @@ const apis = {
     loginUser,
     logoutUser,
     getUserById,
+    getAllUsers,
 
     changePage,
     requestMapEdit,

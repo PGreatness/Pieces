@@ -85,6 +85,12 @@ logoutUser = async (req, res) => {
     return res.status(200).json({ success: true });
 }
 
+getAllUsers = async (req, res) => {
+    const users = await User.find();
+    return res.status(200).json({
+        users: users
+    });
+}
 
 getUserbyId = async (req, res) => {
     const savedUser = await User.findById(req.params.id);
@@ -97,6 +103,13 @@ getUserbyUsername = async (req, res) => {
     const savedUser = await User.findOne({ userName: req.params.username });
     return res.status(200).json({
         user: savedUser
+    });
+}
+
+getUsersbyUsername = async (req, res) => {
+    const savedUsers = await User.find({ userName: req.params.username });
+    return res.status(200).json({
+        users: savedUsers
     });
 }
 
@@ -510,5 +523,7 @@ module.exports = {
             forgotPassword,
             resetPassword,
             getOwnerAndCollaboratorOfMaps,
-            getLibraryMapsByName
+            getLibraryMapsByName,
+            getUsersbyUsername,
+            getAllUsers
         }

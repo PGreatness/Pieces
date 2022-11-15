@@ -35,6 +35,7 @@ export default function MapRightBar() {
   const [owner, setOwner] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
+  const [users, setUsers] = useState([]);
 
   console.log(owner)
   console.log(collaborators)
@@ -74,15 +75,19 @@ export default function MapRightBar() {
     setOpenImportTileset(false)
   }
 
-  const handleOpenUserSettings = () => {
+  const handleOpenUserSettings = async function () {
     store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
       setOwner(owner);
       setCollaborators(collabs);
       setOpenUserSettings(true);
     })
+
+    const users = await store.getAllUsers();
+    setUsers(users)
+    console.log(users)
   }
 
-  const handleCloseUserSettings = () => {
+  const handleCloseUserSettings = async function () {
     setCollaborators([])
     setOpenUserSettings(false)
   }
@@ -114,10 +119,10 @@ export default function MapRightBar() {
   }
 
   const removeCollaborator = async function (id) {
-    console.log("in remove frontend")
-    await store.removeMapCollaborator(id);
-    setProject(store.currentProject);
-    console.log(project)
+    await store.removeMapCollaborator(project._id, id);
+    
+    //setProject(store.currentProject);
+    //console.log(project)
     store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
       setOwner(owner);
       setCollaborators(collabs);
@@ -567,7 +572,7 @@ export default function MapRightBar() {
               onInputChange={(_,value)=>setOpenAutocomplete(value.trim().length > 0)}
               onClose={()=>setOpenAutocomplete(false)}
               freeSolo
-              options={['test', 'test2', 'test3']} // TODO: Iman - get list of users from backend and put them here
+              options={users?.map(user => user.userName)} // TODO: Iman - get list of users from backend and put them here
               renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
               />
               :
