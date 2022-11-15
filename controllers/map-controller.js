@@ -798,6 +798,8 @@ getPublicProjectsByName = async (req, res) => {
         { $limit: limit },
     ]);
 
+
+
     console.log("please god")
     console.log(rangeProject)
 
@@ -890,6 +892,90 @@ addUserToMap = async (req, res) => {
         })
 }
 
+
+
+removeUserFromMap = async (req, res) => {
+
+    const { mapId, requesterId } = req.body;
+
+    if (!mapId) {
+        return res.status(400).json({
+            success: false,
+            error: "Map ID is required"
+        })
+    }
+
+    if (!requesterId) {
+        return res.status(400).json({
+            success: false,
+            error: "Requester ID is required"
+        })
+    }
+
+    var mid;
+    var uid;
+
+    try {
+        mid = mongoose.Types.ObjectId(mapId);
+        uid = mongoose.Types.ObjectId(requesterId);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Map ID or User ID format",
+            error: err
+        })
+    }
+
+    const chosenMap = await Map.findById(mid);
+    const chosenUser = await User.findById(uid);
+
+    if (!chosenUser) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist"
+        })
+    }
+
+    if (!chosenMap) {
+        return res.status(400).json({
+            success: false,
+            message: "Map does not exist"
+        })
+    }
+
+    if (chosenMap.ownerId.equals(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "Cannot remove owner of Map"
+        })
+    }
+
+    if (!chosenMap.collaboratorIds.includes(uid)) {
+        return res.status(400).json({
+            success: false,
+            message: "Not a collaborator of this map"
+        })
+    }
+
+    chosenMap.collaboratorIds.remove(requesterId);
+
+    chosenMap.save()
+        .then((map) => {
+            return res.status(200).json({
+                success: true,
+                message: "User removed as collaborator to map",
+                map: map
+            })
+        })
+        .catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Error removing user from map collaborator",
+                error: err
+            })
+        })
+}
+
 module.exports = {
     getAllUserMaps,
     getAllUserAsCollaboratorMaps,
@@ -902,5 +988,6 @@ module.exports = {
     getAllPublicMapsOnPage,
     addUserToMap,
     getAllPublicProjects,
-    getPublicProjectsByName
+    getPublicProjectsByName,
+    removeUserFromMap
 }

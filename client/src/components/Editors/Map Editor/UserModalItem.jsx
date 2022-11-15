@@ -17,7 +17,9 @@ export default function UserModalItem(props) {
             </Grid>
             <Grid item xs={1}>
                 <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                    <PersonRemove />
+                    {props.owner? 
+                    <PersonRemove onClick={()=> props.removeCollaborator(props.user._id)}/> : <></>
+                    }
                 </Button>
             </Grid>
             <Grid align='center' item xs={5}>

@@ -13,14 +13,18 @@ import { styled } from "@mui/material/styles";
 import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
 import UserModalItem from './UserModalItem';
 import { Form } from 'react-router-dom';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import './css/mapRightBar.css';
 
 export default function MapRightBar() {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
 
-  console.log(store.currentProject)
-  const project = store.currentProject;
+  //console.log(store.currentProject)
+  //const project = store.currentProject;
 
+  const [project, setProject] = useState(store.currentProject);
   const [value, setValue] = useState(0);
   const [openImportMap, setOpenImportMap] = useState(false);
   const [openExportMap, setOpenExportMap] = useState(false);
@@ -30,9 +34,21 @@ export default function MapRightBar() {
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
   const [owner, setOwner] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
+  const [openAutocomplete, setOpenAutocomplete] = useState(false);
+  const [users, setUsers] = useState([]);
 
   console.log(owner)
   console.log(collaborators)
+  console.log(project)
+
+  useEffect(() => {
+    setProject(store.currentProject)
+    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+      setOwner(owner);
+      setCollaborators(collabs);
+    })
+
+  }, [store.currentProject])  
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -68,15 +84,19 @@ export default function MapRightBar() {
     setOpenImportTileset(false)
   }
 
-  const handleOpenUserSettings = () => {
+  const handleOpenUserSettings = async function () {
     store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
       setOwner(owner);
       setCollaborators(collabs);
       setOpenUserSettings(true);
     })
+
+    const users = await store.getAllUsers();
+    setUsers(users)
+    console.log(users)
   }
 
-  const handleCloseUserSettings = () => {
+  const handleCloseUserSettings = async function () {
     setCollaborators([])
     setOpenUserSettings(false)
   }
@@ -105,6 +125,19 @@ export default function MapRightBar() {
   const unpublishMap = () => {
     store.unpublishProject();
     handleCloseUnpublishMap();
+  }
+
+  const removeCollaborator = async function (id) {
+    let idk = await store.removeMapCollaborator(project._id, id);
+    //console.log(idk)
+    //console.log(store.currentProject)
+    //setProject(idk);
+    console.log(project)
+    // store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+    //   setOwner(owner);
+    //   setCollaborators(collabs);
+    //   setOpenUserSettings(true);
+    // })
   }
 
   return (
@@ -409,7 +442,7 @@ export default function MapRightBar() {
           <Stack direction='column'>
             <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>User Settings</Typography>
 
-            {console.log(owner)}
+        
             <Grid justify='center' container style={{ backgroundColor: "#1f293a" }}>
               <Grid item xs={1}>
                 <AccountCircle />
@@ -428,7 +461,9 @@ export default function MapRightBar() {
               </Grid> :
               collaborators.map((collabUser) => (
                 <UserModalItem
+                  owner={project.ownerId === auth?.user._id ? true : false}
                   user={collabUser}
+                  removeCollaborator={removeCollaborator}
                 ></UserModalItem>
               ))
             }
@@ -436,11 +471,15 @@ export default function MapRightBar() {
 
             {
               project.ownerId === auth?.user._id ?
-              <form>
-                <Typography color='azure'>Add Collaborators</Typography>
-                <input width="100" type="text" placeholder="Search by Username..."></input>
-                <Button>Add</Button>
-              </form>
+              <Autocomplete
+              className='map-editor-add-collaborators'
+              open={openAutocomplete}
+              onInputChange={(_,value)=>setOpenAutocomplete(value.trim().length > 0)}
+              onClose={()=>setOpenAutocomplete(false)}
+              freeSolo
+              options={users?.map(user => user.userName)} // TODO: Iman - get list of users from backend and put them here
+              renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
+              />
               :
               <></>
             }

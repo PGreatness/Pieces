@@ -17,6 +17,8 @@ router.get('/login/', UserController.loginUser)
 router.get('/logout/', UserController.logoutUser)
 router.get('/users/userId/:id', UserController.getUserbyId)
 router.get('/users/username/:username', UserController.getUserbyUsername)
+router.get('/users/usernameAll/:username', UserController.getUsersbyUsername)
+router.get('/users/all', UserController.getAllUsers)
 router.get('/forgotPassword', UserController.forgotPassword)
 router.get('/ownerAndCollabOf', UserController.getOwnerAndCollaboratorOfMaps)
 router.get('/getLibraryMapsByName', UserController.getLibraryMapsByName)
@@ -25,8 +27,6 @@ router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
-
-
 
 
 // Map Routes
@@ -41,6 +41,8 @@ router.post('/map/deleteMap', MapController.deleteMap)
 router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
+router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
+
 
 router.post('/comments/updateComment', ProjectCommentController.updateComment)
 router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
@@ -59,6 +61,8 @@ router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
+router.post('/map/addUserToTileset', TilesetController.addUserToTileset)
+router.post('/map/removeUserFromTileset', TilesetController.removeUserFromTileset)
 
 
 // Tile Routes
@@ -68,6 +72,10 @@ router.get('/tile/:id', TileController.getTileById)
 router.post('/tile/newTile', TileController.createTile)
 router.post('/tile/deleteTile', TileController.deleteTile)
 router.post('/tile/updateTile', TileController.updateTile)
+
+
+// Project Comments 
+
 
 // Thread Routes
 router.post('/thread/newThread', ThreadController.createThread)

@@ -27,11 +27,15 @@ export const getLibraryMapsByName = (payload) => api.get(`/getLibraryMapsByName/
 export const createNewMap = (payload) => api.post(`/map/newMap/`, payload)
 export const publishMap = (query, payload) => api.post(`/map/publishMap/`, payload, {params: query})
 export const addMapCollaborator = (payload) => api.post(`/map/addUserToMap/`, payload)
+export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromMap/`, payload)
 
 // Tileset
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 export const createNewTileset = (payload) => api.post(`/tileset/newTileset`, payload)
+
+export const addTilesetCollaborator = (payload) => api.post(`/map/addUserToTileset/`, payload)
+export const removeTilesetCollaborator = (payload) => api.post(`/map/removeUserFromTileset/`, payload)
 
 // User
 export const getLoggedIn = () => api.get(`/loggedIn/`);
@@ -39,6 +43,9 @@ export const registerUser = (payload) => api.post(`/register/`, payload)
 export const loginUser = (payload) => api.get(`/login/`, {params: payload})
 export const logoutUser = () => api.get(`/logout/`)
 export const getUserById = (id) => api.get(`/users/userId/${id}/`)
+export const getUserByUsername = (username) => api.get(`/users/username/${username}/`)
+export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
+export const getAllUsers = () => api.get(`/users/all/`)
 
 // Pagination
 export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
@@ -67,16 +74,20 @@ const apis = {
     createNewMap,
     publishMap,
     addMapCollaborator,
+    removeMapCollaborator,
 
     getLoggedIn,
     registerUser,
     loginUser,
     logoutUser,
     getUserById,
+    getAllUsers,
 
     changePage,
     requestMapEdit,
-    requestTilesetEdit
+    requestTilesetEdit,
+    addTilesetCollaborator,
+    removeTilesetCollaborator
 }
 
 export default apis
