@@ -221,7 +221,7 @@ getAllProjectCommentsOnPage = async (req, res) => {
     const rangeComments = await ProjectComment.aggregate([
         { $skip : startIndex },
         { $limit: limit },
-        { $sort: { createdAt: -1 } },
+        // { $sort: { createdAt: -1 } },
     ])
     return res.status(200).json({
         success: true,
