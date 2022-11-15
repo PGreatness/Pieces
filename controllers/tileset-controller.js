@@ -407,7 +407,7 @@ getTilesetbyId = async (req, res) => {
     }
     return res.status(200).json({
         tileset: savedTileset
-    }).send();
+    })//.send();
 }
 
 publishTileset = async (req, res) => {

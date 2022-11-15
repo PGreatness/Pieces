@@ -19,7 +19,10 @@ export const GlobalStoreActionType = {
     SET_PRIMARY_COLOR: "SET_PRIMARY_COLOR",
     SET_SECONDARY_COLOR: "SET_SECONDARY_COLOR",
     SET_TILESET_TOOL: "SET_TILESET_TOOL",
-    SWAP_COLORS: "SWAP_COLORS"
+    SWAP_COLORS: "SWAP_COLORS",
+    LOAD_TILESET: "LOAD_TILESET",
+    SET_CURRENT_TILE: "SET_CURRENT_TILE",
+    ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET"
 }
 
 
@@ -52,7 +55,9 @@ function GlobalStoreContextProvider(props) {
         },
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
-        tilesetTool: 'brush'
+        tilesetTool: 'brush',
+        currentTileset: null,
+        currentTile: null
     });
 
 
@@ -184,6 +189,29 @@ function GlobalStoreContextProvider(props) {
                     ...store,
                     primaryColor: payload.newPrimary,
                     secondaryColor: payload.newSecondary
+                })
+            }
+
+            case GlobalStoreActionType.LOAD_TILESET: {
+                return setStore({
+                    ...store,
+                    currentTileset: payload.currentTileset,
+                    currentTile: payload.currentTile
+                })
+            }
+
+            case GlobalStoreActionType.SET_CURRENT_TILE: {
+                return setStore({
+                    ...store,   
+                    currentTile: payload.currentTile
+                })
+            }
+
+            case GlobalStoreActionType.ADD_TILE_TO_CURRENT_TILESET: {
+                return setStore({
+                    ...store,
+                    currentTileset: payload.tileset,
+                    currentTile: payload.tile
                 })
             }
 
@@ -1310,8 +1338,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setTilesetTool = async function (newTilesetTool) {
-        console.log("Setting tool to " + newTilesetTool)
-
         storeReducer({
             type: GlobalStoreActionType.SET_TILESET_TOOL,
             payload: {
@@ -1397,6 +1423,82 @@ function GlobalStoreContextProvider(props) {
         else {
             console.log("API FAILED TO REMOVE COLLABORATOR")
         }
+    store.setCurrentTile = async function (tileId) {
+        const response = await api.getTileById(tileId)
+
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_TILE,
+                payload: {
+                    currentTile: response.data.tile
+                }
+            })
+        }
+    }
+
+    store.loadTileset = async function (id) {
+        const response = await api.getTilesetById(id)
+    
+        if (response.status === 200) {
+            const tile_res = await api.getTileById(response.data.tileset.tiles[0])
+            let tile;
+            if (tile_res.status === 200) {
+                tile = tile_res.data.tile
+            }
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_TILESET,
+                payload: {
+                    currentTileset: response.data.tileset,
+                    currentTile: tile
+                }
+            })
+        }
+    }
+
+    store.addTileToCurrentTileset = async function () {
+        let payload = {
+            tilesetId: store.currentTileset._id,
+            height: store.currentTileset.tileHeight,
+            width: store.currentTileset.tileWidth,
+            tileData: Array(store.currentTileset.tileHeight * store.currentTileset.tileWidth).fill(''),
+        }
+        const response = await api.createTile(payload)
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.ADD_TILE_TO_CURRENT_TILESET,
+                payload: {
+                    tileset: response.data.tileset,
+                    tile: response.data.tile
+                }
+            })
+        }
+    }
+
+    store.updateTile = async function (tileId, tilesetId, tileData) {
+        const tilesetResponse = await api.getTilesetById(tilesetId)
+        let payload = {
+            tileId: tileId,
+            userId: tilesetResponse.data.tileset.ownerId,
+            tileData: tileData
+        }
+        const response = await api.updateTile(payload)
+        // if (response.status === 200) {
+        //     storeReducer({
+        //         type: GlobalStoreActionType.UPDATE_TILE,
+        //         payload: {
+        //             tileset
+        //         }
+        //     })
+        // }
+    }
+
+    store.updateTilesetProperties = async function (payload) {
+        let query = {
+            id: store.currentTileset._id,
+            ownerId: store.currentTileset.ownerId,
+        }
+        console.log(query)
+        const response = await api.updateTileset(payload, query)
     }
 
     return (

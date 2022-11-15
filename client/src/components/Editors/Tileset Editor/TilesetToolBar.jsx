@@ -60,9 +60,17 @@ export default function TilesetToolBar() {
         setOpenClearConfirm(true)
       }
     
-      const handleCloseClearConfirm = () => {
+    const handleCloseClearConfirm = () => {
         setOpenClearConfirm(false)
-      }
+    }
+
+    const handleConfirmClear = () => {
+        setOpenClearConfirm(false)
+        let tile = store.currentTile
+        tile.tileData = Array(5*5).fill('')
+        store.setCurrentTile(tile)
+        console.log(store.currentTile)
+    }
 
     return (
         <Box bgcolor={"#11182a"} flex={2} className='map_toolbar'>
@@ -189,8 +197,8 @@ export default function TilesetToolBar() {
                 <Stack direction='column'>
                     <Typography variant='h5' color='azure'>Proceed to Clear?</Typography>
                     <Stack direction='row'>
-                    <Button onClick={handleCloseClearConfirm}>
-                        <Typography >Confirm</Typography>
+                    <Button onClick={handleConfirmClear}>
+                        <Typography>Confirm</Typography>
                         <Check/>
                     </Button>
                     <Button onClick={handleCloseClearConfirm}>

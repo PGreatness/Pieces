@@ -29,6 +29,11 @@ export const publishMap = (query, payload) => api.post(`/map/publishMap/`, paylo
 export const addMapCollaborator = (payload) => api.post(`/map/addUserToMap/`, payload)
 export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromMap/`, payload)
 
+// Tile
+export const createTile = (payload) => api.post(`/tile/newTile`, payload)
+export const getTileById = (id) => api.get(`/tile/${id}`)
+export const updateTile = (payload) => api.post(`/tile/updateTile`, payload)
+
 // Tileset
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
@@ -75,6 +80,10 @@ const apis = {
     publishMap,
     addMapCollaborator,
     removeMapCollaborator,
+
+    createTile,
+    getTileById,
+    updateTile,
 
     getLoggedIn,
     registerUser,

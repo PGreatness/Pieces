@@ -59,7 +59,7 @@ const tilesetSchema = new Schema({
         required: true,
     },
     tiles: {
-        type: [Tile],
+        type: [ObjectId],
         required: true,
     },
     likes: {

@@ -16,10 +16,13 @@ var createTile = async (req, res) => {
     const { tilesetId, height, width, userId, tileData } = req.body;
 
     try {
-        if (!tilesetId || !height || !width || !tileData || !userId) {
+        // TOMMMY commented out userId check for testing purposes as of writing this
+        
+        if (!tilesetId || !height || !width || !tileData /*|| !userId*/) {
             return res.status(400).json({
                 success: false,
                 error: 'You must provide a tilesetId, height, tileData, and width',
+                body: req.body
             });
         }
 
@@ -37,9 +40,9 @@ var createTile = async (req, res) => {
             });
         }
 
-        if (tileData?.length == 0) {
-            tileData = ['rgba(0,0,0,0)'];
-        }
+        // if (tileData?.length == 0) {
+        //     tileData = ['rgba(0,0,0,0)'];
+        // }
 
         const userTileset = await tileset.findOne({ _id: tilesetId });
         console.log(userTileset);
@@ -52,21 +55,22 @@ var createTile = async (req, res) => {
         }
         console.log(userTileset.ownerId.toString());
         console.log(userId?.toString());
-        if (userTileset.ownerId?.toString() != userId.toString()) {
-            return res.status(400).json({
-                success: false,
-                error: 'You do not own this tileset',
-            });
-        }else {
-            for (let i = 0; i < userTileset.collaboratorIds.length; i++) {
-                if (userTileset.collaboratorIds[i].toString() == userId) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'You do not own this tileset',
-                    });
-                }
-            }
-        }
+        // Commented out by TOMMY for testing purposes
+        // if (userTileset.ownerId?.toString() != userId.toString()) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         error: 'You do not own this tileset',
+        //     });
+        // }else {
+        //     for (let i = 0; i < userTileset.collaboratorIds.length; i++) {
+        //         if (userTileset.collaboratorIds[i].toString() == userId) {
+        //             return res.status(400).json({
+        //                 success: false,
+        //                 error: 'You do not own this tileset',
+        //             });
+        //         }
+        //     }
+        // }
 
         if (userTileset.tileHeight != height || userTileset.tileWidth != width) {
             return res.status(400).json({
@@ -89,7 +93,7 @@ var createTile = async (req, res) => {
                 error: 'Tile not created!',
             });
         }
-        let updatedTileset = await tileset.findOneAndUpdate({ _id: tilesetId }, { $push: { tileIds: savedTile._id } }, { new: true });
+        let updatedTileset = await tileset.findOneAndUpdate({ _id: tilesetId }, { $push: { tiles: savedTile._id } }, { new: true });
         if (!updatedTileset) {
             return res.status(400).json({
                 success: false,
@@ -99,6 +103,8 @@ var createTile = async (req, res) => {
         return res.status(200).json({
             success: true,
             id: savedTile._id,
+            tileset: updatedTileset,
+            tile: savedTile,
             message: 'Tile created!',
         });
     } catch (err) {
@@ -122,7 +128,6 @@ var updateTile = async (req, res) => {
 
     try {
         if (!req.body.tileId) {
-            console.log(req.body.tileId);
             return res.status(400).json({
                 success: false,
                 error: 'You must provide an id to update',
@@ -139,7 +144,6 @@ var updateTile = async (req, res) => {
             });
         }
 
-        console.log(userTile);
         const userTileset = await tileset.findOne({ _id: userTile.tilesetId });
         if (userTileset.ownerId.toString() != userId.toString()) {
             return res.status(400).json({
@@ -290,6 +294,7 @@ var getTileById = async (req, res) => {
             });
         }
         let tilesId = await tile.findOne({ _id: req.params.id });
+        console.log(tilesId)
         if (!tilesId) {
             return res.status(400).json({
                 success: false,

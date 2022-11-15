@@ -4,9 +4,10 @@ import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel,
 import { Brush, HighlightAlt, OpenWith, FormatColorFill, PersonRemove, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
 import { TabPanel, TabContext, TabList} from '@mui/lab'
 import { styled } from "@mui/material/styles";
+import { useState, useContext, useEffect } from 'react';
+import { GlobalStoreContext } from '../../../store/store'
 
 export default function TilesetRightBar() {
 
@@ -15,6 +16,26 @@ export default function TilesetRightBar() {
   const [ openImportTile, setOpenImportTile ] = useState(false);
   const [ openExportTileset, setOpenExportTileset ] = useState(false);
   const [ openUserSettings, setOpenUserSettings ] = useState(false);
+  const [ editMode, setEditMode ] = useState(false);
+  const { store } = useContext(GlobalStoreContext)
+
+  const startEditing = () => {
+    setEditMode(true)
+  }
+
+  const endEditing = () => {
+    setEditMode(false)
+  }
+
+  const handleUpdateProperties = () => {
+    let payload = {
+      title: document.getElementById('title_input').value,
+      tilesetDesc: document.getElementById('desc_input').value,
+      tilesetTags: document.getElementById('tags_input').value
+    }
+    store.updateTilesetProperties(store.currentTileset._id, store.currentTileset.ownerId, payload)
+    setEditMode(false)
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -216,42 +237,88 @@ export default function TilesetRightBar() {
 
             <Box className='properties_container'>
               <Stack direction='column' textAlign='center' style={{height:'225px'}}>
-                <Grid container style={{backgroundColor:"#1f293a", height:'30px'}}>
-                  <Grid item xs={10}>
-                    <Typography color='azure'>Properties</Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Button style={{minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px'}}>
-                      <Edit/>
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Grid container textAlign='left' style={{height: '195px', width: '100%', padding: '5px'}}>
-                  <Grid item xs={3}>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Name: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Simple Grassy Plains Tileset </Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Desc: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>An orthogonal 2D tileset that resembles a grassy plain. </Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Size: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>64 x 64 </Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Tags: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{overflowWrap:"break-word"}} color='azure'>Grassy, Plains, Pixel </Typography>
-                  </Grid>
-                </Grid>
+                {!editMode 
+                    ? <Grid container style={{backgroundColor:"#1f293a", height:'30px'}}>
+                        <Grid item xs={10}>
+                          <Typography color='azure'>Properties</Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Button onClick={startEditing} style={{minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px'}}>
+                            <Edit/>
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    : <Grid container style={{backgroundColor:"#1f293a", height:'30px'}}>
+                        <Grid item xs={8}>
+                          <Typography color='azure'>Properties</Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Button onClick={handleUpdateProperties} style={{minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px'}}>
+                            <Check/>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Button onClick={endEditing} style={{minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px'}}>
+                            <Clear/>
+                          </Button>
+                        </Grid>
+                      </Grid>
+                  }
+                {!editMode
+                    ? <Grid container textAlign='left' style={{height: '195px', width: '100%', padding: '5px'}}>
+                        <Grid item xs={3}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Name: </Typography>
+                        </Grid>
+                        <Grid item xs={9} zeroMinWidth>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.title}</Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Desc: </Typography>
+                        </Grid>
+                        <Grid item xs={9} zeroMinWidth>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tilesetDesc}</Typography>
+                        </Grid>
+                        <Grid item xs={5}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Tile Size: </Typography>
+                        </Grid>
+                        <Grid item xs={7} zeroMinWidth>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tileHeight + " x " + store.currentTileset.tileWidth}</Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Tags: </Typography>
+                        </Grid>
+                        <Grid item xs={9} zeroMinWidth>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tilesetTags}</Typography>
+                        </Grid>
+                      </Grid>
+                    : <Grid container textAlign='left' style={{height: '195px', width: '100%', padding: '5px'}}>
+                        <Grid item xs={3}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Name: </Typography>
+                        </Grid>
+                        <Grid item xs={9} zeroMinWidth>
+                          <TextField id='title_input' defaultValue={store.currentTileset.title} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Desc: </Typography>
+                        </Grid>
+                        <Grid item xs={9} zeroMinWidth>
+                          <TextField id='desc_input' defaultValue={store.currentTileset.tilesetDesc} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+                        </Grid>
+                        <Grid item xs={5}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Tile Size: </Typography>
+                        </Grid>
+                        <Grid item xs={7} zeroMinWidth>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tileHeight + " x " + store.currentTileset.tileWidth}</Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>Tags: </Typography>
+                        </Grid>
+                        <Grid item xs={9} zeroMinWidth>
+                          <TextField id='tags_input' defaultValue={store.currentTileset.tilesetTags} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+                        </Grid>
+                      </Grid>
+                }
+          
               </Stack>
             </Box>
 
