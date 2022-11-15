@@ -31,8 +31,8 @@ getLoggedIn = async (req, res) => {
 loginUser = async (req, res) => {
     try {
         const { userName, password } = req.query;
-        console.log("username and password")
-        console.log(userName, password)
+        //console.log("username and password")
+        //console.log(userName, password)
         if (userName === "Community" || userName === "Guest") {
             return res.status(400).json({ message: "You cannot login with this userName" });
         }
@@ -45,7 +45,7 @@ loginUser = async (req, res) => {
         const match = await bcrypt.compare(password, foundUser.passwordHash);
         if (match) {
             const token = auth.signToken(foundUser);
-            console.log("token", token)
+            //console.log("token", token)
 
 
             // res.cookie("token", token, {

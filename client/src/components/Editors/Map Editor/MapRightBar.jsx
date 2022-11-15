@@ -11,13 +11,14 @@ import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth';
 import { styled } from "@mui/material/styles";
 import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
+import UserModalItem from './UserModalItem';
+import { Form } from 'react-router-dom';
 
 export default function MapRightBar() {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
 
   console.log(store.currentProject)
-
   const project = store.currentProject;
 
   const [value, setValue] = useState(0);
@@ -27,6 +28,11 @@ export default function MapRightBar() {
   const [openUserSettings, setOpenUserSettings] = useState(false);
   const [openPublishMap, setOpenPublishMap] = useState(false);
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
+  const [owner, setOwner] = useState(null);
+  const [collaborators, setCollaborators] = useState([]);
+
+  console.log(owner)
+  console.log(collaborators)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -63,10 +69,15 @@ export default function MapRightBar() {
   }
 
   const handleOpenUserSettings = () => {
-    setOpenUserSettings(true)
+    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+      setOwner(owner);
+      setCollaborators(collabs);
+      setOpenUserSettings(true);
+    })
   }
 
   const handleCloseUserSettings = () => {
+    setCollaborators([])
     setOpenUserSettings(false)
   }
 
@@ -113,7 +124,11 @@ export default function MapRightBar() {
           <StyledTab label="Settings" />
         </Tabs>
       </Box>
-      <Box sx={{ padding: 2 }}>
+
+
+
+
+      <Box sx={{ padding: 2, height: '80%' }}>
         {value === 0 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
             <Box bgcolor="#ffffff" className="previewWindow">
@@ -131,67 +146,9 @@ export default function MapRightBar() {
           </Box>
         )}
         {value === 1 && (
-          <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
+          <Box display="flex" flexDirection='column' alignItems="center" justifyContent="start" height='100%' >
 
-            <Box bgcolor="#ffffff" class="suggestionsContainer">
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
-                <Typography bgcolor="#1f293a" color='azure'>Incoming Suggestions</Typography>
-                <List disablePadding style={{ maxHeight: '100%', overflow: 'auto' }}>
-                  <ListItem className='suggestion_item'>
-                    <Grid container>
-                      <Grid item xs={5} className='suggestion_text'>
-                        <Stack direction='column'>
-                          <Typography color='black' fontSize='15px'>Added Grass</Typography>
-                          <Typography color='black' fontSize='10px'>by McKilla</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={1}></Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}>
-                          <Visibility className='suggestion_icon' />
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}>
-                          <Check className='suggestion_icon' />
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}>
-                          <Clear className='suggestion_icon' />
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                  <ListItem className='suggestion_item'>
-                    <Grid container>
-                      <Grid item xs={5} className='suggestion_text'>
-                        <Stack direction='column'>
-                          <Typography color='black' fontSize='15px'>Added Walls</Typography>
-                          <Typography color='black' fontSize='10px'>by McKenna</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={1}></Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}>
-                          <Visibility className='suggestion_icon' />
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}>
-                          <Check className='suggestion_icon' />
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}>
-                          <Clear className='suggestion_icon' />
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                </List>
-              </Stack>
-            </Box>
+
 
             <Box className='conferenceContainer'>
               <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
@@ -313,18 +270,18 @@ export default function MapRightBar() {
             <Box>
               {project.ownerId == auth.user?._id ?
                 project.isPublic ?
-                <Button 
-                  onClick={handleUnpublishMap}
-                  sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                  <Typography>Unpublish Map</Typography>
-                  <PublicIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
-                </Button>
-                : <Button 
-                  onClick={handlePublishMap}
-                  sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                  <Typography>Publish Map</Typography>
-                  <PublicIcon style={{ marginLeft: '15px' }} />
-                </Button>
+                  <Button
+                    onClick={handleUnpublishMap}
+                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+                    <Typography>Unpublish Map</Typography>
+                    <PublicIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
+                  </Button>
+                  : <Button
+                    onClick={handlePublishMap}
+                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+                    <Typography>Publish Map</Typography>
+                    <PublicIcon style={{ marginLeft: '15px' }} />
+                  </Button>
                 : <></>
               }
             </Box>
@@ -451,93 +408,50 @@ export default function MapRightBar() {
         <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='25%' top='30%' left='30%'>
           <Stack direction='column'>
             <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>User Settings</Typography>
+
+            {console.log(owner)}
             <Grid justify='center' container style={{ backgroundColor: "#1f293a" }}>
               <Grid item xs={1}>
                 <AccountCircle />
               </Grid>
-              <Grid item xs={5}>
-                <Typography>Iman Ali</Typography>
+              <Grid item xs={6}>
+                <Typography color='azure'>{owner?.firstName} {owner?.lastName}</Typography>
               </Grid>
-              <Grid item xs={1}>
-                <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                  <People />
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                  <PersonRemove />
-                </Button>
-              </Grid>
-              <Grid align='center' item xs={4}>
-                <Typography>Owner</Typography>
+              <Grid align='center' item xs={5}>
+                <Typography color='azure'>Owner</Typography>
               </Grid>
             </Grid>
-            <Grid container style={{ backgroundColor: "#1f293a" }}>
-              <Grid item xs={1}>
-                <AccountCircle />
-              </Grid>
-              <Grid item xs={5}>
-                <Typography>Iman Ali</Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                  <People />
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                  <PersonRemove />
-                </Button>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth size='small'>
-                  <InputLabel>Acess</InputLabel>
-                  <Select
-                  >
-                    <MenuItem>View</MenuItem>
-                    <MenuItem>Edit</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid container style={{ backgroundColor: "#1f293a" }}>
-              <Grid item xs={1}>
-                <AccountCircle />
-              </Grid>
-              <Grid item xs={5}>
-                <Typography>McKenna</Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                  <People />
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{ minHeight: '30px', maxHeight: '30px', minWidth: '30px', maxWidth: '30px' }}>
-                  <PersonRemove />
-                </Button>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth size='small'>
-                  <InputLabel>Acess</InputLabel>
-                  <Select
-                  >
-                    <MenuItem>View</MenuItem>
-                    <MenuItem>Edit</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Stack direction='row' justifyContent='space-between'>
-              <Button onClick={handleCloseUserSettings}>
-                <Typography >Confirm</Typography>
-                <Check />
-              </Button>
-              <Button onClick={handleCloseUserSettings}>
-                <Typography>Cancel</Typography>
-                <Clear />
-              </Button>
-            </Stack>
+
+            {collaborators.length === 0 ?
+              <Grid item xs={12}>
+                <Typography color='azure'>No Collaborators</Typography>
+              </Grid> :
+              collaborators.map((collabUser) => (
+                <UserModalItem
+                  user={collabUser}
+                ></UserModalItem>
+              ))
+            }
+
+
+            {
+              project.ownerId === auth?.user._id ?
+              <form>
+                <Typography color='azure'>Add Collaborators</Typography>
+                <input width="100" type="text" placeholder="Search by Username..."></input>
+                <Button>Add</Button>
+              </form>
+              :
+              <></>
+            }
+
+
+
+
+            <Button onClick={handleCloseUserSettings}>
+              <Typography>Cancel</Typography>
+              <Clear />
+            </Button>
           </Stack>
         </Box>
       </Modal>
