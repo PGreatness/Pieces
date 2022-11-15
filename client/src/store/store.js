@@ -1156,13 +1156,47 @@ function GlobalStoreContextProvider(props) {
             }
         });
     }
+
+
     store.getUserById = async function (id, setOwnerCallback) {
         const response = await api.getUserById(id);
+        //console.log(response)
         if (response.status === 200) {
-            console.log(response.data)
+            //console.log(response.data)
             setOwnerCallback(response.data.user)
             //return response.data.user;
         }
+    }
+
+
+    // store.getUserByUsername = async function (username, setOwnerCallback) {
+    //     const response = await api.getUserById(id);
+    //     //console.log(response)
+    //     if (response.status === 200) {
+    //         //console.log(response.data)
+    //         setOwnerCallback(response.data.user)
+    //         //return response.data.user;
+    //     }
+    // }
+
+    store.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
+        let owner = null;
+        const ownerResponse = await api.getUserById(ownerId);
+        if (ownerResponse.status === 200) {
+            owner = ownerResponse.data.user
+        }
+
+        let collabs = []
+        for (const collabId of collaboratorIds) {
+            const collabResponse = await api.getUserById(collabId);
+            if (collabResponse.status === 200) {
+                collabs.push(collabResponse.data.user)
+            }
+        }
+
+        console.log(owner)
+        console.log(collabs)
+        setUsersCallback(owner, collabs)
     }
 
 
@@ -1185,7 +1219,7 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.editMapRequest = async function (receiverId, tilesetId, title) {
+    store.editTilesetRequest = async function (receiverId, tilesetId, title) {
         let payload = {
             senderId: auth.user._id,
             receiverId: receiverId,
@@ -1203,6 +1237,30 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+
+
+    store.addMapCollaborator= async function (mapId, collaboratorId) {
+        // call the getUserByUsername thing here
+        // What the hell we might have multiple users with sam username???
+        // maybe try email then idk
+        //const response1 = await api.getUserById(payload);
+
+        let payload = {
+            mapId: mapId,
+            requesterId: collaboratorId
+        }
+        
+        const response = await api.addMapCollaborator(payload);
+        if (response.data.success) {
+            console.log(response)
+            return
+        }
+        else {
+            console.log("API FAILED TO ADD COLLABORATOR")
+        }
+        
+    }
+    
     store.setPrimaryColor = async function (newPrimaryColor) {
         console.log("Setting primary color to " + newPrimaryColor)
         storeReducer({
