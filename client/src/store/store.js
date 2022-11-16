@@ -1423,6 +1423,9 @@ function GlobalStoreContextProvider(props) {
         else {
             console.log("API FAILED TO REMOVE COLLABORATOR")
         }
+
+    }
+
     store.setCurrentTile = async function (tileId) {
         const response = await api.getTileById(tileId)
 
@@ -1512,4 +1515,3 @@ function GlobalStoreContextProvider(props) {
 
 export default GlobalStoreContext;
 export { GlobalStoreContextProvider };
-
