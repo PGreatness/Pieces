@@ -20,6 +20,10 @@
     color: #2dd4cf;
 }
 
+.moveSelected {
+    background-color: white;
+}
+
 .toolbar_grid_item {
     text-align: center;
     padding-top: 10px;
@@ -97,6 +101,10 @@
     width: 100%;
     position: relative;
     text-align: center;
+}
+
+.pixel:hover {
+    background-color: slategray;
 }
 
 .tileset_container {
