@@ -128,7 +128,7 @@ export default function MapRightBar() {
   }
 
   const removeCollaborator = async function (id) {
-    let idk = await store.removeMapCollaborator(project._id, id);
+    let newMap = await store.removeMapCollaborator(project._id, id);
     //console.log(idk)
     //console.log(store.currentProject)
     //setProject(idk);

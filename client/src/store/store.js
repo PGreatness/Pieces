@@ -1367,7 +1367,7 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: store.publicProjects
                 }
             })
-            //store.setPageToMapEditor(currentMap)
+            //store.changePageToMapEditor(currentMap)
             console.log(store.currentProject)
             return currentMap;
         }
