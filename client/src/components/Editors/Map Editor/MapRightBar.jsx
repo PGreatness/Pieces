@@ -60,6 +60,14 @@ export default function MapRightBar() {
     }
   });
 
+  useEffect(()=>{
+    setProject(store.currentProject);
+    store.getOwnerAndCollabs(store.currentProject.ownerId, store.currentProject.collaboratorIds, (owner, collab)=>{
+      setOwner(owner);
+      setCollaborators(collab);
+    })
+  }, [store.currentProject])
+
   const handleOpenImportMap = () => {
     setOpenImportMap(true)
   }
@@ -125,6 +133,16 @@ export default function MapRightBar() {
   const unpublishMap = () => {
     store.unpublishProject();
     handleCloseUnpublishMap();
+  }
+
+  const handleAddCollaborator = async (e, value, reason) => {
+    if (reason === 'selectOption') {
+      await store.getUserByUsername(value, (user)=>{
+        store.addMapCollaborator(project._id, user._id)
+        .then(()=>console.log(store))
+        .catch((err)=>console.log(err))
+      })
+    }
   }
 
   const removeCollaborator = async function (id) {
@@ -479,6 +497,7 @@ export default function MapRightBar() {
               freeSolo
               options={users?.map(user => user.userName)} // TODO: Iman - get list of users from backend and put them here
               renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
+              onChange={handleAddCollaborator}
               />
               :
               <></>

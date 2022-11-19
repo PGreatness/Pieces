@@ -82,6 +82,7 @@ const apis = {
     logoutUser,
     getUserById,
     getAllUsers,
+    getUserByUsername,
 
     changePage,
     requestMapEdit,
