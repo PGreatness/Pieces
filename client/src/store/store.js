@@ -1211,15 +1211,15 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    // store.getUserByUsername = async function (username, setOwnerCallback) {
-    //     const response = await api.getUserByUsername(id);
-    //     //console.log(response)
-    //     if (response.status === 200) {
-    //         //console.log(response.data)
-    //         setOwnerCallback(response.data.user)
-    //         //return response.data.user;
-    //     }
-    // }
+    store.getUserByUsername = async function (username, setOwnerCallback) {
+        const response = await api.getUserByUsername(username);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    }
 
     store.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
         let owner = null;
