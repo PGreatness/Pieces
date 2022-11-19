@@ -30,16 +30,11 @@ getLoggedIn = async (req, res) => {
 
 loginUser = async (req, res) => {
     try {
-        const { userName, password } = req.query;
-        //console.log("username and password")
-        //console.log(userName, password)
-        if (userName === "Community" || userName === "Guest") {
-            return res.status(400).json({ message: "You cannot login with this userName" });
-        }
-
-        const foundUser = await User.findOne({ userName: userName });
+        const { email, password } = req.query;
+        
+        const foundUser = await User.findOne({ email: email });
         if (!foundUser) {
-            return res.status(400).json({ message: "A User with the username provided does not exist." });
+            return res.status(400).json({ message: "A User with the email provided does not exist." });
         }
 
         const match = await bcrypt.compare(password, foundUser.passwordHash);

@@ -14,9 +14,7 @@ export default function ProfileScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    const handleLogout = () => {
-        auth.logoutUser(store);
-    }
+
 
     return (
         <div className="profile_body">
@@ -82,7 +80,6 @@ export default function ProfileScreen() {
                     <Stack direction="row" spacing={2}>
                     <Button disabled>Clear</Button>
                     <Button>Save</Button>
-                    <Button onClick={handleLogout}>Logout</Button>
                     </Stack>
                 </div>
             </div>
