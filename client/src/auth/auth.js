@@ -49,11 +49,11 @@ function AuthContextProvider(props) {
         }
     }
 
-    auth.getLoggedIn = async function (store) {
+    auth.getLoggedIn = async function (store, callback) {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
             //store.changePageToExplore(); 
-            console.log("user is signed in signed in")
+            console.log("user is logged in")
 
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
@@ -62,11 +62,13 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
+
+            callback();
         }
     }
 
 
-    auth.loginUser = async function(userData, store){
+    auth.loginUser = async function(userData, store, callback){
 
         await api.loginUser(userData).then(response => {
             console.log(response.data)
@@ -76,8 +78,9 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            store.changePageToExplore();
-            navigate("/explore");
+            //store.changePageToExplore();
+            //navigate("/explore");
+            callback();
         })
         .catch(({response}) => {
             console.log('error error')
@@ -109,7 +112,7 @@ function AuthContextProvider(props) {
         });      
     }
 
-    auth.logoutUser = async function(store){
+    auth.logoutUser = async function(store, callback){
         const response = await api.logoutUser();
         if(response.status === 200){
             authReducer({
@@ -120,7 +123,8 @@ function AuthContextProvider(props) {
                 }
             });
             store.reset(); 
-            navigate("/");
+            callback();
+            //navigate("/");
         }
     }
 

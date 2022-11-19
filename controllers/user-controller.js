@@ -31,6 +31,12 @@ getLoggedIn = async (req, res) => {
 loginUser = async (req, res) => {
     try {
         const { email, password } = req.query;
+
+        if (!email || !password ) {
+            return res
+                .status(400)
+                .json({ message: "Please enter all required fields." });
+        }
         
         const foundUser = await User.findOne({ email: email });
         if (!foundUser) {
@@ -40,20 +46,18 @@ loginUser = async (req, res) => {
         const match = await bcrypt.compare(password, foundUser.passwordHash);
         if (match) {
             const token = auth.signToken(foundUser);
-            //console.log("token", token)
 
-
-            // res.cookie("token", token, {
-            //     httpOnly: true,
-            //     sameSite: 'none',
-            //     maxAge: 6.048e+8
-            //   })
+            res.cookie("token", token, {
+                httpOnly: true,
+                //sameSite: 'none',
+                maxAge: 6.048e+8
+              })
           
             // return res.json({ status: 'OK' });
 
-            res.set("Set-Cookie", [
-                `token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
-            ]);
+            //res.set("Set-Cookie", [
+                //`token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
+            //]);
             res.status(200).json({
                 success: true,
                 user: foundUser,

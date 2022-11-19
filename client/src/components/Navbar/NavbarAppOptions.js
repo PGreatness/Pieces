@@ -47,6 +47,21 @@ export default function NavbarAppOptions(props) {
     const [anchorEl, setAnchorEl] = useState(null);
     const isProfileMenuOpen = Boolean(anchorEl);
 
+    useEffect(() => {
+        auth.getLoggedIn(store, () => {
+            setLoggedIn(true)
+            props.changeLoc('/explore')
+            store.changePageToExplore();
+            navigate("/explore")
+        });
+        console.log(auth.user)
+    }, []);
+
+    useEffect(() => {
+        console.log(auth.errorMessage)
+        setOpenErrorModal(auth.errorMessage !== null)
+    }, [auth]);
+
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -60,11 +75,6 @@ export default function NavbarAppOptions(props) {
         handleProfileMenuClose();
         navigate("/profile");
         store.changePageToProfile();
-    }
-
-    const handleLogout = () => {
-        handleProfileMenuClose();
-        auth.logoutUser(store);
     }
 
     const handleOpenLoginModal = () => {
@@ -83,13 +93,14 @@ export default function NavbarAppOptions(props) {
         setOpenRegisterModal(false)
     }
 
-    const handleErrorModalClose = () =>{
-        auth.resetMessage(); 
-        setOpenErrorModal(false);  
+    const handleErrorModalClose = () => {
+        auth.resetMessage();
+        setOpenErrorModal(false);
     };
 
     const handleRegister = (event) => {
         event.preventDefault();
+        handleCloseRegisterModal();
 
         const formData = new FormData(event.currentTarget);
         auth.registerUser({
@@ -102,6 +113,31 @@ export default function NavbarAppOptions(props) {
         }, store);
     };
 
+    const handleLogin = (event) => {
+        event.preventDefault();
+        handleCloseLoginModal()
+        const data = new FormData(event.currentTarget);
+
+        auth.loginUser({
+            email: data.get('email'),
+            password: data.get('password'),
+        }, store, () => {
+            setLoggedIn(true)
+            props.changeLoc('/explore')
+            store.changePageToExplore();
+            navigate("/explore")
+        });
+    }
+
+    const handleLogout = () => {
+        handleProfileMenuClose();
+        auth.logoutUser(store, () => {
+            console.log("logout callback")
+            setLoggedIn(false);
+            props.changeLoc('/');
+            navigate("/")
+        });
+    }
 
     const createLogo = () => {
         return (
@@ -110,38 +146,6 @@ export default function NavbarAppOptions(props) {
         )
     }
 
-    useEffect(() => {
-        // auth.getLoggedIn(store);
-        // console.log(auth.user)
-        // if (auth.user == null) {
-        //     setLoggedIn(false);
-        // } else {
-        //     props.changeLoc('/explore')
-        //     setLoggedIn(true);
-        //     navigate("/explore")
-        // }
-
-    }, []);
-
-
-    const handleLogin = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-
-        props.changeLoc('/explore')
-        handleCloseLoginModal()
-
-        auth.loginUser({
-            //email: 'iman.ali@stonybrook.edu',
-            //password: 'iman1234',
-            email: data.get('email'),
-            password: data.get('password'),
-        }, store);
-
-        setLoggedIn(true)
-        store.changePageToExplore();
-        navigate("/explore")
-    }
 
     const createAppButtons = (isLoggedIn) => {
         // if logged in, create 3 buttons for profile, explore, and community
@@ -215,7 +219,7 @@ export default function NavbarAppOptions(props) {
                             marginRight: "30px"
                         }}
                         onClick={handleProfileMenuOpen}>
-                        IA
+                        {auth?.user.firstName.charAt(0)}{auth?.user.lastName.charAt(0)}
                     </Avatar>
                     <Menu
                         anchorEl={anchorEl}
@@ -289,7 +293,6 @@ export default function NavbarAppOptions(props) {
     }
 
 
-
     // return the logo, app buttons, and login buttons
     // the login buttons should be on the right side of the navbar
     // and everything else should be on the left side of the navbar
@@ -330,7 +333,8 @@ export default function NavbarAppOptions(props) {
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
-                                sx={{ "& .MuiInputBase-root": { color: "azure" }, "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" } }}
+                                InputLabelProps={{ style: { color: "white" } }}
+                                sx={{ "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" }, "& .MuiInputBase-root": { color: "azure" } }}
                             />
                             <TextField
                                 margin="normal"
@@ -341,7 +345,8 @@ export default function NavbarAppOptions(props) {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                                sx={{ "& .MuiTextField-root": { color: "azure" } }}
+                                InputLabelProps={{ style: { color: "white" } }}
+                                sx={{ "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" }, "& .MuiInputBase-root": { color: "azure" } }}
                             />
 
                             <Button d
@@ -380,6 +385,11 @@ export default function NavbarAppOptions(props) {
                                         id="firstName"
                                         label="First Name"
                                         autoFocus
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -390,6 +400,11 @@ export default function NavbarAppOptions(props) {
                                         label="Last Name"
                                         name="lastName"
                                         autoComplete="lname"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -400,6 +415,11 @@ export default function NavbarAppOptions(props) {
                                         label="Email Address"
                                         name="email"
                                         autoComplete="email"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -410,6 +430,11 @@ export default function NavbarAppOptions(props) {
                                         label="User Name"
                                         name="userName"
                                         autoComplete="userName"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -421,6 +446,11 @@ export default function NavbarAppOptions(props) {
                                         type="password"
                                         id="password"
                                         autoComplete="new-password"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -432,6 +462,11 @@ export default function NavbarAppOptions(props) {
                                         type="password"
                                         id="passwordVerify"
                                         autoComplete="new-password"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
                                     />
                                 </Grid>
                             </Grid>
