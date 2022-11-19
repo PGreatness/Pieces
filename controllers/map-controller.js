@@ -679,7 +679,7 @@ getAllPublicProjects = async (req, res) => {
     if (!sort || sort === 'date') {
         sort = { createdAt: order };
     } else if (sort === "likes") {
-        sort = { numLikes: order };
+        sort = { "numLikes": order };
     } else if (sort === "name") {
         sort = { title: order };
     } else if (sort === "downloads") {
