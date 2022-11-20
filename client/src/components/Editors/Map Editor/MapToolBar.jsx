@@ -4,24 +4,43 @@ import { List, Modal, ListItem, ListItemIcon, ListItemButton, ListItemText, Typo
 import { Brush, Check, HighlightAlt, OpenWith, FormatColorFill, Colorize, Clear, SwapHoriz } from '@mui/icons-material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { GlobalStoreContext } from "../../../store/store"
 
 export default function MapToolBar() {
 
+    const { store } = useContext(GlobalStoreContext)
     const [ openClearConfirm, setOpenClearConfirm ] = useState(false);
+    const [ currTool, setCurrTool ] = useState('brush')
 
     const handleOpenClearConfirm = () => {
         setOpenClearConfirm(true)
       }
     
-      const handleCloseClearConfirm = () => {
+    const handleCloseClearConfirm = () => {
         setOpenClearConfirm(false)
-      }
+    }
+
+    const handleToolClick = (event) => {
+        let tool = event.currentTarget.id
+
+        setCurrTool(tool)
+        console.log("tl Selected " + tool)
+        store.setTilesetTool(tool)
+    }
+
+    const handleConfirmClear = () => {
+        setOpenClearConfirm(false)
+        let map = store.currentProject
+        map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
+        store.setCurrentProject(map._id)
+        console.log("tl " + store.currentProject)
+    }
 
     return (
         <Box bgcolor={"#11182a"} flex={2} className='map_toolbar'>
 
-            <Grid container space={1}>
+            <Grid container space={1} justify='center'>
 
                 <Grid item xs={12} className="toolbar_header">
                     <Typography variant="h5" className="editor_typography">Tools</Typography>
@@ -29,12 +48,12 @@ export default function MapToolBar() {
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
-                        <Brush className="toolbar_mui_icon"/>
+                    <Button onClick={handleToolClick} id="brush" style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} variant={currTool=='brush' ? "contained" : ""}>
+                        <Brush className="toolbar_mui_icon"/> 
                     </Button>
                 </Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
+                    <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="eraser" variant={currTool=='eraser' ? "contained" : ""}>
                         <FontAwesomeIcon icon={faEraser} className="toolbar_fa_icon"/>
                     </Button>
                 </Grid>
@@ -42,12 +61,12 @@ export default function MapToolBar() {
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
+                    <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="select" variant={currTool=='select' ? "contained" : ""}>
                         <HighlightAlt className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
+                    <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="move" variant={currTool=='move' ? "contained" : ""}>
                         <OpenWith className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
@@ -55,12 +74,12 @@ export default function MapToolBar() {
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
+                    <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="bucket" variant={currTool=='bucket' ? "contained" : ""}>
                         <FormatColorFill className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button>
+                    <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="dropper" variant={currTool=='dropper' ? "contained" : ""}>
                         <Colorize className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
@@ -68,7 +87,7 @@ export default function MapToolBar() {
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
-                    <Button onClick={handleOpenClearConfirm}>
+                    <Button id="clear" style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} onClick={handleOpenClearConfirm}>
                         <Clear className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
@@ -96,7 +115,7 @@ export default function MapToolBar() {
                 <Stack direction='column'>
                     <Typography variant='h5' color='azure'>Proceed to Clear?</Typography>
                     <Stack direction='row'>
-                    <Button onClick={handleCloseClearConfirm}>
+                    <Button onClick={handleConfirmClear}>
                         <Typography >Confirm</Typography>
                         <Check/>
                     </Button>
