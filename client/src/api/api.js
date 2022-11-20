@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    // baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 // Comments
@@ -59,6 +59,10 @@ export const changePage = (page, limit) => api.get(`/changePage`, page, {params:
 export const requestMapEdit = (payload) => api.post(`/notification/requestMapEdit`, payload)
 export const requestTilesetEdit = (payload) => api.post(`/notification/requestTilesetEdit`, payload)
 
+// COMMUNITY
+// Threads
+export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
+
 
 const apis = {
     getAllPublicProjects,
@@ -96,7 +100,9 @@ const apis = {
     requestMapEdit,
     requestTilesetEdit,
     addTilesetCollaborator,
-    removeTilesetCollaborator
+    removeTilesetCollaborator,
+
+    getAllThreads,
 }
 
 export default apis

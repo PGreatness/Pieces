@@ -15,6 +15,7 @@ import { Avatar } from "@mui/material";
 
 import NotificationSidebar from '../NotificationSidebar/NotificationSidebar';
 import { GlobalStoreContext } from '../../store/store'
+import { CommunityStoreContext } from '../../store/communityStore';
 import AuthContext from '../../auth/auth';
 
 
@@ -31,6 +32,7 @@ export default function NavbarAppOptions(props) {
 
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const { communityStore } = useContext(CommunityStoreContext);
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = React.useState(false);
 
@@ -105,7 +107,7 @@ export default function NavbarAppOptions(props) {
                         display: 'flex', flexDirection: 'row', marginRight: '70px', marginLeft: '10px',
                         color: `${store.currentPage === 'community' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
-                        props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity();
+                        props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity(); communityStore.getAllThreads();
                     }}>
                         <PeopleIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></PeopleIcon>
                         <Typography fontSize='26px' className='navbarappoptions-sections'>Community</Typography>

@@ -15,9 +15,9 @@ createThread = async (req, res) => {
     try {
 
         // Get data from request
-        const { threadName, threadText, senderId, sentAt } = req.body;
+        const { threadName, threadText, senderId } = req.body;
 
-        if (!threadName || !threadText || !senderId || !sentAt) {
+        if (!threadName || !threadText || !senderId) {
             return res
                 .status(400)
                 .json({ message: "Please enter all required fields." });
@@ -51,7 +51,8 @@ createThread = async (req, res) => {
             threadName: threadName,
             threadText: threadText,
             senderId: senderId,
-            sentAt: sentAt,
+            likes: 0,
+            dislikes: 0,
             replies: []
 
         })
@@ -122,6 +123,56 @@ deleteThread = async (req, res) => {
 
     })
 
+}
+
+var getAllThreads = async (req, res) => {
+    var { page, limit } = req.query;
+
+    if (!page) page = 1;
+
+    if (limit && !Number.isNaN(+limit)) {
+        limit = +limit;
+    }
+
+    if (Number.isNaN(+page)) {
+        return res.status(400).json({
+            success: false,
+            error: "Page must be a number"
+        })
+    }
+
+    page = +page;
+
+    if (page < 1) {
+        return res.status(400).json({
+            success: false,
+            error: "Page must be greater than 0"
+        })
+    }
+
+    var startIndex;
+    var threads;
+    if (limit) {
+        startIndex = (page - 1) * limit;
+        threads = await Thread.aggregate([
+            { $match: {} },
+            { $sort: { createdAt: -1 } },
+            { $skip: startIndex },
+            { $limit: limit },
+        ]);
+    } else {
+        startIndex = 0;
+        threads = await Thread.aggregate([
+            { $match: {} },
+            { $sort: { createdAt: -1 } },
+            { $skip: startIndex },
+        ]);
+    }
+
+    return res.status(200).json({
+        success: true,
+        threads: threads
+    })
 }
 
 addReplyToThread = async (req, res) => {
@@ -224,5 +275,6 @@ removeReplyFromThread = async (req, res) => {
 
 module.exports = {
     createThread,
-    deleteThread
+    deleteThread,
+    getAllThreads,
 }

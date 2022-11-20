@@ -78,6 +78,7 @@ router.post('/tile/updateTile', TileController.updateTile)
 
 
 // Thread Routes
+router.get('/thread/all', ThreadController.getAllThreads)
 router.post('/thread/newThread', ThreadController.createThread)
 router.post('/thread/deleteThread', ThreadController.deleteThread)
 

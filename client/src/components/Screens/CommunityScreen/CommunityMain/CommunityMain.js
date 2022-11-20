@@ -1,17 +1,20 @@
-import React from 'react';
+import {React, useContext, useState, useEffect } from 'react';
 import CommunityMainThreadList from './CommunityMainThreadList';
 import './css/communityMain.css';
-export default function CommunityMain(props) {
+import { CommunityStoreContext } from '../../../../store/communityStore';
 
-    const topThreads = props.topThreads;
+export default function CommunityMain(props) {
+    const { communityStore } = useContext(CommunityStoreContext);
+    console.log(communityStore);
+    const [topThreads, setTopThreads] = useState(communityStore.ALL_THREADS);
+
+    useEffect(() => {
+        setTopThreads(communityStore.TOP_THREADS);
+    }, [communityStore.TOP_THREADS])
 
     return (
-        <>
-            <div className='community-main'>
-                <div className='community-main-top-threads'>
-                    <CommunityMainThreadList threadList={topThreads}/>
-                </div>
-            </div>
-        </>
+        <div className='community-main'>
+            <CommunityMainThreadList threadList={topThreads} />
+        </div>
     )
 }

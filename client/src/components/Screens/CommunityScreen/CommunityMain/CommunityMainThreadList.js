@@ -23,10 +23,10 @@ export default function CommunityMainThreadList(props) {
     }
         return (
             <div className='community-main-thread-list' onClick={handleOutsideClick}>
-                <div className='community-main-thread-list-div'>
+                <div className='community-main-thread-list-div' style={{overflow: 'auto'}}>
                     <Stack spacing={2}>
                     {
-                        threadList.map((thread, index)=>{
+                        threadList?.map((thread, index)=>{
                             return (
                                 index === selectedIndex ? <CommunityOpenThread thread={thread} key={thread.id}/> : <CommunityMainClickableThread thread={thread} key={thread.id} selectThread={()=>setSelectedIndex(index)}/>
                                 );

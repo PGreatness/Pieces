@@ -1,10 +1,34 @@
-import React from 'react';
+import { React, useState, useContext, useEffect } from 'react';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { Avatar, ListItemButton, ListItemText, ListItem, Divider, TextField, InputAdornment } from '@mui/material';
 import { styled } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
 
+import { CommunityStoreContext } from '../../../../store/communityStore';
+
 export default function CommunityThread(props) {
+
+    const { communityStore } = useContext(CommunityStoreContext);
+    const [username, setUsername] = useState('');
+    const [avatar, setAvatar] = useState('');
+
+    useEffect(() => {
+        findUserAvatar().then((res) => {
+            setUsername(res.user);
+            setAvatar(res.userAvatar);
+        });
+    }, [communityStore.TOP_THREADS]);
+
+    const findUserAvatar = async () => {
+        let userAvatar = '';
+        let user = props.thread.senderId;
+        let threadOwner = await communityStore.getUserById(user);
+        console.log("In findUserAvatar 2: ");
+        console.log(threadOwner);
+        userAvatar = threadOwner.profilePic || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
+        user = threadOwner.userName;
+        return { userAvatar, user };
+    }
 
     const BetterReplyButton = styled(ListItemButton)({
         // make the button full width
@@ -61,26 +85,6 @@ export default function CommunityThread(props) {
         },
     });
 
-    const findUserAvatar = () => {
-        let userAvatar = '';
-        let user = props.thread.senderId;
-        // const response = await fetch(`/api/users/${user}`);
-        // const data = await response.json();
-        const response = {
-            "id": 1,
-            "username": "test",
-            "firstName": "Test",
-            "lastName": "User",
-            "email": "test@test.com",
-            "profilePic": "https://i.imgur.com/0y0y0y0.png",
-            "createdAt": "2021-08-01T00:00:00.000Z",
-            "updatedAt": "2021-08-01T00:00:00.000Z"
-        };
-        const data = response; // await response.json();
-        userAvatar = data.profilePic || data.firstName.chatAt(0) + data.lastName.charAt(0);
-        return [userAvatar, data.username];
-    }
-
     const sendButton = () => {
         return (
             <InputAdornment position="end">
@@ -91,13 +95,12 @@ export default function CommunityThread(props) {
         );
     }
 
-    const [currentUserAvatar, username] = findUserAvatar();
     const replies = props.thread.replies;
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread.id}>
             <ListItemButton divider>
                 <ListItemAvatar>
-                    <Avatar alt={username} src={currentUserAvatar} sx={{width: '100px', height: '100px'}}>{currentUserAvatar ? '': username}</Avatar>
+                    <Avatar alt={username} src={avatar} sx={{width: '100px', height: '100px', fontSize: '250%'}}>{avatar}</Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={props.thread.threadName} secondary={props.thread.threadText} primaryTypographyProps={{style: {color: 'white', fontSize:'3em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'1em'}}}/>
             </ListItemButton>

@@ -1,4 +1,4 @@
-const {model, Schema, ObjectId} = require("mongoose");
+const { model, Schema, ObjectId } = require("mongoose");
 const Reply = require("./reply-model").schema;
 
 const threadSchema = new Schema({
@@ -15,15 +15,22 @@ const threadSchema = new Schema({
         type: ObjectId,
         required: true,
     },
-    sentAt: {
-        type: String,
-        required: true,
-    },
     replies: {
         type: [Reply],
         required: true
-    }
-});
+    },
+    likes: {
+        type: Number,
+        required: true,
+    },
+    dislikes: {
+        type: Number,
+        required: true,
+    },
+},
+    {
+        timestamps: true
+    });
 
 const Thread = model("Thread", threadSchema);
 module.exports = Thread;
