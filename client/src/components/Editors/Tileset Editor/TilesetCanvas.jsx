@@ -13,8 +13,8 @@ export default function TilesetCanvas() {
 
     const { store } = useContext(GlobalStoreContext)
     const [ currentTile, setCurrentTile ] = useState(store.currentTile)
-    const [ height, setHeight ] = useState(5)
-    const [ width, setWidth ] = useState(5)
+    const [ height, setHeight ] = useState(4)
+    const [ width, setWidth ] = useState(4)
     const [ currentPixel, setCurrentPixel ] = useState([0, 0])
     const [ movePixels, setMovePixels ] = useState([])
 
