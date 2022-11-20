@@ -62,6 +62,8 @@ export const requestTilesetEdit = (payload) => api.post(`/notification/requestTi
 // COMMUNITY
 // Threads
 export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
+export const getAllReplies = () => api.get(`/thread/getAllReplies/`)
+export const addReply = (payload) => api.post(`/thread/addReply/`, payload)
 
 
 const apis = {
@@ -103,6 +105,7 @@ const apis = {
     removeTilesetCollaborator,
 
     getAllThreads,
+    addReply
 }
 
 export default apis

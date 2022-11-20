@@ -13,10 +13,6 @@ const repliesSchema = new Schema({
         type: String,
         required: true,
     },
-    sentAt: {
-        type: String,
-        required: true,
-    },
     replyingTo: {
         type: ObjectId,
         required: true,
@@ -25,6 +21,9 @@ const repliesSchema = new Schema({
     //     type: [repliesSchema],
     //     required: true
     // }
+},
+{
+    timestamps: true,
 });
 
 const Reply = model("Reply", repliesSchema);

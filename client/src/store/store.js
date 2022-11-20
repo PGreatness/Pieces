@@ -57,7 +57,8 @@ function GlobalStoreContextProvider(props) {
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
         currentTileset: null,
-        currentTile: null
+        currentTile: null,
+        replies: [],
     });
 
 
@@ -215,6 +216,13 @@ function GlobalStoreContextProvider(props) {
                 })
             }
 
+            case GlobalStoreActionType.LOAD_REPLIES: {
+                return setStore({
+                    ...store,
+                    replies: payload
+                })
+            }
+
             default:
                 return store;
         }
@@ -225,6 +233,27 @@ function GlobalStoreContextProvider(props) {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+    store.addReply = async function (replyToId, ownerId, text) {
+        console.log("handling add reply in store...")
+        let payload = {
+            replyingTo: replyToId,
+            senderId: ownerId,
+            replyMsg: text
+        };
+        let response = await api.addReply(payload)
+        console.log(response)
+
+        let response1 = await api.getAllReplies();
+        if (response1.data.success) {
+            let replies = response1.data.replies;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_REPLIES,
+                payload: replies
+            });
+        } else {
+            console.log("API FAILED TO GET THE REPLIES");
+        }
+    }
 
     store.createNewComment = async function (projectId, ownerId, text) {
         console.log("handling create comment in store...")
@@ -246,6 +275,26 @@ function GlobalStoreContextProvider(props) {
         } else {
             console.log("API FAILED TO GET THE PROJECT COMMENTS");
         }
+    }
+
+    store.loadReplies = async function () {
+
+        let page = store.pagination.page;
+        let limit = store.pagination.limit;
+
+        // Ahnaf is writing the getAllPublicProjects in the backend
+        const response = await api.getAllReplies({ page: page, limit: limit });
+        console.log(response);
+        if (response.data.success) {
+            let replies = response.data.replies;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_REPLIES,
+                payload: replies
+            });
+        } else {
+            console.log("API FAILED TO GET THE REPLIES");
+        }
+
     }
 
     store.loadPublicProjects = async function () {

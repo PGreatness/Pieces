@@ -74,14 +74,13 @@ router.post('/tile/deleteTile', TileController.deleteTile)
 router.post('/tile/updateTile', TileController.updateTile)
 
 
-// Project Comments 
-
-
 // Thread Routes
 router.get('/thread/all', ThreadController.getAllThreads)
 router.post('/thread/newThread', ThreadController.createThread)
 router.post('/thread/deleteThread', ThreadController.deleteThread)
 
+router.post('/thread/addReply/', ThreadController.addReply)
+router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
 
 // Notification Routes
 router.post('/notification/requestMapEdit', NotificationController.requestMapEdit)
