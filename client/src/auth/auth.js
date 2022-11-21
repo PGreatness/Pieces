@@ -172,6 +172,7 @@ function AuthContextProvider(props) {
 
     auth.forgotPassword = async function (userData) {
         await api.forgotPassword(userData).then(response => {
+            console.log(response)
 
             authReducer({
                 type: AuthActionType.SET_ERROR_MESSAGE,
@@ -180,6 +181,21 @@ function AuthContextProvider(props) {
                 }
             })
 
+        });
+    }
+
+
+    auth.resetPassword = async function (userData) {
+        console.log('in reset')
+        await api.resetPassword(userData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.SET_ERROR_MESSAGE,
+                payload: {
+                    message: response.data.message
+                }
+            })
+        
         });
     }
 

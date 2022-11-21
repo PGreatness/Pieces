@@ -6,6 +6,7 @@ import ExploreScreen from './components/Screens/Explore/ExploreScreen'
 import CommunityScreen from './components/Screens/CommunityScreen/CommunityScreen'
 import LibraryScreen from './components/Screens/Library/LibraryScreen'
 import TilesetEditor from './components/Editors/Tileset Editor/TilesetEditor'
+import ResetPasswordScreen from './components/ResetPassword/ResetPassword'
 import MapEditor from './components/Editors/Map Editor/MapEditor'
 import Navbar from './components/Navbar/Navbar'
 import SocialSidebar from "./components/SocialSidebar/SocialSidebar";
@@ -52,18 +53,20 @@ const App = () => {
               location.includes('explore') || location.includes('library') ? <CreateButton setLoc={setLocation} /> : <></>
             }
             <div className='app-nav-social-container'>
-              <Navbar changeLoc={setLocation} />
+              <Navbar changeLoc={setLocation} reset={location.includes('reset-password')? true : false}/>
               {
                 buildSidebar()
               }
             </div>
-            <div className={(location === '/' || location.includes('profile') || location.includes('map') || location.includes('tileset')) ? 'contentBody-nosocial' : "contentBody"}>
+            <div className={(location === '/' || location.includes('profile') || location.includes('reset-password') ||
+              location.includes('map') || location.includes('tileset')) ? 'contentBody-nosocial' : "contentBody"}>
               <Routes>
-                <Route path="/" element={<WelcomeScreen />} />
-                <Route path="/profile/" element={<ProfileScreen />} />
-                <Route path="/explore/" element={<ExploreScreen setLoc={setLocation} />} />
-                <Route path="/library/" element={<LibraryScreen setLoc={setLocation} />} />
-                <Route path="/community/" element={<CommunityScreen />} />
+                <Route path="/" element={<WelcomeScreen/>} />
+                <Route path="/reset-password/:id/:token" element={<ResetPasswordScreen/>} />
+                <Route path="/profile/" element={<ProfileScreen />}/>
+                <Route path="/explore/" element={<ExploreScreen setLoc={setLocation}/>} />
+                <Route path="/library/" element={<LibraryScreen setLoc={setLocation}/>} />
+                <Route path="/community/" element={<CommunityScreen/>} />
 
                 <Route
                   path="/tileset/:id"

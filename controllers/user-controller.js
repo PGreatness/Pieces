@@ -32,12 +32,12 @@ loginUser = async (req, res) => {
     try {
         const { email, password } = req.query;
 
-        if (!email || !password ) {
+        if (!email || !password) {
             return res
                 .status(400)
                 .json({ message: "Please enter all required fields." });
         }
-        
+
         const foundUser = await User.findOne({ email: email });
         if (!foundUser) {
             return res.status(400).json({ message: "A User with the email provided does not exist." });
@@ -51,12 +51,12 @@ loginUser = async (req, res) => {
                 httpOnly: true,
                 //sameSite: 'none',
                 maxAge: 6.048e+8
-              })
-          
+            })
+
             // return res.json({ status: 'OK' });
 
             //res.set("Set-Cookie", [
-                //`token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
+            //`token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
             //]);
             res.status(200).json({
                 success: true,
@@ -113,6 +113,7 @@ getUsersbyUsername = async (req, res) => {
 }
 
 forgotPassword = async (req, res) => {
+    console.log('atleast here')
     try {
         const { email } = req.query;
 
@@ -188,7 +189,7 @@ updateUser = async (req, res) => {
             userName: userName,
             email: email,
             bio: bio
-        }, {returnOriginal: false}).then((newUser) => {
+        }, { returnOriginal: false }).then((newUser) => {
             return res.status(200).json({
                 success: true,
                 user: newUser,
@@ -230,7 +231,7 @@ registerUser = async (req, res) => {
                     message: "Please enter the same password twice."
                 })
         }
-        
+
 
 
         const existingUser = await User.findOne({ email: email });
@@ -330,7 +331,7 @@ changePassword = async (req, res) => {
                 });
 
         newPasswordHash = await bcrypt.hash(newPassword, 10);
-        await user.updateOne( { passwordHash: newPasswordHash }).then(() => {
+        await user.updateOne({ passwordHash: newPasswordHash }).then(() => {
             return res.status(200).json({
                 success: true,
                 user: user,
@@ -352,12 +353,19 @@ changePassword = async (req, res) => {
 
 resetPassword = async (req, res) => {
     try {
-        const { id, token, password } = req.body;
+        const { id, token, password, repeatPassword } = req.body;
 
         if (!id || !token || !password)
             return res
                 .status(400)
                 .json({ message: "Must Provide All Required Arguments to Change Password!" });
+
+        if (password !== repeatPassword)
+            return res
+                .status(400)
+                .json({
+                    message: "New Password Must Match!"
+                });
 
         const objectId = new ObjectId(id);
         const user = await User.findOne({ _id: objectId });
@@ -373,8 +381,9 @@ resetPassword = async (req, res) => {
                 .status(400)
                 .json({ message: "Token is invalid or expired." });
 
+
         newPasswordHash = await bcrypt.hash(password, 10);
-        await User.findOneAndUpdate({ id }, { passwordHash: newPasswordHash }).then(() => {
+        await User.findOneAndUpdate({ _id: objectId }, { passwordHash: newPasswordHash }).then(() => {
             return res.status(200).json({
                 success: true,
                 message: 'User password has been reset!'
@@ -500,18 +509,18 @@ getLibraryMapsByName = async (req, res) => {
 
 
 module.exports = {
-            getLoggedIn,
-            registerUser,
-            loginUser,
-            logoutUser,
-            getUserbyId,
-            getUserbyUsername,
-            updateUser,
-            changePassword,
-            forgotPassword,
-            resetPassword,
-            getOwnerAndCollaboratorOfMaps,
-            getLibraryMapsByName,
-            getUsersbyUsername,
-            getAllUsers
-        }
+    getLoggedIn,
+    registerUser,
+    loginUser,
+    logoutUser,
+    getUserbyId,
+    getUserbyUsername,
+    updateUser,
+    changePassword,
+    forgotPassword,
+    resetPassword,
+    getOwnerAndCollaboratorOfMaps,
+    getLibraryMapsByName,
+    getUsersbyUsername,
+    getAllUsers
+}

@@ -52,7 +52,8 @@ export const getUserByUsername = (username) => api.get(`/users/username/${userna
 export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
 export const getAllUsers = () => api.get(`/users/all/`)
 export const changePassword = (payload) => api.post(`/changePassword/`, payload)
-export const forgotPassword = (query) => api.post(`/resetPassword/`, {params: query})
+export const forgotPassword = (payload) => api.get(`/forgotPassword/`, {params: payload})
+export const resetPassword = (payload) => api.post(`/resetPassword/`, payload)
 export const updateUser = (payload) => api.post(`/updateUser/`, payload)
 
 
@@ -98,6 +99,8 @@ const apis = {
     getUserByUsername,
     changePassword,
     updateUser,
+    forgotPassword,
+    resetPassword,
 
     changePage,
     requestMapEdit,
