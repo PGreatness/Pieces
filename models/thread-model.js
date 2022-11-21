@@ -1,5 +1,4 @@
 const { model, Schema, ObjectId } = require("mongoose");
-const Reply = require("./reply-model").schema;
 
 const threadSchema = new Schema({
 
@@ -16,7 +15,7 @@ const threadSchema = new Schema({
         required: true,
     },
     replies: {
-        type: [Reply],
+        type: [ObjectId],
         required: true
     },
     likes: {
