@@ -40,21 +40,23 @@ export default function NavbarAppOptions(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
 
+    const [user, setUser] = useState(auth.user)
     const [loggedIn, setLoggedIn] = React.useState(false);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
     const [openErrorModal, setOpenErrorModal] = useState(auth.errorMessage !== null)
+    const [openPasswordModal, setOpenPasswordModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const isProfileMenuOpen = Boolean(anchorEl);
 
     useEffect(() => {
-        auth.getLoggedIn(store, () => {
+        auth.getLoggedIn(store, (loggedInUser) => {
+            setUser(loggedInUser)
             setLoggedIn(true)
             props.changeLoc('/explore')
             store.changePageToExplore();
             navigate("/explore")
         });
-        console.log(auth.user)
     }, []);
 
     useEffect(() => {
@@ -98,6 +100,15 @@ export default function NavbarAppOptions(props) {
         setOpenErrorModal(false);
     };
 
+    const handleClosePasswordModal = () => {
+        setOpenPasswordModal(false)
+    }
+
+    const handleOpenPasswordModal = () => {
+        handleCloseLoginModal();
+        setOpenPasswordModal(true)
+    }
+
     const handleRegister = (event) => {
         event.preventDefault();
         handleCloseRegisterModal();
@@ -121,11 +132,22 @@ export default function NavbarAppOptions(props) {
         auth.loginUser({
             email: data.get('email'),
             password: data.get('password'),
-        }, store, () => {
+        }, store, (loggedInUser) => {
+            setUser(loggedInUser)
             setLoggedIn(true)
             props.changeLoc('/explore')
             store.changePageToExplore();
             navigate("/explore")
+        });
+    }
+
+    const handleForgotPassword = (event) => {
+        event.preventDefault();
+        handleClosePasswordModal()
+        const data = new FormData(event.currentTarget);
+
+        auth.forgotPassword({
+            email: data.get('email')
         });
     }
 
@@ -219,7 +241,8 @@ export default function NavbarAppOptions(props) {
                             marginRight: "30px"
                         }}
                         onClick={handleProfileMenuOpen}>
-                        {auth?.user.firstName.charAt(0)}{auth?.user.lastName.charAt(0)}
+                        {auth.user?.firstName.charAt(0)}{auth.user?.lastName.charAt(0)}
+
                     </Avatar>
                     <Menu
                         anchorEl={anchorEl}
@@ -348,6 +371,10 @@ export default function NavbarAppOptions(props) {
                                 InputLabelProps={{ style: { color: "white" } }}
                                 sx={{ "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" }, "& .MuiInputBase-root": { color: "azure" } }}
                             />
+
+                            <Button onClick={handleOpenPasswordModal}>
+                                <Typography fontSize='1rem'>Forgot Password</Typography>
+                            </Button>
 
                             <Button d
                                 type="submit"
@@ -481,6 +508,48 @@ export default function NavbarAppOptions(props) {
                         </Box>
                     </Box>
                 </Modal>
+
+
+                <Modal
+                    open={openPasswordModal}
+                    onClose={handleClosePasswordModal}
+                >
+                    <Box
+                        borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' top='30%' left='30%'
+                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: "white" }}
+                    >
+
+                        <Typography component="h1" variant="h5">
+                            Reset Password
+                        </Typography>
+                        <Box component="form" onSubmit={handleForgotPassword} noValidate sx={{ mt: 1 }}>
+                            <TextField
+                                style={{ color: "white" }}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                InputLabelProps={{ style: { color: "white" } }}
+                                sx={{ "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" }, "& .MuiInputBase-root": { color: "azure" } }}
+                            />
+
+                            <Button d
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Send Password Reset Email
+                            </Button>
+                        </Box>
+                    </Box>
+                </Modal>
+
+
 
                 <Modal
                     hideBackdrop

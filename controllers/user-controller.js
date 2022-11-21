@@ -168,10 +168,11 @@ forgotPassword = async (req, res) => {
 updateUser = async (req, res) => {
     try {
         console.log(req.body)
-        const { _id, firstName, lastName, userName, email, bio } = req.body;
+        const { id, firstName, lastName, userName, email, bio } = req.body;
+        const ObjId = new ObjectId(id);
 
 
-        const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: _id } }] });
+        const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: ObjId } }] });
         if (alreadyRegistered) {
             return res
                 .status(400)
@@ -181,16 +182,16 @@ updateUser = async (req, res) => {
         }
 
 
-        const user = await User.findById(_id);
-        await user.updateOne({
+        await User.findOneAndUpdate({ email: email }, {
             firstName: firstName,
             lastName: lastName,
             userName: userName,
             email: email,
             bio: bio
-        }).then(() => {
+        }, {returnOriginal: false}).then((newUser) => {
             return res.status(200).json({
                 success: true,
+                user: newUser,
                 message: 'User has been updated!'
             })
         }).catch((err) => {
@@ -229,20 +230,7 @@ registerUser = async (req, res) => {
                     message: "Please enter the same password twice."
                 })
         }
-        if (userName === "Community" || userName === "Guest") {
-            return res
-                .status(400)
-                .json({
-                    message: "An account with this User Name already exists."
-                })
-        }
-        if (email === "community@pieces.com" || email === "guestuser@pieces.com") {
-            return res
-                .status(400)
-                .json({
-                    message: "An account with this email address already exists."
-                })
-        }
+        
 
 
         const existingUser = await User.findOne({ email: email });
@@ -342,9 +330,10 @@ changePassword = async (req, res) => {
                 });
 
         newPasswordHash = await bcrypt.hash(newPassword, 10);
-        await User.findOneAndUpdate({ email }, { passwordHash: newPasswordHash }).then(() => {
+        await user.updateOne( { passwordHash: newPasswordHash }).then(() => {
             return res.status(200).json({
                 success: true,
+                user: user,
                 message: 'User password has been changed!'
             })
         }).catch((err) => {

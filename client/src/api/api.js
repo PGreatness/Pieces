@@ -51,6 +51,10 @@ export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 export const getUserByUsername = (username) => api.get(`/users/username/${username}/`)
 export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
 export const getAllUsers = () => api.get(`/users/all/`)
+export const changePassword = (payload) => api.post(`/changePassword/`, payload)
+export const forgotPassword = (query) => api.post(`/resetPassword/`, {params: query})
+export const updateUser = (payload) => api.post(`/updateUser/`, payload)
+
 
 // Pagination
 export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
@@ -92,6 +96,8 @@ const apis = {
     getUserById,
     getAllUsers,
     getUserByUsername,
+    changePassword,
+    updateUser,
 
     changePage,
     requestMapEdit,
