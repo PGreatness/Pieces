@@ -1,5 +1,6 @@
 const Thread = require('../models/thread-model')
 const Reply = require('../models/reply-model')
+const User = require('../models/user-model')
 const mongoose = require('mongoose')
 
 createThread = async (req, res) => {
@@ -22,7 +23,7 @@ createThread = async (req, res) => {
                 .status(400)
                 .json({ message: "Please enter all required fields." });
         }
-    
+
         if (threadName == "") {
             return res
                 .status(400)
@@ -69,11 +70,11 @@ createThread = async (req, res) => {
         thread
             .save()
             .then(() => {
-            return res.status(201).json({
-                success: true,
-                thread: thread,
-                message: 'Thread was successfully created.'
-            })
+                return res.status(201).json({
+                    success: true,
+                    thread: thread,
+                    message: 'Thread was successfully created.'
+                })
             })
             .catch(error => {
                 return res.status(400).json({
@@ -95,7 +96,7 @@ deleteThread = async (req, res) => {
     let id = mongoose.Types.ObjectId(req.query.id)
     let senderObjectId = mongoose.Types.ObjectId(req.query.senderId)
 
-    Thread.findById({ _id: id}, (err, thread) => {
+    Thread.findById({ _id: id }, (err, thread) => {
 
         // Checks if Thread with given id exists
         if (err) {
@@ -152,11 +153,46 @@ var getAllThreads = async (req, res) => {
 
     var startIndex;
     var threads;
+
+    /**
+     * THE CODE BELOW TRANSLATES TO:
+        if (likes >= dislikes) {
+            if (dislikes == 0) {
+                return likes;
+            }else{
+                return likes/dislikes;
+            }
+        }else{
+            if (likes == 0) {
+                return -dislikes;
+            }else{
+                return -dislikes/likes;
+            }
+        }
+    */
+    const ratioLogic = {
+        $cond: {
+            if: { $gte: [ { $size: "$likes"}, { $size: "$dislikes" } ] },
+            then: { $cond: {
+                if: { $eq: [ { $size: "$dislikes" }, 0 ] },
+                then: { $size: "$likes" },
+                else: { $divide: [ { $size: "$likes" }, { $size: "$dislikes" } ] }
+            }},
+            else: { $cond: {
+                if: { $eq: [ { $size: "$likes" }, 0 ] },
+                then: { $subtract: [0, { $size: "$dislikes" }] },
+                else: { $subtract: [0, { $divide: [ { $size: "$dislikes" }, { $size: "$likes" } ] }] }
+            }}
+        }
+    };
     if (limit) {
         startIndex = (page - 1) * limit;
         threads = await Thread.aggregate([
             { $match: {} },
-            { $sort: { createdAt: -1 } },
+            { $addFields: {
+                "ratio": { ratioLogic }
+            }},
+            { $sort: { "ratio": -1, createdAt: -1 } },
             { $skip: startIndex },
             { $limit: limit },
         ]);
@@ -164,7 +200,10 @@ var getAllThreads = async (req, res) => {
         startIndex = 0;
         threads = await Thread.aggregate([
             { $match: {} },
-            { $sort: { createdAt: -1 } },
+            { $addFields: {
+                "ratio": { ratioLogic },
+            }},
+            { $sort: { "ratio": -1, createdAt: -1 } },
             { $skip: startIndex },
         ]);
     }
@@ -173,6 +212,126 @@ var getAllThreads = async (req, res) => {
         success: true,
         threads: threads
     })
+}
+
+var likeThread = async (req, res) => {
+    const { threadId, userId } = req.body;
+    var tid;
+    var uid;
+    if (!threadId || !userId) {
+        return res.status(400).json({
+            success: false,
+            error: "No threadId or userId was provided by the client."
+        })
+    }
+    try {
+        tid = mongoose.Types.ObjectId(threadId);
+        uid = mongoose.Types.ObjectId(userId);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid threadId or userId"
+        })
+    }
+
+    const thread = await Thread.findById(tid);
+    if (!thread) {
+        return res.status(404).json({
+            success: false,
+            error: "Thread not found"
+        })
+    }
+
+    const user = await User.findById(uid);
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            error: "User not found"
+        })
+    }
+
+    if (thread.dislikes.includes(uid)) {
+        thread.dislikes = thread.dislikes.filter(id => !id.equals(uid));
+    }
+
+    if (thread.likes.includes(uid)) {
+        thread.likes = thread.likes.filter(id => !id.equals(uid));
+        thread.save();
+        return res.status(200).json({
+            success: true,
+            thread: thread,
+            message: "Thread unliked"
+        })
+    }
+
+    thread.likes.push(uid);
+    thread.save().then(() => {
+        return res.status(200).json({
+            success: true,
+            message: "Thread liked",
+            thread: thread
+        })
+    });
+}
+
+var dislikeThread = async (req, res) => {
+    const { threadId, userId } = req.body;
+    var tid;
+    var uid;
+    if (!threadId || !userId) {
+        return res.status(400).json({
+            success: false,
+            error: "No threadId or userId was provided by the client."
+        })
+    }
+    try {
+        tid = mongoose.Types.ObjectId(threadId);
+        uid = mongoose.Types.ObjectId(userId);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid threadId or userId"
+        })
+    }
+
+    const thread = await Thread.findById(tid);
+    if (!thread) {
+        return res.status(404).json({
+            success: false,
+            error: "Thread not found"
+        })
+    }
+
+    const user = await User.findById(uid);
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            error: "User not found"
+        })
+    }
+
+    if (thread.likes.includes(uid)) {
+        thread.likes = thread.likes.filter(id => !id.equals(uid));
+    }
+
+    if (thread.dislikes.includes(uid)) {
+        thread.dislikes = thread.dislikes.filter(id => !id.equals(uid));
+        thread.save();
+        return res.status(200).json({
+            success: true,
+            thread: thread,
+            message: "Thread undisliked"
+        })
+    }
+
+    thread.dislikes.push(uid);
+    thread.save().then(() => {
+        return res.status(200).json({
+            success: true,
+            message: "Thread disliked",
+            thread: thread
+        })
+    });
 }
 
 addReplyToThread = async (req, res) => {
@@ -202,11 +361,11 @@ addReplyToThread = async (req, res) => {
         thread
             .save()
             .then(() => {
-            return res.status(201).json({
-                success: true,
-                thread: thread,
-                message: 'Thread was successfully updated.'
-            })
+                return res.status(201).json({
+                    success: true,
+                    thread: thread,
+                    message: 'Thread was successfully updated.'
+                })
             })
             .catch(error => {
                 return res.status(400).json({
@@ -256,11 +415,11 @@ removeReplyFromThread = async (req, res) => {
         thread
             .save()
             .then(() => {
-            return res.status(201).json({
-                success: true,
-                thread: thread,
-                message: 'Thread was successfully updated.'
-            })
+                return res.status(201).json({
+                    success: true,
+                    thread: thread,
+                    message: 'Thread was successfully updated.'
+                })
             })
             .catch(error => {
                 return res.status(400).json({
@@ -277,4 +436,6 @@ module.exports = {
     createThread,
     deleteThread,
     getAllThreads,
+    likeThread,
+    dislikeThread,
 }
