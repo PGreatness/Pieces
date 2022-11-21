@@ -8,7 +8,6 @@ import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
-import { GlobalStoreContext } from '../../../../store/store'
 
 export default function CommunityThread(props) {
 
@@ -25,9 +24,29 @@ export default function CommunityThread(props) {
         disliked: props.thread.dislikes.includes(auth.user._id),
     });
 
-    const [threadreplies, setReplies] = useState(store.replies);
+    const [threadreplies, setReplies] = useState([]);
 
-    useEffect(() => {setReplies(store.replies)}, [store.replies]);
+    const getReply = async (replies) => {
+        // let replyId = replies;
+        // let result = await communityStore.getReplybyId(replyId);
+        let results = []
+        for(let i = 0; i < replies.length; i++) {
+            let result = await communityStore.getReplybyId(replies[i])
+            results.push(result)
+        }
+        return results;
+    }
+
+    // communityStore.loadReplies();
+    const firstlevelreplies = props.thread.replies;
+    console.log(firstlevelreplies);
+
+    useEffect(() => {
+        getReply(firstlevelreplies).then((something) => {
+            console.log(something)
+            setReplies(something)
+        })
+    }, [communityStore.replies]);
 
     useEffect(() => {
         findUserAvatar().then((res) => {
@@ -152,8 +171,8 @@ export default function CommunityThread(props) {
             </InputAdornment>
         );
     }
-    store.loadReplies();
-    const firstlevelreplies = props.thread.replies;
+
+    
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
@@ -169,16 +188,17 @@ export default function CommunityThread(props) {
             <ReplyDivider flexItem />
             <ReplyTextField label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>
             {
-                firstlevelreplies.length < 1 ? <></> : (
+                threadreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
                         {
-                            firstlevelreplies.map((reply, index)=>{
+                            threadreplies.map((reply, index)=>{
                                 return (
+                                    // Add onclick event here v
                                     <BetterReplyButton divider >
                                         <ListItemAvatar>
                                             <Avatar alt={reply.id} src={reply.id} sx={{width: '30px', height: '30px'}}>{reply.id}</Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary={store.getReplybyId(reply).replyMsg} secondary={store.getReplybyId(reply).createdAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
+                                        <ListItemText primary={reply.replyMsg} secondary={reply.createdAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
                                     </BetterReplyButton>
                                 );
                             })

@@ -17,6 +17,10 @@ const repliesSchema = new Schema({
         type: ObjectId,
         required: true,
     },
+    isFirstLevel: {
+        type: Boolean,
+        required: true,
+    },
     replies: {
         type: [ObjectId],
         required: true

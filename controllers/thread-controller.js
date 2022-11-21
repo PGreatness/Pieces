@@ -215,48 +215,7 @@ var getAllThreads = async (req, res) => {
 }
 
 getAllReplies = async (req, res) => {
-    var { page } = req.query;
-    var { limit } = req.body;
-
-    if (!page) {
-        page = 1;
-    }
-
-    if (!limit) {
-        limit = 10;
-    }
-
-    if (Number.isNaN(+page) || Number.isNaN(+limit)) {
-        return res.status(400).json({
-            success: false,
-            error: "Page and limit must be numbers"
-        })
-    }
-
-    page = +page;
-    limit = +limit;
-
-    if (page < 1) {
-        return res.status(400).json({
-            success: false,
-            error: "Page must be greater than 0"
-        })
-    }
-
-    if (limit < 1) {
-        return res.status(400).json({
-            success: false,
-            error: "Limit must be greater than 0"
-        })
-    }
-
-    const startIndex = page > 0 ? (page - 1) * limit : 0;
-    limit = Number(limit);
-    const rangeReplies = await Reply.aggregate([
-        { $skip : startIndex },
-        { $limit: limit },
-        // { $sort: { createdAt: -1 } },
-    ])
+    const rangeReplies = await Reply.find({})
     return res.status(200).json({
         success: true,
         count: rangeReplies.length,
