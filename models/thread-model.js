@@ -20,11 +20,11 @@ const threadSchema = new Schema({
         required: true
     },
     likes: {
-        type: Number,
+        type: [ObjectId],
         required: true,
     },
     dislikes: {
-        type: Number,
+        type: [ObjectId],
         required: true,
     },
 },
