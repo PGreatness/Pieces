@@ -107,7 +107,7 @@ export default function NavbarAppOptions(props) {
                         display: 'flex', flexDirection: 'row', marginRight: '70px', marginLeft: '10px',
                         color: `${store.currentPage === 'community' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
-                        props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity(); communityStore.getAllThreads();
+                        props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity(); communityStore.getPopularThreads(1, 5);
                     }}>
                         <PeopleIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></PeopleIcon>
                         <Typography fontSize='26px' className='navbarappoptions-sections'>Community</Typography>
