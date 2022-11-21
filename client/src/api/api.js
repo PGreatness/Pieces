@@ -62,7 +62,9 @@ export const requestTilesetEdit = (payload) => api.post(`/notification/requestTi
 // COMMUNITY
 // Threads
 export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
-
+export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
+export const registerLike = (payload) => api.post(`/thread/like`, payload)
+export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
 
 const apis = {
     getAllPublicProjects,
@@ -103,6 +105,9 @@ const apis = {
     removeTilesetCollaborator,
 
     getAllThreads,
+    getPopularThreads,
+    registerLike,
+    registerDislike,
 }
 
 export default apis

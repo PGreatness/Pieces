@@ -8,6 +8,7 @@ export const CommunityStoreContext = createContext({});
 export const CommunityStoreActionType = {
     GET_ALL_THREADS: 'GET_ALL_THREADS',
     SET_TOP_THREADS: 'SET_TOP_THREADS',
+    REGISTER_LIKE: 'REGISTER_LIKE',
 }
 
 const CommunityStoreContextProvider = (props) => {
@@ -29,6 +30,8 @@ const CommunityStoreContextProvider = (props) => {
                     ALL_THREADS: payload,
                 });
             case CommunityStoreActionType.SET_TOP_THREADS:
+                console.log('Setting top threads');
+                console.log(payload);
                 return setCommunityStore({
                     ...communityStore,
                     TOP_THREADS: payload,
@@ -41,6 +44,7 @@ const CommunityStoreContextProvider = (props) => {
 
     communityStore.getAllThreads = async () => {
         console.log("Getting all threads");
+        await communityStore.getPopularThreads(1,5);
         const threads = await api.getAllThreads();
         console.log(threads);
         if (threads.success) {
@@ -49,7 +53,13 @@ const CommunityStoreContextProvider = (props) => {
                 payload: threads.data.threads
             })
         }
-        if (communityStore.TOP_THREADS.length === 0) {
+    }
+
+    communityStore.getPopularThreads = async (page, limit) => {
+        console.log("Getting popular threads");
+        const threads = await api.getPopularThreads({page:page,limit:limit});
+        console.log(threads);
+        if (threads.data.success) {
             communityReducer({
                 type: CommunityStoreActionType.SET_TOP_THREADS,
                 payload: threads.data.threads,
@@ -58,11 +68,41 @@ const CommunityStoreContextProvider = (props) => {
     }
 
     communityStore.getUserById = async (id) => {
-        console.log("Getting user by id");
-        console.log(id);
         const user = await api.getUserById(id);
         console.log(user);
         return user.data.user;
+    }
+
+    communityStore.registerLike = async (threadId, userId) => {
+        console.log("Registering like");
+        let payload = {
+            threadId: threadId,
+            userId: userId,
+        }
+        console.log('in registerLike');
+        console.log(payload);
+        const liked = await api.registerLike(payload);
+        if (liked.status === 200) {
+            communityStore.getAllThreads();
+        } else {
+            console.log("Error registering like");
+        }
+    }
+
+    communityStore.registerDislike = async (threadId, userId) => {
+        console.log("Registering dislike");
+        let payload = {
+            threadId: threadId,
+            userId: userId,
+        }
+        console.log('in registerDislike');
+        console.log(payload);
+        const disliked = await api.registerDislike(payload);
+        if (disliked.status === 200) {
+            communityStore.getAllThreads();
+        } else {
+            console.log("Error registering dislike");
+        }
     }
 
 
