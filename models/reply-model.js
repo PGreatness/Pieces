@@ -17,10 +17,10 @@ const repliesSchema = new Schema({
         type: ObjectId,
         required: true,
     },
-    // replies: {
-    //     type: [repliesSchema],
-    //     required: true
-    // }
+    replies: {
+        type: [ObjectId],
+        required: true
+    }
 },
 {
     timestamps: true,

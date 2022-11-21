@@ -64,6 +64,7 @@ export const requestTilesetEdit = (payload) => api.post(`/notification/requestTi
 export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
 export const getAllReplies = () => api.get(`/thread/getAllReplies/`)
 export const addReply = (payload) => api.post(`/thread/addReply/`, payload)
+export const getReplybyId = (id) => api.get(`/thread/getReplybyId/${id}`)
 
 export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
 export const registerLike = (payload) => api.post(`/thread/like`, payload)
@@ -112,6 +113,8 @@ const apis = {
     getPopularThreads,
     registerLike,
     registerDislike,
+    getAllReplies,
+    getReplybyId
 }
 
 export default apis

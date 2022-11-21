@@ -83,6 +83,7 @@ router.post('/thread/dislike', ThreadController.dislikeThread)
 
 router.post('/thread/addReply/', ThreadController.addReply)
 router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
+router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
 
 // Notification Routes
 router.post('/notification/requestMapEdit', NotificationController.requestMapEdit)

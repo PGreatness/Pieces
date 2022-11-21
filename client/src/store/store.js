@@ -233,6 +233,17 @@ function GlobalStoreContextProvider(props) {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+
+    store.getReplybyId = async function (id, setOwnerCallback) {
+        const response = await api.getReplybyId(id);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            // setOwnerCallback(response.data.reply)
+            return response.data.reply;
+        }
+    }
+
     store.addReply = async function (replyToId, ownerId, text) {
         console.log("handling add reply in store...")
         let payload = {

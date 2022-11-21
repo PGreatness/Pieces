@@ -8,6 +8,7 @@ import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
+import { GlobalStoreContext } from '../../../../store/store'
 
 export default function CommunityThread(props) {
 
@@ -23,6 +24,10 @@ export default function CommunityThread(props) {
         liked: props.thread.likes.includes(auth.user._id),
         disliked: props.thread.dislikes.includes(auth.user._id),
     });
+
+    const [threadreplies, setReplies] = useState(store.replies);
+
+    useEffect(() => {setReplies(store.replies)}, [store.replies]);
 
     useEffect(() => {
         findUserAvatar().then((res) => {
@@ -147,8 +152,8 @@ export default function CommunityThread(props) {
             </InputAdornment>
         );
     }
-
-    const replies = props.thread.replies;
+    store.loadReplies();
+    const firstlevelreplies = props.thread.replies;
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
@@ -164,16 +169,16 @@ export default function CommunityThread(props) {
             <ReplyDivider flexItem />
             <ReplyTextField label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>
             {
-                replies.length < 1 ? <></> : (
+                firstlevelreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
                         {
-                            replies.map((reply, index)=>{
+                            firstlevelreplies.map((reply, index)=>{
                                 return (
                                     <BetterReplyButton divider >
                                         <ListItemAvatar>
                                             <Avatar alt={reply.id} src={reply.id} sx={{width: '30px', height: '30px'}}>{reply.id}</Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary={reply.replyMsg} secondary={reply.sentAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
+                                        <ListItemText primary={store.getReplybyId(reply).replyMsg} secondary={store.getReplybyId(reply).createdAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
                                     </BetterReplyButton>
                                 );
                             })

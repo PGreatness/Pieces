@@ -482,11 +482,20 @@ removeReply = async (req, res) => {
 
 }
 
+getReplybyId = async (req, res) => {
+    const savedReply = await Reply.findById(req.params.id);
+    console.log(savedReply)
+    return res.status(200).json({
+        reply: savedReply
+    });
+}
+
 module.exports = {
     createThread,
     deleteThread,
     getAllThreads,
     getAllReplies,
+    getReplybyId,
     addReply,
     removeReply,
     likeThread,
