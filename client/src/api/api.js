@@ -65,6 +65,9 @@ export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
 export const getAllReplies = () => api.get(`/thread/getAllReplies/`)
 export const addReply = (payload) => api.post(`/thread/addReply/`, payload)
 
+export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
+export const registerLike = (payload) => api.post(`/thread/like`, payload)
+export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
 
 const apis = {
     getAllPublicProjects,
@@ -105,7 +108,10 @@ const apis = {
     removeTilesetCollaborator,
 
     getAllThreads,
-    addReply
+    addReply,
+    getPopularThreads,
+    registerLike,
+    registerDislike,
 }
 
 export default apis

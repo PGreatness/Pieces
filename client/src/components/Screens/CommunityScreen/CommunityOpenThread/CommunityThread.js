@@ -1,7 +1,10 @@
 import { React, useState, useContext, useEffect } from 'react';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import { Avatar, ListItemButton, ListItemText, ListItem, Divider, TextField, InputAdornment } from '@mui/material';
+import { Avatar, ListItemButton, ListItemText, ListItem, Divider, TextField, InputAdornment, Typography, ButtonGroup } from '@mui/material';
 import { styled } from '@mui/material';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
@@ -9,25 +12,75 @@ import { CommunityStoreContext } from '../../../../store/communityStore';
 export default function CommunityThread(props) {
 
     const { communityStore } = useContext(CommunityStoreContext);
+    const { auth } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [avatar, setAvatar] = useState('');
+    const [user, setUser] = useState({
+        first: '',
+        last: '',
+    });
+    const [interactions, setInteractions] = useState({
+        liked: props.thread.likes.includes(auth.user._id),
+        disliked: props.thread.dislikes.includes(auth.user._id),
+    });
 
     useEffect(() => {
         findUserAvatar().then((res) => {
-            setUsername(res.user);
+            setUsername(res.username);
             setAvatar(res.userAvatar);
+            setUser({
+                ...res.user,
+            });
         });
     }, [communityStore.TOP_THREADS]);
 
+    useEffect(() => {
+        setInteractions({
+            liked: props.thread.likes.includes(auth.user._id),
+            disliked: props.thread.dislikes.includes(auth.user._id),
+        })
+    }, [props.thread.likes, props.thread.dislikes])
+
     const findUserAvatar = async () => {
         let userAvatar = '';
-        let user = props.thread.senderId;
-        let threadOwner = await communityStore.getUserById(user);
-        console.log("In findUserAvatar 2: ");
+        let username = props.thread.senderId;
+        let threadOwner = await communityStore.getUserById(username);
+        console.log("In findUserAvatar: ");
         console.log(threadOwner);
         userAvatar = threadOwner.profilePic || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
-        user = threadOwner.userName;
-        return { userAvatar, user };
+        username = threadOwner.userName;
+        let user = {first: threadOwner.firstName, last: threadOwner.lastName};
+        return { userAvatar, username, user };
+    }
+
+    const registerLike = async () => {
+        let threadId = props.thread._id;
+        let userId = auth.user._id;
+        console.log("In registerLike: ", threadId, userId);
+        await communityStore.registerLike(threadId, userId);
+    }
+
+    const registerDislike = async () => {
+        let threadId = props.thread._id;
+        let userId = auth.user._id;
+        console.log("In registerDislike: ", threadId, userId);
+        await communityStore.registerDislike(threadId, userId);
+    }
+
+    const createUpvoteButton = () => {
+        return (
+            <ListItemButton onClick={registerLike} sx={{ flex: 'revert', padding: '0', paddingRight: '5px' }}>
+                <ThumbUpAltIcon className='thread-interaction-buttons' sx={{ color: interactions.liked ? 'rgb(45, 212, 207)' : 'white' }} />
+            </ListItemButton>
+        );
+    }
+
+    const createDownvoteButton = () => {
+        return (
+            <ListItemButton onClick={registerDislike} sx={{ flex: 'revert', padding: '0' }}>
+                <ThumbDownAltIcon className='thread-interaction-buttons' sx={{ color: interactions.disliked ? 'red' : 'white' }} />
+            </ListItemButton>
+        );
     }
 
     const BetterReplyButton = styled(ListItemButton)({
@@ -97,12 +150,16 @@ export default function CommunityThread(props) {
 
     const replies = props.thread.replies;
     return (
-        <LightListItem alignItems="flex-start" key={"item " + props.thread.id}>
-            <ListItemButton divider>
+        <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
+            <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
+                <ListItemText sx={{flex: 'revert', paddingRight: '5px'}} primary={props.thread.likes.length} secondary={createUpvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                <ListItemText sx={{ flex: 'revert', paddingRight: '10px'}} primary={props.thread.dislikes.length} secondary={createDownvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+            </ButtonGroup>
+            <ListItemButton divider sx={{width: 'calc(100% - 56px)'}}>
                 <ListItemAvatar>
                     <Avatar alt={username} src={avatar} sx={{width: '100px', height: '100px', fontSize: '250%'}}>{avatar}</Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={props.thread.threadName} secondary={props.thread.threadText} primaryTypographyProps={{style: {color: 'white', fontSize:'3em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'1em'}}}/>
+                <ListItemText primary={<><Typography sx={{color:'white', float: 'left', paddingRight: '1ch', paddingLeft: '2ch'}}>{props.thread.threadName}</Typography><Typography sx={{color:'#a8a8a8'}}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{style: {color: 'white'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'1em', float: 'left', paddingLeft: '2ch' }}}/>
             </ListItemButton>
             <ReplyDivider flexItem />
             <ReplyTextField label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>

@@ -9,6 +9,8 @@ export default function CommunityMain(props) {
     const [topThreads, setTopThreads] = useState(communityStore.ALL_THREADS);
 
     useEffect(() => {
+        console.log("Updating all threads");
+        console.log(communityStore);
         setTopThreads(communityStore.TOP_THREADS);
     }, [communityStore.TOP_THREADS])
 

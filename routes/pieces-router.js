@@ -78,6 +78,8 @@ router.post('/tile/updateTile', TileController.updateTile)
 router.get('/thread/all', ThreadController.getAllThreads)
 router.post('/thread/newThread', ThreadController.createThread)
 router.post('/thread/deleteThread', ThreadController.deleteThread)
+router.post('/thread/like', ThreadController.likeThread)
+router.post('/thread/dislike', ThreadController.dislikeThread)
 
 router.post('/thread/addReply/', ThreadController.addReply)
 router.get('/thread/getAllReplies/', ThreadController.getAllReplies)

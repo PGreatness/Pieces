@@ -1,6 +1,7 @@
 .community-screen {
     background-color: #1F293A;
     height: 100%;
+    overflow-y: auto;
 }
 
 .community-screen-text {
