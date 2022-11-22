@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    baseURL: 'http://localhost:4000/api',
-    // baseURL: 'https://pieces-316.herokuapp.com/api',
+    // baseURL: 'http://localhost:4000/api',
+    baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 // Comments
@@ -55,6 +55,9 @@ export const changePassword = (payload) => api.post(`/changePassword/`, payload)
 export const forgotPassword = (payload) => api.get(`/forgotPassword/`, {params: payload})
 export const resetPassword = (payload) => api.post(`/resetPassword/`, payload)
 export const updateUser = (payload) => api.post(`/updateUser/`, payload)
+export const uploadImage = (payload) => api.post(`/uploadImage/`, payload)
+export const deleteImage = (payload) => api.post(`/deleteImage/`, payload)
+
 
 
 // Pagination
@@ -101,6 +104,8 @@ const apis = {
     updateUser,
     forgotPassword,
     resetPassword,
+    uploadImage,
+    deleteImage,
 
     changePage,
     requestMapEdit,

@@ -230,7 +230,7 @@ export default function NavbarAppOptions(props) {
                 <>
                     {/* add user information once they are logged in here */}
                     <NotificationSidebar />
-                    <Avatar
+                    <Avatar src={auth.user?.profilePic?.url}
                         sx={{
                             width: 50,
                             height: 50,

@@ -186,7 +186,6 @@ function AuthContextProvider(props) {
 
 
     auth.resetPassword = async function (userData) {
-        console.log('in reset')
         await api.resetPassword(userData).then(response => {
             console.log(response.data)
             authReducer({
@@ -198,6 +197,56 @@ function AuthContextProvider(props) {
         
         });
     }
+
+
+    auth.uploadImage = async function (imgData, callback) {
+        await api.uploadImage(imgData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.CHANGE_USER,
+                payload: {
+                    user: response.data.user,
+                    message: response.data.message
+                }
+            });
+            callback(response.data.user);
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+    auth.deleteImage = async function (imgData, callback) {
+        await api.deleteImage(imgData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.CHANGE_USER,
+                payload: {
+                    user: response.data.user,
+                    message: response.data.message
+                }
+            });
+            callback(response.data.user);
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
 
     auth.logoutUser = async function (store, callback) {
         const response = await api.logoutUser();

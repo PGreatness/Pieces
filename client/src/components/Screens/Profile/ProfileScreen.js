@@ -12,9 +12,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import ForwardIcon from '@mui/icons-material/Forward';
 import Alert from '@mui/material/Alert';
 import { GlobalStoreContext } from '../../../store/store'
 import { deepOrange, deepPurple } from '@mui/material/colors';
+import Cloudinary from "../../../cloudinary/cloudinary";
 
 export default function ProfileScreen() {
     const navigate = useNavigate();
@@ -109,6 +111,30 @@ export default function ProfileScreen() {
         //setUser(auth.user)
     }
 
+    const onImageChangeHandler = async function (event) {
+        let image = event.target.files[0];
+        const cloud = await Cloudinary(image);
+        console.log(cloud)
+
+        await auth.uploadImage({
+            id: user._id,
+            publicId: cloud.publicId,
+            url: cloud.url,
+        }, (newUser) => {
+            setUser(newUser)
+        });
+
+    };
+
+
+    const handleDeleteUserImage = async function () {
+        await auth.deleteImage({
+            id: user._id,
+            publicId: user.profilePic.publicId,
+        }, (newUser) => {
+            setUser(newUser)
+        });
+    }
 
 
     return (
@@ -121,16 +147,37 @@ export default function ProfileScreen() {
                     alignItems: 'center', justifyContent: 'center'
                 }} spacing={8}>
                     <Grid item xs={4}>
-                        <Avatar sx={{
+                        <Grid item xs={1}>
+                            <Input
+                                type="file"
+                                id="avatarFileInput"
+                                sx={{ margin: "10px", display: "none" }}
+                                onChange={e => onImageChangeHandler(e)}
+                            />
+                        </Grid>
+                        {user.profilePic ?
+                            <Clear onClick={handleDeleteUserImage} style={{
+                                fontSize: "80px", marginBottom: "-60px",
+                                marginLeft: '20px', color: 'white'
+                            }} />
+                            :
+                            <></>
+                        }
+                        <Avatar src={user.profilePic?.url} sx={{
                             bgcolor: '#2DD4CF', width: 420, height: 420, fontSize: '200px', color: 'black',
                             border: "black 2px solid", cursor: "pointer"
                         }}>
                             {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                         </Avatar>
-                        <CameraAltIcon style={{
-                            fontSize: "100px", marginTop: "-50px",
-                            marginLeft: '330px', color: 'white'
-                        }} />
+                        <Grid item xs={1}>
+                            <label htmlFor="avatarFileInput">
+                                <CameraAltIcon style={{
+                                    fontSize: "100px", marginTop: "-50px",
+                                    marginLeft: '330px', color: 'white'
+                                }} />
+                            </label>
+                        </Grid>
+
                     </Grid>
 
                     <Grid item xs={1}></Grid>
@@ -259,8 +306,8 @@ export default function ProfileScreen() {
                                     backgroundColor: '#BA1D1D', color: 'white', width: '20%',
                                     marginRight: '0px', justifySelf: 'flex-end'
                                 }}>
-                                <Clear />
-                                <Typography variant="h6">Cancel</Typography>
+                                <ForwardIcon />
+                                <Typography variant="h6">Back</Typography>
                             </Button>
 
                         </Grid>
@@ -274,7 +321,7 @@ export default function ProfileScreen() {
                     alignItems: 'center', justifyContent: 'center'
                 }} spacing={8}>
                     <Grid item xs={4}>
-                        <Avatar sx={{
+                        <Avatar src={user.profilePic?.url} sx={{
                             bgcolor: '#2DD4CF', width: 420, height: 420, fontSize: '200px', color: 'black',
                             border: "black 2px solid", cursor: "pointer"
                         }}>

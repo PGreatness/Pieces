@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 const mongoose = require('mongoose')
 const nodemailer = require("nodemailer");
 const emailUtil = require("../utils/emails");
+const cloudinary = require("../config/cloudinary");
 const config = require("config");
 const Map = require('../models/map-model');
 
@@ -508,6 +509,127 @@ getLibraryMapsByName = async (req, res) => {
 }
 
 
+deleteUser = async (req, res) => {
+
+    const user = await User.findById(req.params.id);
+    if (!user)
+        return res
+            .status(400)
+            .json({
+                message: "Account does not exist Not Found!"
+            });
+
+    // Collaborator rights remove (maps & tilesets)
+
+    // Owned projects 
+    // 1. Collaborators = give first collaborator ownership
+    // 2. No collaborators = delete 
+    // if deleting tileset, then remove tiles as well
+
+    // remove all likes, dislikes & comments from projects
+
+    // everything about threads, owned threads, replies, likes, dislikes, comments
+
+    // delete image from cloudinary
+
+    // remove all friends
+    // chats
+    // remove all notifications
+
+    // delete user
+}
+
+
+uploadImage = async (req, res) => {
+    try {
+        const { id, publicId, url } = req.body;
+
+        var objId = new ObjectId(id);
+
+        const img = { 
+            publicId, 
+            url 
+        };
+        
+        const user = await User.findById(objId);
+        
+        // delete previous pic if any
+        if (user.profilePic && user.profilePic.publicId) {
+            const res = await cloudinary.v2.uploader.destroy(user.profilePic.publicId);
+            console.log(res)
+            if (res.result !== "ok") throw new Error();
+        }
+
+        await User.findOneAndUpdate({_id: objId}, { $set: { profilePic: img } },
+             { new: true }).then((newUser) => {
+            return res.status(200).json({
+                success: true,
+                user: newUser,
+                message: 'User profile pic has been updated!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to update profilepic'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500);
+    }
+},
+
+
+deleteImage = async (req, res) => {
+    try {
+        const { id, publicId } = req.body;
+
+        var objId = new ObjectId(id);
+
+        const img = { 
+            publicId: "", 
+            url: "" 
+        };
+        
+        const user = await User.findById(objId);
+
+        
+        // check if req publicId correct,
+        // & user has an image 
+        if (publicId !== "" && user.profilePic && user.profilePic.publicId && 
+            publicId === user.profilePic.publicId) {
+            const res = await cloudinary.v2.uploader.destroy(publicId);
+            if (res.result !== "ok") throw new Error();
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to delete image in cloudinary'
+            })
+        }
+
+        await User.findOneAndUpdate({_id: objId}, { $set: { profilePic: img } },
+             { new: true }).then((newUser) => {
+            return res.status(200).json({
+                success: true,
+                user: newUser,
+                message: 'User profile pic has been deleted!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to delete profilepic'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500);
+    }
+},
+
 module.exports = {
     getLoggedIn,
     registerUser,
@@ -522,5 +644,7 @@ module.exports = {
     getOwnerAndCollaboratorOfMaps,
     getLibraryMapsByName,
     getUsersbyUsername,
-    getAllUsers
+    getAllUsers,
+    uploadImage,
+    deleteImage
 }
