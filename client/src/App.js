@@ -37,7 +37,7 @@ const App = () => {
     }
     else if (community) {
       return (
-        <MyPostsSidebar id={1} />
+        <MyPostsSidebar />
       );
     }
     return (

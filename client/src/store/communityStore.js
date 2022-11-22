@@ -8,7 +8,6 @@ export const CommunityStoreContext = createContext({});
 export const CommunityStoreActionType = {
     GET_ALL_THREADS: 'GET_ALL_THREADS',
     SET_TOP_THREADS: 'SET_TOP_THREADS',
-    REGISTER_LIKE: 'REGISTER_LIKE',
 }
 
 const CommunityStoreContextProvider = (props) => {
@@ -50,8 +49,9 @@ const CommunityStoreContextProvider = (props) => {
             senderId: user,
         });
         console.log(thread);
-        if (thread.status === 200) {
+        if (thread.status < 400) {
             console.log('Thread created successfully');
+            communityStore.getAllThreads();
             return thread.data;
         } else {
             console.log('Thread creation failed');
@@ -67,7 +67,7 @@ const CommunityStoreContextProvider = (props) => {
         }
         const thread = await api.deleteThread(payload);
         console.log(thread);
-        if (thread.status === 200) {
+        if (thread.status < 400) {
             console.log('Thread deleted successfully');
             communityStore.getAllThreads();
             return thread.data;
@@ -79,10 +79,10 @@ const CommunityStoreContextProvider = (props) => {
 
     communityStore.getAllThreads = async () => {
         console.log("Getting all threads");
-        await communityStore.getPopularThreads(1, 5);
+        await communityStore.getPopularThreads(1);
         const threads = await api.getAllThreads();
         console.log(threads);
-        if (threads.success) {
+        if (threads.status < 400) {
             communityReducer({
                 type: CommunityStoreActionType.GET_ALL_THREADS,
                 payload: threads.data.threads
@@ -90,11 +90,24 @@ const CommunityStoreContextProvider = (props) => {
         }
     }
 
+    communityStore.getPostsByUser = async (userId, search) => {
+        console.log("Getting all threads and replies by user");
+        const posts = await api.getPostsByUser({userId:userId, search:search});
+        console.log(posts);
+        if (posts.status < 400) {
+            return posts.data;
+        } else {
+            console.log('Failed to get posts by user');
+            return null;
+        }
+    }
+
+
     communityStore.getPopularThreads = async (page, limit) => {
         console.log("Getting popular threads");
         const threads = await api.getPopularThreads({ page: page, limit: limit });
         console.log(threads);
-        if (threads.data.success) {
+        if (threads.status < 400) {
             communityReducer({
                 type: CommunityStoreActionType.SET_TOP_THREADS,
                 payload: threads.data.threads,
@@ -117,7 +130,7 @@ const CommunityStoreContextProvider = (props) => {
         console.log('in registerLike');
         console.log(payload);
         const liked = await api.registerLike(payload);
-        if (liked.status === 200) {
+        if (liked.status < 400) {
             communityStore.getAllThreads();
         } else {
             console.log("Error registering like");
@@ -133,7 +146,7 @@ const CommunityStoreContextProvider = (props) => {
         console.log('in registerDislike');
         console.log(payload);
         const disliked = await api.registerDislike(payload);
-        if (disliked.status === 200) {
+        if (disliked.status < 400) {
             communityStore.getAllThreads();
         } else {
             console.log("Error registering dislike");

@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 
 createThread = async (req, res) => {
 
-    const body = req.query
+    const body = req.body
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -16,7 +16,7 @@ createThread = async (req, res) => {
     try {
 
         // Get data from request
-        const { threadName, threadText, senderId } = req.query;
+        const { threadName, threadText, senderId } = req.body;
 
         if (!threadName || !threadText || !senderId) {
             return res
@@ -245,6 +245,66 @@ var getAllThreads = async (req, res) => {
     })
 }
 
+var getPostsByUser = async (req, res) => {
+    const { userId } = req.body;
+    var { search } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({
+            success: false,
+            error: "No userId was provided by the client."
+        })
+    }
+
+    var user;
+    try {
+        user = mongoose.Types.ObjectId(userId)
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid userId was provided by the client."
+        })
+    }
+
+    var threads;
+    var replies;
+    if (search) {
+        search = search.trim();
+        threads = await Thread.aggregate([
+            { $match: { senderId: user } },
+            { $match: { $or:
+                [
+                    {"threadName": {$regex: search, $options: "i" }},
+                    { "threadText": { $regex: search, $options: "i" }}
+                ]
+            }},
+            { $sort: { createdAt: -1 } },
+        ]);
+
+        replies = await Reply.aggregate([
+            { $match: { senderId: user } },
+            { $match: { "replyMsg": { $regex: search, $options: "i" } } },
+            { $sort: { createdAt: -1 } },
+        ]);
+    } else {
+        threads = await Thread.aggregate([
+            { $match: { senderId: user } },
+            { $sort: { createdAt: -1 } },
+        ]);
+
+        replies = await Reply.aggregate([
+            { $match: { senderId: user } },
+            { $sort: { createdAt: -1 } },
+        ]);
+    }
+
+    return res.status(200).json({
+        success: true,
+        threads: threads,
+        replies: replies
+    })
+}
+
 var likeThread = async (req, res) => {
     const { threadId, userId } = req.body;
     var tid;
@@ -467,6 +527,7 @@ module.exports = {
     createThread,
     deleteThread,
     getAllThreads,
+    getPostsByUser,
     likeThread,
     dislikeThread,
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,15 +26,15 @@ const createSearchButton = () => {
     );
 }
 
-export default function MyPostsSidebar(props) {
-
+export default function MyPostsSidebar() {
+    const [searchText, setSearchText] = useState('');
     return (
         <div className='myposts-sidebar-container'>
             <div className='myposts-sidebar-search'>
-                <SearchBarWhite placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()} />
+                <SearchBarWhite placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()} onChange={(e)=>setSearchText(e.target.value)}/>
             </div>
             <div className='myposts-sidebar-list'>
-                <PostListSidebar />
+                <PostListSidebar filter={searchText}/>
             </div>
         </div>
     );

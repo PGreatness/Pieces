@@ -8,6 +8,26 @@ import AuthContext from '../../../../auth/auth';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
 
+const primaryInnerTypographyProps = {
+    color:'white',
+    float: 'left',
+    paddingRight: '1ch',
+    fontWeight: 'bold',
+    textOverflow: 'ellipsis',
+    overflow:'clip',
+    maxWidth:'calc(100% - 10vw)',
+    whiteSpace: 'nowrap'
+}
+
+const secondaryTypographyProps = {
+    color: 'whitesmoke',
+    float: 'left',
+    textOverflow: 'ellipsis',
+    overflow:'clip',
+    width:'100%',
+    whiteSpace: 'nowrap'
+}
+
 export default function CommunityMainClickableThread(props) {
     const { communityStore } = useContext(CommunityStoreContext);
     const { auth } = useContext(AuthContext);
@@ -97,13 +117,41 @@ export default function CommunityMainClickableThread(props) {
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ListItemButton onClick={props.selectThread}>
                 <ListItemAvatar>
-                    <Avatar alt={username} src={avatar} sx={{ width: '50px', height: '50px' }}>{avatar}</Avatar>
+                    <Avatar alt={username}
+                    src={avatar}
+                    sx={{ width: '50px', height: '50px' }}>
+                        {avatar}
+                    </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={<><Typography sx={{ color: 'white', float: 'left', paddingRight: '1ch', textOverflow: 'ellipsis', overflow:'clip', maxWidth:'calc(100% - 10vw)', whiteSpace: 'nowrap' }}>{props.thread.threadName}</Typography><Typography sx={{ color: '#a8a8a8' }}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{ style: { color: 'white' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke', float: 'left', textOverflow: 'ellipsis', overflow:'clip', width:'100%', whiteSpace: 'nowrap' } }} />
+                <ListItemText primary={
+                <>
+                    <Typography
+                    sx={ primaryInnerTypographyProps }>
+                        {props.thread.threadName}
+                    </Typography>
+
+                    <Typography
+                    sx={{ color: '#a8a8a8' }}>
+                        by: {user.first} {user.last}
+                    </Typography>
+                </>}
+                secondary={props.thread.threadText}
+                primaryTypographyProps={{ style: { color: 'white' } }}
+                secondaryTypographyProps={{ style: secondaryTypographyProps }} />
             </ListItemButton>
+
             <ButtonGroup sx={{minWidth: '56px'}}>
-                <ListItemText sx={{ flex: 'revert', paddingRight: '5px' }} primary={props.thread.likes.length} secondary={createUpvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
-                <ListItemText sx={{ flex: 'revert' }} primary={props.thread.dislikes.length} secondary={createDownvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                <ListItemText sx={{ flex: 'revert', paddingRight: '5px' }}
+                primary={props.thread.likes.length}
+                secondary={createUpvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+
+                <ListItemText sx={{ flex: 'revert' }}
+                primary={props.thread.dislikes.length}
+                secondary={createDownvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
             </ButtonGroup>
         </LightListItem>
     )

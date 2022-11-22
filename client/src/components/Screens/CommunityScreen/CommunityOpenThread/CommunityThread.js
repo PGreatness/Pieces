@@ -10,6 +10,23 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
 
+const primaryTypographyProps = {
+    color: 'white',
+    float: 'left',
+    paddingRight: '1ch',
+    paddingLeft: '2ch',
+    textOverflow: 'ellipsis',
+    overflow: 'auto',
+    maxWidth: '100%'
+}
+
+const secondaryTypographyProps = {
+    color: 'whitesmoke',
+    fontSize: '1em',
+    float: 'left',
+    paddingLeft: '2ch'
+}
+
 export default function CommunityThread(props) {
 
     const { communityStore } = useContext(CommunityStoreContext);
@@ -172,24 +189,57 @@ export default function CommunityThread(props) {
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
-                <ListItemText sx={{ flex: 'revert', paddingRight: '5px' }} primary={props.thread.likes.length} secondary={createUpvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
-                <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }} primary={props.thread.dislikes.length} secondary={createDownvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                <ListItemText
+                sx={{ flex: 'revert', paddingRight: '5px' }}
+                primary={props.thread.likes.length}
+                secondary={createUpvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+
+                <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
+                primary={props.thread.dislikes.length}
+                secondary={createDownvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
                 {
                     auth.user._id === user.id ? (
-                        <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }} primary={'Delete'} secondary={createDeleteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                        <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
+                        primary={'Delete'}
+                        secondary={createDeleteButton()}
+                        primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                        secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
                     ) : (
                         <></>
                     )
                 }
             </ButtonGroup>
-            <ListItemButton divider sx={{ width: auth.user._id === user.id ? 'calc(100% - 120px)' : 'calc(100% - 56px)' }}>
+            <ListItemButton divider
+            sx={{ width: auth.user._id === user.id ? 'calc(100% - 120px)' : 'calc(100% - 56px)' }}>
                 <ListItemAvatar>
-                    <Avatar alt={username} src={avatar} sx={{ width: '100px', height: '100px', fontSize: '250%' }}>{avatar}</Avatar>
+                    <Avatar alt={username}
+                    src={avatar}
+                    sx={{ width: '100px', height: '100px', fontSize: '250%' }}>
+                        {avatar}
+                    </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={<><Typography sx={{ color: 'white', float: 'left', paddingRight: '1ch', paddingLeft: '2ch', textOverflow: 'ellipsis', overflow: 'auto', maxWidth: '100%' }}>{props.thread.threadName}</Typography><Typography sx={{ color: '#a8a8a8' }}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{ style: { color: 'white' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '1em', float: 'left', paddingLeft: '2ch' } }} />
+                <ListItemText primary={
+                    <>
+                        <Typography sx={primaryTypographyProps}>
+                            {props.thread.threadName}
+                        </Typography>
+                        <Typography sx={{ color: '#a8a8a8' }}>
+                            by: {user.first} {user.last}
+                        </Typography>
+                    </>
+                } secondary={props.thread.threadText}
+                primaryTypographyProps={{ style: { color: 'white' } }}
+                secondaryTypographyProps={{ style: secondaryTypographyProps }} />
             </ListItemButton>
             <ReplyDivider flexItem />
-            <ReplyTextField label="Write a reply..." variant="filled" InputLabelProps={{ style: { color: 'white' } }} InputProps={{ endAdornment: sendButton() }} />
+            <ReplyTextField label="Write a reply..."
+            variant="filled"
+            InputLabelProps={{ style: { color: 'white' } }}
+            InputProps={{ endAdornment: sendButton() }} />
             {
                 replies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
@@ -198,9 +248,17 @@ export default function CommunityThread(props) {
                                 return (
                                     <BetterReplyButton divider >
                                         <ListItemAvatar>
-                                            <Avatar alt={reply.id} src={reply.id} sx={{ width: '30px', height: '30px' }}>{reply.id}</Avatar>
+                                            <Avatar alt={reply.id}
+                                            src={reply.id}
+                                            sx={{ width: '30px', height: '30px' }}>
+                                                {reply.id}
+                                            </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary={reply.replyMsg} secondary={reply.sentAt} primaryTypographyProps={{ style: { color: 'white', fontSize: '0.7em' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.5em' } }} />
+                                        <ListItemText
+                                        primary={reply.replyMsg}
+                                        secondary={reply.sentAt}
+                                        primaryTypographyProps={{ style: { color: 'white', fontSize: '0.7em' } }}
+                                        secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.5em' } }} />
                                     </BetterReplyButton>
                                 );
                             })
