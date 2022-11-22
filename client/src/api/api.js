@@ -65,6 +65,8 @@ export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
 export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
 export const registerLike = (payload) => api.post(`/thread/like`, payload)
 export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
+export const createThread = (payload) => api.post(`/thread/newThread`, {params: payload})
+export const deleteThread = (payload) => api.post(`/thread/deleteThread`,payload)
 
 const apis = {
     getAllPublicProjects,
@@ -108,6 +110,8 @@ const apis = {
     getPopularThreads,
     registerLike,
     registerDislike,
+    createThread,
+    deleteThread,
 }
 
 export default apis

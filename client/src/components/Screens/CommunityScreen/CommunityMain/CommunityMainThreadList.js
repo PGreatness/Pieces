@@ -28,7 +28,7 @@ export default function CommunityMainThreadList(props) {
                     {
                         threadList?.map((thread, index)=>{
                             return (
-                                index === selectedIndex ? <CommunityThread thread={thread} key={thread._id}/> : <CommunityMainClickableThread thread={thread} key={thread._id} selectThread={()=>setSelectedIndex(index)}/>
+                                index === selectedIndex ? <CommunityThread thread={thread} key={thread._id} deselect={()=>setSelectedIndex(-1)}/> : <CommunityMainClickableThread thread={thread} key={thread._id} selectThread={()=>setSelectedIndex(index)}/>
                                 );
                         })
                     }

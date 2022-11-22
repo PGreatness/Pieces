@@ -16,6 +16,7 @@ export default function CommunityMainClickableThread(props) {
     const [user, setUser] = useState({
         first: '',
         last: '',
+        id: '',
     });
     const [interactions, setInteractions] = useState({
         liked: props.thread.likes.includes(auth.user._id),
@@ -56,9 +57,9 @@ export default function CommunityMainClickableThread(props) {
         let threadOwner = await communityStore.getUserById(username);
         console.log("In findUserAvatar: ");
         console.log(threadOwner);
-        userAvatar = threadOwner.profilePic || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
+        userAvatar = (threadOwner.profilePic ? threadOwner.profilePic.url : null) || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
         username = threadOwner.userName;
-        let user = { first: threadOwner.firstName, last: threadOwner.lastName };
+        let user = { first: threadOwner.firstName, last: threadOwner.lastName, id: threadOwner._id };
         return { userAvatar, username, user };
     }
 
@@ -98,7 +99,7 @@ export default function CommunityMainClickableThread(props) {
                 <ListItemAvatar>
                     <Avatar alt={username} src={avatar} sx={{ width: '50px', height: '50px' }}>{avatar}</Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={<><Typography sx={{ color: 'white', float: 'left', paddingRight: '1ch' }}>{props.thread.threadName}</Typography><Typography sx={{ color: '#a8a8a8' }}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{ style: { color: 'white' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke', float: 'left', textOverflow: 'ellipsis', overflow:'clip', width:'100%', whiteSpace: 'nowrap' } }} />
+                <ListItemText primary={<><Typography sx={{ color: 'white', float: 'left', paddingRight: '1ch', textOverflow: 'ellipsis', overflow:'clip', maxWidth:'calc(100% - 10vw)', whiteSpace: 'nowrap' }}>{props.thread.threadName}</Typography><Typography sx={{ color: '#a8a8a8' }}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{ style: { color: 'white' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke', float: 'left', textOverflow: 'ellipsis', overflow:'clip', width:'100%', whiteSpace: 'nowrap' } }} />
             </ListItemButton>
             <ButtonGroup sx={{minWidth: '56px'}}>
                 <ListItemText sx={{ flex: 'revert', paddingRight: '5px' }} primary={props.thread.likes.length} secondary={createUpvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />

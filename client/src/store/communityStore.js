@@ -42,9 +42,44 @@ const CommunityStoreContextProvider = (props) => {
         }
     }
 
+    communityStore.createThread = async (title, content, user) => {
+        console.log('Creating new thread');
+        const thread = await api.createThread({
+            threadName: title,
+            threadText: content,
+            senderId: user,
+        });
+        console.log(thread);
+        if (thread.status === 200) {
+            console.log('Thread created successfully');
+            return thread.data;
+        } else {
+            console.log('Thread creation failed');
+            return null;
+        }
+    }
+
+    communityStore.deleteThread = async (threadId, userId) => {
+        console.log('Deleting thread');
+        const payload = {
+            id: threadId,
+            senderId: userId,
+        }
+        const thread = await api.deleteThread(payload);
+        console.log(thread);
+        if (thread.status === 200) {
+            console.log('Thread deleted successfully');
+            communityStore.getAllThreads();
+            return thread.data;
+        } else {
+            console.log('Thread deletion failed');
+            return null;
+        }
+    }
+
     communityStore.getAllThreads = async () => {
         console.log("Getting all threads");
-        await communityStore.getPopularThreads(1,5);
+        await communityStore.getPopularThreads(1, 5);
         const threads = await api.getAllThreads();
         console.log(threads);
         if (threads.success) {
@@ -57,7 +92,7 @@ const CommunityStoreContextProvider = (props) => {
 
     communityStore.getPopularThreads = async (page, limit) => {
         console.log("Getting popular threads");
-        const threads = await api.getPopularThreads({page:page,limit:limit});
+        const threads = await api.getPopularThreads({ page: page, limit: limit });
         console.log(threads);
         if (threads.data.success) {
             communityReducer({

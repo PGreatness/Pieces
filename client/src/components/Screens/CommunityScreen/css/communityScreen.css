@@ -2,6 +2,7 @@
     background-color: #1F293A;
     height: 100%;
     overflow-y: auto;
+    width: calc(100% - 20vw);
 }
 
 .community-screen-text {
@@ -20,7 +21,8 @@
     /* transform: translateX(-20vw); */
     /* margin-top:1em; */
     margin-bottom: 2em;
-    width: 80vw;
+    width: 100%;
+    padding-top: 2%;
 }
 
 .community-screen-text > h1 {
