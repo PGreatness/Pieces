@@ -223,6 +223,32 @@ function AuthContextProvider(props) {
             });
     }
 
+    auth.deleteUser = async function () {
+        let payload = {
+            id: auth.user._id
+        }
+        await api.deleteUser(payload).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.GET_LOGGED_IN,
+                payload: {
+                    user: null,
+                    loggedIn: false
+                }
+            });
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
     auth.deleteImage = async function (imgData, callback) {
         await api.deleteImage(imgData).then(response => {
             console.log(response.data)

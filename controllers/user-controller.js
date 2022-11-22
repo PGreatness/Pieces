@@ -10,6 +10,8 @@ const emailUtil = require("../utils/emails");
 const cloudinary = require("../config/cloudinary");
 const config = require("config");
 const Map = require('../models/map-model');
+const Tileset = require('../models/tileset-model');
+const Tile = require('../models/tile-model');
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -511,7 +513,21 @@ getLibraryMapsByName = async (req, res) => {
 
 deleteUser = async (req, res) => {
 
-    const user = await User.findById(req.params.id);
+    const { id } = req.body
+    console.log(id)
+
+    var uid;
+    try {
+        uid = new ObjectId(id);
+    } catch (err) {
+        return res
+            .status(400)
+            .json({ message: "Invalid User ID" });
+    }
+
+    const user = await User.findById(uid);
+
+
     if (!user)
         return res
             .status(400)
@@ -519,24 +535,155 @@ deleteUser = async (req, res) => {
                 message: "Account does not exist Not Found!"
             });
 
-    // Collaborator rights remove (maps & tilesets)
+
+    // Collaborator projects
+    // Remove Map Collaborator
+    const collaboratorMaps = await Map.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
+
+    collaboratorMaps.forEach((collabMap) => {
+        collabMap.collaboratorIds.remove(uid);
+        collabMap.save().then((map) => {
+            //console.log(map)
+        })
+            .catch((err) => {
+                return res.status(400).json({
+                    success: false,
+                    message: "Error removing user from Map collaborator",
+                    error: err
+                })
+            })
+    })
+
+
+    // Remove Tileset Collaborator
+    const collaboratorTilesets = await Tileset.find({ collaboratorIds: { $elemMatch: { $eq: uid } } });
+
+    collaboratorTilesets.forEach((collabTileset) => {
+        collabTileset.collaboratorIds.remove(uid);
+        collabTileset.save().then((tileset) => {
+            //console.log(tileset)
+        })
+            .catch((err) => {
+                return res.status(400).json({
+                    success: false,
+                    message: "Error removing user from Tileset collaborator",
+                    error: err
+                })
+            })
+    })
+
 
     // Owned projects 
-    // 1. Collaborators = give first collaborator ownership
-    // 2. No collaborators = delete 
-    // if deleting tileset, then remove tiles as well
+    // 1. Collaborators exist = give first collaborator ownership
 
-    // remove all likes, dislikes & comments from projects
+    // Maps
+    const ownedCollabMaps = await Map.find({ collaboratorIds: { $exists: true, $type: 'array', $ne: [] } })
+    console.log(ownedCollabMaps)
+    ownedCollabMaps.forEach((map) => {
+        var newOwner = map.collaboratorIds[0];
+        map.ownerId = newOwner;
+        map.collaboratorIds.remove(newOwner);
+        map.save().then((newmap) => {
+            console.log(newmap)
+        })
+            .catch((err) => {
+                return res.status(400).json({
+                    success: false,
+                    message: "Error changing owner rights",
+                    error: err
+                })
+            })
+    })
+
+
+
+    // Tilesets
+    const ownedCollabTilesets = await Tileset.find({ collaboratorIds: { $exists: true, $type: 'array', $ne: [] } })
+    ownedCollabTilesets.forEach((tile) => {
+        var newOwner = tile.collaboratorIds[0];
+        tile.ownerId = newOwner;
+        tile.collaboratorIds.remove(newOwner);
+        tile.save().then((newtile) => {
+            //console.log(newtile)
+        })
+            .catch((err) => {
+                return res.status(400).json({
+                    success: false,
+                    message: "Error changing owner rights",
+                    error: err
+                })
+            })
+    })
+
+
+    // 2. No collaborators = delete 
+    // Map
+    const noCollabOwned = await Map.deleteMany({ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
+    //console.log(noCollabOwned)
+
+    // Tileset & Tiles
+    // if deleting tileset, then remove tiles as well
+    const tilesets = await Tileset.find({ ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
+
+    tilesets.forEach(async function (tileset) {
+        var tilesetId = tileset._id;
+        await Tile.deleteMany({ tilesetId: tilesetId })
+    })
+
+    await Tileset.deleteMany({ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
 
     // everything about threads, owned threads, replies, likes, dislikes, comments
+    // NO NEED ^ because will show up as deletedUser
+
+    // TODO: remove all friends
+    // TODO: remove all chats
+    // TODO: remove all notifications
 
     // delete image from cloudinary
+    if (user.profilePic && user.profilePic.publicId) {
+        const res = await cloudinary.v2.uploader.destroy(user.profilePic.publicId);
+        console.log(res)
+        if (res.result !== "ok") throw new Error();
+    }
 
-    // remove all friends
-    // chats
-    // remove all notifications
+    const img = {
+        publicId: "",
+        url: ""
+    };
 
-    // delete user
+    await User.findOneAndUpdate({ _id: uid }, { $set: { profilePic: img } },
+        { new: true }).then((newUser) => {
+            console.log(newUser)
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to delete profilepic'
+            })
+        });
+
+    // Rename user firstname, lastname, username to deleteduser
+    // clear bio, change password
+    await User.findOneAndUpdate({ _id: uid },
+        {
+            firstName: "DELETED",
+            lastName: "USER",
+            userName: "DeletedUser",
+            bio: "",
+            passwordHash: ""
+        }, {returnOriginal: false}).then((newUser) => {
+            return res.status(200).json({
+                success: true,
+                user: newUser,
+                message: 'User deleted!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to delete profilepic'
+            })
+        });
 }
 
 
@@ -546,13 +693,13 @@ uploadImage = async (req, res) => {
 
         var objId = new ObjectId(id);
 
-        const img = { 
-            publicId, 
-            url 
+        const img = {
+            publicId,
+            url
         };
-        
+
         const user = await User.findById(objId);
-        
+
         // delete previous pic if any
         if (user.profilePic && user.profilePic.publicId) {
             const res = await cloudinary.v2.uploader.destroy(user.profilePic.publicId);
@@ -560,20 +707,20 @@ uploadImage = async (req, res) => {
             if (res.result !== "ok") throw new Error();
         }
 
-        await User.findOneAndUpdate({_id: objId}, { $set: { profilePic: img } },
-             { new: true }).then((newUser) => {
-            return res.status(200).json({
-                success: true,
-                user: newUser,
-                message: 'User profile pic has been updated!'
-            })
-        }).catch((err) => {
-            console.log(err)
-            return res.status(404).json({
-                success: false,
-                message: 'Failed to update profilepic'
-            })
-        });
+        await User.findOneAndUpdate({ _id: objId }, { $set: { profilePic: img } },
+            { new: true }).then((newUser) => {
+                return res.status(200).json({
+                    success: true,
+                    user: newUser,
+                    message: 'User profile pic has been updated!'
+                })
+            }).catch((err) => {
+                console.log(err)
+                return res.status(404).json({
+                    success: false,
+                    message: 'Failed to update profilepic'
+                })
+            });
 
     } catch (err) {
         console.error(err);
@@ -582,69 +729,70 @@ uploadImage = async (req, res) => {
 },
 
 
-deleteImage = async (req, res) => {
-    try {
-        const { id, publicId } = req.body;
+    deleteImage = async (req, res) => {
+        try {
+            const { id, publicId } = req.body;
 
-        var objId = new ObjectId(id);
+            var objId = new ObjectId(id);
 
-        const img = { 
-            publicId: "", 
-            url: "" 
-        };
-        
-        const user = await User.findById(objId);
+            const img = {
+                publicId: "",
+                url: ""
+            };
 
-        
-        // check if req publicId correct,
-        // & user has an image 
-        if (publicId !== "" && user.profilePic && user.profilePic.publicId && 
-            publicId === user.profilePic.publicId) {
-            const res = await cloudinary.v2.uploader.destroy(publicId);
-            if (res.result !== "ok") throw new Error();
-        } else {
-            return res.status(404).json({
-                success: false,
-                message: 'Failed to delete image in cloudinary'
-            })
+            const user = await User.findById(objId);
+
+
+            // check if req publicId correct,
+            // & user has an image 
+            if (publicId !== "" && user.profilePic && user.profilePic.publicId &&
+                publicId === user.profilePic.publicId) {
+                const res = await cloudinary.v2.uploader.destroy(publicId);
+                if (res.result !== "ok") throw new Error();
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Failed to delete image in cloudinary'
+                })
+            }
+
+            await User.findOneAndUpdate({ _id: objId }, { $set: { profilePic: img } },
+                { new: true }).then((newUser) => {
+                    return res.status(200).json({
+                        success: true,
+                        user: newUser,
+                        message: 'User profile pic has been deleted!'
+                    })
+                }).catch((err) => {
+                    console.log(err)
+                    return res.status(404).json({
+                        success: false,
+                        message: 'Failed to delete profilepic'
+                    })
+                });
+
+        } catch (err) {
+            console.error(err);
+            return res.status(500);
         }
+    },
 
-        await User.findOneAndUpdate({_id: objId}, { $set: { profilePic: img } },
-             { new: true }).then((newUser) => {
-            return res.status(200).json({
-                success: true,
-                user: newUser,
-                message: 'User profile pic has been deleted!'
-            })
-        }).catch((err) => {
-            console.log(err)
-            return res.status(404).json({
-                success: false,
-                message: 'Failed to delete profilepic'
-            })
-        });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500);
+    module.exports = {
+        getLoggedIn,
+        registerUser,
+        loginUser,
+        logoutUser,
+        getUserbyId,
+        getUserbyUsername,
+        updateUser,
+        changePassword,
+        forgotPassword,
+        resetPassword,
+        getOwnerAndCollaboratorOfMaps,
+        getLibraryMapsByName,
+        getUsersbyUsername,
+        getAllUsers,
+        uploadImage,
+        deleteImage,
+        deleteUser
     }
-},
-
-module.exports = {
-    getLoggedIn,
-    registerUser,
-    loginUser,
-    logoutUser,
-    getUserbyId,
-    getUserbyUsername,
-    updateUser,
-    changePassword,
-    forgotPassword,
-    resetPassword,
-    getOwnerAndCollaboratorOfMaps,
-    getLibraryMapsByName,
-    getUsersbyUsername,
-    getAllUsers,
-    uploadImage,
-    deleteImage
-}

@@ -57,6 +57,7 @@ export const resetPassword = (payload) => api.post(`/resetPassword/`, payload)
 export const updateUser = (payload) => api.post(`/updateUser/`, payload)
 export const uploadImage = (payload) => api.post(`/uploadImage/`, payload)
 export const deleteImage = (payload) => api.post(`/deleteImage/`, payload)
+export const deleteUser = (payload) => api.post(`/deleteUser/`, payload)
 
 
 
@@ -121,6 +122,7 @@ const apis = {
     resetPassword,
     uploadImage,
     deleteImage,
+    deleteUser,
 
     changePage,
     requestMapEdit,

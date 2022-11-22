@@ -30,6 +30,7 @@ router.post('/resetPassword', UserController.resetPassword)
 router.post('/uploadImage', UserController.uploadImage)
 router.post('/deleteImage', UserController.deleteImage)
 
+router.post('/deleteUser', UserController.deleteUser)
 
 // Map Routes
 router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
