@@ -43,7 +43,7 @@ export default function NavbarAppOptions(props) {
     const { communityStore } = useContext(CommunityStoreContext);
 
     const [user, setUser] = useState(auth.user)
-    const [loggedIn, setLoggedIn] = React.useState(false);
+    const [loggedIn, setLoggedIn] = useState(auth.user? true: false);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
     const [openErrorModal, setOpenErrorModal] = useState(auth.errorMessage !== null)
@@ -310,7 +310,7 @@ export default function NavbarAppOptions(props) {
                 </InputAdornment>
             )
         }
-        return loggedIn ? (
+        return auth.user ? (
             <>
                 <WideInput placeholder="Search for maps and tilesets..." onKeyDown={handleSearchChange} endAdornment={createSearchIcon()} />
             </>
@@ -328,11 +328,11 @@ export default function NavbarAppOptions(props) {
                 {createLogo()}
                 <div className='navbar_appflexbox'>
                     <div className='navbar_flexitem_left'>
-                        {createAppButtons(loggedIn)}
+                        {createAppButtons(auth.user? true: false)}
                     </div>
                     {createSearchBar()}
                     <div className='navbar_flexitem_right'>
-                        {createLoginButtons(loggedIn, setLoggedIn)}
+                        {createLoginButtons(auth.user? true: false, setLoggedIn)}
                     </div>
                 </div>
 

@@ -63,7 +63,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<WelcomeScreen />} />
                   <Route path="/reset-password/:id/:token" element={<ResetPasswordScreen />} />
-                  <Route path="/profile/" element={<ProfileScreen />} />
+                  <Route path="/profile/" element={<ProfileScreen setLoc={setLocation} />} />
                   <Route path="/explore/" element={<ExploreScreen setLoc={setLocation} />} />
                   <Route path="/library/" element={<LibraryScreen setLoc={setLocation} />} />
                   <Route path="/community/" element={<CommunityScreen />} />

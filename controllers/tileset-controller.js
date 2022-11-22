@@ -147,6 +147,7 @@ deleteTileset = async (req, res) => {
         })
 
         // TODO: Delete the tileset from the User's favs list
+        // TODO: Delete each individual Tile in the tileset
 
         // Finds tileset with given id and deletes it
         Tileset.findByIdAndDelete(id, (err, tileset) => {
