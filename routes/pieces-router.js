@@ -27,6 +27,8 @@ router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
+router.post('/uploadImage', UserController.uploadImage)
+router.post('/deleteImage', UserController.deleteImage)
 
 
 // Map Routes

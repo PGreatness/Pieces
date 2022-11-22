@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 const mongoose = require('mongoose')
 const nodemailer = require("nodemailer");
 const emailUtil = require("../utils/emails");
+const cloudinary = require("../config/cloudinary");
 const config = require("config");
 const Map = require('../models/map-model');
 
@@ -30,35 +31,34 @@ getLoggedIn = async (req, res) => {
 
 loginUser = async (req, res) => {
     try {
-        const { userName, password } = req.query;
-        //console.log("username and password")
-        //console.log(userName, password)
-        if (userName === "Community" || userName === "Guest") {
-            return res.status(400).json({ message: "You cannot login with this userName" });
+        const { email, password } = req.query;
+
+        if (!email || !password) {
+            return res
+                .status(400)
+                .json({ message: "Please enter all required fields." });
         }
 
-        const foundUser = await User.findOne({ userName: userName });
+        const foundUser = await User.findOne({ email: email });
         if (!foundUser) {
-            return res.status(400).json({ message: "A User with the username provided does not exist." });
+            return res.status(400).json({ message: "A User with the email provided does not exist." });
         }
 
         const match = await bcrypt.compare(password, foundUser.passwordHash);
         if (match) {
             const token = auth.signToken(foundUser);
-            //console.log("token", token)
 
+            res.cookie("token", token, {
+                httpOnly: true,
+                //sameSite: 'none',
+                maxAge: 6.048e+8
+            })
 
-            // res.cookie("token", token, {
-            //     httpOnly: true,
-            //     sameSite: 'none',
-            //     maxAge: 6.048e+8
-            //   })
-          
             // return res.json({ status: 'OK' });
 
-            res.set("Set-Cookie", [
-                `token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
-            ]);
+            //res.set("Set-Cookie", [
+            //`token=${token}; HttpOnly; Secure; SameSite=none; Max-Age=86400`,
+            //]);
             res.status(200).json({
                 success: true,
                 user: foundUser,
@@ -114,6 +114,7 @@ getUsersbyUsername = async (req, res) => {
 }
 
 forgotPassword = async (req, res) => {
+    console.log('atleast here')
     try {
         const { email } = req.query;
 
@@ -169,10 +170,11 @@ forgotPassword = async (req, res) => {
 updateUser = async (req, res) => {
     try {
         console.log(req.body)
-        const { _id, firstName, lastName, userName, email, bio } = req.body;
+        const { id, firstName, lastName, userName, email, bio } = req.body;
+        const ObjId = new ObjectId(id);
 
 
-        const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: _id } }] });
+        const alreadyRegistered = await User.findOne({ $and: [{ email: email }, { _id: { $ne: ObjId } }] });
         if (alreadyRegistered) {
             return res
                 .status(400)
@@ -182,16 +184,16 @@ updateUser = async (req, res) => {
         }
 
 
-        const user = await User.findById(_id);
-        await user.updateOne({
+        await User.findOneAndUpdate({ email: email }, {
             firstName: firstName,
             lastName: lastName,
             userName: userName,
             email: email,
             bio: bio
-        }).then(() => {
+        }, { returnOriginal: false }).then((newUser) => {
             return res.status(200).json({
                 success: true,
+                user: newUser,
                 message: 'User has been updated!'
             })
         }).catch((err) => {
@@ -230,20 +232,7 @@ registerUser = async (req, res) => {
                     message: "Please enter the same password twice."
                 })
         }
-        if (userName === "Community" || userName === "Guest") {
-            return res
-                .status(400)
-                .json({
-                    message: "An account with this User Name already exists."
-                })
-        }
-        if (email === "community@pieces.com" || email === "guestuser@pieces.com") {
-            return res
-                .status(400)
-                .json({
-                    message: "An account with this email address already exists."
-                })
-        }
+
 
 
         const existingUser = await User.findOne({ email: email });
@@ -343,9 +332,10 @@ changePassword = async (req, res) => {
                 });
 
         newPasswordHash = await bcrypt.hash(newPassword, 10);
-        await User.findOneAndUpdate({ email }, { passwordHash: newPasswordHash }).then(() => {
+        await user.updateOne({ passwordHash: newPasswordHash }).then(() => {
             return res.status(200).json({
                 success: true,
+                user: user,
                 message: 'User password has been changed!'
             })
         }).catch((err) => {
@@ -364,12 +354,19 @@ changePassword = async (req, res) => {
 
 resetPassword = async (req, res) => {
     try {
-        const { id, token, password } = req.body;
+        const { id, token, password, repeatPassword } = req.body;
 
         if (!id || !token || !password)
             return res
                 .status(400)
                 .json({ message: "Must Provide All Required Arguments to Change Password!" });
+
+        if (password !== repeatPassword)
+            return res
+                .status(400)
+                .json({
+                    message: "New Password Must Match!"
+                });
 
         const objectId = new ObjectId(id);
         const user = await User.findOne({ _id: objectId });
@@ -385,8 +382,9 @@ resetPassword = async (req, res) => {
                 .status(400)
                 .json({ message: "Token is invalid or expired." });
 
+
         newPasswordHash = await bcrypt.hash(password, 10);
-        await User.findOneAndUpdate({ id }, { passwordHash: newPasswordHash }).then(() => {
+        await User.findOneAndUpdate({ _id: objectId }, { passwordHash: newPasswordHash }).then(() => {
             return res.status(200).json({
                 success: true,
                 message: 'User password has been reset!'
@@ -511,19 +509,142 @@ getLibraryMapsByName = async (req, res) => {
 }
 
 
-module.exports = {
-            getLoggedIn,
-            registerUser,
-            loginUser,
-            logoutUser,
-            getUserbyId,
-            getUserbyUsername,
-            updateUser,
-            changePassword,
-            forgotPassword,
-            resetPassword,
-            getOwnerAndCollaboratorOfMaps,
-            getLibraryMapsByName,
-            getUsersbyUsername,
-            getAllUsers
+deleteUser = async (req, res) => {
+
+    const user = await User.findById(req.params.id);
+    if (!user)
+        return res
+            .status(400)
+            .json({
+                message: "Account does not exist Not Found!"
+            });
+
+    // Collaborator rights remove (maps & tilesets)
+
+    // Owned projects 
+    // 1. Collaborators = give first collaborator ownership
+    // 2. No collaborators = delete 
+    // if deleting tileset, then remove tiles as well
+
+    // remove all likes, dislikes & comments from projects
+
+    // everything about threads, owned threads, replies, likes, dislikes, comments
+
+    // delete image from cloudinary
+
+    // remove all friends
+    // chats
+    // remove all notifications
+
+    // delete user
+}
+
+
+uploadImage = async (req, res) => {
+    try {
+        const { id, publicId, url } = req.body;
+
+        var objId = new ObjectId(id);
+
+        const img = { 
+            publicId, 
+            url 
+        };
+        
+        const user = await User.findById(objId);
+        
+        // delete previous pic if any
+        if (user.profilePic && user.profilePic.publicId) {
+            const res = await cloudinary.v2.uploader.destroy(user.profilePic.publicId);
+            console.log(res)
+            if (res.result !== "ok") throw new Error();
         }
+
+        await User.findOneAndUpdate({_id: objId}, { $set: { profilePic: img } },
+             { new: true }).then((newUser) => {
+            return res.status(200).json({
+                success: true,
+                user: newUser,
+                message: 'User profile pic has been updated!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to update profilepic'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500);
+    }
+},
+
+
+deleteImage = async (req, res) => {
+    try {
+        const { id, publicId } = req.body;
+
+        var objId = new ObjectId(id);
+
+        const img = { 
+            publicId: "", 
+            url: "" 
+        };
+        
+        const user = await User.findById(objId);
+
+        
+        // check if req publicId correct,
+        // & user has an image 
+        if (publicId !== "" && user.profilePic && user.profilePic.publicId && 
+            publicId === user.profilePic.publicId) {
+            const res = await cloudinary.v2.uploader.destroy(publicId);
+            if (res.result !== "ok") throw new Error();
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to delete image in cloudinary'
+            })
+        }
+
+        await User.findOneAndUpdate({_id: objId}, { $set: { profilePic: img } },
+             { new: true }).then((newUser) => {
+            return res.status(200).json({
+                success: true,
+                user: newUser,
+                message: 'User profile pic has been deleted!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to delete profilepic'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500);
+    }
+},
+
+module.exports = {
+    getLoggedIn,
+    registerUser,
+    loginUser,
+    logoutUser,
+    getUserbyId,
+    getUserbyUsername,
+    updateUser,
+    changePassword,
+    forgotPassword,
+    resetPassword,
+    getOwnerAndCollaboratorOfMaps,
+    getLibraryMapsByName,
+    getUsersbyUsername,
+    getAllUsers,
+    uploadImage,
+    deleteImage
+}
