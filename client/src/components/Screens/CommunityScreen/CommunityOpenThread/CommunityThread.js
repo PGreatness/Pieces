@@ -1,10 +1,149 @@
-import React from 'react';
+import { React, useState, useContext, useEffect } from 'react';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import { Avatar, ListItemButton, ListItemText, ListItem, Divider, TextField, InputAdornment } from '@mui/material';
+import { Avatar, ListItemButton, ListItemText, ListItem, Divider, TextField, InputAdornment, Typography, ButtonGroup } from '@mui/material';
 import { styled } from '@mui/material';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import { CommunityStoreContext } from '../../../../store/communityStore';
+
+const primaryTypographyProps = {
+    color: 'white',
+    float: 'left',
+    paddingRight: '1ch',
+    paddingLeft: '2ch',
+    textOverflow: 'ellipsis',
+    overflow: 'auto',
+    maxWidth: '100%'
+}
+
+const secondaryTypographyProps = {
+    color: 'whitesmoke',
+    fontSize: '1em',
+    float: 'left',
+    paddingLeft: '2ch'
+}
 
 export default function CommunityThread(props) {
+
+    const { communityStore } = useContext(CommunityStoreContext);
+    const { auth } = useContext(AuthContext);
+    const [replyingTo, setReplyingTo] = useState(props.thread.senderId);
+    const [username, setUsername] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const [user, setUser] = useState({
+        first: '',
+        last: '',
+        id: '',
+    });
+    const [interactions, setInteractions] = useState({
+        liked: props.thread.likes.includes(auth.user._id),
+        disliked: props.thread.dislikes.includes(auth.user._id),
+    });
+
+    const [threadreplies, setReplies] = useState([]);
+
+    const getReply = async (replies) => {
+        // let replyId = replies;
+        // let result = await communityStore.getReplybyId(replyId);
+        let results = []
+        for(let i = 0; i < replies.length; i++) {
+            let result = await communityStore.getReplybyId(replies[i])
+            results.push(result)
+        }
+        return results;
+    }
+
+    // communityStore.loadReplies();
+    const firstlevelreplies = props.thread.replies;
+    console.log(firstlevelreplies);
+
+    useEffect(() => {
+        getReply(firstlevelreplies).then((something) => {
+            console.log(something)
+            setReplies(something)
+        })
+    }, [communityStore.replies]);
+
+    useEffect(() => {
+        findUserAvatar().then((res) => {
+            console.log("IN HERE");
+            setUsername(res.username);
+            setAvatar(res.userAvatar);
+            setUser({
+                ...res.user,
+            });
+        });
+    }, [communityStore.TOP_THREADS]);
+
+    useEffect(() => {
+        setInteractions({
+            liked: props.thread.likes.includes(auth.user._id),
+            disliked: props.thread.dislikes.includes(auth.user._id),
+        })
+    }, [props.thread.likes, props.thread.dislikes])
+
+    const findUserAvatar = async () => {
+        let userAvatar = '';
+        let username = props.thread.senderId;
+        let threadOwner = await communityStore.getUserById(username);
+        console.log("In findUserAvatar: ");
+        console.log(threadOwner);
+        userAvatar = (threadOwner.profilePic ? threadOwner.profilePic.url : null) || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
+        username = threadOwner.userName;
+        let user = { first: threadOwner.firstName, last: threadOwner.lastName, id: threadOwner._id };
+        return { userAvatar, username, user };
+    }
+
+    const registerLike = async () => {
+        let threadId = props.thread._id;
+        let userId = auth.user._id;
+        console.log("In registerLike: ", threadId, userId);
+        await communityStore.registerLike(threadId, userId);
+    }
+
+    const registerDislike = async () => {
+        let threadId = props.thread._id;
+        let userId = auth.user._id;
+        console.log("In registerDislike: ", threadId, userId);
+        await communityStore.registerDislike(threadId, userId);
+    }
+
+    const handleDelete = async () => {
+        console.log(auth.user);
+        let res = await communityStore.deleteThread(props.thread._id, auth.user._id);
+        if (res !== null) {
+            console.log('Thread deleted successfully');
+            props.deselect();
+        }
+    }
+
+    const createUpvoteButton = () => {
+        return (
+            <ListItemButton onClick={registerLike} sx={{ flex: 'revert', padding: '0', paddingRight: '5px' }}>
+                <ThumbUpAltIcon className='thread-interaction-buttons' sx={{ color: interactions.liked ? 'rgb(45, 212, 207)' : 'white' }} />
+            </ListItemButton>
+        );
+    }
+
+    const createDownvoteButton = () => {
+        return (
+            <ListItemButton onClick={registerDislike} sx={{ flex: 'revert', padding: '0' }}>
+                <ThumbDownAltIcon className='thread-interaction-buttons' sx={{ color: interactions.disliked ? 'red' : 'white' }} />
+            </ListItemButton>
+        );
+    }
+
+    const createDeleteButton = () => {
+        return (
+            <ListItemButton onClick={handleDelete} sx={{ flex: 'revert', padding: '0' }}>
+                <DeleteIcon className='thread-interaction-buttons delete-button' sx={{ color: 'white' }} />
+            </ListItemButton>
+        );
+    }
 
     const BetterReplyButton = styled(ListItemButton)({
         // make the button full width
@@ -16,9 +155,9 @@ export default function CommunityThread(props) {
         backgroundColor: '#29313f',
         borderRadius: '10px',
         border: '1px solid black',
-        width:'100%',
+        width: '100%',
         height: '0%',
-        flexDirection:'column',
+        flexDirection: 'column',
         '&:hover': {
             backgroundColor: '#29313f',
         },
@@ -32,7 +171,7 @@ export default function CommunityThread(props) {
 
     const ReplyDivider = styled(Divider)({
         borderTop: '1px solid grey',
-        height:'0%',
+        height: '0%',
         // make sure the divider is always below the list item
         position: 'relative',
         // left: '50%',w
@@ -45,7 +184,7 @@ export default function CommunityThread(props) {
         backgroundColor: '#242b38',
         borderRadius: '10px',
         // border: '1px solid black',
-        width:'100%',
+        width: '100%',
         color: 'white',
         '& .MuiInputBase-input': {
             color: 'white',
@@ -61,59 +200,107 @@ export default function CommunityThread(props) {
         },
     });
 
-    const findUserAvatar = () => {
-        let userAvatar = '';
-        let user = props.thread.senderId;
-        // const response = await fetch(`/api/users/${user}`);
-        // const data = await response.json();
-        const response = {
-            "id": 1,
-            "username": "test",
-            "firstName": "Test",
-            "lastName": "User",
-            "email": "test@test.com",
-            "profilePic": "https://i.imgur.com/0y0y0y0.png",
-            "createdAt": "2021-08-01T00:00:00.000Z",
-            "updatedAt": "2021-08-01T00:00:00.000Z"
-        };
-        const data = response; // await response.json();
-        userAvatar = data.profilePic || data.firstName.chatAt(0) + data.lastName.charAt(0);
-        return [userAvatar, data.username];
-    }
-
     const sendButton = () => {
         return (
             <InputAdornment position="end">
                 <ListItemButton>
-                    <CommentIcon fill='white' sx={{color:'white'}}/>
+                    <CommentIcon fill='white' sx={{color:'white'}} onClick={() => {handleAddReply()}}/>
                 </ListItemButton>
             </InputAdornment>
         );
     }
 
-    const [currentUserAvatar, username] = findUserAvatar();
-    const replies = props.thread.replies;
+    const handleAddReply = async() => {
+        let text = document.getElementById('reply_field').value
+        // let senderId = '6366fe474c670183dd2bcae5'
+        let senderId = auth.user?._id
+
+        if (text === "") {
+            console.log("Empty text field.")
+        }
+        else {
+            let response = await communityStore.addReply(replyingTo, senderId, text)
+            console.log(response)
+            document.getElementById('reply_field').value = "";
+        }
+    }
+    
     return (
-        <LightListItem alignItems="flex-start" key={"item " + props.thread.id}>
-            <ListItemButton divider>
+        <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
+            <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
+                <ListItemText
+                sx={{ flex: 'revert', paddingRight: '5px' }}
+                primary={props.thread.likes.length}
+                secondary={createUpvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+
+                <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
+                primary={props.thread.dislikes.length}
+                secondary={createDownvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                {
+                    auth.user._id === user.id ? (
+                        <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
+                        primary={'Delete'}
+                        secondary={createDeleteButton()}
+                        primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                        secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                    ) : (
+                        <></>
+                    )
+                }
+            </ButtonGroup>
+            <ListItemButton divider
+            sx={{ width: auth.user._id === user.id ? 'calc(100% - 120px)' : 'calc(100% - 56px)' }}>
                 <ListItemAvatar>
-                    <Avatar alt={username} src={currentUserAvatar} sx={{width: '100px', height: '100px'}}>{currentUserAvatar ? '': username}</Avatar>
+                    <Avatar alt={username}
+                    src={avatar}
+                    sx={{ width: '100px', height: '100px', fontSize: '250%' }}>
+                        {avatar}
+                    </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={props.thread.threadName} secondary={props.thread.threadText} primaryTypographyProps={{style: {color: 'white', fontSize:'3em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'1em'}}}/>
+                <ListItemText primary={
+                    <>
+                        <Typography sx={primaryTypographyProps}>
+                            {props.thread.threadName}
+                        </Typography>
+                        <Typography sx={{ color: '#a8a8a8' }}>
+                            by: {user.first} {user.last}
+                        </Typography>
+                    </>
+                } secondary={props.thread.threadText}
+                primaryTypographyProps={{ style: { color: 'white' } }}
+                secondaryTypographyProps={{ style: secondaryTypographyProps }} />
             </ListItemButton>
             <ReplyDivider flexItem />
-            <ReplyTextField label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>
+            <ReplyTextField label="Write a reply..."
+            id="reply_field"
+            variant="filled"
+            InputLabelProps={{ style: { color: 'white' } }}
+            InputProps={{ endAdornment: sendButton() }} />
             {
-                replies.length < 1 ? <></> : (
+                threadreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
                         {
-                            replies.map((reply, index)=>{
+                            threadreplies.map((reply, index)=>{
                                 return (
-                                    <BetterReplyButton divider >
+                                    <BetterReplyButton divider onClick={() => {
+                                            setReplyingTo(reply._id)
+                                        }}>
                                         <ListItemAvatar>
-                                            <Avatar alt={reply.id} src={reply.id} sx={{width: '30px', height: '30px'}}>{reply.id}</Avatar>
+                                            <Avatar alt={reply.id}
+                                            src={reply.id}
+                                            sx={{ width: '30px', height: '30px' }}>
+                                                {reply.id}
+                                            </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary={reply.replyMsg} secondary={reply.sentAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
+                                        <ListItemText
+                                        primary={reply.replyMsg}
+                                        secondary={reply.sentAt}
+                                        primaryTypographyProps={{ style: { color: 'white', fontSize: '0.7em' } }}
+                                        secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.5em' } }} />
                                     </BetterReplyButton>
                                 );
                             })

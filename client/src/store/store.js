@@ -27,7 +27,8 @@ export const GlobalStoreActionType = {
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
     ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET",
     SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT",
-    SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES'
+    SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
+    CLEAR_STORE: "CLEAR_STORE",
 }
 
 
@@ -236,7 +237,7 @@ function GlobalStoreContextProvider(props) {
 
             case GlobalStoreActionType.SET_CURRENT_TILE: {
                 return setStore({
-                    ...store,   
+                    ...store,
                     currentTile: payload.currentTile
                 })
             }
@@ -263,11 +264,43 @@ function GlobalStoreContextProvider(props) {
                 })
             }
 
+
             case GlobalStoreActionType.SET_CURRENT_MAP_TILES: {
                 return setStore({
                     ...store,
                     currentMapTiles: payload.currentMapTiles
                 })
+            }
+
+            case GlobalStoreActionType.CLEAR_STORE: {
+                return setStore({
+                    publicProjects: [],
+                    projectComments: [],
+                    currentProject: null,
+                    userMaps: [],
+                    collabMaps: [],
+                    userAndCollabMaps: [],
+                    librarySortOption: "",
+                    librarySortDirection: "",
+                    projSortOpt: "",
+                    projSortDir: "",
+                    sortedLibraryList: [],
+                    currentPage: "",
+                    mapOwner: null,
+                    searchName: "",
+                    pagination: {
+                        page: 1,
+                        limit: 10,
+                        stopPagination: false,
+                        sort: 'date',
+                        order: -1
+                    },
+                    primaryColor: '#000000',
+                    secondaryColor: '#ffffff',
+                    tilesetTool: 'brush',
+                    currentTileset: null,
+                    currentTile: null
+                });
             }
 
             default:
@@ -279,7 +312,6 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
-
 
     store.createNewComment = async function (projectId, ownerId, text) {
         console.log("handling create comment in store...")
@@ -1266,15 +1298,15 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    // store.getUserByUsername = async function (username, setOwnerCallback) {
-    //     const response = await api.getUserByUsername(id);
-    //     //console.log(response)
-    //     if (response.status === 200) {
-    //         //console.log(response.data)
-    //         setOwnerCallback(response.data.user)
-    //         //return response.data.user;
-    //     }
-    // }
+    store.getUserByUsername = async function (username, setOwnerCallback) {
+        const response = await api.getUserByUsername(username);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    }
 
     store.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
         let owner = null;
@@ -1336,12 +1368,12 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    store.addMapCollaborator= async function (mapId, collaboratorId) {
-       let payload = {
+    store.addMapCollaborator = async function (mapId, collaboratorId) {
+        let payload = {
             mapId: mapId,
             requesterId: collaboratorId
         }
-        
+
         const response = await api.addMapCollaborator(payload);
         if (response.data.success) {
             storeReducer({
@@ -1358,9 +1390,9 @@ function GlobalStoreContextProvider(props) {
         else {
             console.log("API FAILED TO ADD COLLABORATOR")
         }
-        
+
     }
-    
+
     store.setPrimaryColor = async function (newPrimaryColor) {
         console.log("Setting primary color to " + newPrimaryColor)
         storeReducer({
@@ -1444,14 +1476,14 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.removeMapCollaborator = async function (mapId, collaboratorId) {
-       let payload = {
+        let payload = {
             mapId: mapId,
             requesterId: collaboratorId
         }
-        
+
         const response = await api.removeMapCollaborator(payload);
         if (response.data.success) {
-            
+
             let currentMap = response.data.map
             //console.log(newMap)
             storeReducer({
@@ -1464,7 +1496,7 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: store.publicProjects
                 }
             })
-            //store.setPageToMapEditor(currentMap)
+            //store.changePageToMapEditor(currentMap)
             console.log(store.currentProject)
             return currentMap;
         }
@@ -1478,7 +1510,7 @@ function GlobalStoreContextProvider(props) {
             mapId: mapId,
             requesterId: collaboratorId
         }
-        
+
         const response = await api.addTilesetCollaborator(payload);
         if (response.data.success) {
             storeReducer({
@@ -1498,14 +1530,14 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.removeTilesetCollaborator = async function (mapId, collaboratorId) {
-       let payload = {
+        let payload = {
             mapId: mapId,
             requesterId: collaboratorId
         }
-        
+
         const response = await api.removeTilesetCollaborator(payload);
         if (response.data.success) {
-            
+
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
@@ -1551,7 +1583,7 @@ function GlobalStoreContextProvider(props) {
 
     store.loadTileset = async function (id) {
         const response = await api.getTilesetById(id)
-    
+
         if (response.status === 200) {
             const tile_res = await api.getTileById(response.data.tileset.tiles[0])
             let tile;
@@ -1612,6 +1644,13 @@ function GlobalStoreContextProvider(props) {
         }
         console.log(query)
         const response = await api.updateTileset(payload, query)
+    }
+
+    store.reset = function () {
+        storeReducer({
+            type: GlobalStoreActionType.CLEAR_STORE,
+            payload: null
+        });
     }
 
     return (

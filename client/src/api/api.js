@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    // baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 // Comments
@@ -51,6 +51,14 @@ export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 export const getUserByUsername = (username) => api.get(`/users/username/${username}/`)
 export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
 export const getAllUsers = () => api.get(`/users/all/`)
+export const changePassword = (payload) => api.post(`/changePassword/`, payload)
+export const forgotPassword = (payload) => api.get(`/forgotPassword/`, {params: payload})
+export const resetPassword = (payload) => api.post(`/resetPassword/`, payload)
+export const updateUser = (payload) => api.post(`/updateUser/`, payload)
+export const uploadImage = (payload) => api.post(`/uploadImage/`, payload)
+export const deleteImage = (payload) => api.post(`/deleteImage/`, payload)
+
+
 
 // Pagination
 export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
@@ -59,6 +67,21 @@ export const changePage = (page, limit) => api.get(`/changePage`, page, {params:
 export const requestMapEdit = (payload) => api.post(`/notification/requestMapEdit`, payload)
 export const requestTilesetEdit = (payload) => api.post(`/notification/requestTilesetEdit`, payload)
 
+// COMMUNITY
+// Threads
+export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
+export const getAllReplies = () => api.get(`/thread/getAllReplies/`)
+export const addReply = (payload) => api.post(`/thread/addReply/`, payload)
+export const removeReply = (payload) => api.post(`/thread/deleteReply/`, payload)
+export const getReplybyId = (id) => api.get(`/thread/getReplybyId/${id}`)
+
+export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
+export const registerLike = (payload) => api.post(`/thread/like`, payload)
+export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
+export const createThread = (payload) => api.post(`/thread/newThread`, payload)
+export const deleteThread = (payload) => api.post(`/thread/deleteThread`,payload)
+export const getPostsByUser = (payload) => api.post(`/thread/allPosts`, payload)
+export const getThreadById = (payload) => api.get(`/thread/${payload}`)
 
 const apis = {
     getAllPublicProjects,
@@ -91,12 +114,31 @@ const apis = {
     logoutUser,
     getUserById,
     getAllUsers,
+    getUserByUsername,
+    changePassword,
+    updateUser,
+    forgotPassword,
+    resetPassword,
+    uploadImage,
+    deleteImage,
 
     changePage,
     requestMapEdit,
     requestTilesetEdit,
     addTilesetCollaborator,
-    removeTilesetCollaborator
+    removeTilesetCollaborator,
+
+    getAllThreads,
+    addReply,
+    getThreadById,
+    getPopularThreads,
+    getPostsByUser,
+    registerLike,
+    registerDislike,
+    getAllReplies,
+    getReplybyId,
+    createThread,
+    deleteThread,
 }
 
 export default apis
