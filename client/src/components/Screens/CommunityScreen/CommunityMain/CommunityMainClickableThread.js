@@ -5,6 +5,7 @@ import { styled } from '@mui/material';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import AuthContext from '../../../../auth/auth';
+import ReactTimeAgo from 'react-time-ago';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
 
@@ -132,7 +133,9 @@ export default function CommunityMainClickableThread(props) {
 
                     <Typography
                     sx={{ color: '#a8a8a8' }}>
-                        by: {user.first} {user.last}
+                        by: {user.first} {user.last}, <ReactTimeAgo
+                                                        date={props.thread.createdAt}
+                                                        locale="en-US" timeStyle='twitter-minute-now'/>
                     </Typography>
                 </>}
                 secondary={props.thread.threadText}
