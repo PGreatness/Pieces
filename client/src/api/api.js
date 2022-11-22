@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    // baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 // Comments
@@ -59,6 +59,16 @@ export const changePage = (page, limit) => api.get(`/changePage`, page, {params:
 export const requestMapEdit = (payload) => api.post(`/notification/requestMapEdit`, payload)
 export const requestTilesetEdit = (payload) => api.post(`/notification/requestTilesetEdit`, payload)
 
+// COMMUNITY
+// Threads
+export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
+export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
+export const registerLike = (payload) => api.post(`/thread/like`, payload)
+export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
+export const createThread = (payload) => api.post(`/thread/newThread`, payload)
+export const deleteThread = (payload) => api.post(`/thread/deleteThread`,payload)
+export const getPostsByUser = (payload) => api.post(`/thread/allPosts`, payload)
+export const getThreadById = (payload) => api.get(`/thread/${payload}`)
 
 const apis = {
     getAllPublicProjects,
@@ -96,7 +106,16 @@ const apis = {
     requestMapEdit,
     requestTilesetEdit,
     addTilesetCollaborator,
-    removeTilesetCollaborator
+    removeTilesetCollaborator,
+
+    getAllThreads,
+    getThreadById,
+    getPopularThreads,
+    getPostsByUser,
+    registerLike,
+    registerDislike,
+    createThread,
+    deleteThread,
 }
 
 export default apis
