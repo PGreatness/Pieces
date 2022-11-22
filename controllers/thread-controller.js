@@ -246,6 +246,7 @@ var getAllThreads = async (req, res) => {
 }
 
 getAllReplies = async (req, res) => {
+    console.log("Getting replies")
     const rangeReplies = await Reply.find({})
     return res.status(200).json({
         success: true,
@@ -470,10 +471,7 @@ var dislikeThread = async (req, res) => {
 
 addReply = async (req, res) => {
     // console.log("hello");
-    const { replyingTo, senderId, replyMsg } = req.body;
-    console.log(replyingTo)
-    console.log(senderId)
-    console.log(replyMsg)
+    const { replyingTo, senderId, replyMsg, parentThread } = req.body;
     if (!replyingTo || !senderId || !replyMsg) {
         return res.status(400).json({
             success: false,
@@ -491,39 +489,45 @@ addReply = async (req, res) => {
         isFirstLevel: false,
         replies: [],
     });
-    newReply.save();
+    newReply.save().then((reply, err) => {
+        if (err) {
+            console.log(err)
+            return
+        }
+        let parentThreadObject = mongoose.Types.ObjectId(parentThread)
+        Thread.findById({ _id: parentThreadObject }, (err, thread) => {
+
+            // Checks if Thread with given id exists
+            if (err) {
+                return res.status(404).json({
+                    err,
+                    message: 'Thread not found',
+                })
+            }
     
-    // Thread.findById({ _id: req.params.id }, (err, thread) => {
-
-    //     // Checks if Thread with given id exists
-    //     if (err) {
-    //         return res.status(404).json({
-    //             err,
-    //             message: 'Thread not found',
-    //         })
-    //     }
-
-    //     // Add reply to Thread
-    //     const { reply } = body._id
-    //     thread.replies.push(reply)
-
-    //     thread
-    //         .save()
-    //         .then(() => {
-    //             return res.status(201).json({
-    //                 success: true,
-    //                 thread: thread,
-    //                 message: 'Thread was successfully updated.'
-    //             })
-    //         })
-    //         .catch(error => {
-    //             return res.status(400).json({
-    //                 error,
-    //                 message: 'Thread was not updated.'
-    //             })
-    //         })
-
-    // })
+            // Add reply to Thread
+            const { _id } = reply
+            console.log(reply)
+            thread.replies.push(_id)
+    
+            thread
+                .save()
+                .then(() => {
+                    return res.status(201).json({
+                        success: true,
+                        thread: thread,
+                        message: 'Thread was successfully updated.'
+                    })
+                })
+                .catch(error => {
+                    return res.status(400).json({
+                        error,
+                        message: 'Thread was not updated.'
+                    })
+                })
+    
+        })
+    });
 }
 
 removeReply = async (req, res) => {

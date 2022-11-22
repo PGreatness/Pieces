@@ -219,12 +219,13 @@ const CommunityStoreContextProvider = (props) => {
         return reply.data.reply;
     }
 
-    communityStore.addReply = async function (replyToId, ownerId, text) {
+    communityStore.addReply = async function (replyToId, ownerId, text, parentThread) {
         console.log("handling add reply in store...")
         let payload = {
             replyingTo: replyToId,
             senderId: ownerId,
-            replyMsg: text
+            replyMsg: text,
+            parentThread: parentThread
         };
         let response = await api.addReply(payload)
         console.log(response)
