@@ -532,58 +532,108 @@ addReply = async (req, res) => {
 
 removeReply = async (req, res) => {
 
-    const body = req.body
-    if (!body) {
-        console.log(".... bruh")
+    const { replyId, threadId } = req.body;
+
+    if (!replyId || !threadId) {
         return res.status(400).json({
             success: false,
-            error: "No body was provided by the client."
+            error: "Missing required IDs"
         })
     }
 
-    Thread.findById({ _id: req.params.id }, (err, thread) => {
+    var replyToDelete = mongoose.Types.ObjectId(replyId);
+    var threadDeleteFrom = mongoose.Types.ObjectId(threadId);
+    
+    const foundReply = await Reply.findById(replyToDelete);
+    const foundThread = await Thread.findById(threadDeleteFrom);
 
-        const { replyId } = req.body
+    if (!foundReply) {
+        return res.status(400).json({
+            success: false,
+            message: "Reply does not exist"
+        })
+    }
 
-        // Checks if Thread with given id exists
-        if (err) {
-            return res.status(404).json({
-                err,
-                message: 'Thread not found',
+    if (!foundThread) {
+        return res.status(400).json({
+            success: false,
+            message: "Thread does not exist"
+        })
+    }
+
+    foundThread.replies.remove(foundReply._id);
+
+    foundThread.save()
+        .then((map) => {
+            return res.status(200).json({
+                success: true,
+                message: "Reply removed from thread",
+                map: map
             })
-        }
-
-        // Remove reply from Thread
-        let replies = thread.replies
-        for (let i = 0; i < replies.length; i++) {
-            let reply = replies[i]
-            if (reply._id == replyId) {
-                replies.splice(i, 1)
-                break;
-            }
-        }
-
-        // Save Thread with new replies
-        thread.replies = replies
-        thread
-            .save()
-            .then(() => {
-                return res.status(201).json({
-                    success: true,
-                    thread: thread,
-                    message: 'Thread was successfully updated.'
-                })
+        })
+        .catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Error removing reply from thread",
+                error: err
             })
-            .catch(error => {
-                return res.status(400).json({
-                    error,
-                    message: 'Thread was not updated.'
-                })
-            })
-
-    })
-
+        })
 }
+
+// removeReply = async (req, res) => {
+
+//     const body = req.body
+//     if (!body) {
+//         console.log(".... bruh")
+//         return res.status(400).json({
+//             success: false,
+//             error: "No body was provided by the client."
+//         })
+//     }
+
+//     Thread.findById({ _id: req.params.id }, (err, thread) => {
+
+//         const { replyId } = req.body
+
+//         // Checks if Thread with given id exists
+//         if (err) {
+//             return res.status(404).json({
+//                 err,
+//                 message: 'Thread not found',
+//             })
+//         }
+
+//         // Remove reply from Thread
+//         let replies = thread.replies
+//         for (let i = 0; i < replies.length; i++) {
+//             let reply = replies[i]
+//             if (reply._id == replyId) {
+//                 replies.splice(i, 1)
+//                 break;
+//             }
+//         }
+
+//         // Save Thread with new replies
+//         thread.replies = replies
+//         thread
+//             .save()
+//             .then(() => {
+//                 return res.status(201).json({
+//                     success: true,
+//                     thread: thread,
+//                     message: 'Thread was successfully updated.'
+//                 })
+//             })
+//             .catch(error => {
+//                 return res.status(400).json({
+//                     error,
+//                     message: 'Thread was not updated.'
+//                 })
+//             })
+
+//     })
+
+// }
 
 getReplybyId = async (req, res) => {
     const savedReply = await Reply.findById(req.params.id);

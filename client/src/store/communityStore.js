@@ -242,6 +242,21 @@ const CommunityStoreContextProvider = (props) => {
         }
     }
 
+    communityStore.deleteReply = async function (replyId, threadId) {
+        let payload = {
+            replyId: replyId,
+            threadId: threadId
+        }
+
+        const response = await api.removeReply(payload);
+        if (response.data.success) {
+
+        }
+        else {
+            console.log("API FAILED TO REMOVE REPLY")
+        }
+    }
+
     return (
         <CommunityStoreContext.Provider value={{ communityStore }}>
             {props.children}

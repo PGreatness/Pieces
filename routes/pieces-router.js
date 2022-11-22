@@ -86,7 +86,7 @@ router.post('/thread/allPosts', ThreadController.getPostsByUser)
 router.get('/thread/:id', ThreadController.getThreadById)
 
 router.post('/thread/addReply/', ThreadController.addReply)
-// router.post('/thread/deleteReply/', ThreadController.deleteReply)
+router.post('/thread/deleteReply/', ThreadController.removeReply)
 router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
 router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
 
