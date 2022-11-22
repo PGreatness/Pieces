@@ -134,9 +134,9 @@ var updateTile = async (req, res) => {
             });
         }
 
-        const { tileId, userId, tileData } = req.body;
+        let { tileId, userId, tileData } = req.body;
 
-        const userTile = await tile.findOne({ _id: tileId });
+        let userTile = await tile.findOne({ _id: tileId });
         if (!userTile) {
             return res.status(400).json({
                 success: false,
@@ -144,7 +144,7 @@ var updateTile = async (req, res) => {
             });
         }
 
-        const userTileset = await tileset.findOne({ _id: userTile.tilesetId });
+        let userTileset = await tileset.findOne({ _id: userTile.tilesetId });
         if (userTileset.ownerId.toString() != userId.toString()) {
             return res.status(400).json({
                 success: false,

@@ -70,18 +70,20 @@ export default function TilesetCanvas() {
         }
     }
 
-    const handleClickPixel = (e) => {
+    const handleClickPixel = async (e) => {
 
         let tile = currentTile
         switch (store.tilesetTool) {
             case 'brush':
                 tile.tileData[currentPixel[0] * width + currentPixel[1]] = store.primaryColor
                 setCurrentTile(tile)
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
                 break
 
             case 'eraser':
                 tile.tileData[currentPixel[0] * width + currentPixel[1]] = ''
                 setCurrentTile(tile)
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
                 break
 
             case 'dropper':
@@ -91,6 +93,7 @@ export default function TilesetCanvas() {
             case 'bucket':
                 let originalColor = currentTile.tileData[currentPixel[0] * width + currentPixel[1]]
                 fillHelper(currentPixel[0], currentPixel[1], originalColor)
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
                 break
 
         }
@@ -119,7 +122,7 @@ export default function TilesetCanvas() {
                 <Redo className='toolbar_mui_icon'/>
             </Button>
 
-            <Grid container direction='row' rowSpacing={0} columns={width} bgcolor='#000000' style={{position: 'absolute', height: '65vh', width: '65vh', top: '50%', left: '50%', transform: 'translate(-50%, -60%)'}}>
+            <Grid container direction='row' id='tileset-canvas-grid' rowSpacing={0} columns={width} bgcolor='#000000' style={{position: 'absolute', height: '65vh', width: '65vh', top: '50%', left: '50%', transform: 'translate(-50%, -60%)'}}>
                 {currentTile && currentTile.tileData.map((pixel, index) => (
                     pixel === ''
                         ? <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', height:`calc(100% / ${width}`}} bgcolor='#fff'></Grid>

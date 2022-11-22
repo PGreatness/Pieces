@@ -1,23 +1,57 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Stack } from '@mui/system';
-import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
-import { Brush, HighlightAlt, OpenWith, FormatColorFill, PersonRemove, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward,Add, Visibility} from '@mui/icons-material'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEraser } from '@fortawesome/free-solid-svg-icons'
-import { TabPanel, TabContext, TabList} from '@mui/lab'
+import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
+import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility} from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
+import html2canvas from "html2canvas";
+
 
 export default function TilesetRightBar() {
 
+  const { store } = useContext(GlobalStoreContext)
   const [ value, setValue ] = useState(0);
   const [ openImportTileset, setOpenImportTileset ] = useState(false);
   const [ openImportTile, setOpenImportTile ] = useState(false);
   const [ openExportTileset, setOpenExportTileset ] = useState(false);
   const [ openUserSettings, setOpenUserSettings ] = useState(false);
   const [ editMode, setEditMode ] = useState(false);
-  const { store } = useContext(GlobalStoreContext)
+  const [ currentTile, setCurrentTile ] = useState(store.currentTile)
+
+  var ndarray = require("ndarray")
+  var zeros = require("zeros")
+
+  useEffect(() => {
+    setCurrentTile(store.currentTile)
+  }, [store.currentTile]) 
+
+  //let pixels = []
+  // var savePixels = require("save-pixels")
+
+  // useEffect(() => {
+  //   if (store.currentTile) {
+  //     tileData = store.currentTile.tileData
+  //     console.log("Save Pixels Debugs")
+  //     console.log(store.currentTile)
+  //     let height = store.currentTile.height
+
+  //     // let pixels = ndarray(new Array(tileData), [height, height])
+  //     let prev = document.getElementById('tileset-canvas-grid')
+  //     prev.style.height = '100%'
+  //     prev.style.width = '100%' 
+  //     setPreview(prev)
+
+  //     let previewWindow = document.getElementById('preview-window')
+  //     previewWindow.appendChild(preview)
+
+  //   }
+  // }, [store.currentTile])
+
+  if (store.currentTile) {
+    console.log("Store tile data")
+    console.log(store.currentTile.tileData)
+  }
 
   const startEditing = () => {
     setEditMode(true)
@@ -101,9 +135,18 @@ export default function TilesetRightBar() {
         {value === 0 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
             <Box bgcolor="#ffffff" className="previewWindow">
-              <Stack direction='column' textAlign='center'>
+              <Stack id='preview-window' direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
-                <img src={require('../images/dummyTilePreview.png')} id="map_preview"/>
+                {currentTile
+                  ? (<Grid container direction='row' rowSpacing={0} style={{height:'250px', width:'250px'}} columns={currentTile.width} bgcolor='#000000'>
+                      {currentTile.tileData.map((pixel, index) => (
+                        pixel === ''
+                        ? <Grid item xs={1} style={{height:`calc(100% / ${currentTile.width}`}} bgcolor='#fff'></Grid>
+                        : <Grid item xs={1} style={{height:`calc(100% / ${currentTile.width}`}} bgcolor={pixel}></Grid>
+                      ))}
+                    </Grid>)
+                  : <div></div>
+                }
               </Stack>
             </Box>
           </Box>
