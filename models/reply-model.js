@@ -1,10 +1,6 @@
 const { model, Schema, ObjectId } = require("mongoose");
 
 const repliesSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
     senderId: {
         type: ObjectId,
         required: true,
@@ -13,18 +9,21 @@ const repliesSchema = new Schema({
         type: String,
         required: true,
     },
-    sentAt: {
-        type: String,
-        required: true,
-    },
     replyingTo: {
         type: ObjectId,
         required: true,
     },
-    // replies: {
-    //     type: [repliesSchema],
-    //     required: true
-    // }
+    isFirstLevel: {
+        type: Boolean,
+        required: true,
+    },
+    replies: {
+        type: [ObjectId],
+        required: true
+    }
+},
+{
+    timestamps: true,
 });
 
 const Reply = model("Reply", repliesSchema);

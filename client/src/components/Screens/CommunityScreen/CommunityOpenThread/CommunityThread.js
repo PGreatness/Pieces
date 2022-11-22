@@ -31,6 +31,7 @@ export default function CommunityThread(props) {
 
     const { communityStore } = useContext(CommunityStoreContext);
     const { auth } = useContext(AuthContext);
+    const [replyingTo, setReplyingTo] = useState(props.thread.senderId);
     const [username, setUsername] = useState('');
     const [avatar, setAvatar] = useState('');
     const [user, setUser] = useState({
@@ -42,6 +43,30 @@ export default function CommunityThread(props) {
         liked: props.thread.likes.includes(auth.user._id),
         disliked: props.thread.dislikes.includes(auth.user._id),
     });
+
+    const [threadreplies, setReplies] = useState([]);
+
+    const getReply = async (replies) => {
+        // let replyId = replies;
+        // let result = await communityStore.getReplybyId(replyId);
+        let results = []
+        for(let i = 0; i < replies.length; i++) {
+            let result = await communityStore.getReplybyId(replies[i])
+            results.push(result)
+        }
+        return results;
+    }
+
+    // communityStore.loadReplies();
+    const firstlevelreplies = props.thread.replies;
+    console.log(firstlevelreplies);
+
+    useEffect(() => {
+        getReply(firstlevelreplies).then((something) => {
+            console.log(something)
+            setReplies(something)
+        })
+    }, [communityStore.replies]);
 
     useEffect(() => {
         findUserAvatar().then((res) => {
@@ -179,13 +204,27 @@ export default function CommunityThread(props) {
         return (
             <InputAdornment position="end">
                 <ListItemButton>
-                    <CommentIcon fill='white' sx={{ color: 'white' }} />
+                    <CommentIcon fill='white' sx={{color:'white'}} onClick={() => {handleAddReply()}}/>
                 </ListItemButton>
             </InputAdornment>
         );
     }
 
-    const replies = props.thread.replies;
+    const handleAddReply = async() => {
+        let text = document.getElementById('reply_field').value
+        // let senderId = '6366fe474c670183dd2bcae5'
+        let senderId = auth.user?._id
+
+        if (text === "") {
+            console.log("Empty text field.")
+        }
+        else {
+            let response = await communityStore.addReply(replyingTo, senderId, text)
+            console.log(response)
+            document.getElementById('reply_field').value = "";
+        }
+    }
+    
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
@@ -237,16 +276,19 @@ export default function CommunityThread(props) {
             </ListItemButton>
             <ReplyDivider flexItem />
             <ReplyTextField label="Write a reply..."
+            id="reply_field"
             variant="filled"
             InputLabelProps={{ style: { color: 'white' } }}
             InputProps={{ endAdornment: sendButton() }} />
             {
-                replies.length < 1 ? <></> : (
+                threadreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
                         {
-                            replies.map((reply, index) => {
+                            threadreplies.map((reply, index)=>{
                                 return (
-                                    <BetterReplyButton divider >
+                                    <BetterReplyButton divider onClick={() => {
+                                            setReplyingTo(reply._id)
+                                        }}>
                                         <ListItemAvatar>
                                             <Avatar alt={reply.id}
                                             src={reply.id}

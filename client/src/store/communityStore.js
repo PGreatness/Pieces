@@ -8,6 +8,8 @@ export const CommunityStoreContext = createContext({});
 export const CommunityStoreActionType = {
     GET_ALL_THREADS: 'GET_ALL_THREADS',
     SET_TOP_THREADS: 'SET_TOP_THREADS',
+    REGISTER_LIKE: 'REGISTER_LIKE',
+    LOAD_REPLIES: 'LOAD_REPLIES',
     SET_SELECTED_INDEX: 'SET_SELECTED_INDEX',
 }
 
@@ -17,6 +19,7 @@ const CommunityStoreContextProvider = (props) => {
     const [communityStore, setCommunityStore] = useState({
         ALL_THREADS: [],
         TOP_THREADS: [],
+        replies: [],
         SELECTED_INDEX: -1,
     });
 
@@ -37,12 +40,16 @@ const CommunityStoreContextProvider = (props) => {
                     ...communityStore,
                     TOP_THREADS: payload,
                 });
-            case CommunityStoreActionType.SET_SELECTED_INDEX:
+            case CommunityStoreActionType.LOAD_REPLIES: 
+                return setCommunityStore({
+                    ...communityStore,
+                    replies: payload
+                });
+            case CommunityStoreActionType.SET_SELECTED_INDEX: 
                 return setCommunityStore({
                     ...communityStore,
                     SELECTED_INDEX: payload,
                 });
-
             default:
                 return communityStore;
         }
@@ -189,6 +196,50 @@ const CommunityStoreContextProvider = (props) => {
     }
 
 
+    communityStore.loadReplies = async function () {
+
+        // Ahnaf is writing the getAllPublicProjects in the backend
+        const response = await api.getAllReplies();
+        console.log(response);
+        if (response.data.success) {
+            let replies = response.data.replies;
+            communityReducer({
+                type: CommunityStoreActionType.LOAD_REPLIES,
+                payload: replies
+            });
+        } else {
+            console.log("API FAILED TO GET THE REPLIES");
+        }
+
+    }
+
+    communityStore.getReplybyId = async (id) => {
+        const reply = await api.getReplybyId(id);
+        console.log(reply);
+        return reply.data.reply;
+    }
+
+    communityStore.addReply = async function (replyToId, ownerId, text) {
+        console.log("handling add reply in store...")
+        let payload = {
+            replyingTo: replyToId,
+            senderId: ownerId,
+            replyMsg: text
+        };
+        let response = await api.addReply(payload)
+        console.log(response)
+
+        let response1 = await api.getAllReplies();
+        if (response1.data.success) {
+            let replies = response1.data.replies;
+            communityReducer({
+                type: CommunityStoreActionType.LOAD_REPLIES,
+                payload: replies
+            });
+        } else {
+            console.log("API FAILED TO GET THE REPLIES");
+        }
+    }
 
     return (
         <CommunityStoreContext.Provider value={{ communityStore }}>

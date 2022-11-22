@@ -51,15 +51,12 @@ const App = () => {
         <AuthContextProvider>
           <GlobalStoreContextProvider>
             <CommunityStoreContextProvider>
-
               {
                 location.includes('explore') || location.includes('library') ? <CreateButton setLoc={setLocation} /> : <></>
               }
               <div className='app-nav-social-container'>
                 <Navbar changeLoc={setLocation} reset={location.includes('reset-password') ? true : false} />
-                {
-                  buildSidebar()
-                }
+                {buildSidebar()}
               </div>
               <div className={(location === '/' || location.includes('profile') || location.includes('reset-password') ||
                 location.includes('map') || location.includes('tileset')) ? 'contentBody-nosocial' : "contentBody"}>

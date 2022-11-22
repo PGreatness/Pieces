@@ -245,6 +245,15 @@ var getAllThreads = async (req, res) => {
     })
 }
 
+getAllReplies = async (req, res) => {
+    const rangeReplies = await Reply.find({})
+    return res.status(200).json({
+        success: true,
+        count: rangeReplies.length,
+        replies: rangeReplies
+    });
+}
+
 var getThreadById = async (req, res) => {
     if (!req.params.id) {
         return res.status(400).json({
@@ -336,6 +345,7 @@ var getPostsByUser = async (req, res) => {
         threads: threads,
         replies: replies
     })
+
 }
 
 var likeThread = async (req, res) => {
@@ -458,54 +468,69 @@ var dislikeThread = async (req, res) => {
     });
 }
 
-addReplyToThread = async (req, res) => {
-
-    const body = req.body
-    if (!body) {
+addReply = async (req, res) => {
+    // console.log("hello");
+    const { replyingTo, senderId, replyMsg } = req.body;
+    console.log(replyingTo)
+    console.log(senderId)
+    console.log(replyMsg)
+    if (!replyingTo || !senderId || !replyMsg) {
         return res.status(400).json({
             success: false,
             error: "No body was provided by the client."
         })
     }
+    const body = req.body;
 
-    Thread.findById({ _id: req.params.id }, (err, thread) => {
+    let sender = mongoose.Types.ObjectId(senderId)
+    let replying = mongoose.Types.ObjectId(replyingTo)
+    const newReply = new Reply({
+        replyingTo: replying,
+        senderId: sender,
+        replyMsg: replyMsg,
+        isFirstLevel: false,
+        replies: [],
+    });
+    newReply.save();
+    
+    // Thread.findById({ _id: req.params.id }, (err, thread) => {
 
-        // Checks if Thread with given id exists
-        if (err) {
-            return res.status(404).json({
-                err,
-                message: 'Thread not found',
-            })
-        }
+    //     // Checks if Thread with given id exists
+    //     if (err) {
+    //         return res.status(404).json({
+    //             err,
+    //             message: 'Thread not found',
+    //         })
+    //     }
 
-        // Add reply to Thread
-        const { reply } = req.body
-        thread.replies.push(reply)
+    //     // Add reply to Thread
+    //     const { reply } = body._id
+    //     thread.replies.push(reply)
 
-        thread
-            .save()
-            .then(() => {
-                return res.status(201).json({
-                    success: true,
-                    thread: thread,
-                    message: 'Thread was successfully updated.'
-                })
-            })
-            .catch(error => {
-                return res.status(400).json({
-                    error,
-                    message: 'Thread was not updated.'
-                })
-            })
+    //     thread
+    //         .save()
+    //         .then(() => {
+    //             return res.status(201).json({
+    //                 success: true,
+    //                 thread: thread,
+    //                 message: 'Thread was successfully updated.'
+    //             })
+    //         })
+    //         .catch(error => {
+    //             return res.status(400).json({
+    //                 error,
+    //                 message: 'Thread was not updated.'
+    //             })
+    //         })
 
-    })
-
+    // })
 }
 
-removeReplyFromThread = async (req, res) => {
+removeReply = async (req, res) => {
 
     const body = req.body
     if (!body) {
+        console.log(".... bruh")
         return res.status(400).json({
             success: false,
             error: "No body was provided by the client."
@@ -556,10 +581,22 @@ removeReplyFromThread = async (req, res) => {
 
 }
 
+getReplybyId = async (req, res) => {
+    const savedReply = await Reply.findById(req.params.id);
+    console.log(savedReply)
+    return res.status(200).json({
+        reply: savedReply
+    });
+}
+
 module.exports = {
     createThread,
     deleteThread,
     getAllThreads,
+    getAllReplies,
+    getReplybyId,
+    addReply,
+    removeReply,
     getThreadById,
     getPostsByUser,
     likeThread,

@@ -58,7 +58,7 @@ function GlobalStoreContextProvider(props) {
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
         currentTileset: null,
-        currentTile: null
+        currentTile: null,
     });
 
 
@@ -256,7 +256,6 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
-
 
     store.createNewComment = async function (projectId, ownerId, text) {
         console.log("handling create comment in store...")

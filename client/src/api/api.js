@@ -70,6 +70,11 @@ export const requestTilesetEdit = (payload) => api.post(`/notification/requestTi
 // COMMUNITY
 // Threads
 export const getAllThreads = (query) => api.get(`/thread/all`, {params: query})
+export const getAllReplies = () => api.get(`/thread/getAllReplies/`)
+export const addReply = (payload) => api.post(`/thread/addReply/`, payload)
+export const removeReply = (payload) => api.post(`/thread/deleteReply/`, payload)
+export const getReplybyId = (id) => api.get(`/thread/getReplybyId/${id}`)
+
 export const getPopularThreads = (query) => api.get(`/thread/all`, {params: query})
 export const registerLike = (payload) => api.post(`/thread/like`, payload)
 export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
@@ -124,11 +129,14 @@ const apis = {
     removeTilesetCollaborator,
 
     getAllThreads,
+    addReply,
     getThreadById,
     getPopularThreads,
     getPostsByUser,
     registerLike,
     registerDislike,
+    getAllReplies,
+    getReplybyId,
     createThread,
     deleteThread,
 }
