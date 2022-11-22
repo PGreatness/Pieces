@@ -67,6 +67,7 @@ const App = () => {
                   <Route path="/explore/" element={<ExploreScreen setLoc={setLocation} />} />
                   <Route path="/library/" element={<LibraryScreen setLoc={setLocation} />} />
                   <Route path="/community/" element={<CommunityScreen />} />
+
                   <Route
                     path="/tileset/:id"
                     element={<TilesetEditor />}
