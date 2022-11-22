@@ -1,0 +1,92 @@
+.community-screen {
+    background-color: #1F293A;
+    height: 100%;
+    overflow-y: auto;
+    width: calc(100% - 20vw);
+}
+
+.create-thread-title {
+    color: #FFFFFF;
+    font-size: 2.25rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-right: 0.5ch;
+}
+
+.create-thread-set-title {
+    display: flex;
+    align-items: baseline;
+    width: calc(100% - 20vw);
+    padding-left: 5vw;
+}
+
+.create-thread-title-input {
+    border: 1px solid #1F293A;
+    border-radius: 5px;
+    color: #FFFFFF;
+    height: 50px;
+    margin: 10px 0;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.create-thread-title-input input {
+    background-color: #323b4a;
+    color: white;
+}
+
+.create-thread-title-input input::placeholder {
+    color: white;
+}
+
+.create-thread-set-content {
+    display: flex;
+    align-items: flex-start;
+    width: calc(100% - 20vw);
+    padding-left: 5vw;
+    padding-top: 3rem;
+    flex-direction: column;
+}
+
+.create-thread-content {
+    color: #FFFFFF;
+    font-size: 2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-right: 0.5ch;
+}
+
+.create-thread-content-input {
+    border-radius: 5px;
+    height: 50px;
+    margin: 10px 0;
+    padding: 0;
+    width: 100%;
+}
+
+.create-thread-content-input div:hover {
+    background-color: #323b4a;
+}
+
+.create-thread-content-input textarea {
+    background-color: #323b4a;
+    color: #FFFFFF;
+}
+
+.create-thread-content-input div {
+    background-color: #323b4a;
+    padding: 0;
+}
+
+.create-thread-submit {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    font-weight: 500;
+    height: 50px;
+    margin: 10px 0;
+
+}

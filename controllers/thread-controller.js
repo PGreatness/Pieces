@@ -21,28 +21,29 @@ createThread = async (req, res) => {
         if (!threadName || !threadText || !senderId) {
             return res
                 .status(400)
-                .json({ message: "Please enter all required fields." });
+                .json({ success: false, message: "Please enter all required fields." });
         }
 
         if (threadName == "") {
             return res
                 .status(400)
-                .json({ message: "Thread name can not be empty" });
+                .json({ success: false, message: "Thread name can not be empty" });
         }
         if (threadText == "") {
             return res
                 .status(400)
-                .json({ message: "Thread text can not be empty" });
+                .json({ success: false, message: "Thread text can not be empty" });
         }
         if (threadText.length > 2500) {
+            console.log("WE HERE")
             return res
                 .status(400)
-                .json({ message: "Thread text is over the limit of 2500 characters" });
+                .json({ success: false, message: "Thread text is over the limit of 2500 characters" });
         }
         if (threadName.length > 250) {
             return res
                 .status(400)
-                .json({ message: "Thread title is over the limit of 250 characters" });
+                .json({ success: false, message: "Thread title is over the limit of 250 characters" });
         }
 
         // Creates Thread
@@ -52,8 +53,8 @@ createThread = async (req, res) => {
             threadName: threadName,
             threadText: threadText,
             senderId: senderId,
-            likes: 0,
-            dislikes: 0,
+            likes: [senderId],
+            dislikes: [],
             replies: []
 
         })
@@ -93,36 +94,66 @@ createThread = async (req, res) => {
 
 deleteThread = async (req, res) => {
 
-    let id = mongoose.Types.ObjectId(req.query.id)
-    let senderObjectId = mongoose.Types.ObjectId(req.query.senderId)
+    console.log("DELETE THREAD")
+    console.log("Query")
+    console.log(req.query)
+    console.log("Params")
+    console.log(req.params)
+    console.log("Body")
+    console.log(req.body)
+    if (!req.body.id) {
+        return res.status(400).json({
+            success: false,
+            error: "No id was provided by the client."
+        })
+    }
 
-    Thread.findById({ _id: id }, (err, thread) => {
+    if (!req.body.senderId) {
+        return res.status(400).json({
+            success: false,
+            error: "No userId was provided by the client."
+        })
+    }
 
-        // Checks if Thread with given id exists
-        if (err) {
+    try {
+        let id = mongoose.Types.ObjectId(req.body.id)
+        let senderObjectId = mongoose.Types.ObjectId(req.body.senderId)
+
+        let thread = await Thread.aggregate([
+            { $match: { _id: id } },
+            { $limit: 1 },
+        ]);
+
+        if (thread.length == 0) {
             return res.status(404).json({
-                err,
-                message: 'Thread not found',
+                success: false,
+                error: "Thread not found."
             })
         }
 
-        // Checks if Thread belongs to the User who is trying to delete it
-        if (!thread.senderId.equals(senderObjectId)) {
+        if (!thread[0].senderId.equals(senderObjectId)) {
             return res.status(401).json({
-                err,
-                message: 'User does not have ownership of this Thread',
+                success: false,
+                error: "User does not have permission to delete this thread."
             })
         }
 
-        // Finds Thread with given id and deletes it
-        Thread.findByIdAndDelete(id, (err, thread) => {
+        await Thread.deleteOne({ _id : id }).then(() => {
             return res.status(200).json({
                 success: true,
-                data: thread
+                message: "Thread was successfully deleted."
             })
-        }).catch(err => console.log(err))
+        }).catch(error => {
+            return res.status(400).json({
+                error,
+                message: "Thread was not deleted."
+            })
+        });
 
-    })
+    } catch (error) {
+        console.log(error)
+        return res.status(500)
+    }
 
 }
 
@@ -221,6 +252,100 @@ getAllReplies = async (req, res) => {
         count: rangeReplies.length,
         replies: rangeReplies
     });
+}
+
+var getThreadById = async (req, res) => {
+    if (!req.params.id) {
+        return res.status(400).json({
+            success: false,
+            error: "No id was provided by the client."
+        })
+    }
+
+    var id;
+    try {
+        id = mongoose.Types.ObjectId(req.params.id);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid id was provided by the client."
+        })
+    }
+
+    var thread = await Thread.findOne({ _id: id });
+
+    if (!thread) {
+        return res.status(404).json({
+            success: false,
+            error: "Thread not found."
+        })
+    }
+
+    return res.status(200).json({
+        success: true,
+        thread: thread
+    })
+}
+
+var getPostsByUser = async (req, res) => {
+    const { userId } = req.body;
+    var { search } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({
+            success: false,
+            error: "No userId was provided by the client."
+        })
+    }
+
+    var user;
+    try {
+        user = mongoose.Types.ObjectId(userId)
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid userId was provided by the client."
+        })
+    }
+
+    var threads;
+    var replies;
+    if (search) {
+        search = search.trim();
+        threads = await Thread.aggregate([
+            { $match: { senderId: user } },
+            { $match: { $or:
+                [
+                    {"threadName": {$regex: search, $options: "i" }},
+                    { "threadText": { $regex: search, $options: "i" }}
+                ]
+            }},
+            { $sort: { createdAt: -1 } },
+        ]);
+
+        replies = await Reply.aggregate([
+            { $match: { senderId: user } },
+            { $match: { "replyMsg": { $regex: search, $options: "i" } } },
+            { $sort: { createdAt: -1 } },
+        ]);
+    } else {
+        threads = await Thread.aggregate([
+            { $match: { senderId: user } },
+            { $sort: { createdAt: -1 } },
+        ]);
+
+        replies = await Reply.aggregate([
+            { $match: { senderId: user } },
+            { $sort: { createdAt: -1 } },
+        ]);
+    }
+
+    return res.status(200).json({
+        success: true,
+        threads: threads,
+        replies: replies
+    })
+
 }
 
 var likeThread = async (req, res) => {
@@ -344,9 +469,12 @@ var dislikeThread = async (req, res) => {
 }
 
 addReply = async (req, res) => {
-
-    const { replyingTo, senderId, text } = req.body;
-    if (!replyingTo || !senderId || !text) {
+    // console.log("hello");
+    const { replyingTo, senderId, replyMsg } = req.body;
+    console.log(replyingTo)
+    console.log(senderId)
+    console.log(replyMsg)
+    if (!replyingTo || !senderId || !replyMsg) {
         return res.status(400).json({
             success: false,
             error: "No body was provided by the client."
@@ -359,7 +487,7 @@ addReply = async (req, res) => {
     const newReply = new Reply({
         replyingTo: replying,
         senderId: sender,
-        replyMsg: text,
+        replyMsg: replyMsg,
         isFirstLevel: false,
         replies: [],
     });
@@ -469,6 +597,8 @@ module.exports = {
     getReplybyId,
     addReply,
     removeReply,
+    getThreadById,
+    getPostsByUser,
     likeThread,
     dislikeThread,
 }

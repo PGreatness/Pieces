@@ -3,13 +3,15 @@ import CommunityMainClickableThread from './CommunityMainClickableThread';
 import List from '@mui/material/List';
 import Stack from '@mui/material/Stack';
 import CommunityThread from '../CommunityOpenThread/CommunityThread';
+import { CommunityStoreContext } from '../../../../store/communityStore';
 
 import './css/communityMainThreadList.css';
 
 
 export default function CommunityMainThreadList(props) {
+    const { communityStore } = React.useContext(CommunityStoreContext);
     const threadList = props.threadList;
-    const [selectedIndex, setSelectedIndex] = React.useState(-1);
+    var selectedIndex = communityStore.SELECTED_INDEX;
 
     /**
  * 
@@ -18,7 +20,7 @@ export default function CommunityMainThreadList(props) {
     const handleOutsideClick = (e) => {
         console.log(e)
         if (!e.target.className.includes('Mui')) {
-            setSelectedIndex(-1);
+            communityStore.setSelectedIndex(-1);
         }
     }
         return (
@@ -28,7 +30,15 @@ export default function CommunityMainThreadList(props) {
                     {
                         threadList?.map((thread, index)=>{
                             return (
-                                index === selectedIndex ? <CommunityThread thread={thread} key={thread._id}/> : <CommunityMainClickableThread thread={thread} key={thread._id} selectThread={()=>setSelectedIndex(index)}/>
+                                index === selectedIndex ?
+                                <CommunityThread thread={thread}
+                                key={thread._id}
+                                deselect={()=>communityStore.setSelectedIndex(-1)}/>
+                                :
+                                <CommunityMainClickableThread
+                                thread={thread}
+                                key={thread._id}
+                                selectThread={()=>communityStore.setSelectedIndex(index)}/>
                                 );
                         })
                     }

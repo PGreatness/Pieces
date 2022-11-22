@@ -13,6 +13,7 @@
     position: relative;
     left: 0;
     width: 20vw;
-    height: 100vh;
+    height: calc(100% - 100px);
     z-index: 100;
+    overflow: scroll;
 }

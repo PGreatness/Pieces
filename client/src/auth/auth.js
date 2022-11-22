@@ -8,7 +8,8 @@ console.log("create AuthContext: " + AuthContext);
 export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     REGISTER_USER: "REGISTER_USER",
-    SET_ERROR_MESSAGE: "SET_ERROR_MESSAGE"
+    SET_ERROR_MESSAGE: "SET_ERROR_MESSAGE",
+    CHANGE_USER: "CHNAGE_USER"
 }
 
 function AuthContextProvider(props) {
@@ -21,7 +22,7 @@ function AuthContextProvider(props) {
 
     const authReducer = (action) => {
         const { type, payload } = action;
-        
+
         switch (type) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
@@ -44,16 +45,23 @@ function AuthContextProvider(props) {
                     errorMessage: payload.message
                 });
             }
+            case AuthActionType.CHANGE_USER: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: auth.loggedIn,
+                    errorMessage: payload.message
+                });
+            }
             default:
                 return auth;
         }
     }
 
-    auth.getLoggedIn = async function (store) {
+    auth.getLoggedIn = async function (store, callback) {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
             //store.changePageToExplore(); 
-            console.log("user is signed in signed in")
+            console.log("user is logged in")
 
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
@@ -62,11 +70,12 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
+            callback(response.data.user);
         }
     }
 
 
-    auth.loginUser = async function(userData, store){
+    auth.loginUser = async function (userData, store, callback) {
 
         await api.loginUser(userData).then(response => {
             console.log(response.data)
@@ -76,58 +85,189 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            store.changePageToExplore();
-            navigate("/explore");
+            //store.changePageToExplore();
+            //navigate("/explore");
+            callback(response.data.user);
         })
-        .catch(({response}) => {
-            console.log('error error')
-            if(response){ 
-                authReducer({
-                    type: AuthActionType.SET_ERROR_MESSAGE,
-                    payload:{
-                        message: response.data.message
-                    }
-                })
-            }
-        });      
-        
+            .catch(({ response }) => {
+                console.log('error error')
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+
     }
 
-    auth.registerUser = async function(userData) {
+    auth.registerUser = async function (userData) {
         await api.registerUser(userData).then(response => {
             navigate("/");
         })
-        .catch(({response}) => {
-            if(response){ 
-                authReducer({
-                    type: AuthActionType.SET_ERROR_MESSAGE,
-                    payload:{
-                        message: response.data.message
-                    }
-                })
-            }
-        });      
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
     }
 
-    auth.logoutUser = async function(store){
+    auth.changePassword = async function (userData, callback) {
+        await api.changePassword(userData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.CHANGE_USER,
+                payload: {
+                    user: response.data.user,
+                    message: response.data.message
+                }
+            });
+            callback(response.data.user);
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+
+    auth.updateUser = async function (userData, callback) {
+        await api.updateUser(userData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.CHANGE_USER,
+                payload: {
+                    user: response.data.user,
+                    message: response.data.message
+                }
+            });
+            console.log(response.data.user)
+            callback(response.data.user);
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+
+    auth.forgotPassword = async function (userData) {
+        await api.forgotPassword(userData).then(response => {
+            console.log(response)
+
+            authReducer({
+                type: AuthActionType.SET_ERROR_MESSAGE,
+                payload: {
+                    message: response.data.message
+                }
+            })
+
+        });
+    }
+
+
+    auth.resetPassword = async function (userData) {
+        await api.resetPassword(userData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.SET_ERROR_MESSAGE,
+                payload: {
+                    message: response.data.message
+                }
+            })
+        
+        });
+    }
+
+
+    auth.uploadImage = async function (imgData, callback) {
+        await api.uploadImage(imgData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.CHANGE_USER,
+                payload: {
+                    user: response.data.user,
+                    message: response.data.message
+                }
+            });
+            callback(response.data.user);
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+    auth.deleteImage = async function (imgData, callback) {
+        await api.deleteImage(imgData).then(response => {
+            console.log(response.data)
+            authReducer({
+                type: AuthActionType.CHANGE_USER,
+                payload: {
+                    user: response.data.user,
+                    message: response.data.message
+                }
+            });
+            callback(response.data.user);
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+
+    auth.logoutUser = async function (store, callback) {
         const response = await api.logoutUser();
-        if(response.status === 200){
+        if (response.status === 200) {
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
-                payload:{
+                payload: {
                     user: null,
                     loggedIn: false
                 }
             });
-            store.reset(); 
-            navigate("/");
+            store.reset();
+            callback();
+            //navigate("/");
         }
     }
 
     auth.resetMessage = function () {
         authReducer({
             type: AuthActionType.SET_ERROR_MESSAGE,
-            payload:{
+            payload: {
                 message: null
             }
         });

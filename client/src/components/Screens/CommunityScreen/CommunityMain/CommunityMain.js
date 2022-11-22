@@ -3,7 +3,7 @@ import CommunityMainThreadList from './CommunityMainThreadList';
 import './css/communityMain.css';
 import { CommunityStoreContext } from '../../../../store/communityStore';
 
-export default function CommunityMain(props) {
+export default function CommunityMain() {
     const { communityStore } = useContext(CommunityStoreContext);
     console.log(communityStore);
     const [topThreads, setTopThreads] = useState(communityStore.ALL_THREADS);

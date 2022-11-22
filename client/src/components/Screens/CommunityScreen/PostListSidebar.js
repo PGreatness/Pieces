@@ -1,10 +1,11 @@
-import React from 'react';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import PostListThread from './PostListThread';
 import PostListReply from './PostListReply';
 import Chip from '@mui/material/Chip';
-
+import { CommunityStoreContext } from '../../../store/communityStore';
+import AuthContext from '../../../auth/auth';
+import { React, useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material';
 
 import './css/postListSidebar.css';
@@ -29,145 +30,70 @@ const BackgroundColorList = styled(List)({
 });
 
 export default function PostListSidebar(props) {
+    const { communityStore } = useContext(CommunityStoreContext);
+    const { auth } = useContext(AuthContext);
+    const [myThreads, setMyThreads] = useState([]);
+    const [myReplies, setMyReplies] = useState([]);
+    const [activeFilter, setActiveFilter] = useState(props.filter);
 
-    const getAllPosts = () => {
-        // const response = await fetch(`/api/posts/${props.communityId}`);
-        // const data = await response.json();
-        const response = {
-            "threads": [
-                {
-                    "id": 1,
-                    "threadName": "Test Thread",
-                    "threadText": "This is a test thread",
-                    "senderId": 3,
-                    "sentAt": "2021-08-01T00:00:00.000Z",
-                    "replies": []
-                },
-                {
-                    "id": 2,
-                    "threadName": "Test Thread 2",
-                    "threadText": "This is a test thread 2",
-                    "senderId": 3,
-                    "sentAt": "2021-08-01T00:00:00.000Z",
-                    "replies": [
-                        {
-                            'id': 1,
-                            senderId: 2,
-                            replyMsg: "This is a test reply",
-                            sentAt: "2021-08-01T00:00:00.000Z",
-                            replyingTo: 3
-                        },
-                        {
-                            'id': 2,
-                            senderId: 1,
-                            replyMsg: "This is a test reply 2",
-                            sentAt: "2021-08-01T00:00:00.000Z",
-                            replyingTo: 3
-                        }
-                    ]
-                }
-            ],
-            "replies": [
-                {
-                    'id': 4,
-                    senderId: 3,
-                    replyMsg: "This is a test reply to another thread",
-                    sentAt: "2021-08-01T00:00:00.000Z",
-                    replyingTo: 2
-                }
-            ]
-        };
-        const data = response; // await response.json();
-        return data;
+    const getAllPosts = async () => {
+        const response = await communityStore.getPostsByUser(auth.user._id, activeFilter);
+        console.log(response);
+        return { threads: response.threads, replies: response.replies };
     }
 
-    const getOnlyFilteredPosts = () => {
-        // const response = await fetch(`/api/posts/${props.communityId}/${props.filteredName}`);
-        // const data = await response.json();
-        const response = {
-            "threads": [
-                {
-                    "id": 1,
-                    "threadName": "Test Thread",
-                    "threadText": "This is a test thread",
-                    "senderId": 3,
-                    "sentAt": "2021-08-01T00:00:00.000Z",
-                    "replies": []
-                },
-                {
-                    "id": 2,
-                    "threadName": "Test Thread",
-                    "threadText": "This is a test thread 2",
-                    "senderId": 3,
-                    "sentAt": "2021-08-01T00:00:00.000Z",
-                    "replies": [
-                        {
-                            'id': 1,
-                            senderId: 2,
-                            replyMsg: "This is a test reply",
-                            sentAt: "2021-08-01T00:00:00.000Z",
-                            replyingTo: 3
-                        }
-                    ]
-                }
-            ],
-        };
-        const data = response; // await response.json();
-        return data;
-    }
+    useEffect(() => {
+        getAllPosts().then((posts) => {
+            console.log("SETTING POSTS");
+            console.log(posts.threads);
+            console.log(posts.replies);
+
+            setMyThreads(posts.threads);
+            setMyReplies(posts.replies);
+        });
+    }, [activeFilter, communityStore.ALL_THREADS]);
+
+    useEffect(() => {
+        setActiveFilter(props.filter.trim());
+    }, [props.filter]);
 
 
-    const allPosts = (props.filterName) ? getOnlyFilteredPosts() : getAllPosts();
-    if (!props.filteredName) {
-        return (
-            <div className='postlist-sidebar-postlist'>
-                <BackgroundColorList>
-                    <WhiteDivider >
-                        <WhiteChip label='My Threads' />
-                    </WhiteDivider>
-                {
-                    allPosts.threads.map((thread)=>{
-                        return (
-                            <PostListThread key={thread.id} thread={thread} />
-                            );
-                        })
-                }
-                <WhiteDivider>
-                    <WhiteChip label='My Replies' />
-                </WhiteDivider>
-                {allPosts.replies.map((reply)=>{
-                    return (
-                        <PostListReply key={reply.id} reply={reply} />
-                    );
-                    })
-                }
-                </BackgroundColorList>
-            </div>
-        )
-    }
     return (
         <div className='postlist-sidebar-postlist'>
             <BackgroundColorList>
-                <WhiteDivider >
-                    <WhiteChip label='Threads'/>
-                </WhiteDivider>
-            {
-                allPosts?.threads?.map((thread)=>{
-                    return (
-                        <PostListThread key={thread.id} thread={thread} />
-                        );
-                    })
-            }
-            <WhiteDivider>
-                <WhiteChip label='Replies' />
-            </WhiteDivider>
-            {allPosts?.replies?.map((reply)=>{
-                return (
-                    <PostListReply key={reply.id} reply={reply} />
-                );
-                })
-            }
+                {
+                    myThreads.length !== 0 ? (
+                        <>
+                            <WhiteDivider >
+                                <WhiteChip label={activeFilter !== '' ? "Threads" : 'My Threads'} />
+                            </WhiteDivider>
+                            {
+                                myThreads.map((thread) => (
+                                    <PostListThread key={thread.id} thread={thread} />
+                                ))
+                            }
+                        </>
+                    ) : (
+                        <></>
+                    )
+                }
+                {
+                    myReplies.length !== 0 ? (
+                        <>
+                            <WhiteDivider >
+                                <WhiteChip label={activeFilter !== '' ? "Replies" : 'My Replies'} />
+                            </WhiteDivider>
+                            {
+                                myReplies.map((reply) => (
+                                    <PostListReply key={reply.id} reply={reply} />
+                                ))
+                            }
+                        </>
+                    ) : (
+                        <></>
+                    )
+                }
             </BackgroundColorList>
         </div>
-    )
+    );
 }

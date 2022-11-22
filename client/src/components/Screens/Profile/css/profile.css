@@ -5,6 +5,7 @@
     width: 100vw;
     height: 100vh;
     padding-top: 15px;
+    position: fixed;
 }
 
 .profile_title {

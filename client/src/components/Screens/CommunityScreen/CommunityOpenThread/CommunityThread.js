@@ -6,8 +6,26 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
+
+const primaryTypographyProps = {
+    color: 'white',
+    float: 'left',
+    paddingRight: '1ch',
+    paddingLeft: '2ch',
+    textOverflow: 'ellipsis',
+    overflow: 'auto',
+    maxWidth: '100%'
+}
+
+const secondaryTypographyProps = {
+    color: 'whitesmoke',
+    fontSize: '1em',
+    float: 'left',
+    paddingLeft: '2ch'
+}
 
 export default function CommunityThread(props) {
 
@@ -19,6 +37,7 @@ export default function CommunityThread(props) {
     const [user, setUser] = useState({
         first: '',
         last: '',
+        id: '',
     });
     const [interactions, setInteractions] = useState({
         liked: props.thread.likes.includes(auth.user._id),
@@ -51,6 +70,7 @@ export default function CommunityThread(props) {
 
     useEffect(() => {
         findUserAvatar().then((res) => {
+            console.log("IN HERE");
             setUsername(res.username);
             setAvatar(res.userAvatar);
             setUser({
@@ -72,9 +92,9 @@ export default function CommunityThread(props) {
         let threadOwner = await communityStore.getUserById(username);
         console.log("In findUserAvatar: ");
         console.log(threadOwner);
-        userAvatar = threadOwner.profilePic || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
+        userAvatar = (threadOwner.profilePic ? threadOwner.profilePic.url : null) || threadOwner.firstName[0].toUpperCase() + threadOwner.lastName[0].toUpperCase();
         username = threadOwner.userName;
-        let user = {first: threadOwner.firstName, last: threadOwner.lastName};
+        let user = { first: threadOwner.firstName, last: threadOwner.lastName, id: threadOwner._id };
         return { userAvatar, username, user };
     }
 
@@ -90,6 +110,15 @@ export default function CommunityThread(props) {
         let userId = auth.user._id;
         console.log("In registerDislike: ", threadId, userId);
         await communityStore.registerDislike(threadId, userId);
+    }
+
+    const handleDelete = async () => {
+        console.log(auth.user);
+        let res = await communityStore.deleteThread(props.thread._id, auth.user._id);
+        if (res !== null) {
+            console.log('Thread deleted successfully');
+            props.deselect();
+        }
     }
 
     const createUpvoteButton = () => {
@@ -108,6 +137,14 @@ export default function CommunityThread(props) {
         );
     }
 
+    const createDeleteButton = () => {
+        return (
+            <ListItemButton onClick={handleDelete} sx={{ flex: 'revert', padding: '0' }}>
+                <DeleteIcon className='thread-interaction-buttons delete-button' sx={{ color: 'white' }} />
+            </ListItemButton>
+        );
+    }
+
     const BetterReplyButton = styled(ListItemButton)({
         // make the button full width
         width: '100%',
@@ -118,9 +155,9 @@ export default function CommunityThread(props) {
         backgroundColor: '#29313f',
         borderRadius: '10px',
         border: '1px solid black',
-        width:'100%',
+        width: '100%',
         height: '0%',
-        flexDirection:'column',
+        flexDirection: 'column',
         '&:hover': {
             backgroundColor: '#29313f',
         },
@@ -134,7 +171,7 @@ export default function CommunityThread(props) {
 
     const ReplyDivider = styled(Divider)({
         borderTop: '1px solid grey',
-        height:'0%',
+        height: '0%',
         // make sure the divider is always below the list item
         position: 'relative',
         // left: '50%',w
@@ -147,7 +184,7 @@ export default function CommunityThread(props) {
         backgroundColor: '#242b38',
         borderRadius: '10px',
         // border: '1px solid black',
-        width:'100%',
+        width: '100%',
         color: 'white',
         '& .MuiInputBase-input': {
             color: 'white',
@@ -175,7 +212,8 @@ export default function CommunityThread(props) {
 
     const handleAddReply = async() => {
         let text = document.getElementById('reply_field').value
-        let senderId = '6366fe474c670183dd2bcae5'
+        // let senderId = '6366fe474c670183dd2bcae5'
+        let senderId = auth.user?._id
 
         if (text === "") {
             console.log("Empty text field.")
@@ -190,18 +228,58 @@ export default function CommunityThread(props) {
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
-                <ListItemText sx={{flex: 'revert', paddingRight: '5px'}} primary={props.thread.likes.length} secondary={createUpvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
-                <ListItemText sx={{ flex: 'revert', paddingRight: '10px'}} primary={props.thread.dislikes.length} secondary={createDownvoteButton()} primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                <ListItemText
+                sx={{ flex: 'revert', paddingRight: '5px' }}
+                primary={props.thread.likes.length}
+                secondary={createUpvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+
+                <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
+                primary={props.thread.dislikes.length}
+                secondary={createDownvoteButton()}
+                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                {
+                    auth.user._id === user.id ? (
+                        <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
+                        primary={'Delete'}
+                        secondary={createDeleteButton()}
+                        primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                        secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                    ) : (
+                        <></>
+                    )
+                }
             </ButtonGroup>
-            <ListItemButton divider sx={{width: 'calc(100% - 56px)'}}>
+            <ListItemButton divider
+            sx={{ width: auth.user._id === user.id ? 'calc(100% - 120px)' : 'calc(100% - 56px)' }}>
                 <ListItemAvatar>
-                    <Avatar alt={username} src={avatar} sx={{width: '100px', height: '100px', fontSize: '250%'}}>{avatar}</Avatar>
+                    <Avatar alt={username}
+                    src={avatar}
+                    sx={{ width: '100px', height: '100px', fontSize: '250%' }}>
+                        {avatar}
+                    </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={<><Typography sx={{color:'white', float: 'left', paddingRight: '1ch', paddingLeft: '2ch'}}>{props.thread.threadName}</Typography><Typography sx={{color:'#a8a8a8'}}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{style: {color: 'white'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'1em', float: 'left', paddingLeft: '2ch' }}}/>
+                <ListItemText primary={
+                    <>
+                        <Typography sx={primaryTypographyProps}>
+                            {props.thread.threadName}
+                        </Typography>
+                        <Typography sx={{ color: '#a8a8a8' }}>
+                            by: {user.first} {user.last}
+                        </Typography>
+                    </>
+                } secondary={props.thread.threadText}
+                primaryTypographyProps={{ style: { color: 'white' } }}
+                secondaryTypographyProps={{ style: secondaryTypographyProps }} />
             </ListItemButton>
             <ReplyDivider flexItem />
-
-            <ReplyTextField id="reply_field" label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>
+            <ReplyTextField label="Write a reply..."
+            id="reply_field"
+            variant="filled"
+            InputLabelProps={{ style: { color: 'white' } }}
+            InputProps={{ endAdornment: sendButton() }} />
             {
                 threadreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
@@ -212,9 +290,17 @@ export default function CommunityThread(props) {
                                             setReplyingTo(reply._id)
                                         }}>
                                         <ListItemAvatar>
-                                            <Avatar alt={reply.id} src={reply._id} sx={{width: '30px', height: '30px'}}>{reply._id}</Avatar>
+                                            <Avatar alt={reply.id}
+                                            src={reply.id}
+                                            sx={{ width: '30px', height: '30px' }}>
+                                                {reply.id}
+                                            </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary={reply.replyMsg} secondary={reply.createdAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
+                                        <ListItemText
+                                        primary={reply.replyMsg}
+                                        secondary={reply.sentAt}
+                                        primaryTypographyProps={{ style: { color: 'white', fontSize: '0.7em' } }}
+                                        secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.5em' } }} />
                                     </BetterReplyButton>
                                 );
                             })

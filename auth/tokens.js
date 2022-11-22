@@ -4,6 +4,7 @@ const config = require("config")
 function authManager() {
     verifyToken = function (req, res, next) {
         try {
+            console.log(req.cookies)
             const token = req.cookies.token;
             if (!token) {
                 return res.status(401).json({
@@ -31,7 +32,7 @@ function authManager() {
     };
 
     verifyPasswordResetToken = function (user, token) {
-        const secret = config.get("secrets.jwt") + req.user.password;
+        const secret = config.get("secrets.jwt") + user.passwordHash;
         try {
             return jwt.verify(token, secret);
         } catch (e) {
