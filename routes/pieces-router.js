@@ -77,6 +77,11 @@ router.post('/tile/updateTile', TileController.updateTile)
 
 
 // Thread Routes
+router.post('/thread/addReply/', ThreadController.addReply)
+// router.post('/thread/deleteReply/', ThreadController.deleteReply)
+router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
+router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
+
 router.get('/thread/all', ThreadController.getAllThreads)
 router.post('/thread/newThread', ThreadController.createThread)
 router.post('/thread/deleteThread', ThreadController.deleteThread)
@@ -85,10 +90,6 @@ router.post('/thread/dislike', ThreadController.dislikeThread)
 router.post('/thread/allPosts', ThreadController.getPostsByUser)
 router.get('/thread/:id', ThreadController.getThreadById)
 
-router.post('/thread/addReply/', ThreadController.addReply)
-// router.post('/thread/deleteReply/', ThreadController.deleteReply)
-router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
-router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
 
 // Notification Routes
 router.post('/notification/requestMapEdit', NotificationController.requestMapEdit)

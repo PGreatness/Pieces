@@ -80,6 +80,12 @@ export default function CommunityThread(props) {
     }, [communityStore.TOP_THREADS]);
 
     useEffect(() => {
+        console.log('Replies changed');
+        console.log(props.thread.replies);
+        setReplies(props.thread.replies);
+    }, [props.thread.replies]);
+
+    useEffect(() => {
         setInteractions({
             liked: props.thread.likes.includes(auth.user._id),
             disliked: props.thread.dislikes.includes(auth.user._id),
