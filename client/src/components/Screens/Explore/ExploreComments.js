@@ -35,7 +35,8 @@ export default function ExploreComments(props) {
     const handleCreateNewComment = async () => {
         let text = document.getElementById('reply_field').value
         let time = Date();
-        let ownerId = '636942dd04afd5d5f9331583'
+        // let ownerId = '636942dd04afd5d5f9331583'
+        let ownerId = auth.user?._id
         let projectId = props.projectId
 
         if (text === "") {
