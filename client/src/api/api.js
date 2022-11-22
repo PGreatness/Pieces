@@ -130,6 +130,7 @@ const apis = {
 
     getAllThreads,
     addReply,
+    removeReply,
     getThreadById,
     getPopularThreads,
     getPostsByUser,
