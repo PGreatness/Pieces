@@ -13,7 +13,8 @@ import SocialSidebar from "./components/SocialSidebar/SocialSidebar";
 import MyPostsSidebar from "./components/Screens/CommunityScreen/MyPostsSidebar";
 import CreateButton from "./components/CreateButton/CreateButton";
 import { AuthContextProvider } from './auth/auth';
-import { GlobalStoreContextProvider } from './store/store'
+import { GlobalStoreContextProvider } from './store/store';
+import { CommunityStoreContextProvider } from './store/communityStore';
 import './css/app.css';
 
 const App = () => {
@@ -37,7 +38,7 @@ const App = () => {
     }
     else if (community) {
       return (
-        <MyPostsSidebar id={1} />
+        <MyPostsSidebar />
       );
     }
     return (
@@ -49,14 +50,19 @@ const App = () => {
       <Suspense fallback={<div className="Loading">Loading...</div>}>
         <AuthContextProvider>
           <GlobalStoreContextProvider>
+
             {
               location.includes('explore') || location.includes('library') ? <CreateButton setLoc={setLocation} /> : <></>
             }
             <div className='app-nav-social-container'>
               <Navbar changeLoc={setLocation} reset={location.includes('reset-password')? true : false}/>
+
+              <CommunityStoreContextProvider>
+
               {
-                buildSidebar()
+                location.includes('explore') || location.includes('library') ? <CreateButton setLoc={setLocation} /> : <></>
               }
+
             </div>
             <div className={(location === '/' || location.includes('profile') || location.includes('reset-password') ||
               location.includes('map') || location.includes('tileset')) ? 'contentBody-nosocial' : "contentBody"}>
@@ -67,17 +73,30 @@ const App = () => {
                 <Route path="/explore/" element={<ExploreScreen setLoc={setLocation}/>} />
                 <Route path="/library/" element={<LibraryScreen setLoc={setLocation}/>} />
                 <Route path="/community/" element={<CommunityScreen/>} />
-
-                <Route
-                  path="/tileset/:id"
-                  element={<TilesetEditor />}
-                />
-                <Route
-                  path="/map/:id"
-                  element={<MapEditor />}
-                />
-              </Routes>
-            </div>
+              <div className='app-nav-social-container'>
+                <Navbar changeLoc={setLocation} />
+                {
+                  buildSidebar()
+                }
+              </div>
+              <div className={(location === '/' || location.includes('profile') || location.includes('map') || location.includes('tileset')) ? 'contentBody-nosocial' : "contentBody"}>
+                <Routes>
+                  <Route path="/" element={<WelcomeScreen />} />
+                  <Route path="/profile/" element={<ProfileScreen />} />
+                  <Route path="/explore/" element={<ExploreScreen setLoc={setLocation} />} />
+                  <Route path="/library/" element={<LibraryScreen setLoc={setLocation} />} />
+                  <Route path="/community/" element={<CommunityScreen />} />
+                  <Route
+                    path="/tileset/:id"
+                    element={<TilesetEditor />}
+                  />
+                  <Route
+                    path="/map/:id"
+                    element={<MapEditor />}
+                  />
+                </Routes>
+              </div>
+            </CommunityStoreContextProvider>
           </GlobalStoreContextProvider>
         </AuthContextProvider>
       </Suspense>
