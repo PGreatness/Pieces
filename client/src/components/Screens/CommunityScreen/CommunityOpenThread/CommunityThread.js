@@ -31,7 +31,7 @@ export default function CommunityThread(props) {
 
     const { communityStore } = useContext(CommunityStoreContext);
     const { auth } = useContext(AuthContext);
-    const [replyingTo, setReplyingTo] = useState(props.thread.senderId);
+    const [replyingTo, setReplyingTo] = useState(props.thread._id);
     const [username, setUsername] = useState('');
     const [avatar, setAvatar] = useState('');
     const [user, setUser] = useState({
@@ -219,7 +219,7 @@ export default function CommunityThread(props) {
             console.log("Empty text field.")
         }
         else {
-            let response = await communityStore.addReply(replyingTo, senderId, text)
+            let response = await communityStore.addReply(replyingTo, senderId, text, props.thread._id)
             console.log(response)
             document.getElementById('reply_field').value = "";
         }
@@ -288,17 +288,18 @@ export default function CommunityThread(props) {
                                 return (
                                     <BetterReplyButton divider onClick={() => {
                                             setReplyingTo(reply._id)
+                                            console.log(replyingTo)
                                         }}>
                                         <ListItemAvatar>
-                                            <Avatar alt={reply.id}
-                                            src={reply.id}
+                                            <Avatar alt={reply._id}
+                                            src={reply._id}
                                             sx={{ width: '30px', height: '30px' }}>
-                                                {reply.id}
+                                                {reply._id}
                                             </Avatar>
                                         </ListItemAvatar>
                                         <ListItemText
                                         primary={reply.replyMsg}
-                                        secondary={reply.sentAt}
+                                        secondary={new Date(reply.createdAt).toLocaleDateString()}
                                         primaryTypographyProps={{ style: { color: 'white', fontSize: '0.7em' } }}
                                         secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.5em' } }} />
                                     </BetterReplyButton>
