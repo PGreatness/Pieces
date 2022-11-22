@@ -20,10 +20,14 @@ export const GlobalStoreActionType = {
     SET_SECONDARY_COLOR: "SET_SECONDARY_COLOR",
     SET_TILESET_TOOL: "SET_TILESET_TOOL",
     SWAP_COLORS: "SWAP_COLORS",
+    SET_PRIMARY_TILE: "SET_PRIMARY_TILE",
+    SET_SECONDARY_TILE: "SET_SECONDARY_TILE",
+    SWAP_TILES: "SWAP_TILES",
     LOAD_TILESET: "LOAD_TILESET",
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
     ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET",
-    SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT"
+    SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT",
+    SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES'
 }
 
 
@@ -58,7 +62,10 @@ function GlobalStoreContextProvider(props) {
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
         currentTileset: null,
-        currentTile: null
+        currentTile: null,
+        primaryTile: null,
+        secondaryTile: null,
+        currentMapTiles: []
     });
 
 
@@ -73,8 +80,8 @@ function GlobalStoreContextProvider(props) {
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
         const { type, payload } = action;
-        console.log(type)
-        console.log(payload)
+        // console.log(type)
+        // console.log(payload)
         switch (type) {
 
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
@@ -177,6 +184,22 @@ function GlobalStoreContextProvider(props) {
                 })
             }
 
+            case GlobalStoreActionType.SET_PRIMARY_TILE: {
+                console.log("STORE SETTING PRIMARY TILE")
+                console.log(payload.newPrimaryTile)
+                return setStore({
+                    ...store,
+                    primaryTile: payload.newPrimaryTile
+                })
+            }
+
+            case GlobalStoreActionType.SET_SECONDARY_TILE: {
+                return setStore({
+                    ...store,
+                    secondaryTile: payload.newSecondaryTile
+                })
+            }
+
             case GlobalStoreActionType.SET_TILESET_TOOL: {
                 return setStore({
                     ...store,
@@ -185,11 +208,21 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.SWAP_COLORS: {
-                
+
                 return setStore({
                     ...store,
                     primaryColor: payload.newPrimary,
                     secondaryColor: payload.newSecondary
+                })
+            }
+
+            case GlobalStoreActionType.SWAP_TILES: {
+                console.log("SWAP_TILES: payload")
+                console.log(payload)
+                return setStore({
+                    ...store,
+                    primaryTile: payload.newPrimary,
+                    secondaryTile: payload.newSecondary
                 })
             }
 
@@ -227,6 +260,13 @@ function GlobalStoreContextProvider(props) {
                     ...store,
                     currentTileset: payload.tileset,
                     currentTile: payload.tile
+                })
+            }
+
+            case GlobalStoreActionType.SET_CURRENT_MAP_TILES: {
+                return setStore({
+                    ...store,
+                    currentMapTiles: payload.currentMapTiles
                 })
             }
 
@@ -1352,11 +1392,53 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+    store.setPrimaryTile = async function (newPrimaryTile) {
+        console.log("Setting primary color to " + newPrimaryTile)
+        storeReducer({
+            type: GlobalStoreActionType.SET_PRIMARY_TILE,
+            payload: {
+                newPrimaryTile: newPrimaryTile
+            }
+        });
+        console.log(store.primaryTile)
+    }
+
+    store.setSecondaryTile = async function (newSecondaryTile) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_SECONDARY_TILE,
+            payload: {
+                newSecondaryTile: newSecondaryTile
+            }
+        });
+    }
+
+    store.swapTiles = async function () {
+        let primary = store.primaryTile
+        let secondary = store.secondaryTile
+        console.log("SWAP TILES")
+        storeReducer({
+            type: GlobalStoreActionType.SWAP_TILES,
+            payload: {
+                newPrimary: secondary,
+                newSecondary: primary
+            }
+        })
+    }
+
     store.setTilesetTool = async function (newTilesetTool) {
         storeReducer({
             type: GlobalStoreActionType.SET_TILESET_TOOL,
             payload: {
                 newTilesetTool: newTilesetTool
+            }
+        })
+    }
+
+    store.setCurrentMapTiles = async function (currentMapTiles) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
+            payload: {
+                currentMapTiles: currentMapTiles
             }
         })
     }

@@ -13,12 +13,26 @@ export default function MapToolBar() {
     const [ openClearConfirm, setOpenClearConfirm ] = useState(false);
     const [ currTool, setCurrTool ] = useState('brush')
 
+    useEffect(() => {
+        setCurrTool(currTool)
+        console.log("MapToolBar rerender")
+        console.log(store.primaryTile)
+    }, [store.primaryTile, store.secondaryTile])
+
     const handleOpenClearConfirm = () => {
         setOpenClearConfirm(true)
       }
     
     const handleCloseClearConfirm = () => {
         setOpenClearConfirm(false)
+    }
+
+    const handleSwapTiles = async () => {
+        await store.swapTiles()
+        console.log("after swapping tiles")
+        console.log(store.primaryTile)
+        console.log(store.secondaryTile)
+
     }
 
     const handleToolClick = (event) => {
@@ -31,10 +45,10 @@ export default function MapToolBar() {
 
     const handleConfirmClear = () => {
         setOpenClearConfirm(false)
-        let map = store.currentProject
-        map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
-        store.setCurrentProject(map._id)
-        console.log("tl " + store.currentProject)
+        // let map = store.currentProject
+        // map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
+        // store.setCurrentProject(map._id)
+        store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(''))
     }
 
     return (
@@ -96,10 +110,16 @@ export default function MapToolBar() {
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
 
                 <Grid item xs={12}>
-                    <Box className="brush_selections_container">
-                        <img src={require("../images/dummyTile1.png")} className="brush_selection" id="tile_primary"/>
-                        <img src={require("../images/dummyTile2.png")} className="brush_selection" id="tile_secondary"/>
-                        <Button className="toolbar_mui_icon" id="swap_primary">
+                    <Box style={{marginTop: '10px'}} className="brush_selections_container">
+                        {store.primaryTile
+                            ? <img src={store.primaryTile} className="brush_selection" id="tile_primary"/>
+                            : <Box style={{height:'80px', width:'80px'}} className="brush_selection" bgcolor='white' id="tile_primary"></Box>
+                        }
+                        {store.secondaryTile
+                            ? <img src={store.secondaryTile} className="brush_selection_tileset" id="tile_secondary"/>
+                            : <Box className="brush_selection_tileset" bgcolor='white' id="tile_secondary"></Box>
+                        }
+                        <Button onClick={handleSwapTiles} className="toolbar_mui_icon" id="swap_primary">
                             <SwapHoriz/>
                         </Button>
                     </Box>
