@@ -8,6 +8,7 @@ export const CommunityStoreContext = createContext({});
 export const CommunityStoreActionType = {
     GET_ALL_THREADS: 'GET_ALL_THREADS',
     SET_TOP_THREADS: 'SET_TOP_THREADS',
+    SET_SELECTED_INDEX: 'SET_SELECTED_INDEX',
 }
 
 const CommunityStoreContextProvider = (props) => {
@@ -16,6 +17,7 @@ const CommunityStoreContextProvider = (props) => {
     const [communityStore, setCommunityStore] = useState({
         ALL_THREADS: [],
         TOP_THREADS: [],
+        SELECTED_INDEX: -1,
     });
 
     const { auth } = useContext(AuthContext);
@@ -34,6 +36,11 @@ const CommunityStoreContextProvider = (props) => {
                 return setCommunityStore({
                     ...communityStore,
                     TOP_THREADS: payload,
+                });
+            case CommunityStoreActionType.SET_SELECTED_INDEX:
+                return setCommunityStore({
+                    ...communityStore,
+                    SELECTED_INDEX: payload,
                 });
 
             default:
@@ -115,6 +122,24 @@ const CommunityStoreContextProvider = (props) => {
         }
     }
 
+    communityStore.setThreadAsTop = async (threadId) => {
+        console.log('Setting thread as top');
+        const thread = await api.getThreadById(threadId);
+        console.log(thread);
+        if (thread.status < 400) {
+            console.log('Thread found');
+            const threadData = [thread.data.thread];
+            console.log(threadData);
+            return communityReducer({
+                type: CommunityStoreActionType.SET_TOP_THREADS,
+                payload: threadData,
+            });
+        } else {
+            console.log('Thread not found');
+            return null;
+        }
+    }
+
     communityStore.getUserById = async (id) => {
         const user = await api.getUserById(id);
         console.log(user);
@@ -151,6 +176,16 @@ const CommunityStoreContextProvider = (props) => {
         } else {
             console.log("Error registering dislike");
         }
+    }
+
+    communityStore.setSelectedIndex = (index) => {
+        console.log('Setting selected index');
+        console.log('current store');
+        console.log(communityStore);
+        communityReducer({
+            type: CommunityStoreActionType.SET_SELECTED_INDEX,
+            payload: index,
+        })
     }
 
 

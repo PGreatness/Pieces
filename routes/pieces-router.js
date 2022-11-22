@@ -84,6 +84,7 @@ router.post('/thread/deleteThread', ThreadController.deleteThread)
 router.post('/thread/like', ThreadController.likeThread)
 router.post('/thread/dislike', ThreadController.dislikeThread)
 router.post('/thread/allPosts', ThreadController.getPostsByUser)
+router.get('/thread/:id', ThreadController.getThreadById)
 
 
 // Notification Routes

@@ -245,6 +245,39 @@ var getAllThreads = async (req, res) => {
     })
 }
 
+var getThreadById = async (req, res) => {
+    if (!req.params.id) {
+        return res.status(400).json({
+            success: false,
+            error: "No id was provided by the client."
+        })
+    }
+
+    var id;
+    try {
+        id = mongoose.Types.ObjectId(req.params.id);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid id was provided by the client."
+        })
+    }
+
+    var thread = await Thread.findOne({ _id: id });
+
+    if (!thread) {
+        return res.status(404).json({
+            success: false,
+            error: "Thread not found."
+        })
+    }
+
+    return res.status(200).json({
+        success: true,
+        thread: thread
+    })
+}
+
 var getPostsByUser = async (req, res) => {
     const { userId } = req.body;
     var { search } = req.body;
@@ -527,6 +560,7 @@ module.exports = {
     createThread,
     deleteThread,
     getAllThreads,
+    getThreadById,
     getPostsByUser,
     likeThread,
     dislikeThread,

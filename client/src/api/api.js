@@ -68,6 +68,7 @@ export const registerDislike = (payload) => api.post(`/thread/dislike`, payload)
 export const createThread = (payload) => api.post(`/thread/newThread`, payload)
 export const deleteThread = (payload) => api.post(`/thread/deleteThread`,payload)
 export const getPostsByUser = (payload) => api.post(`/thread/allPosts`, payload)
+export const getThreadById = (payload) => api.get(`/thread/${payload}`)
 
 const apis = {
     getAllPublicProjects,
@@ -108,6 +109,7 @@ const apis = {
     removeTilesetCollaborator,
 
     getAllThreads,
+    getThreadById,
     getPopularThreads,
     getPostsByUser,
     registerLike,
