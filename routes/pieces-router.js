@@ -30,6 +30,7 @@ router.post('/resetPassword', UserController.resetPassword)
 router.post('/uploadImage', UserController.uploadImage)
 router.post('/deleteImage', UserController.deleteImage)
 
+router.post('/deleteUser', UserController.deleteUser)
 
 // Map Routes
 router.get('/map/getAllUserMaps/:ownerId', MapController.getAllUserMaps)
@@ -78,7 +79,7 @@ router.post('/tile/updateTile', TileController.updateTile)
 
 // Thread Routes
 router.post('/thread/addReply/', ThreadController.addReply)
-// router.post('/thread/deleteReply/', ThreadController.deleteReply)
+router.post('/thread/deleteReply/', ThreadController.deleteReply)
 router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
 router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
 

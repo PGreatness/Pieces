@@ -18,7 +18,7 @@ import { GlobalStoreContext } from '../../../store/store'
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import Cloudinary from "../../../cloudinary/cloudinary";
 
-export default function ProfileScreen() {
+export default function ProfileScreen(props) {
     const navigate = useNavigate();
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
@@ -88,9 +88,17 @@ export default function ProfileScreen() {
 
     }
 
-    const handleDeleteUser = () => {
+    const handleDeleteUser = async function () {
         handleCloseDeleteUserModal();
         // call auth method to delete user
+        await auth.deleteUser();
+
+        await auth.logoutUser(store, () => {
+            console.log('in logout')
+            setUser(null);
+            props.setLoc('/');
+            navigate("/")
+        });
     }
 
     const handleChangePassword = async function (event) {
@@ -135,6 +143,7 @@ export default function ProfileScreen() {
             setUser(newUser)
         });
     }
+
 
 
     return (

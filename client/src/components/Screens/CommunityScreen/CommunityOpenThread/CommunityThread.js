@@ -231,6 +231,11 @@ export default function CommunityThread(props) {
         }
     }
     
+    const handleDeleteReply = async(replyId) => {
+        let response = await communityStore.deleteReply(replyId, props.thread._id)
+        console.log(response)
+    }
+
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
@@ -293,8 +298,13 @@ export default function CommunityThread(props) {
                             threadreplies.map((reply, index)=>{
                                 return (
                                     <BetterReplyButton divider onClick={() => {
-                                            setReplyingTo(reply._id)
-                                            console.log(replyingTo)
+                                            if (reply.senderId == auth.user?._id) {
+                                                handleDeleteReply(reply._id)
+                                            }
+                                            else {
+                                                setReplyingTo(reply._id)
+                                                console.log(replyingTo)
+                                            }
                                         }}>
                                         <ListItemAvatar>
                                             <Avatar alt={reply._id}
