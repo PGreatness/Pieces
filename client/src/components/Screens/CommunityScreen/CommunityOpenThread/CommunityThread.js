@@ -13,6 +13,7 @@ export default function CommunityThread(props) {
 
     const { communityStore } = useContext(CommunityStoreContext);
     const { auth } = useContext(AuthContext);
+    const [replyingTo, setReplyingTo] = useState(props.thread.senderId);
     const [username, setUsername] = useState('');
     const [avatar, setAvatar] = useState('');
     const [user, setUser] = useState({
@@ -166,12 +167,25 @@ export default function CommunityThread(props) {
         return (
             <InputAdornment position="end">
                 <ListItemButton>
-                    <CommentIcon fill='white' sx={{color:'white'}}/>
+                    <CommentIcon fill='white' sx={{color:'white'}} onClick={() => {handleAddReply()}}/>
                 </ListItemButton>
             </InputAdornment>
         );
     }
 
+    const handleAddReply = async() => {
+        let text = document.getElementById('reply_field').value
+        let senderId = '6366fe474c670183dd2bcae5'
+
+        if (text === "") {
+            console.log("Empty text field.")
+        }
+        else {
+            let response = await communityStore.addReply(replyingTo, senderId, text)
+            console.log(response)
+            document.getElementById('reply_field').value = "";
+        }
+    }
     
     return (
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
@@ -186,17 +200,19 @@ export default function CommunityThread(props) {
                 <ListItemText primary={<><Typography sx={{color:'white', float: 'left', paddingRight: '1ch', paddingLeft: '2ch'}}>{props.thread.threadName}</Typography><Typography sx={{color:'#a8a8a8'}}>by: {user.first} {user.last}</Typography></>} secondary={props.thread.threadText} primaryTypographyProps={{style: {color: 'white'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'1em', float: 'left', paddingLeft: '2ch' }}}/>
             </ListItemButton>
             <ReplyDivider flexItem />
-            <ReplyTextField label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>
+
+            <ReplyTextField id="reply_field" label="Write a reply..." variant="filled" InputLabelProps={{style: {color:'white'}}} InputProps={{endAdornment: sendButton()}}/>
             {
                 threadreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
                         {
                             threadreplies.map((reply, index)=>{
                                 return (
-                                    // Add onclick event here v
-                                    <BetterReplyButton divider >
+                                    <BetterReplyButton divider onClick={() => {
+                                            setReplyingTo(reply._id)
+                                        }}>
                                         <ListItemAvatar>
-                                            <Avatar alt={reply.id} src={reply.id} sx={{width: '30px', height: '30px'}}>{reply.id}</Avatar>
+                                            <Avatar alt={reply.id} src={reply._id} sx={{width: '30px', height: '30px'}}>{reply._id}</Avatar>
                                         </ListItemAvatar>
                                         <ListItemText primary={reply.replyMsg} secondary={reply.createdAt} primaryTypographyProps={{style: {color: 'white', fontSize:'0.7em'}}} secondaryTypographyProps={{style:{color:'whitesmoke', fontSize:'0.5em'}}}/>
                                     </BetterReplyButton>

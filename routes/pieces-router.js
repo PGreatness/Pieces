@@ -82,6 +82,7 @@ router.post('/thread/like', ThreadController.likeThread)
 router.post('/thread/dislike', ThreadController.dislikeThread)
 
 router.post('/thread/addReply/', ThreadController.addReply)
+// router.post('/thread/deleteReply/', ThreadController.deleteReply)
 router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
 router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
 

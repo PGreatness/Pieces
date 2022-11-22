@@ -12,8 +12,21 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { GlobalStoreContext } from '../../../store/store'
+import { useContext, useEffect, useState } from 'react';
+import { CommunityStoreContext } from '../../../store/communityStore';
 
 export default function WelcomeScreen() {
+    const { store } = useContext(GlobalStoreContext);
+    const { communityStore } = useContext(CommunityStoreContext);
+
+    // let x = db.serverStatus().connections
+
+    store.loadPublicProjects();
+    communityStore.getAllThreads();
+    let publicProjects = store.publicProjects;
+    let threads = communityStore.ALL_THREADS;
+
     return (
         <div className="welcome_body">
             <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '96%', height: '200px', position: 'relative' }}>
@@ -58,17 +71,17 @@ export default function WelcomeScreen() {
                             <div className="welcome_stats">
                                 <ForumIcon></ForumIcon>
                             </div>
-                            1,234,567 Ongoing Discussions
+                            {threads.length} Ongoing Discussions
                             <br></br>
                             <div className="welcome_stats">
                                 <DownloadIcon></DownloadIcon>
                             </div>
-                            1,234,567 Project Downloads
+                            No Download Data
                             <br></br>
                             <div className="welcome_stats">
                                 <WorkIcon></WorkIcon>
                             </div>
-                            1,234,567 Projects to Collaborate On
+                            {publicProjects.length} Projects to Collaborate On
                             <br></br>
                         
                     </div>

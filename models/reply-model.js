@@ -1,10 +1,6 @@
 const { model, Schema, ObjectId } = require("mongoose");
 
 const repliesSchema = new Schema({
-    _id: {
-        type: ObjectId,
-        required: true,
-    },
     senderId: {
         type: ObjectId,
         required: true,
