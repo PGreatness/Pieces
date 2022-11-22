@@ -22,7 +22,8 @@ export const GlobalStoreActionType = {
     SWAP_COLORS: "SWAP_COLORS",
     LOAD_TILESET: "LOAD_TILESET",
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
-    ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET"
+    ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET",
+    SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT"
 }
 
 
@@ -204,6 +205,20 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     ...store,   
                     currentTile: payload.currentTile
+                })
+            }
+
+            case GlobalStoreActionType.SET_CURRENT_PROJECT: {
+                return setStore({
+                    ...store,   
+                    currentProject: payload.currentProject
+                })
+            }
+
+            case GlobalStoreActionType.UPDATE_TILE: {
+                return setStore({
+                    ...store,
+                    currentTile: payload.tile
                 })
             }
 
@@ -1439,6 +1454,19 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.setCurrentProject = async function (mapId) {
+        const response = await api.getMapById(mapId)
+
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+                payload: {
+                    currentProject: response.data.map
+                }
+            })
+        }
+    }
+
     store.loadTileset = async function (id) {
         const response = await api.getTilesetById(id)
     
@@ -1485,14 +1513,14 @@ function GlobalStoreContextProvider(props) {
             tileData: tileData
         }
         const response = await api.updateTile(payload)
-        // if (response.status === 200) {
-        //     storeReducer({
-        //         type: GlobalStoreActionType.UPDATE_TILE,
-        //         payload: {
-        //             tileset
-        //         }
-        //     })
-        // }
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.UPDATE_TILE,
+                payload: {
+                    tile: response.data.tile
+                }
+            })
+        }
     }
 
     store.updateTilesetProperties = async function (payload) {
