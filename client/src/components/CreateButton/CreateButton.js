@@ -8,7 +8,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import { Modal, TextField, Grid, Typography, Box, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import { GlobalStoreContext } from '../../store/store'
-// import { AuthContext } from '../../auth/auth'
+import AuthContext from '../../auth/auth'
 import { useContext, useState } from 'react'
 
 // const { auth } = useContext(AuthContext);
@@ -31,6 +31,7 @@ export default function CreateButton(props) {
 
     const navigate = useNavigate();
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [ openCreateMapModal, setOpenCreateMapModal ] = useState(false)
     const [ openCreateTilesetModal, setOpenCreateTilesetModal ] = useState(false)
 
@@ -39,39 +40,40 @@ export default function CreateButton(props) {
         navigate(loc);
     }
 
-    const handleCreateNewMap = () => {
-        let title = document.getElementById('title_input').value
+    const handleCreateNewMap = async () => {
+        let title = document.getElementById('map_name_input').value
         let mapHeight = Number(document.getElementById('map_height_input').value)
         let mapWidth = Number(document.getElementById('map_width_input').value)
         let tileHeight = Number(document.getElementById('tile_height_input').value)
         let tileWidth = Number(document.getElementById('tile_width_input').value)
-        let ownerId = '6357194e0a81cb803bbb913e'
+        let ownerId = auth.user._id
 
         if (mapHeight === NaN || mapWidth === NaN || tileHeight === NaN || tileWidth === NaN) {
             console.log("Not a valid number.")
         }
         else {
-            let response = store.createNewMap(title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
+            let response = await store.createNewMap(title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
+            console.log(response)
             if (response.data.success) 
-                setLocation('/map/1')
+                setLocation(`/map/${response.data.id}`)
         }
         setOpenCreateMapModal(false)
     }
     
-    const handleCreateNewTileset = () => {
+    const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
         let tilesetHeight = Number(document.getElementById('tileset_height_input').value)
         let tilesetWidth = Number(document.getElementById('tileset_width_input').value)
         let tileHeight = Number(document.getElementById('ts_tile_height_input').value)
         let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
-        let ownerId = '6357194e0a81cb803bbb913e'
+        let ownerId = auth.user._id
 
         if (tilesetHeight === NaN || tilesetWidth === NaN || tileHeight === NaN || tileWidth === NaN) {
             console.log("Not a valid number.")
         }
         else {
-            store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
-            // setLocation('/tileset/1')
+            let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+            setLocation(`/tileset/${response.data.id}`)
         }
         setOpenCreateTilesetModal(false)
     }
