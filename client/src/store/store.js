@@ -746,6 +746,7 @@ function GlobalStoreContextProvider(props) {
         };
         let response = await api.createNewMap(payload)
         console.log(response)
+        return response;
     }
 
     store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
@@ -768,6 +769,7 @@ function GlobalStoreContextProvider(props) {
         };
         let response = await api.createNewTileset(payload)
         console.log(response)
+        return response;
     }
 
 
