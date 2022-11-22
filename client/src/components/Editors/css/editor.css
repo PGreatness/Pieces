@@ -159,11 +159,11 @@
     color: #2dd4cf;
 }
 
-#color_primary {
+#color_primary, #tile_primary {
     z-index: 2;
 }
 
-#color_secondary {
+#color_secondary, #tile_secondary {
     bottom: 0px;
     right: 0px;
     z-index: 1;
