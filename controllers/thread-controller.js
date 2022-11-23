@@ -245,7 +245,7 @@ var getAllThreads = async (req, res) => {
     })
 }
 
-getAllReplies = async (req, res) => {
+var getAllReplies = async (req, res) => {
     console.log("Getting replies")
     const rangeReplies = await Reply.find({})
     return res.status(200).json({
@@ -256,6 +256,7 @@ getAllReplies = async (req, res) => {
 }
 
 var getThreadById = async (req, res) => {
+    console.log("Getting thread by id")
     if (!req.params.id) {
         return res.status(400).json({
             success: false,
@@ -469,7 +470,7 @@ var dislikeThread = async (req, res) => {
     });
 }
 
-addReply = async (req, res) => {
+var addReply = async (req, res) => {
     // console.log("hello");
     const { replyingTo, senderId, replyMsg, parentThread } = req.body;
     if (!replyingTo || !senderId || !replyMsg) {
@@ -530,7 +531,7 @@ addReply = async (req, res) => {
     });
 }
 
-removeReply = async (req, res) => {
+var removeReply = async (req, res) => {
 
     const { replyId, threadId } = req.body;
 
@@ -635,7 +636,7 @@ removeReply = async (req, res) => {
 
 // }
 
-getReplybyId = async (req, res) => {
+var getReplybyId = async (req, res) => {
     const savedReply = await Reply.findById(req.params.id);
     console.log(savedReply)
     return res.status(200).json({
