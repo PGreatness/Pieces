@@ -79,7 +79,7 @@ router.post('/tile/updateTile', TileController.updateTile)
 
 // Thread Routes
 router.post('/thread/addReply/', ThreadController.addReply)
-router.post('/thread/deleteReply/', ThreadController.deleteReply)
+router.post('/thread/deleteReply/', ThreadController.removeReply)
 router.get('/thread/getAllReplies/', ThreadController.getAllReplies)
 router.get('/thread/getReplybyId/:id', ThreadController.getReplybyId)
 
