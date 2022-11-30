@@ -29,15 +29,18 @@ export default function Explore(props) {
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
 
-    useEffect(() => {
-        setProjects(store.publicProjects)
-    }, [store.publicProjects])
-
     // Filtering stuff
     const [filterOptions, setFilterOptions] = useState([0, 0])
     const [filterActive, setFilterActive] = useState(false)
     const [filteredProjects, setFilteredProjects] = useState()
 
+
+    useEffect(() => {
+        setProjects(store.publicProjects)
+    }, [store.publicProjects])
+
+
+    // Filtering stuff
     useEffect(() => {
         if (filterActive || !filterActive) {
             setSortDir("")

@@ -31,13 +31,26 @@ export default function LibraryScreen(props) {
 
     const [projects, setProjects] = useState(store.userProjects)
 
+    const [sortOpt, setSortOpt] = useState("");
+    const [sortDir, setSortDir] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
-    const [sortOption, setSortOption] = useState("");
-    const [sortDirection, setSortDirection] = useState("")
+    const isSortMenuOpen = Boolean(anchorEl);
+    const isFilterMenuOpen = Boolean(anchorEl2);
+
+
+
+    // TOMMY STUFF
+    // const [allMaps, setAllMaps] = useState()
+    // const [anchorEl, setAnchorEl] = useState(null);
+    // const [anchorEl2, setAnchorEl2] = useState(null);
+    // const [sortOption, setSortOption] = useState("");
+    // const [sortDirection, setSortDirection] = useState("")
     const [filterOptions, setFilterOptions] = useState([0, 0])
     const [filterActive, setFilterActive] = useState(false)
     const [filteredMaps, setFilteredMaps] = useState()
+    const [openTagsFilterModal, setOpenTagsFilterModal] = useState(false)
+    
     const [tagFilters, setTagFilters] = useState({
         'rpg_checkbox': true,
         'space_checkbox': true,
@@ -46,10 +59,7 @@ export default function LibraryScreen(props) {
         'shooter_checkbox': true,
         'arcade_checkbox': true
     })
-    const [openTagsFilterModal, setOpenTagsFilterModal] = useState(false)
-    //const [allMaps, setAllMaps] = useState()
-    const isSortMenuOpen = Boolean(anchorEl);
-    const isFilterMenuOpen = Boolean(anchorEl2);
+
 
 
 
@@ -62,21 +72,20 @@ export default function LibraryScreen(props) {
     //     store.loadUserAndCollabMaps(auth.user?._id)
     // }, [auth])
 
+    // useEffect(() => {
+    //     setAllMaps(store.userMaps.concat(store.collabMaps))
+    // }, [store.userMaps])
 
-    useEffect(() => {
-        store.setLibrarySort(sortOption, sortDirection);
-    }, [sortOption, sortDirection])
-
-    useEffect(() => {
-        setAllMaps(store.userMaps.concat(store.collabMaps))
-    }, [store.userMaps])
+    // useEffect(() => {
+    //     store.setLibrarySort(sortOption, sortDirection);
+    // }, [sortOption, sortDirection])
 
     useEffect(() => {
         if (filterActive) {
-            setSortDirection("")
-            setSortOption("")
+            setSortDir("")
+            setSortOpt("")
 
-            let maps = allMaps
+            let maps = store.userProjects
             let filtered = []
 
             if (filterOptions[0] === 0 && filterOptions[1] === 0) {
