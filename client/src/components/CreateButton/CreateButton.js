@@ -56,6 +56,7 @@ export default function CreateButton(props) {
             console.log(response)
             if (response.data.success) 
                 setLocation(`/map/${response.data.id}`)
+                store.changePageToMapEditor(response.data.map)
         }
         setOpenCreateMapModal(false)
     }
