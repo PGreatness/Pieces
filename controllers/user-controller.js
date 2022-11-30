@@ -405,6 +405,79 @@ resetPassword = async (req, res) => {
     }
 }
 
+
+addFriend = async (req, res) => {
+    try {
+        const { userId, friendId } = req.body;
+
+        if (!friendId || !userId)
+            return res
+                .status(400)
+                .json({ message: "Must provide Ids of both users!" });
+
+
+        if (friendId === userId)
+            return res
+                .status(400)
+                .json({ message: "Cannot add yourself as friend!" });
+
+
+        const objectUserId = new ObjectId(userId);
+        const user = await User.findOne({ _id: objectUserId });
+        if (!user)
+            return res
+                .status(400)
+                .json({ message: "Account with specified id not found (current user)." });
+
+        const objectFriendId = new ObjectId(friendId);
+        const friend = await User.findOne({ _id: objectFriendId });
+        if (!friend)
+            return res
+                .status(400)
+                .json({ message: "Account with specified id not found (friend)." });
+
+                
+        if (user.friends.includes(friendId)) {
+            return res.status(400).json({
+                success: false,
+                message: "You are already friends!"
+            })
+        }
+
+        if (friend.friends.includes(userId)) {
+            return res.status(400).json({
+                success: false,
+                message: "You are already friends!"
+            })
+        }
+
+        friend.friends.push(userId);
+        await friend.save()
+
+        user.friends.push(friendId);
+        await user.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                user: user,
+                message: 'Friend added!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to add friends'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
+
+
+
+
 getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
     const { id } = req.query;
@@ -453,8 +526,6 @@ getOwnerAndCollaboratorOfMaps = async (req, res) => {
 
 
 getLibraryMapsByName = async (req, res) => {
-    console.log("good")
-
     const { id, name } = req.query;
 
     if (!id) {
@@ -618,7 +689,7 @@ deleteUser = async (req, res) => {
 
     // 2. No collaborators = delete 
     // Map
-    const noCollabOwned = await Map.deleteMany({ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
+    const noCollabOwned = await Map.deleteMany({ ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
     //console.log(noCollabOwned)
 
     // Tileset & Tiles
@@ -630,7 +701,7 @@ deleteUser = async (req, res) => {
         await Tile.deleteMany({ tilesetId: tilesetId })
     })
 
-    await Tileset.deleteMany({ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
+    await Tileset.deleteMany({ ownerId: uid, collaboratorIds: { $exists: true, $type: 'array', $eq: [] } })
 
     // everything about threads, owned threads, replies, likes, dislikes, comments
     // NO NEED ^ because will show up as deletedUser
@@ -671,7 +742,7 @@ deleteUser = async (req, res) => {
             userName: "DeletedUser",
             bio: "",
             passwordHash: ""
-        }, {returnOriginal: false}).then((newUser) => {
+        }, { returnOriginal: false }).then((newUser) => {
             return res.status(200).json({
                 success: true,
                 user: newUser,
@@ -794,5 +865,6 @@ uploadImage = async (req, res) => {
         getAllUsers,
         uploadImage,
         deleteImage,
-        deleteUser
+        deleteUser,
+        addFriend
     }

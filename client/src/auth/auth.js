@@ -352,6 +352,48 @@ function AuthContextProvider(props) {
     }
 
 
+    auth.removeAllNotifications = async function (userId, callback) {
+        let payload = {
+            userId: userId
+        }
+
+        const response = await api.removeAllNotifications(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO DELETE NOTIFICATION")
+        }
+    }
+
+    auth.markAllSeen = async function (userId, callback) {
+        let payload = {
+            userId: userId
+        }
+
+        const response = await api.markAllSeen(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO DELETE NOTIFICATION")
+        }
+    }
+
     auth.mapActionNotification = async function (ownerId, newUserId, mapId, callback) {
         let payload = {
             ownerId: ownerId, 
@@ -441,6 +483,95 @@ function AuthContextProvider(props) {
         }
         else {
             console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.sendFriendRequest = async function (senderId, receiverId) {
+        let payload = {
+            senderId: senderId, 
+            receiverId: receiverId
+        }
+
+        await api.friendRequest(payload).then(response => {
+            console.log(response.data)
+            console.log("API SENT FRIEND REQUEST NOTIFICATION")
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+    auth.addFriend = async function (userId, friendId, callback) {
+        let payload = {
+            userId: userId,
+            friendId: friendId
+        }
+
+        const response = await api.addFriend(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API ADDED FRIEND")
+        }
+    }
+
+
+    auth.approveFriendRequest = async function (senderId, receiverId, callback) {
+        let payload = {
+            senderId: senderId,
+            receiverId: receiverId
+        }
+
+        const response = await api.approveFriendRequest(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API ADDED APPROVED FRIEND REQUEST NOTIFICATION")
+        }
+    }
+
+    auth.denyFriendRequest = async function (senderId, receiverId, callback) {
+        let payload = {
+            senderId: senderId,
+            receiverId: receiverId
+        }
+
+        const response = await api.denyFriendRequest(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API ADDED DENIED FRIEND REQUEST NOTIFICATION")
         }
     }
 

@@ -19,21 +19,22 @@ export default function NotificationList(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
 
-    const [notifs, setNotifs] = useState(auth.user?.notifications);
+    // const [notifs, setNotifs] = useState(auth.user?.notifications);
 
-    const updateNotifications = (newNotifications) => {
-        setNotifs(newNotifications);
-    }
+    // const updateNotifications = (newNotifications) => {
+    //     setNotifs(newNotifications);
+    // }
 
     // return the list of notifications in a stack with spacing of 2 between each notification
     return (
-        <Stack spacing={2} sx={{paddingTop: "10px", overflowX: "scroll"}}>
+        <Stack spacing={2} sx={{paddingTop: "10px", overflowX:'hidden'}}>
             <TransitionGroup>
                 {
-                    notifs?.length ? notifs.map(notif => (
-                        <Slide direction="up" key={notif._id} in={notifs[notif._id]} mountOnEnter unmountOnExit timeout={{ enter: 500, exit: 500 }}>
+                    props.notifs?.length ? props.notifs.map(notif => (
+                        <Slide direction="up" key={notif._id} in={props.notifs[notif._id]} mountOnEnter 
+                            unmountOnExit timeout={{ enter: 500, exit: 500 }}>
                             <div>
-                                <Notification key={notif._id} notification={notif} updateNotifs={updateNotifications} />
+                                <Notification key={notif._id} notification={notif} updateNotifs={props.updateNotifications} />
                             </div>
                         </Slide>
                     )) :

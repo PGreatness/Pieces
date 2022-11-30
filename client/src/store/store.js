@@ -1334,6 +1334,7 @@ function GlobalStoreContextProvider(props) {
             })
         }
         else {
+            // TODO: display message to alert user like already collaborator
             console.log("API FAILED TO ADD COLLABORATOR")
         }
 

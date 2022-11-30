@@ -2,6 +2,7 @@ import React from 'react';
 import { ObjectId } from 'mongoose';
 import { useState, useContext, useEffect } from "react";
 import { ListItemButton, ListItemAvatar, Avatar, ListItemText, ListItem } from '@mui/material';
+import ReactTimeAgo from 'react-time-ago';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Clear } from '@mui/icons-material'
@@ -86,6 +87,22 @@ export default function Notification(props) {
         } else {
             // friend request case
 
+            // add friend
+            auth.addFriend(auth.user?._id, props.notification.senderId, (user) => {
+
+                    // remove notification
+                    auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+
+                        // add new Notification to let users know a collaborator added
+                        auth.approveFriendRequest(props.notification.senderId, auth.user?._id,
+                            (newUser) => {
+                                props.updateNotifs(newUser.notifications)
+                            })
+
+                    })
+
+            }).catch((err) => console.log(err))
+
         }
     }
 
@@ -121,6 +138,16 @@ export default function Notification(props) {
 
         } else {
             // friend request case
+            // remove notification
+            auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+
+                // add new Notification to let users know a collaborator added
+                auth.denyFriendRequest(props.notification.senderId, auth.user?._id, 
+                    (newUser) => {
+                        props.updateNotifs(newUser.notifications)
+                    })
+
+            })
 
         }
     }
@@ -156,7 +183,8 @@ export default function Notification(props) {
 
     return (
         <div>
-            <ListItemButton style={{ backgroundColor: "rgb(217, 217, 217, 0.3", margin: "10px", borderRadius: "15px" }}>
+            <ListItemButton style={{ backgroundColor: props.notification.seen? "rgb(217, 217, 217, 0.25" : "rgb(217, 217, 217, 0.45", 
+                margin: "10px", borderRadius: "15px" }}>
                 <ListItemAvatar sx={{ height: '90%' }}>
                     {getAvatar()}
                 </ListItemAvatar>
@@ -171,17 +199,17 @@ export default function Notification(props) {
                     {props.notification.action ?
                         <ListItem style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                             <CheckCircleIcon
-                                sx={{ fill: '#4CAF50', fontSize: 50, paddingTop: "3px" }}
+                                sx={{ fill: '#4bcb50', fontSize: 50, paddingTop: "3px" }}
                                 onClick={approve}
                             />
                             <CancelIcon
-                                sx={{ fill: 'red', fontSize: 50, paddingLeft: "20px", paddingTop: "3px" }} 
+                                sx={{ fill: '#e52727', fontSize: 50, paddingLeft: "20px", paddingTop: "3px" }} 
                                 onClick={deny}
                             />
                         </ListItem>
                         : <></>}
                     <ListItemText primary={notif.sentAt}
-                        primaryTypographyProps={{ style: { color: 'rgb(0,0,0,0.7)', paddingTop: "8px" } }}
+                        primaryTypographyProps={{ style: { color: 'rgb(0,0,0,0.6)', paddingTop: "5px" } }}
                     />
                 </ListItem>
             </ListItemButton>
