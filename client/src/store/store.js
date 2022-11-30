@@ -7,6 +7,7 @@ export const GlobalStoreContext = createContext({});
 
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
+    LOAD_USER_PROJECTS: "LOAD_USER_PROJECTS",
     LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
     LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
     LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
@@ -39,19 +40,24 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
         publicProjects: [],
+        userProjects: [],
         projectComments: [],
         currentProject: null,
+
         userMaps: [],
         collabMaps: [],
-        userAndCollabMaps: [],
+        // userAndCollabMaps: [],
         librarySortOption: "",
         librarySortDirection: "",
+        sortedLibraryList: [],
+
         projSortOpt: "",
         projSortDir: "",
-        sortedLibraryList: [],
+
         currentPage: "",
         mapOwner: null,
         searchName: "",
+        
         pagination: {
             page: 1,
             limit: 10,
@@ -59,6 +65,7 @@ function GlobalStoreContextProvider(props) {
             sort: 'date',
             order: -1
         },
+       
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
@@ -90,6 +97,13 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     ...store,
                     publicProjects: payload,
+                });
+            }
+
+            case GlobalStoreActionType.LOAD_USER_PROJECTS: {
+                return setStore({
+                    ...store,
+                    userProjects: payload,
                 });
             }
 
@@ -404,25 +418,45 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.loadUserAndCollabMaps = async function (id) {
+    store.loadUserProjects = async function (userId) {
 
-        const response = await api.getUserAndCollabMaps({ "id": id });
+        //let page = store.pagination.page;
+        //let limit = store.pagination.limit;
+
+        const response = await api.getAllUserProjects({ userId: userId });
+        console.log(response);
         if (response.data.success) {
-            let userMaps = response.data.owner;
-            let collabMaps = response.data.collaborator;
+            let userProjects = response.data.projects;
             storeReducer({
-                type: GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS,
-                payload: {
-                    currentPage: "library",
-                    userMaps: userMaps,
-                    collabMaps: collabMaps
-                }
-            })
+                type: GlobalStoreActionType.LOAD_USER_PROJECTS,
+                payload: userProjects
+            });
+        } else {
+            console.log("API FAILED TO GET THE USER PROJECTS");
         }
-        else {
-            console.log("API FAILED TO FETCH USER AND COLLAB MAPS")
-        }
+
     }
+
+    // store.loadUserAndCollabMaps = async function (id) {
+
+    //     const response = await api.getUserAndCollabMaps({ "id": id });
+    //     if (response.data.success) {
+    //         let userMaps = response.data.owner;
+    //         let collabMaps = response.data.collaborator;
+    //         storeReducer({
+    //             type: GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS,
+    //             payload: {
+    //                 currentPage: "library",
+    //                 userMaps: userMaps,
+    //                 collabMaps: collabMaps
+    //             }
+    //         })
+    //     }
+    //     else {
+    //         console.log("API FAILED TO FETCH USER AND COLLAB MAPS")
+    //     }
+    // }
+
 
 
     store.publishProject = async function () {
@@ -615,8 +649,6 @@ function GlobalStoreContextProvider(props) {
                 }
                 break;
             }
-
-
 
             // case "community" : {
             //     break;
