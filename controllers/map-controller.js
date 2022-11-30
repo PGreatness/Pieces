@@ -873,7 +873,7 @@ addUserToMap = async (req, res) => {
         })
     }
 
-    chosenMap.collaboratorIds.push(requesterId);
+    chosenMap.collaboratorIds.push(uid);
 
     chosenMap.save()
         .then((map) => {

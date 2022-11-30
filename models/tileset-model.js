@@ -40,7 +40,7 @@ const tilesetSchema = new Schema({
     },
     source: {
         type: String,
-        required: true
+        required: false
     },
     ownerId: {
         type: ObjectId,

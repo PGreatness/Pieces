@@ -1,7 +1,7 @@
 {
     "mongo_uri": "mongodb+srv://piecesAdmin:zBzVR5DvrI5PPOkw@cluster0.jyrlicl.mongodb.net/Pieces?retryWrites=true&w=majority",
     "port": 4000,
-    "client_origin": "http://localhost:3000",
+    "client_origin": "http://pieces-316.herokuapp",
     "server_local_domain": "http://localhost",
     "secrets": {
         "reset_token": "5g[^2-Y>oDN+&p2",
@@ -13,3 +13,4 @@
     "app_password": "zxffgtaasnvwplai",
     "envType": "DEFAULT"
 }
+

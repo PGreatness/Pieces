@@ -2,8 +2,10 @@ import React from 'react';
 import { Stack } from '@mui/material';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import Slide from '@mui/material/Slide';
-import { useState } from 'react';
+import { useState, useContext, useEffect } from "react";
 import noNotifications from '../images/mindful.png';
+import { GlobalStoreContext } from '../../store/store';
+import AuthContext from '../../auth/auth';
 import './css/notificationList.css';
 
 import Notification from './Notification';
@@ -14,28 +16,25 @@ import Notification from './Notification';
 // props.changeLoc is a function that takes in a string and changes the location of the app
 // notifications is an array of Notification objects
 export default function NotificationList(props) {
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
 
-    const [notifs, setNotifs] = useState(props.notifications);
+    // const [notifs, setNotifs] = useState(auth.user?.notifications);
 
-    const addNotification = (notif) => {
-        setNotifs([...notifs, notif]);
-    }
-
-    const removeNotification = (notifId) => {
-        // filter out the notification with the given id
-        setNotifs(notifs.filter(notif => notif._id !== notifId));
-    }
+    // const updateNotifications = (newNotifications) => {
+    //     setNotifs(newNotifications);
+    // }
 
     // return the list of notifications in a stack with spacing of 2 between each notification
-
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{paddingTop: "10px", overflowX:'hidden'}}>
             <TransitionGroup>
                 {
-                    notifs?.length ? notifs.map(notif => (
-                        <Slide direction="up" key={notif._id} in={notifs[notif._id]} mountOnEnter unmountOnExit timeout={{ enter: 500, exit: 500 }}>
+                    props.notifs?.length ? props.notifs.map(notif => (
+                        <Slide direction="up" key={notif._id} in={props.notifs[notif._id]} mountOnEnter 
+                            unmountOnExit timeout={{ enter: 500, exit: 500 }}>
                             <div>
-                                <Notification key={notif._id} notification={notif} swipeAway={removeNotification} />
+                                <Notification key={notif._id} notification={notif} updateNotifs={props.updateNotifications} />
                             </div>
                         </Slide>
                     )) :
