@@ -74,7 +74,9 @@ export default function CreateButton(props) {
         }
         else {
             let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
-            setLocation(`/tileset/${response.data.id}`)
+            console.log(response)
+            setLocation(`/tileset/${response.data.tileset._id}`)
+            store.changePageToTilesetEditor(response.data.tileset)
         }
         setOpenCreateTilesetModal(false)
     }
