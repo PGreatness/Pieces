@@ -589,7 +589,6 @@ function GlobalStoreContextProvider(props) {
             }
 
             case "library": {
-                console.log("what the heck")
                 let payload = {
                     id: "6357194e0a81cb803bbb913e",
                     name: search
