@@ -132,7 +132,6 @@ createMap = async (req, res) => {
             favs: [],
             downloads: 0,
             comments: [],
-            creationDate: Date.now()
 
         })
 
@@ -144,6 +143,7 @@ createMap = async (req, res) => {
                 });
         }
 
+        console.log(map)
         // Saves map
         map
             .save()

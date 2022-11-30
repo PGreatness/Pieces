@@ -57,8 +57,21 @@ app.use('/', serverRouter);
 // CONNECT TO DATABASE
 mongoose.connect(config.get("mongo_uri"), { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        app.listen({ port: PORT }, () => {
+        var server = app.listen({ port: PORT }, () => {
             console.log(`Server is running on port ${PORT}`)
+        });
+        const { Server } = require("socket.io");
+        const io = new Server(server, {
+            cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST"]
+            }
+        });
+        io.on('connection', (socket) => {
+            console.log('a user connected');
+            socket.on('disconnect', () => {
+                console.log('user disconnected');
+            });
         });
     })
     .catch(error => {

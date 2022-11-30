@@ -34,12 +34,12 @@ const mapSchema = new Schema({
         required: true,
     },
     tiles: {
-        types: [ObjectId],
-        required: false,
+        type: [ObjectId],
+        required: true,
     },
     tilesets: {
         type: [ObjectId],
-        required: false,
+        required: true,
     },
     ownerId: {
         type: ObjectId,
@@ -47,7 +47,7 @@ const mapSchema = new Schema({
     },
     collaboratorIds: {
         type: [ObjectId],
-        required: false,
+        required: true,
     },
     isPublic: {
         type: Boolean,
@@ -55,11 +55,11 @@ const mapSchema = new Schema({
     },
     likes: {
         type: [ObjectId],
-        required: false,
+        required: true,
     },
     dislikes: {
         type: [ObjectId],
-        required: false,
+        required: true,
     },
     favs: {
         type: [ObjectId],

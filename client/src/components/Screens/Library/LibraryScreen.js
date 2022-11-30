@@ -297,7 +297,8 @@ export default function LibraryScreen(props) {
     }
 
     const openProject = (project) => {
-        setLocation('/map/'+project._id); 
+        setLocation('/map/'+project._id);
+        console.log(project);
         store.changePageToMapEditor(project)
     }
 
