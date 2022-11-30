@@ -27,6 +27,7 @@ router.post('/updateUser', UserController.updateUser)
 router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
+router.post('/addFriend', UserController.addFriend)
 router.post('/uploadImage', UserController.uploadImage)
 router.post('/deleteImage', UserController.deleteImage)
 
@@ -65,8 +66,8 @@ router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
-router.post('/map/addUserToTileset', TilesetController.addUserToTileset)
-router.post('/map/removeUserFromTileset', TilesetController.removeUserFromTileset)
+router.post('/tileset/addUserToTileset', TilesetController.addUserToTileset)
+router.post('/tileset/removeUserFromTileset', TilesetController.removeUserFromTileset)
 
 
 // Tile Routes
@@ -96,6 +97,17 @@ router.get('/thread/:id', ThreadController.getThreadById)
 // Notification Routes
 router.post('/notification/requestMapEdit', NotificationController.requestMapEdit)
 router.post('/notification/requestTilesetEdit', NotificationController.requestTilesetEdit)
+router.post('/notification/friendRequest', NotificationController.friendRequest)
+router.post('/notification/mapActionNotif', NotificationController.mapActionNotif)
+router.post('/notification/mapDenyNotif', NotificationController.mapDenyNotif)
+router.post('/notification/tilesetActionNotif', NotificationController.tilesetActionNotif)
+router.post('/notification/tilesetDenyNotif', NotificationController.tilesetDenyNotif)
+router.post('/notification/approveFriendRequest', NotificationController.approveFriendRequest)
+router.post('/notification/denyFriendRequest', NotificationController.denyFriendRequest)
+router.post('/notification/removeNotification', NotificationController.removeNotification)
+router.post('/notification/removeAll', NotificationController.removeAllNotifications)
+router.post('/notification/markAllSeen', NotificationController.markAllSeen)
+
 
 
 // Chat Routes

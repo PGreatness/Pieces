@@ -86,6 +86,7 @@ createTileset = async (req, res) => {
         newTileset.save().then(() => {
             return res.status(200).json({
                 success: true,
+                tileset: newTileset,
                 message: 'A tileset has been created!'
             })
         }).catch((err) => {

@@ -9,6 +9,10 @@ const notificationSchema = new Schema({
         type: Boolean,
         required: true,
     },
+    action: {
+        type: Boolean,
+        required: true,
+    },
     mapId: {
         type: String,
         required: false,
