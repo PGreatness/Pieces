@@ -17,14 +17,21 @@ import AuthContext from '../../../auth/auth';
 import './css/explore.css';
 
 export default function Explore(props) {
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+
+
+    const [projects, setProjects] = useState(store.publicProjects)
     const [sortOpt, setSortOpt] = useState("");
     const [sortDir, setSortDir] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
-    const { store } = useContext(GlobalStoreContext);
-    const { auth } = useContext(AuthContext);
+
+    useEffect(() => {
+        setProjects(store.publicProjects)
+    }, [store.publicProjects])
 
     // Filtering stuff
     const [filterOptions, setFilterOptions] = useState([0, 0])
@@ -79,11 +86,7 @@ export default function Explore(props) {
         }
     }, [filterOptions])
 
-    const [projects, setProjects] = useState(store.publicProjects)
 
-    useEffect(() => {
-        setProjects(store.publicProjects)
-    }, [store.publicProjects])
 
 
     const handleSortMenuOpen = (event) => {

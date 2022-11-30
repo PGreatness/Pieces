@@ -46,7 +46,6 @@ router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
 router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
-router.post('/map/allProjectsOfUser', MapController.getAllProjectsWithUser)
 
 
 router.post('/comments/updateComment', ProjectCommentController.updateComment)
@@ -116,9 +115,10 @@ router.post('/chat/newChat', ChatController.createChat)
 router.post('/chat/deleteChat', ChatController.deleteChat)
 router.post('/chat/markChatAsSeen', ChatController.markChatAsSeen)
 
-// Other Routes
+// Other Project Routes
 router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
 router.get('/getPublicProjectsByName/:name', MapController.getPublicProjectsByName)
+router.post('/getUserProjects', MapController.getAllProjectsWithUser)
 router.get('/changePage', MapController.getAllPublicProjects)
 
 module.exports = router

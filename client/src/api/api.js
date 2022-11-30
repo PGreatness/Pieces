@@ -31,6 +31,7 @@ export const deleteUser = (payload) => api.post(`/deleteUser/`, payload)
 // Projects
 export const getAllPublicProjects = (query) => api.get(`/getAllPublicProjects/`, {params: query})
 export const getPublicProjectsByName = (name) => api.get(`/getPublicProjectsByName/${name}/`)
+export const getAllUserProjects = (query) => api.get(`/getUserProjects/`, {params: query})
 
 // Map
 export const getMapById = (id) => api.get(`/map/getMapById/${id}/`)
@@ -100,6 +101,8 @@ export const getThreadById = (payload) => api.get(`/thread/${payload}`)
 const apis = {
     getAllPublicProjects,
     getAllProjectComments,
+    getAllUserProjects,
+    
     getCommentbyId,
     updateComment,
     createNewComment,

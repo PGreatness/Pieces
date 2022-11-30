@@ -28,20 +28,16 @@ export default function LibraryScreen(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
 
-    useEffect(() => {
-        store.loadUserAndCollabMaps(auth.user?._id)
-    }, [auth])
+
+    const [projects, setProjects] = useState(store.userProjects)
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
-
     const [sortOption, setSortOption] = useState("");
     const [sortDirection, setSortDirection] = useState("")
-
     const [filterOptions, setFilterOptions] = useState([0, 0])
     const [filterActive, setFilterActive] = useState(false)
     const [filteredMaps, setFilteredMaps] = useState()
-
     const [tagFilters, setTagFilters] = useState({
         'rpg_checkbox': true,
         'space_checkbox': true,
@@ -51,11 +47,21 @@ export default function LibraryScreen(props) {
         'arcade_checkbox': true
     })
     const [openTagsFilterModal, setOpenTagsFilterModal] = useState(false)
-
-    const [allMaps, setAllMaps] = useState()
-
+    //const [allMaps, setAllMaps] = useState()
     const isSortMenuOpen = Boolean(anchorEl);
     const isFilterMenuOpen = Boolean(anchorEl2);
+
+
+
+
+    useEffect(() => {
+        setProjects(store.userProjects)
+    }, [store.userProjects])
+
+    // useEffect(() => {
+    //     store.loadUserAndCollabMaps(auth.user?._id)
+    // }, [auth])
+
 
     useEffect(() => {
         store.setLibrarySort(sortOption, sortDirection);
