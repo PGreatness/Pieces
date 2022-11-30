@@ -805,6 +805,7 @@ var getAllProjectsWithUser = async (req, res) => {
             startIndex = (page - 1) * limit;
             rangeProject = await Map.aggregate([
                 { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } },
+                { $unionWith: { coll: "tilesets", pipeline: [ { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } } ] } },
                 { $addFields: { numLikes: { $size: "$likes"} } },
                 { $sort: sort },
                 { $skip: startIndex },
