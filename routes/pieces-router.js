@@ -45,6 +45,7 @@ router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
 router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
+router.post('/map/allProjectsOfUser', MapController.getAllProjectsWithUser)
 
 
 router.post('/comments/updateComment', ProjectCommentController.updateComment)

@@ -739,6 +739,94 @@ getAllPublicProjects = async (req, res) => {
     });
 }
 
+var getAllProjectsWithUser = async (req, res) => {
+        var { page } = req.query;
+        var { limit } = req.query;
+        var { sort } = req.query;
+        var { order } = req.query;
+        var { userId } = req.query;
+
+        if (!page) {
+            page = 1;
+        }
+
+        if (!userId) {
+            return res.status(400).json({
+                message: "User ID is required"
+            })
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({
+                message: "User ID is invalid"
+            })
+        }
+
+        userId = mongoose.Types.ObjectId(userId);
+
+        // console.log(order)
+        order = order === 'asc' || +order === 1 ? 1 : -1;
+        if (!sort || sort === 'date') {
+            sort = { createdAt: order };
+        } else if (sort === "likes") {
+            sort = { "numLikes": order };
+        } else if (sort === "name") {
+            sort = { title: order };
+        } else if (sort === "downloads") {
+            sort = { downloads: order };
+        } else {
+            sort = { createdAt: order };
+        }
+    
+        if (limit && !Number.isNaN(+limit)) {
+            limit = +limit;
+        }
+    
+        if (Number.isNaN(+page)) {
+            return res.status(400).json({
+                success: false,
+                message: "Page and limit must be numbers"
+            })
+        }
+    
+        page = +page;
+    
+        if (page < 1) {
+            return res.status(400).json({
+                success: false,
+                message: "Page must be greater than 0"
+            })
+        }
+    
+        var startIndex;
+        var rangeProject;
+        // console.log("sorting by: ", sort)
+        if (limit) {
+            startIndex = (page - 1) * limit;
+            rangeProject = await Map.aggregate([
+                { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } },
+                { $addFields: { numLikes: { $size: "$likes"} } },
+                { $sort: sort },
+                { $skip: startIndex },
+                { $limit: limit },
+            ]);
+        } else {
+            startIndex = page - 1;
+            rangeProject = await Map.aggregate([
+                { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } },
+                { $unionWith: { coll: "tilesets", pipeline: [ { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } } ] } },
+                { $addFields: { numLikes: { $size: "$likes"} } },
+                { $sort: sort },
+                { $skip: startIndex },
+            ]);
+        }
+
+        return res.status(200).json({
+            success: true,
+            count: rangeProject.length,
+            projects: rangeProject
+        });
+}
 
 getPublicProjectsByName = async (req, res) => {
     console.log('req.params')
@@ -989,5 +1077,6 @@ module.exports = {
     addUserToMap,
     getAllPublicProjects,
     getPublicProjectsByName,
-    removeUserFromMap
+    removeUserFromMap,
+    getAllProjectsWithUser
 }
