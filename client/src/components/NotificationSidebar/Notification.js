@@ -79,7 +79,6 @@ export default function Notification(props) {
                             props.notification.tilesetId, (newUser) => {
                                 props.updateNotifs(newUser.notifications)
                             })
-
                     })
                 })
                 .catch((err) => console.log(err))
