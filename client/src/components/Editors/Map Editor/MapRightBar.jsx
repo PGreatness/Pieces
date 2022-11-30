@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useContext, useEffect } from 'react';
 import { Box, Stack } from '@mui/system';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
 import { Brush, HighlightAlt, OpenWith, Map, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add } from '@mui/icons-material'
 import PublicIcon from '@mui/icons-material/Public';
@@ -32,6 +33,7 @@ export default function MapRightBar() {
   const [openUserSettings, setOpenUserSettings] = useState(false);
   const [openPublishMap, setOpenPublishMap] = useState(false);
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
+  const [openDeleteMap, setOpenDeleteMap] = useState(false);
   const [owner, setOwner] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
@@ -133,6 +135,19 @@ export default function MapRightBar() {
   const unpublishMap = () => {
     store.unpublishProject();
     handleCloseUnpublishMap();
+  }
+
+  const handleDeleteMap = () => {
+    setOpenDeleteMap(true)
+  }
+
+  const handleCloseDeleteMap = () => {
+    setOpenDeleteMap(false)
+  }
+
+  const deleteMap = () => {
+    //store.unpublishProject();
+    handleCloseDeleteMap();
   }
 
   const handleAddCollaborator = async (e, value, reason) => {
@@ -312,12 +327,14 @@ export default function MapRightBar() {
                 <Map style={{ marginLeft: '15px' }} />
               </Button>
             </Box>
+
             <Box>
               <Button onClick={handleOpenExportMap} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
                 <Typography>Export Map</Typography>
                 <IosShare style={{ marginLeft: '15px' }} />
               </Button>
             </Box>
+
             <Box>
               {project.ownerId == auth.user?._id ?
                 project.isPublic ?
@@ -332,6 +349,18 @@ export default function MapRightBar() {
                     sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
                     <Typography>Publish Map</Typography>
                     <PublicIcon style={{ marginLeft: '15px' }} />
+                  </Button>
+                : <></>
+              }
+            </Box>
+
+            <Box>
+              {project.ownerId == auth.user?._id ?
+                <Button
+                    onClick={handleDeleteMap}
+                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: 'red' }}>
+                    <Typography>Delete Map</Typography>
+                    <DeleteIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
                   </Button>
                 : <></>
               }
@@ -442,6 +471,31 @@ export default function MapRightBar() {
                 <Check />
               </Button>
               <Button onClick={handleCloseUnpublishMap}>
+                <Typography>Cancel</Typography>
+                <Clear />
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+
+
+
+      <Modal
+        open={openDeleteMap}
+        onClose={handleCloseDeleteMap}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column'>
+            <Typography variant='h3' color='azure'>Delete Map</Typography>
+            <Typography variant='h5' color='azure'>Map will be permanently deleted. Are you sure?</Typography>
+            <Stack direction='row'>
+              <Button onClick={deleteMap}>
+                <Typography >Confirm</Typography>
+                <Check />
+              </Button>
+              <Button onClick={handleCloseDeleteMap}>
                 <Typography>Cancel</Typography>
                 <Clear />
               </Button>
