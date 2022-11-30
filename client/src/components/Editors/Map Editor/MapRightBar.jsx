@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useContext, useEffect } from 'react';
 import { Box, Stack } from '@mui/system';
 import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
-import { Brush, HighlightAlt, OpenWith, Map, FormatColorFill, PersonRemove, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, SwapHoriz, ContentCopy, Delete, ArrowUpward, Check, ArrowDownward, Add, Visibility } from '@mui/icons-material'
+import { Brush, HighlightAlt, OpenWith, Map, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add } from '@mui/icons-material'
 import PublicIcon from '@mui/icons-material/Public';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
@@ -43,7 +43,7 @@ export default function MapRightBar() {
 
   useEffect(() => {
     setProject(store.currentProject)
-    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
       setOwner(owner);
       setCollaborators(collabs);
     })
@@ -62,7 +62,7 @@ export default function MapRightBar() {
 
   useEffect(()=>{
     setProject(store.currentProject);
-    store.getOwnerAndCollabs(store.currentProject.ownerId, store.currentProject.collaboratorIds, (owner, collab)=>{
+    auth.getOwnerAndCollabs(store.currentProject.ownerId, store.currentProject.collaboratorIds, (owner, collab)=>{
       setOwner(owner);
       setCollaborators(collab);
     })
@@ -93,13 +93,13 @@ export default function MapRightBar() {
   }
 
   const handleOpenUserSettings = async function () {
-    store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
       setOwner(owner);
       setCollaborators(collabs);
       setOpenUserSettings(true);
     })
 
-    const users = await store.getAllUsers();
+    const users = await auth.getAllUsers();
     setUsers(users)
     console.log(users)
   }
@@ -137,7 +137,7 @@ export default function MapRightBar() {
 
   const handleAddCollaborator = async (e, value, reason) => {
     if (reason === 'selectOption') {
-      await store.getUserByUsername(value, (user)=>{
+      await auth.getUserByUsername(value, (user)=>{
         store.addMapCollaborator(project._id, user._id)
         .then(()=>console.log(store))
         .catch((err)=>console.log(err))
@@ -151,7 +151,7 @@ export default function MapRightBar() {
     //console.log(store.currentProject)
     //setProject(idk);
     console.log(project)
-    // store.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+    // auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
     //   setOwner(owner);
     //   setCollaborators(collabs);
     //   setOpenUserSettings(true);

@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    // baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 // Comments
@@ -39,8 +39,8 @@ export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 export const createNewTileset = (payload) => api.post(`/tileset/newTileset`, payload)
 
-export const addTilesetCollaborator = (payload) => api.post(`/map/addUserToTileset/`, payload)
-export const removeTilesetCollaborator = (payload) => api.post(`/map/removeUserFromTileset/`, payload)
+export const addTilesetCollaborator = (payload) => api.post(`/tileset/addUserToTileset/`, payload)
+export const removeTilesetCollaborator = (payload) => api.post(`/tileset/removeUserFromTileset/`, payload)
 
 // User
 export const getLoggedIn = () => api.get(`/loggedIn/`);
@@ -65,8 +65,14 @@ export const deleteUser = (payload) => api.post(`/deleteUser/`, payload)
 export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
 
 // Notification
-export const requestMapEdit = (payload) => api.post(`/notification/requestMapEdit`, payload)
-export const requestTilesetEdit = (payload) => api.post(`/notification/requestTilesetEdit`, payload)
+export const requestMapEdit = (payload) => api.post(`/notification/requestMapEdit/`, payload)
+export const requestTilesetEdit = (payload) => api.post(`/notification/requestTilesetEdit/`, payload)
+export const friendRequest = (payload) => api.post(`/notification/friendRequest/`, payload)
+export const mapActionNotif = (payload) => api.post(`/notification/mapActionNotif/`, payload)
+export const mapDenyNotif = (payload) => api.post(`/notification/mapDenyNotif/`, payload)
+export const tilesetActionNotif = (payload) => api.post(`/notification/tilesetActionNotif/`, payload)
+export const tilesetDenyNotif = (payload) => api.post(`/notification/tilesetDenyNotif/`, payload)
+export const removeNotification = (payload) => api.post(`/notification/removeNotification/`, payload)
 
 // COMMUNITY
 // Threads
@@ -123,12 +129,17 @@ const apis = {
     uploadImage,
     deleteImage,
     deleteUser,
-
     changePage,
     requestMapEdit,
     requestTilesetEdit,
+    friendRequest,
     addTilesetCollaborator,
     removeTilesetCollaborator,
+    removeNotification,
+    mapActionNotif,
+    mapDenyNotif,
+    tilesetActionNotif,
+    tilesetDenyNotif,
 
     getAllThreads,
     addReply,

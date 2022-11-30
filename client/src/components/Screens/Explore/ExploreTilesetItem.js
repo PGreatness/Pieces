@@ -26,7 +26,7 @@ export default function ExploreTilesetItem(props) {
     const project = props.project;
 
     const [showRequestModal, setShowRequestModal] = useState(false);
-    const [mapOwner, setMapOwner] = useState(null);
+    const [tilesetOwner, setTilesetOwner] = useState(null);
 
     const [likes, setLikes] = useState(project.likes.length); 
     const [dislikes, setDislikes] = useState(project.dislikes.length);  
@@ -71,8 +71,8 @@ export default function ExploreTilesetItem(props) {
     }
 
     const handleConfirmRequest = () => {
-        store.getUserById(project.ownerId, (ownerUser) => {
-            setMapOwner(ownerUser);
+        auth.getUserById(project.ownerId, (ownerUser) => {
+            setTilesetOwner(ownerUser);
         });
         setShowRequestModal(true)
     }
@@ -82,7 +82,8 @@ export default function ExploreTilesetItem(props) {
     }
 
     const handleRequestAccess = () => {
-        store.editMapRequest(mapOwner._id, project._id, project.title)
+        console.log(project._id)
+        store.editTilesetRequest(tilesetOwner._id, project._id, project.title)
         setShowRequestModal(false)
     }
 
@@ -150,11 +151,11 @@ export default function ExploreTilesetItem(props) {
                         </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
                             <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Tileset Owner:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{mapOwner?.firstName} {mapOwner?.lastName}</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{tilesetOwner?.firstName} {tilesetOwner?.lastName}</Typography>
                         </Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'50px'}} item xs={12}>
                             <Typography style={{textAlign:'center', marginBottom:'px', marginRight: '10px', fontSize: '20px'}} color='azure'>Username:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>@{mapOwner?.userName}</Typography>
+                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>@{tilesetOwner?.userName}</Typography>
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>

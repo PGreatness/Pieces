@@ -273,6 +273,176 @@ function AuthContextProvider(props) {
             });
     }
 
+    auth.getUserById = async function (id, setOwnerCallback) {
+        const response = await api.getUserById(id);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    }
+
+    auth.getUsersByUsername = async function (username) {
+        const response = await api.getUsersByUsername(username);
+        if (response.status === 200) {
+            return response;
+        }
+    }
+
+    auth.getAllUsers = async function () {
+        const response = await api.getAllUsers();
+        if (response.status === 200) {
+            return response.data.users;
+        }
+    }
+
+
+    auth.getUserByUsername = async function (username, setOwnerCallback) {
+        const response = await api.getUserByUsername(username);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    }
+
+
+    auth.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
+        let owner = null;
+        const ownerResponse = await api.getUserById(ownerId);
+        if (ownerResponse.status === 200) {
+            owner = ownerResponse.data.user
+        }
+
+        let collabs = []
+        for (const collabId of collaboratorIds) {
+            const collabResponse = await api.getUserById(collabId);
+            if (collabResponse.status === 200) {
+                collabs.push(collabResponse.data.user)
+            }
+        }
+
+        console.log(owner)
+        console.log(collabs)
+        setUsersCallback(owner, collabs)
+    }
+
+    auth.removeNotification = async function (id, userId, callback) {
+        let payload = {
+            id: id, 
+            userId: userId
+        }
+
+        const response = await api.removeNotification(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO DELETE NOTIFICATION")
+        }
+    }
+
+
+    auth.mapActionNotification = async function (ownerId, newUserId, mapId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            mapId: mapId
+        }
+
+        const response = await api.mapActionNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.mapDenyNotification = async function (ownerId, newUserId, mapId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            mapId: mapId
+        }
+
+        const response = await api.mapDenyNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.tilesetActionNotification = async function (ownerId, newUserId, tilesetId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            tilesetId: tilesetId
+        }
+
+        const response = await api.tilesetActionNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.tilesetDenyNotification = async function (ownerId, newUserId, tilesetId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            tilesetId: tilesetId
+        }
+
+        const response = await api.tilesetDenyNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
 
     auth.logoutUser = async function (store, callback) {
         const response = await api.logoutUser();

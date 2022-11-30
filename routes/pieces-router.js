@@ -64,8 +64,8 @@ router.post('/tileset/newTileset', TilesetController.createTileset)
 router.post('/tileset/deleteTileset', TilesetController.deleteTileset)
 router.post('/tileset/updateTileset', TilesetController.updateTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
-router.post('/map/addUserToTileset', TilesetController.addUserToTileset)
-router.post('/map/removeUserFromTileset', TilesetController.removeUserFromTileset)
+router.post('/tileset/addUserToTileset', TilesetController.addUserToTileset)
+router.post('/tileset/removeUserFromTileset', TilesetController.removeUserFromTileset)
 
 
 // Tile Routes
@@ -95,6 +95,13 @@ router.get('/thread/:id', ThreadController.getThreadById)
 // Notification Routes
 router.post('/notification/requestMapEdit', NotificationController.requestMapEdit)
 router.post('/notification/requestTilesetEdit', NotificationController.requestTilesetEdit)
+router.post('/notification/friendRequest', NotificationController.friendRequest)
+router.post('/notification/removeNotification', NotificationController.removeNotification)
+router.post('/notification/mapActionNotif', NotificationController.mapActionNotif)
+router.post('/notification/mapDenyNotif', NotificationController.mapDenyNotif)
+router.post('/notification/tilesetActionNotif', NotificationController.tilesetActionNotif)
+router.post('/notification/tilesetDenyNotif', NotificationController.tilesetDenyNotif)
+
 
 
 // Chat Routes

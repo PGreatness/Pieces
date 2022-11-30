@@ -765,7 +765,8 @@ function GlobalStoreContextProvider(props) {
             tileWidth: tileWidth,
             ownerId: ownerId,
             isLocked: true,
-            isPublic: false
+            isPublic: false,
+            source: null
         };
         let response = await api.createNewTileset(payload)
         console.log(response)
@@ -1275,62 +1276,6 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.getUserById = async function (id, setOwnerCallback) {
-        const response = await api.getUserById(id);
-        //console.log(response)
-        if (response.status === 200) {
-            //console.log(response.data)
-            setOwnerCallback(response.data.user)
-            //return response.data.user;
-        }
-    }
-
-    store.getUsersByUsername = async function (username) {
-        const response = await api.getUsersByUsername(username);
-        if (response.status === 200) {
-            return response;
-        }
-    }
-
-    store.getAllUsers = async function () {
-        const response = await api.getAllUsers();
-        if (response.status === 200) {
-            return response.data.users;
-        }
-    }
-
-
-    store.getUserByUsername = async function (username, setOwnerCallback) {
-        const response = await api.getUserByUsername(username);
-        //console.log(response)
-        if (response.status === 200) {
-            //console.log(response.data)
-            setOwnerCallback(response.data.user)
-            //return response.data.user;
-        }
-    }
-
-    store.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
-        let owner = null;
-        const ownerResponse = await api.getUserById(ownerId);
-        if (ownerResponse.status === 200) {
-            owner = ownerResponse.data.user
-        }
-
-        let collabs = []
-        for (const collabId of collaboratorIds) {
-            const collabResponse = await api.getUserById(collabId);
-            if (collabResponse.status === 200) {
-                collabs.push(collabResponse.data.user)
-            }
-        }
-
-        console.log(owner)
-        console.log(collabs)
-        setUsersCallback(owner, collabs)
-    }
-
-
     store.editMapRequest = async function (receiverId, mapId, title) {
         let payload = {
             senderId: auth.user._id,
@@ -1354,10 +1299,9 @@ function GlobalStoreContextProvider(props) {
         let payload = {
             senderId: auth.user._id,
             receiverId: receiverId,
-            tilsetId: tilesetId,
+            tilesetId: tilesetId,
             title: title
         }
-
         const response = await api.requestTilesetEdit(payload);
         if (response.data.success) {
             console.log(response)
@@ -1507,10 +1451,10 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.addTilesetCollaborator = async function (mapId, collaboratorId) {
+    store.addTilesetCollaborator = async function (tilesetId, userId) {
         let payload = {
-            mapId: mapId,
-            requesterId: collaboratorId
+            tilesetId: tilesetId,
+            userId: userId
         }
 
         const response = await api.addTilesetCollaborator(payload);
@@ -1519,7 +1463,7 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentProject: response.data.tileset,
-                    currentPage: "mapEditor",
+                    currentPage: "tilesetEditor",
                     userMaps: store.userMaps,
                     collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects

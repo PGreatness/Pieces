@@ -6,14 +6,14 @@
     }
     100% {
         transform: translateX(0);
-        width: 250px;
+        width: 400px;
     }
 }
 
 @keyframes slideInAndReset {
     0% {
         transform: translateX(0);
-        width: 250px;
+        width: 400px;
     }
     100% {
         transform: translateX(0);
@@ -44,7 +44,7 @@
     position: fixed;
     top:0;
     background-color: transparent;
-    width: 250px;
+    width: 400px;
     z-index: 9999;
     animation: resetVertically 1s ease-in-out forwards;
 }

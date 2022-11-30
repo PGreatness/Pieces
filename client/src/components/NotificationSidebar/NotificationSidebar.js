@@ -7,6 +7,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import './css/notificationSidebar.css';
 import NotificationList from './NotificationList';
 import AuthContext from '../../auth/auth';
+import { Typography } from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 const startAnimation = () => {
     let target = document.getElementsByClassName('notification-sidebar-cover')[0];
@@ -42,6 +44,7 @@ export default function NotificationSidebar(props) {
             return;
         }
 
+        // TODO: if closing notifications, make sure all are seen! call controller function here
         if (!open) {
             endAnimation();
         }
@@ -57,10 +60,18 @@ export default function NotificationSidebar(props) {
             <div className='notification-sidebar-cover' onAnimationEnd={toggler(true)} ref={containerRef}></div>
             <Drawer anchor="right" open={open} onClose={toggler(false)} transitionDuration={{ enter: 0.1, exit: 500 }} PaperProps={{ sx: { backgroundColor: '#11182A' } }}>
                 <Box
-                    sx={{ width: 250 }}
+                    sx={{ width: 400 }}
                     role="presentation"
                 >
-                    <NotificationList notifications={auth.user?.notifications}/>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', paddingTop: "40px", 
+                                paddingBottom: "30px", paddingLeft: "30px" }} borderBottom={3}>
+                        <Typography component="h1" variant="h4">Notifications</Typography>
+                        <MoreHorizIcon 
+                            sx={{ color: 'white', fill: 'white', fontSize: 40, paddingLeft: "100px", paddingTop: "3px" }}
+                        /> 
+                    </Box>
+                    
+                    <NotificationList/>
                 </Box>
             </Drawer>
         </>

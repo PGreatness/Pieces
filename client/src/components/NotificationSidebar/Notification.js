@@ -1,7 +1,12 @@
 import React from 'react';
 import { ObjectId } from 'mongoose';
-import { ListItemButton, ListItemAvatar, Avatar, ListItemText } from '@mui/material';
+import { useState, useContext, useEffect } from "react";
+import { ListItemButton, ListItemAvatar, Avatar, ListItemText, ListItem } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Clear } from '@mui/icons-material'
+import { GlobalStoreContext } from '../../store/store';
+import AuthContext from '../../auth/auth';
 // props.user is the currently logged in user object
 // user has the following properties:
 // id, firstName, lastName, userName, email, passwordHash, notifications, profilePic, bio, friends, chats
@@ -11,6 +16,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // props.from is the id of the user who sent the notification or null if the notification is from the app
 export default function Notification(props) {
 
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+
     const [notif, setNotif] = React.useState({
         _id: props.notification._id,
         senderId: props.notification.senderId,
@@ -18,45 +26,166 @@ export default function Notification(props) {
         notificationMsg: props.notification.notificationMsg,
         sentAt: props.notification.sentAt
     });
+    const [sender, setSender] = useState(null)
 
-    const markAsSeen = () => {
-        props.swipeAway(notif._id);
-        setNotif({ ...notif, seen: true });
+    useEffect(() => {
+        auth.getUserById(notif.senderId, (sender) => {
+            console.log(sender)
+            setSender(sender)
+        })
+    }, [])
+
+
+    const deleteNotification = () => {
+        auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+            props.updateNotifs(updatedUser.notifications)
+        })
     }
 
-    const createNotification = () => {
+
+    const approve = () => {
+        if (notif.notificationMsg.includes("map")) {
+
+            // add collaborator
+            store.addMapCollaborator(props.notification.mapId, props.notification.senderId)
+                .then(() => {
+
+                    // remove notification
+                    auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+
+                        // add new Notification to let users know a collaborator added
+                        auth.mapActionNotification(auth.user?._id, props.notification.senderId,
+                            props.notification.mapId, (newUser) => {
+                                props.updateNotifs(newUser.notifications)
+                            })
+
+                    })
+                })
+                .catch((err) => console.log(err))
+
+        } else if (notif.notificationMsg.includes("tileset")) {
+            console.log(props.notification)
+
+            // add collaborator
+            store.addTilesetCollaborator(props.notification.tilesetId, props.notification.senderId)
+                .then(() => {
+
+                    // remove notification
+                    auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+
+                        // add new Notification to let users know a collaborator added
+                        auth.tilesetActionNotification(auth.user?._id, props.notification.senderId,
+                            props.notification.tilesetId, (newUser) => {
+                                props.updateNotifs(newUser.notifications)
+                            })
+
+                    })
+                })
+                .catch((err) => console.log(err))
+
+        } else {
+            // friend request case
+
+        }
+    }
+
+
+
+    const deny = () => {
+        
+        if (notif.notificationMsg.includes("map")) {
+
+            // remove notification
+            auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+
+                // add new Notification to let users know a collaborator added
+                auth.mapDenyNotification(auth.user?._id, props.notification.senderId,
+                    props.notification.mapId, (newUser) => {
+                        props.updateNotifs(newUser.notifications)
+                    })
+
+            })
+
+        } else if (notif.notificationMsg.includes("tileset")) {
+
+            // remove notification
+            auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
+
+                // add new Notification to let users know a collaborator added
+                auth.tilesetDenyNotification(auth.user?._id, props.notification.senderId,
+                    props.notification.tilesetId, (newUser) => {
+                        props.updateNotifs(newUser.notifications)
+                    })
+
+            })
+
+        } else {
+            // friend request case
+
+        }
+    }
+
+    const getAvatar = () => {
         let notifAvatar = null;
         // if the notification is from a user, create an avatar with their profile picture
         // by pinging the server for the user's profile picture
         // if the notification is from the app, create an avatar with the app logo
         if (notif.senderId) {
-            // ping the server but for now use dummy data
-            // data = response.json().userName;
-            const data = 'username';
-            notifAvatar = <Avatar src='https://i.imgur.com/0y0y0y0.png' alt={data}>{data.charAt(0)}</Avatar>;
+            notifAvatar = <Avatar src={sender?.profilePic?.url}
+                sx={{
+                    width: 70,
+                    height: 70,
+                    fontSize: "20px",
+                    bgcolor: "black",
+                    color: "white",
+                    cursor: "pointer",
+                    marginRight: "12px"
+                }}>
+                {sender?.firstName.charAt(0)}{sender?.lastName.charAt(0)}
+            </Avatar>
+
         } else {
-            notifAvatar = <Avatar src='https://i.imgur.com/0y0y0y0.png' alt='App Logo'>A</Avatar>;
+            notifAvatar = <Avatar src='https://i.imgur.com/0y0y0y0.png' alt='App Logo'>A</Avatar>
         }
 
-        // create the notification with the avatar, the message, a timestamp, and a button to mark the notification as seen
-        return (
-            <>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        {notifAvatar}
-                    </ListItemAvatar>
-                    <ListItemText primary={notif.notificationMsg} secondary={notif.sentAt} primaryTypographyProps={{ style: { color: 'white' } }} secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
-                </ListItemButton>
-                <ListItemButton onClick={markAsSeen}>
-                    <CheckCircleIcon sx={{ color: 'white', fill: "white" }} />
-                </ListItemButton>
-            </>
-        );
+        return (notifAvatar)
+
     }
+
+
 
     return (
         <div>
-            {createNotification()}
+            <ListItemButton style={{ backgroundColor: "rgb(217, 217, 217, 0.3", margin: "10px", borderRadius: "15px" }}>
+                <ListItemAvatar sx={{ height: '90%' }}>
+                    {getAvatar()}
+                </ListItemAvatar>
+                <ListItem style={{ display: "flex", flexDirection: "column" }}>
+                    <Clear
+                        sx={{ color: 'rgb(0,0,0,0.7)', marginLeft: 'auto' }}
+                        onClick={deleteNotification}
+                    ></Clear>
+                    <ListItemText primary={notif.notificationMsg}
+                        primaryTypographyProps={{ style: { color: 'black', fontSize: "20px" } }}
+                    />
+                    {props.notification.action ?
+                        <ListItem style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                            <CheckCircleIcon
+                                sx={{ fill: '#4CAF50', fontSize: 50, paddingTop: "3px" }}
+                                onClick={approve}
+                            />
+                            <CancelIcon
+                                sx={{ fill: 'red', fontSize: 50, paddingLeft: "20px", paddingTop: "3px" }} 
+                                onClick={deny}
+                            />
+                        </ListItem>
+                        : <></>}
+                    <ListItemText primary={notif.sentAt}
+                        primaryTypographyProps={{ style: { color: 'rgb(0,0,0,0.7)', paddingTop: "8px" } }}
+                    />
+                </ListItem>
+            </ListItemButton>
+
         </div>
     );
 }
