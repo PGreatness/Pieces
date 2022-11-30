@@ -79,7 +79,7 @@ export default function ExploreMapItem(props) {
     }
 
     const handleConfirmRequest = () => {
-        store.getUserById(project.ownerId, (ownerUser) => {
+        auth.getUserById(project.ownerId, (ownerUser) => {
             setMapOwner(ownerUser);
         });
         setShowRequestModal(true)
@@ -132,7 +132,7 @@ export default function ExploreMapItem(props) {
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
                             onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color: `${isUnlocked ? "white" : "gray"}` }}
-                            onClick={isUnlocked ? () => {setLocation('/map/1'); store.changePageToMapEditor()} : handleConfirmRequest} ></EditIcon>
+                            onClick={isUnlocked ? () => {setLocation('/map/'+project._id); store.changePageToMapEditor(project)} : handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>

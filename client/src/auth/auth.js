@@ -273,6 +273,307 @@ function AuthContextProvider(props) {
             });
     }
 
+    auth.getUserById = async function (id, setOwnerCallback) {
+        const response = await api.getUserById(id);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    }
+
+    auth.getUsersByUsername = async function (username) {
+        const response = await api.getUsersByUsername(username);
+        if (response.status === 200) {
+            return response;
+        }
+    }
+
+    auth.getAllUsers = async function () {
+        const response = await api.getAllUsers();
+        if (response.status === 200) {
+            return response.data.users;
+        }
+    }
+
+
+    auth.getUserByUsername = async function (username, setOwnerCallback) {
+        const response = await api.getUserByUsername(username);
+        //console.log(response)
+        if (response.status === 200) {
+            //console.log(response.data)
+            setOwnerCallback(response.data.user)
+            //return response.data.user;
+        }
+    }
+
+
+    auth.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
+        let owner = null;
+        const ownerResponse = await api.getUserById(ownerId);
+        if (ownerResponse.status === 200) {
+            owner = ownerResponse.data.user
+        }
+
+        let collabs = []
+        for (const collabId of collaboratorIds) {
+            const collabResponse = await api.getUserById(collabId);
+            if (collabResponse.status === 200) {
+                collabs.push(collabResponse.data.user)
+            }
+        }
+
+        console.log(owner)
+        console.log(collabs)
+        setUsersCallback(owner, collabs)
+    }
+
+    auth.removeNotification = async function (id, userId, callback) {
+        let payload = {
+            id: id, 
+            userId: userId
+        }
+
+        const response = await api.removeNotification(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO DELETE NOTIFICATION")
+        }
+    }
+
+
+    auth.removeAllNotifications = async function (userId, callback) {
+        let payload = {
+            userId: userId
+        }
+
+        const response = await api.removeAllNotifications(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO DELETE NOTIFICATION")
+        }
+    }
+
+    auth.markAllSeen = async function (userId, callback) {
+        let payload = {
+            userId: userId
+        }
+
+        const response = await api.markAllSeen(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO DELETE NOTIFICATION")
+        }
+    }
+
+    auth.mapActionNotification = async function (ownerId, newUserId, mapId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            mapId: mapId
+        }
+
+        const response = await api.mapActionNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.mapDenyNotification = async function (ownerId, newUserId, mapId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            mapId: mapId
+        }
+
+        const response = await api.mapDenyNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.tilesetActionNotification = async function (ownerId, newUserId, tilesetId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            tilesetId: tilesetId
+        }
+
+        const response = await api.tilesetActionNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.tilesetDenyNotification = async function (ownerId, newUserId, tilesetId, callback) {
+        let payload = {
+            ownerId: ownerId, 
+            newUserId: newUserId, 
+            tilesetId: tilesetId
+        }
+
+        const response = await api.tilesetDenyNotif(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API FAILED TO ADD NOTIFICATION")
+        }
+    }
+
+    auth.sendFriendRequest = async function (senderId, receiverId) {
+        let payload = {
+            senderId: senderId, 
+            receiverId: receiverId
+        }
+
+        await api.friendRequest(payload).then(response => {
+            console.log(response.data)
+            console.log("API SENT FRIEND REQUEST NOTIFICATION")
+        })
+            .catch(({ response }) => {
+                if (response) {
+                    authReducer({
+                        type: AuthActionType.SET_ERROR_MESSAGE,
+                        payload: {
+                            message: response.data.message
+                        }
+                    })
+                }
+            });
+    }
+
+    auth.addFriend = async function (userId, friendId, callback) {
+        let payload = {
+            userId: userId,
+            friendId: friendId
+        }
+
+        const response = await api.addFriend(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API ADDED FRIEND")
+        }
+    }
+
+
+    auth.approveFriendRequest = async function (senderId, receiverId, callback) {
+        let payload = {
+            senderId: senderId,
+            receiverId: receiverId
+        }
+
+        const response = await api.approveFriendRequest(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API ADDED APPROVED FRIEND REQUEST NOTIFICATION")
+        }
+    }
+
+    auth.denyFriendRequest = async function (senderId, receiverId, callback) {
+        let payload = {
+            senderId: senderId,
+            receiverId: receiverId
+        }
+
+        const response = await api.denyFriendRequest(payload);
+        if (response.data.success) {
+            console.log(response)
+            authReducer({
+                type: AuthActionType.LOGIN_USER,
+                payload: {
+                    user: response.data.user
+                }
+            });
+            callback(response.data.user)
+        }
+        else {
+            console.log("API ADDED DENIED FRIEND REQUEST NOTIFICATION")
+        }
+    }
 
     auth.logoutUser = async function (store, callback) {
         const response = await api.logoutUser();

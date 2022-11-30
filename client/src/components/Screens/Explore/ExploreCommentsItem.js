@@ -34,7 +34,7 @@ export default function ExploreCommentsItem(props) {
     const [isDisliked, setIsDisliked] = useState(comment.dislikes.includes(auth.user?._id));
 
     const [commentOwner, setCommentOwner] = useState(null);
-    store.getUserById(comment.userId, (ownerUser) => {
+    auth.getUserById(comment.userId, (ownerUser) => {
         setCommentOwner(ownerUser);
     });
     
