@@ -1,4 +1,5 @@
 const Tileset = require('../models/tileset-model')
+const Tile = require('../models/tile-model')
 var mongoose = require('mongoose');
 const User = require('../models/user-model')
 const ProjectComments = require('../models/project-comment-model')
@@ -154,13 +155,25 @@ deleteTileset = async (req, res) => {
                 })
             }
 
-            Tileset.findByIdAndDelete(id, (err, tileset) => {
-                return res.status(200).json({
-                    success: true,
-                    data: tileset,
-                    message: 'Tileset deleted!',
-                })
-            }).catch(err => console.log(err))
+            // Delete the tiles of the tileset
+            const tiles = Tile.deleteMany({ tilesetId: id });
+
+            tiles.then((deleted) => {
+                if (!deleted) {
+                    return res.status(400).json({
+                        err,
+                        message: "Tiles were not deleted",
+                    })
+                }
+
+                Tileset.findByIdAndDelete(id, (err, tileset) => {
+                    return res.status(200).json({
+                        success: true,
+                        data: tileset,
+                        message: 'Tileset deleted!',
+                    })
+                }).catch(err => console.log(err))
+            })
         })
     })
 }
