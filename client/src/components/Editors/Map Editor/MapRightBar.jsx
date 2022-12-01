@@ -16,7 +16,7 @@ import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
 import UserModalItem from './UserModalItem';
 import { Form } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import './css/mapRightBar.css';
 
@@ -70,9 +70,9 @@ export default function MapRightBar(props) {
     }
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     setProject(store.currentProject);
-    auth.getOwnerAndCollabs(store.currentProject.ownerId, store.currentProject.collaboratorIds, (owner, collab)=>{
+    auth.getOwnerAndCollabs(store.currentProject.ownerId, store.currentProject.collaboratorIds, (owner, collab) => {
       setOwner(owner);
       setCollaborators(collab);
     })
@@ -165,10 +165,10 @@ export default function MapRightBar(props) {
 
   const handleAddCollaborator = async (e, value, reason) => {
     if (reason === 'selectOption') {
-      await auth.getUserByUsername(value, (user)=>{
+      await auth.getUserByUsername(value, (user) => {
         store.addMapCollaborator(project._id, user._id)
-        .then(()=>console.log(store))
-        .catch((err)=>console.log(err))
+          .then(() => console.log(store))
+          .catch((err) => console.log(err))
       })
     }
   }
@@ -210,7 +210,11 @@ export default function MapRightBar(props) {
       <Box sx={{ padding: 2, height: '80%' }}>
         {value === 0 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
-            <Box bgcolor="#ffffff" className="previewWindow">
+
+            <Typography color='azure' variant='h4' 
+              sx={{marginTop: '10px', marginLeft: '15px', marginRight: '15px'}}>Map: {store.currentProject.title}</Typography>
+
+            <Box bgcolor="#ffffff" className="previewWindow" sx={{marginTop: '30px', marginBottom: '30px'}}>
               <Stack direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 <img src={require('../images/dummyMapPreview.png')} id="map_preview" />
@@ -370,11 +374,11 @@ export default function MapRightBar(props) {
             <Box>
               {project.ownerId == auth.user?._id ?
                 <Button
-                    onClick={handleDeleteMap}
-                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: 'red' }}>
-                    <Typography>Delete Map</Typography>
-                    <DeleteIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
-                  </Button>
+                  onClick={handleDeleteMap}
+                  sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: 'red' }}>
+                  <Typography>Delete Map</Typography>
+                  <DeleteIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
+                </Button>
                 : <></>
               }
             </Box>
@@ -541,7 +545,7 @@ export default function MapRightBar(props) {
           <Stack direction='column'>
             <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>User Settings</Typography>
 
-        
+
             <Grid justify='center' container style={{ backgroundColor: "#1f293a" }}>
               <Grid item xs={1}>
                 <AccountCircle />
@@ -570,18 +574,18 @@ export default function MapRightBar(props) {
 
             {
               project.ownerId === auth?.user._id ?
-              <Autocomplete
-              className='map-editor-add-collaborators'
-              open={openAutocomplete}
-              onInputChange={(_,value)=>setOpenAutocomplete(value.trim().length > 0)}
-              onClose={()=>setOpenAutocomplete(false)}
-              freeSolo
-              options={users?.map(user => user.userName)} 
-              renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
-              onChange={handleAddCollaborator}
-              />
-              :
-              <></>
+                <Autocomplete
+                  className='map-editor-add-collaborators'
+                  open={openAutocomplete}
+                  onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
+                  onClose={() => setOpenAutocomplete(false)}
+                  freeSolo
+                  options={users?.map(user => user.userName)}
+                  renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
+                  onChange={handleAddCollaborator}
+                />
+                :
+                <></>
             }
 
 
