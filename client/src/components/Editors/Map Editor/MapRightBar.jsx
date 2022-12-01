@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useContext, useEffect } from 'react';
 import { Box, Stack } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
 import { Brush, HighlightAlt, OpenWith, Map, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add } from '@mui/icons-material'
 import PublicIcon from '@mui/icons-material/Public';
@@ -37,6 +38,7 @@ export default function MapRightBar(props) {
   const [openDeleteMap, setOpenDeleteMap] = useState(false);
   const [owner, setOwner] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
+  const [favs, setFavs] = useState(store.userFavs);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [users, setUsers] = useState([]);
 
@@ -52,7 +54,11 @@ export default function MapRightBar(props) {
       setCollaborators(collabs);
     })
 
-  }, [store.currentProject])  
+  }, [store.currentProject])
+
+  useEffect(() => {
+    setFavs(store.userFavs)
+  }, [store.userFavs])
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -72,7 +78,9 @@ export default function MapRightBar(props) {
     })
   }, [store.currentProject])
 
-  const handleOpenImportMap = () => {
+  const handleOpenImportMap = async () => {
+    await store.loadFavorites(auth.user._id, project._id);
+    console.log(store);
     setOpenImportMap(true)
   }
 
@@ -382,6 +390,20 @@ export default function MapRightBar(props) {
         <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%' id="importTilesetModal">
           <Stack direction='column'>
             <Typography variant='h5' color='azure'>Import Map</Typography>
+            <Box display="flex" alignContent="space-evenly" alignItems="end">
+              <Typography color='azure' sx={{ width: 'fit-content', display: 'flex', paddingRight: '5px' }}>Import a map from a file: </Typography>
+              <Button variant="contained" sx={{ color: 'black', backgroundColor: '#2dd4cf', minWidth: 'fit-content', height: '2em' }}>
+                <Typography variant='p'>Browse</Typography>
+                <FolderOpenIcon style={{ marginLeft: '5px', width: '1em' }} />
+              </Button>
+            </Box>
+            <Box>
+              {
+                favs.tilesets.map((tilesets) => (
+                  <h1>{tilesets.title}</h1>
+                ))
+              }
+            </Box>
             <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
             <Stack direction='row'>
               <Button onClick={handleCloseImportMap}>

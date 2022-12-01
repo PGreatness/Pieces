@@ -17,6 +17,7 @@ export const logoutUser = () => api.get(`/logout/`)
 export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 export const getUserByUsername = (username) => api.get(`/users/username/${username}/`)
 export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
+export const getFavorites = (payload) => api.get(`/users/getUserFavorites/`, {params: payload})
 export const getAllUsers = () => api.get(`/users/all/`)
 export const changePassword = (payload) => api.post(`/changePassword/`, payload)
 export const forgotPassword = (payload) => api.get(`/forgotPassword/`, {params: payload})
@@ -136,6 +137,7 @@ const apis = {
     getUserById,
     getAllUsers,
     getUserByUsername,
+    getFavorites,
     changePassword,
     updateUser,
     forgotPassword,

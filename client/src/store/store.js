@@ -12,6 +12,7 @@ export const GlobalStoreActionType = {
     LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
     LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
+    LOAD_USER_FAVORITES: "LOAD_USER_FAVORITES",
     GET_MAP_OWNER: "GET_MAP_OWNER",
     LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
@@ -46,7 +47,11 @@ function GlobalStoreContextProvider(props) {
 
         userMaps: [],
         collabMaps: [],
-        // userAndCollabMaps: [],
+        userFavs: {
+            maps: [],
+            tilesets: []
+        },
+
         librarySortOption: "",
         librarySortDirection: "",
         sortedLibraryList: [],
@@ -105,6 +110,15 @@ function GlobalStoreContextProvider(props) {
                     ...store,
                     userProjects: payload,
                 });
+            }
+
+            case GlobalStoreActionType.LOAD_USER_FAVORITES: {
+                console.log("Got here with")
+                console.log(payload)
+                return setStore({
+                    ...store,
+                    userFavs: payload
+                })
             }
 
             case GlobalStoreActionType.LOAD_ALL_USER_MAPS: {
@@ -438,6 +452,24 @@ function GlobalStoreContextProvider(props) {
 
     }
 
+    store.loadFavorites = async function (id, filter) {
+        let payload = {
+            id: id,
+            filteredId: filter
+        };
+        const response = await api.getFavorites(payload);
+        console.log(response)
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_USER_FAVORITES,
+                payload: {
+                    maps: response.data.maps,
+                    tilesets: response.data.tilesets
+                }
+            })
+        }
+    }
+
     // store.loadUserAndCollabMaps = async function (id) {
 
     //     const response = await api.getUserAndCollabMaps({ "id": id });
@@ -524,6 +556,7 @@ function GlobalStoreContextProvider(props) {
 
         const response = await api.getAllUserProjects({ "userId": id });
         if (response.data.success) {
+            console.log(response);
             let userProjects = response.data.projects;
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,

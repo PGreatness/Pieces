@@ -581,6 +581,62 @@ getLibraryMapsByName = async (req, res) => {
     })
 }
 
+var getUserFavorites = async (req, res) => {
+    const { id } = req.query;
+    var { filteredId } = req.query;
+
+    if (!id) {
+        return res
+            .status(400)
+            .json({ message: "Must Provide All Required Arguments to Get User Favorites" });
+    }
+
+    var uid;
+    var fid;
+    try {
+        uid = mongoose.Types.ObjectId(id);
+        if (filteredId) {
+            fid = mongoose.Types.ObjectId(filteredId);
+        }
+    } catch (err) {
+        return res
+            .status(400)
+            .json({ message: "Invalid User ID" });
+    }
+
+    var aggregation;
+    if (!fid) {
+        aggregation = [
+            // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
+            {
+                $match: { favs: { $in: [uid] } },
+            },
+        ];
+    } else {
+        aggregation = [
+            // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
+            {
+                $match: {
+                    $and: [
+                        { favs: { $in: [uid] } },
+                        { _id: { $ne: fid } },
+                    ],
+                },
+            },
+        ];
+    }
+
+    const maps = await Map.aggregate(aggregation);
+    const tilesets = await Tileset.aggregate(aggregation);
+
+    return res.status(200).json({
+        success: true,
+        maps: maps,
+        tilesets: tilesets,
+        message: 'User Favorites have been retrieved'
+    })
+}
+
 
 deleteUser = async (req, res) => {
 
@@ -861,6 +917,7 @@ uploadImage = async (req, res) => {
         resetPassword,
         getOwnerAndCollaboratorOfMaps,
         getLibraryMapsByName,
+        getUserFavorites,
         getUsersbyUsername,
         getAllUsers,
         uploadImage,
