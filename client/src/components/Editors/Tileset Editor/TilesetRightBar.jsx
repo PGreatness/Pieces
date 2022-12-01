@@ -50,11 +50,11 @@ export default function TilesetRightBar(props) {
   useEffect(() => {
     console.log(store.currentProject)
     setProject(store.currentProject)
-    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
-      setOwner(owner);
-      setCollaborators(collabs);
+    auth.getOwnerAndCollaborators(project._id, false).then((data) => {
+      console.log(data)
+      setOwner(data.owner)
+      setCollaborators(data.collaborators)
     })
-
   }, [store.currentProject])
 
   //let pixels = []
@@ -139,11 +139,10 @@ export default function TilesetRightBar(props) {
 
 
   const handleOpenUserSettings = async function () {
-    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
-      setOwner(owner);
-      setCollaborators(collabs);
-      setOpenUserSettings(true);
-    })
+    const data = await auth.getOwnerAndCollaborators(project._id, false);
+    setOwner(data.owner);
+    setCollaborators(data.collaborators);
+    setOpenUserSettings(true);
 
     const users = await auth.getAllUsers();
     setUsers(users)
