@@ -54,6 +54,7 @@ export const createNewTileset = (payload) => api.post(`/tileset/newTileset`, pay
 export const deleteTileset = (payload) => api.post(`/tileset/deleteTileset`, payload)
 export const addTilesetCollaborator = (payload) => api.post(`/tileset/addUserToTileset/`, payload)
 export const removeTilesetCollaborator = (payload) => api.post(`/tileset/removeUserFromTileset/`, payload)
+export const publishTileset = (query, payload) => api.post(`/tileset/publishTileset/`, payload, {params: query})
 
 // Tile
 export const createTile = (payload) => api.post(`/tile/newTile`, payload)
@@ -129,6 +130,7 @@ const apis = {
     createTile,
     getTileById,
     updateTile,
+    publishTileset,
 
     getLoggedIn,
     registerUser,

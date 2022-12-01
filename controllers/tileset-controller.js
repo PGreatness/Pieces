@@ -600,6 +600,68 @@ removeUserFromTileset = async (req, res) => {
     })
 }
 
+publishTileset = async (req, res) => {
+
+    let id = mongoose.Types.ObjectId(req.query.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+
+    // Checks if request contains any body data
+    const body = req.body
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: "No body was given by the client",
+        })
+    }
+
+    Tileset.findOne({ _id: id }, async (err, tileset) => {
+
+        // Checks if Tileset exists
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: "Tileset not found"
+            })
+        }
+
+        if (!tileset) {
+            return res.status(404).json({
+                message: 'Tileset not found'
+            })
+        }
+
+        // Checks if Map belongs to the User who is trying to delete it
+        if (!tileset.ownerId.equals(ownerObjectId)) {
+            return res.status(401).json({
+                err,
+                message: 'User does not have ownership of this tileset',
+            })
+        }
+
+        // Change public
+        tileset.isPublic = req.body.isPublic
+
+        // Attempts to save updated map
+        tileset
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    tileset: tileset,
+                    message: 'Tileset was successfully updated',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'Tileset was not updated',
+                })
+            })
+
+    })
+
+}
+
 
 module.exports = {
     getAllUserTilesets,
@@ -610,5 +672,6 @@ module.exports = {
     updateTileset,
     publishTileset,
     addUserToTileset,
-    removeUserFromTileset
+    removeUserFromTileset,
+    publishTileset
 }
