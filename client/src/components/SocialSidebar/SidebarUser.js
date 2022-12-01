@@ -9,8 +9,12 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ThemeProvider } from '@mui/material/styles';
-import { React, useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../../auth/auth';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import * as React from 'react';
 
 // import './css/SidebarUser.css';
 
@@ -38,6 +42,14 @@ export default function SidebarUser(props) {
   const [isOnline, setIsOnline] = useState(props.isOnline);
   const [isFriend, setIsFriend] = useState(props.isFriend);
   const { auth } = useContext(AuthContext);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const theme = createTheme({
     palette: {
@@ -68,7 +80,30 @@ export default function SidebarUser(props) {
         </ListItemAvatar>
         <ListItemText primary={name} secondary={username} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
-          {isFriend ? <WhiteMore /> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
+          {isFriend ? <div>
+                        <Button
+                          id="basic-button"
+                          aria-controls={open ? 'basic-menu' : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={open ? 'true' : undefined}
+                          onClick={handleClick}
+                        >
+                          <WhiteMore />
+                        </Button>
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleClose}
+                          MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                          }}
+                        >
+                          <MenuItem onClick={handleClose}>Profile</MenuItem>
+                          <MenuItem onClick={handleClose}>Chat</MenuItem>
+                          <MenuItem onClick={handleClose}>Remove</MenuItem>
+                        </Menu>
+                      </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
         </ListItemButton>
         <Divider />
       </ListItem>
