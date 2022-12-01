@@ -59,13 +59,13 @@ export default function Explore(props) {
 
                     // If project does not belong to user, remove
                     if (filterOptions[0] === 1) {
-                        if (proj.ownerId.toString() === "6357194e0a81cb803bbb913e") {
+                        if (proj.ownerId.toString() === auth.user?._id) {
                             filtered.push(proj)
                         }
                     }
                     // If project belongs to user, remove
                     else if (filterOptions[0] === -1) {
-                        if (proj.ownerId.toString() !== "6357194e0a81cb803bbb913e") {
+                        if (proj.ownerId.toString() !== auth.user?._id) {
                             filtered.push(proj)
                         }
                     }

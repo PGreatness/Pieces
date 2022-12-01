@@ -44,13 +44,15 @@ export default function LibraryScreen(props) {
     // const [allMaps, setAllMaps] = useState()
     // const [anchorEl, setAnchorEl] = useState(null);
     // const [anchorEl2, setAnchorEl2] = useState(null);
-    // const [sortOption, setSortOption] = useState("");
-    // const [sortDirection, setSortDirection] = useState("")
+    const [sortOption, setSortOption] = useState("");
+    const [sortDirection, setSortDirection] = useState("")
+
+
     const [filterOptions, setFilterOptions] = useState([0, 0])
     const [filterActive, setFilterActive] = useState(false)
     const [filteredMaps, setFilteredMaps] = useState()
     const [openTagsFilterModal, setOpenTagsFilterModal] = useState(false)
-    
+
     const [tagFilters, setTagFilters] = useState({
         'rpg_checkbox': true,
         'space_checkbox': true,
@@ -62,7 +64,9 @@ export default function LibraryScreen(props) {
 
 
 
-
+    useEffect(() => {
+        store.loadUserProjects(auth.user?._id)
+    }, [auth])
 
     useEffect(() => {
         setProjects(store.userProjects)
@@ -93,7 +97,7 @@ export default function LibraryScreen(props) {
             }
             else {
                 // Filters by basic filters (check boxes)
-                for (let i = 0; i < allMaps.length; i++) {
+                for (let i = 0; i < maps.length; i++) {
                     let map = maps[i]
 
                     // If map does not belong to user, remove
@@ -123,15 +127,15 @@ export default function LibraryScreen(props) {
             }
 
             setFilteredMaps(filtered)
-        
+
         }
         else {
-            setAllMaps(store.userMaps.concat(store.collabMaps))
+            //setAllMaps(store.userMaps.concat(store.collabMaps))
         }
     }, [filterOptions])
 
     // useEffect(() => {
-        
+
     //     console.log("You changed a tag!")
     //     var maps;
     //     if (!filterActive) {
@@ -159,9 +163,9 @@ export default function LibraryScreen(props) {
     //     // // for (let i = 0; i < maps.length; i++) {
     //     // //     console.log("")
     //     // // }
-        
+
     //     // setFilteredMaps(filtered)
-        
+
     // }, [tagFilters])
 
 
@@ -281,7 +285,7 @@ export default function LibraryScreen(props) {
     const handleOpenTagsFilterModal = () => {
         setOpenTagsFilterModal(true)
     }
-    
+
     const handleCloseTagsFilterModal = () => {
         setOpenTagsFilterModal(false)
         setTagFilters({
@@ -312,7 +316,7 @@ export default function LibraryScreen(props) {
     }
 
     const openProject = (project) => {
-        setLocation('/map/'+project._id);
+        setLocation('/map/' + project._id);
         console.log(project);
         store.changePageToMapEditor(project)
     }
@@ -406,14 +410,14 @@ export default function LibraryScreen(props) {
                 {filterOptions[0] === 0
                     ? <MenuItem onClick={handleFilterOwnedClick}>Owned</MenuItem>
                     : filterOptions[0] === 1
-                        ? <MenuItem onClick={handleFilterOwnedClick}>Owned <CheckIcon/></MenuItem>
-                        : <MenuItem onClick={handleFilterOwnedClick}>Owned <ClearIcon/></MenuItem>
+                        ? <MenuItem onClick={handleFilterOwnedClick}>Owned <CheckIcon /></MenuItem>
+                        : <MenuItem onClick={handleFilterOwnedClick}>Owned <ClearIcon /></MenuItem>
                 }
                 {filterOptions[1] === 0
                     ? <MenuItem onClick={handleFilterPublicClick}>Is Public</MenuItem>
                     : filterOptions[1] === 1
-                        ? <MenuItem onClick={handleFilterPublicClick}>Is Public <CheckIcon/></MenuItem>
-                        : <MenuItem onClick={handleFilterPublicClick}>Is Public <ClearIcon/></MenuItem>
+                        ? <MenuItem onClick={handleFilterPublicClick}>Is Public <CheckIcon /></MenuItem>
+                        : <MenuItem onClick={handleFilterPublicClick}>Is Public <ClearIcon /></MenuItem>
                 }
             </Menu>
 
@@ -434,11 +438,14 @@ export default function LibraryScreen(props) {
             >
 
                 {sortOption === "" && !filterActive
-                    ? (allMaps && allMaps.map((project) => (
-                        <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
-                        style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
-                        onClick={() => openProject(project)}>
-                            <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                    ? (projects && projects.map((project) => (
+
+                        <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
+                            style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                            onClick={() => openProject(project)}>
+                            <img className='library_image' src={project.tilesetDesc? require("../../images/tile.png") : require("../../images/map.jpg")} 
+                                width="100%" height="100%" border-radius="16px">
+                            </img>
                             {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                 ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                                 : <LockIcon className='library_lock_icon'></LockIcon>
@@ -447,17 +454,18 @@ export default function LibraryScreen(props) {
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                     <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                         <div className="library_project_title">{project.title}</div>
-                                        <div className="library_project_desc">{project.mapDescription}</div>
-                                    </Box>                            
+                                        <div className="library_project_desc">{project.tilesetDesc? project.tilesetDesc: project.mapDescription }</div>
+                                    </Box>
                                 </Box>
                             </div>
                         </Box>
+
                     )))
                     : !filterActive
                         ? (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
-                            style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
-                            onClick={() => openProject(project)}>
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
+                                style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                                onClick={() => openProject(project)}>
                                 <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                                 {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                     ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
@@ -474,9 +482,9 @@ export default function LibraryScreen(props) {
                             </Box>
                         )))
                         : (filteredMaps && filteredMaps.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} 
-                            style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
-                            onClick={() => openProject(project)}>
+                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
+                                style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                                onClick={() => openProject(project)}>
                                 <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
                                 {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                     ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
@@ -503,31 +511,31 @@ export default function LibraryScreen(props) {
                 <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='30%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} variant='h5' color='azure'>Tags Filter</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>Tags Filter</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>RPG</Typography>
-                            <Checkbox id='rpg_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} style={{contentAlign:'center'}} defaultChecked={tagFilters['rpg_checkbox']}></Checkbox>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} color='azure'>RPG</Typography>
+                            <Checkbox id='rpg_checkbox' onChange={handleTagOnChange} sx={{ color: 'azure' }} style={{ contentAlign: 'center' }} defaultChecked={tagFilters['rpg_checkbox']}></Checkbox>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Adventure</Typography>
-                            <Checkbox id='adventure_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['adventure_checkbox']}></Checkbox>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} color='azure'>Adventure</Typography>
+                            <Checkbox id='adventure_checkbox' onChange={handleTagOnChange} sx={{ color: 'azure' }} defaultChecked={tagFilters['adventure_checkbox']}></Checkbox>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Space</Typography>
-                            <Checkbox id='space_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['space_checkbox']}></Checkbox>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} color='azure'>Space</Typography>
+                            <Checkbox id='space_checkbox' onChange={handleTagOnChange} sx={{ color: 'azure' }} defaultChecked={tagFilters['space_checkbox']}></Checkbox>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Nature</Typography>
-                            <Checkbox id='nature_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} bgcolor='azure' defaultChecked={tagFilters['nature_checkbox']}></Checkbox>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} color='azure'>Nature</Typography>
+                            <Checkbox id='nature_checkbox' onChange={handleTagOnChange} sx={{ color: 'azure' }} bgcolor='azure' defaultChecked={tagFilters['nature_checkbox']}></Checkbox>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Shooter</Typography>
-                            <Checkbox id='shooter_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['shooter_checkbox']}></Checkbox>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} color='azure'>Shooter</Typography>
+                            <Checkbox id='shooter_checkbox' onChange={handleTagOnChange} sx={{ color: 'azure' }} defaultChecked={tagFilters['shooter_checkbox']}></Checkbox>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} color='azure'>Arcade</Typography>
-                            <Checkbox id='arcade_checkbox' onChange={handleTagOnChange} sx={{color:'azure'}} defaultChecked={tagFilters['arcade_checkbox']}></Checkbox>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} color='azure'>Arcade</Typography>
+                            <Checkbox id='arcade_checkbox' onChange={handleTagOnChange} sx={{ color: 'azure' }} defaultChecked={tagFilters['arcade_checkbox']}></Checkbox>
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid item xs={4}>
