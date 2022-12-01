@@ -149,70 +149,17 @@ export default function TilesetRightBar() {
                 }
               </Stack>
             </Box>
+            <Box>
+              <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+                <Typography>Import Tileset</Typography>
+                <LibraryAdd style={{ marginLeft: '15px' }} />
+              </Button>
+            </Box>
           </Box>
         )}
         {value === 1 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
       
-            <Box bgcolor="#ffffff" class="suggestionsContainer">
-              <Stack direction='column' textAlign='center' style={{height:'225px'}}>
-                <Typography bgcolor="#1f293a" color='azure'>Incoming Suggestions</Typography>
-                <List disablePadding style={{maxHeight: '100%', overflow:'auto'}}>
-                  <ListItem className='suggestion_item'>
-                    <Grid container>
-                      <Grid item xs={5} className='suggestion_text'>
-                        <Stack direction='column'>
-                          <Typography color='black' fontSize='15px'>Added Grass</Typography>
-                          <Typography color='black' fontSize='10px'>by McKilla</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={1}></Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}>
-                          <Visibility className='suggestion_icon'/>
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}>
-                          <Check className='suggestion_icon'/>
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}>
-                          <Clear className='suggestion_icon'/>
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                  <ListItem className='suggestion_item'>
-                    <Grid container>
-                      <Grid item xs={5} className='suggestion_text'>
-                        <Stack direction='column'>
-                          <Typography color='black' fontSize='15px'>Added Walls</Typography>
-                          <Typography color='black' fontSize='10px'>by McKenna</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={1}></Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}>
-                          <Visibility className='suggestion_icon'/>
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}>
-                          <Check className='suggestion_icon'/>
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button size="small" className="small_button" style={{maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px'}}>
-                          <Clear className='suggestion_icon'/>
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                </List>
-              </Stack>
-            </Box>
 
             <Box className='conferenceContainer'>
               <Stack direction='column' textAlign='center' style={{height:'225px'}}>
