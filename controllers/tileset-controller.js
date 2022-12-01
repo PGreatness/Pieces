@@ -103,29 +103,35 @@ createTileset = async (req, res) => {
 }
 
 deleteTileset = async (req, res) => {
-    if (req.query.id == undefined) {
+    if (req.body.id == undefined) {
         return res.status(404).json({
             err,
             message: 'ID empty',
         })
     }
-    if (req.query.ownerId == undefined) {
+    if (req.body.ownerId == undefined) {
         return res.status(404).json({
             err,
             message: 'ownerId empty',
         })
     }
 
-    let id = mongoose.Types.ObjectId(req.query.id)
-    let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
+    let id = mongoose.Types.ObjectId(req.body.id)
+    let ObjectOwnerId = mongoose.Types.ObjectId(req.body.ownerId)
 
-    Tileset.findById({ _id: id }, (err, tileset) => {
+    Tileset.findOne({ _id: id }, (err, tileset) => {
 
         // Checks if Tileset with given id exists
         if (err) {
             return res.status(404).json({
                 err,
                 message: 'Tileset not found',
+            })
+        }
+
+        if (!tileset) {
+            return res.status(404).json({
+                message: 'Tileset not found'
             })
         }
 
@@ -138,26 +144,24 @@ deleteTileset = async (req, res) => {
         }
 
         // Delete all the comments on the tileset
-        ProjectComments.deleteMany({ projectId: id }, (err, comments) => {
-            if (err) {
+        const comments = ProjectComments.deleteMany({ projectId: id });
+
+        comments.then((deleted) => {
+            if (!deleted) {
                 return res.status(400).json({
                     err,
-                    message: 'Failed to delete comments',
+                    message: "Comments were not deleted",
                 })
             }
+
+            Tileset.findByIdAndDelete(id, (err, tileset) => {
+                return res.status(200).json({
+                    success: true,
+                    data: tileset,
+                    message: 'Tileset deleted!',
+                })
+            }).catch(err => console.log(err))
         })
-
-        // TODO: Delete the tileset from the User's favs list
-        // TODO: Delete each individual Tile in the tileset
-
-        // Finds tileset with given id and deletes it
-        Tileset.findByIdAndDelete(id, (err, tileset) => {
-            return res.status(200).json({
-                success: true,
-                data: tileset
-            })
-        }).catch(err => console.log(err))
-
     })
 }
 

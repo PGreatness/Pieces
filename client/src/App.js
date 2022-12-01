@@ -73,7 +73,7 @@ const App = () => {
 
                   <Route
                     path="/tileset/:id"
-                    element={<TilesetEditor />}
+                    element={<TilesetEditor setLoc={setLocation}/>}
                   />
                   <Route
                     path="/map/:id"

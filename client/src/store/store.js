@@ -817,6 +817,18 @@ function GlobalStoreContextProvider(props) {
         return response;
     }
 
+    store.deleteTileset = async function (id) {
+        console.log(id)
+        let query = {
+            id: id,
+            ownerId: auth.user?._id,
+        }
+        let response = await api.deleteTileset(query)
+        console.log(response);
+        store.changePageToLibrary();
+        return response;
+    }
+
 
     store.setLibrarySort = async function (sortOpt, sortDir) {
 

@@ -50,6 +50,7 @@ export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromM
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 export const createNewTileset = (payload) => api.post(`/tileset/newTileset`, payload)
+export const deleteTileset = (payload) => api.post(`/tileset/deleteTileset`, payload)
 export const addTilesetCollaborator = (payload) => api.post(`/tileset/addUserToTileset/`, payload)
 export const removeTilesetCollaborator = (payload) => api.post(`/tileset/removeUserFromTileset/`, payload)
 
@@ -119,6 +120,7 @@ const apis = {
     createNewTileset,
     createNewMap,
     deleteMap,
+    deleteTileset,
     publishMap,
     addMapCollaborator,
     removeMapCollaborator,
