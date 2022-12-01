@@ -303,41 +303,45 @@ export default function Explore(props) {
                 display: 'flex', alignItems: 'flex-start', flexDirection: 'column', maxHeight: '100%',
                 width: '100%', overflow: 'auto', paddingLeft: '10px', borderRadius: '30px'
             }}>
-                {
-                    !filterActive
-                    ?   projects.map((entry) => (
-                            entry.mapHeight ? (<ExploreMapItem
-                                setLoc={props.setLoc}
-                                setShowComments={props.setShowComments}
-                                project={entry}
-                                projectId = {props.projectId}
-                                setProjectId = {props.setProjectId}
-                            />) : (<ExploreTilesetItem
-                                setLoc={props.setLoc}
-                                setShowComments={props.setShowComments}
-                                project={entry}
-                                projectId = {props.projectId}
-                                setProjectId = {props.setProjectId}
-                            />)
-                        ))
-                    :   filteredProjects.map((entry) => (
-                            entry.mapHeight ? (<ExploreMapItem
-                                setLoc={props.setLoc}
-                                setShowComments={props.setShowComments}
-                                project={entry}
-                                projectId = {props.projectId}
-                                setProjectId = {props.setProjectId}
-                            />) : (<ExploreTilesetItem
-                                setLoc={props.setLoc}
-                                setShowComments={props.setShowComments}
-                                project={entry}
-                                projectId = {props.projectId}
-                                setProjectId = {props.setProjectId}
-                            />)
-                        ))
+                {  projects
+                    ? 
+                        !filterActive
+                        ?   projects.map((entry) => (
+                                entry.mapHeight ? (<ExploreMapItem
+                                    setLoc={props.setLoc}
+                                    setShowComments={props.setShowComments}
+                                    project={entry}
+                                    projectId = {props.projectId}
+                                    setProjectId = {props.setProjectId}
+                                />) : (<ExploreTilesetItem
+                                    setLoc={props.setLoc}
+                                    setShowComments={props.setShowComments}
+                                    project={entry}
+                                    projectId = {props.projectId}
+                                    setProjectId = {props.setProjectId}
+                                />)
+                            ))
+                        :   filteredProjects.map((entry) => (
+                                entry.mapHeight ? (<ExploreMapItem
+                                    setLoc={props.setLoc}
+                                    setShowComments={props.setShowComments}
+                                    project={entry}
+                                    projectId = {props.projectId}
+                                    setProjectId = {props.setProjectId}
+                                />) : (<ExploreTilesetItem
+                                    setLoc={props.setLoc}
+                                    setShowComments={props.setShowComments}
+                                    project={entry}
+                                    projectId = {props.projectId}
+                                    setProjectId = {props.setProjectId}
+                                />)
+                            ))
+                    : <div></div>
                 }
-                <MakePaginations count={projects.length} />
-
+                {   projects
+                    ? <MakePaginations count={projects.length} />
+                    : <div></div>
+                }
             </Box>
 
 
