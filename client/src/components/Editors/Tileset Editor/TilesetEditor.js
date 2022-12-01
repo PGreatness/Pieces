@@ -6,13 +6,13 @@ import TilesetToolBar from './TilesetToolBar';
 import TilesetCanvas from './TilesetCanvas';
 import TilesetRightBar from './TilesetRightBar';
 
-export default function TileEditor() {
+export default function TileEditor(props) {
     return (
         <Box bgcolor={"#1f293a"}>
             <Stack direction="row" justifyContent='space-between'>
                 <TilesetToolBar/>
                 <TilesetCanvas/>
-                <TilesetRightBar/>
+                <TilesetRightBar setLoc={props.setLoc}/>
             </Stack>
         </Box>
     )

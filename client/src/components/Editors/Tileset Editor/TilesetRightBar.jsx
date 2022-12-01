@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react'
 import { Box, Stack } from '@mui/system';
 import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
-import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility} from '@mui/icons-material'
+import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from "@mui/material/styles";
 import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth'
+import { useNavigate } from 'react-router-dom';
 import html2canvas from "html2canvas";
 
 
-export default function TilesetRightBar() {
+export default function TilesetRightBar(props) {
 
   const { store } = useContext(GlobalStoreContext)
+  const { auth } = useContext(AuthContext)
   const [ value, setValue ] = useState(0);
   const [ openImportTileset, setOpenImportTileset ] = useState(false);
   const [ openImportTile, setOpenImportTile ] = useState(false);
@@ -18,13 +22,20 @@ export default function TilesetRightBar() {
   const [ openUserSettings, setOpenUserSettings ] = useState(false);
   const [ editMode, setEditMode ] = useState(false);
   const [ currentTile, setCurrentTile ] = useState(store.currentTile)
+  const [ openDeleteTileset, setOpenDeleteTileset ] = useState(false)
+  const [ project, setProject ] = useState(store.currentProject)
 
+  const navigate = useNavigate();
   var ndarray = require("ndarray")
   var zeros = require("zeros")
 
   useEffect(() => {
     setCurrentTile(store.currentTile)
-  }, [store.currentTile]) 
+  }, [store.currentTile])
+
+  useEffect(() => {
+    setProject(store.currentProject)
+  }, [store.currentProject])
 
   //let pixels = []
   // var savePixels = require("save-pixels")
@@ -67,7 +78,7 @@ export default function TilesetRightBar() {
       tilesetDesc: document.getElementById('desc_input').value,
       tilesetTags: document.getElementById('tags_input').value
     }
-    store.updateTilesetProperties(store.currentTileset._id, store.currentTileset.ownerId, payload)
+    store.updateTilesetProperties(store.currentProject._id, store.currentProject.ownerId, payload)
     setEditMode(false)
   }
 
@@ -111,6 +122,21 @@ export default function TilesetRightBar() {
 
   const handleCloseUserSettings = () => {
     setOpenUserSettings(false)
+  }
+
+  const handleDeleteTileset = () => {
+    setOpenDeleteTileset(true)
+  }
+
+  const handleCloseDeleteTileset = () => {
+    setOpenDeleteTileset(false)
+  }
+
+  const deleteTileset = () => {
+    handleCloseDeleteTileset();
+    store.deleteTileset(project._id);
+    props.setLoc('/library');
+    navigate('/library');
   }
 
 
@@ -313,25 +339,25 @@ export default function TilesetRightBar() {
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Name: </Typography>
                         </Grid>
                         <Grid item xs={9} zeroMinWidth>
-                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.title}</Typography>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentProject.title}</Typography>
                         </Grid>
                         <Grid item xs={3}>
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Desc: </Typography>
                         </Grid>
                         <Grid item xs={9} zeroMinWidth>
-                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tilesetDesc}</Typography>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentProject.tilesetDesc}</Typography>
                         </Grid>
                         <Grid item xs={5}>
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Tile Size: </Typography>
                         </Grid>
                         <Grid item xs={7} zeroMinWidth>
-                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tileHeight + " x " + store.currentTileset.tileWidth}</Typography>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                         </Grid>
                         <Grid item xs={3}>
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Tags: </Typography>
                         </Grid>
                         <Grid item xs={9} zeroMinWidth>
-                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tilesetTags}</Typography>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentProject.tilesetTags}</Typography>
                         </Grid>
                       </Grid>
                     : <Grid container textAlign='left' style={{height: '195px', width: '100%', padding: '5px'}}>
@@ -339,25 +365,25 @@ export default function TilesetRightBar() {
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Name: </Typography>
                         </Grid>
                         <Grid item xs={9} zeroMinWidth>
-                          <TextField id='title_input' defaultValue={store.currentTileset.title} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+                          <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
                         </Grid>
                         <Grid item xs={3}>
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Desc: </Typography>
                         </Grid>
                         <Grid item xs={9} zeroMinWidth>
-                          <TextField id='desc_input' defaultValue={store.currentTileset.tilesetDesc} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+                          <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
                         </Grid>
                         <Grid item xs={5}>
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Tile Size: </Typography>
                         </Grid>
                         <Grid item xs={7} zeroMinWidth>
-                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentTileset.tileHeight + " x " + store.currentTileset.tileWidth}</Typography>
+                          <Typography style={{overflowWrap:"break-word"}} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                         </Grid>
                         <Grid item xs={3}>
                           <Typography style={{overflowWrap:"break-word"}} color='azure'>Tags: </Typography>
                         </Grid>
                         <Grid item xs={9} zeroMinWidth>
-                          <TextField id='tags_input' defaultValue={store.currentTileset.tilesetTags} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
+                          <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags} size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
                         </Grid>
                       </Grid>
                 }
@@ -382,6 +408,18 @@ export default function TilesetRightBar() {
                 <Typography>Export Tileset</Typography>
                 <IosShare style={{marginLeft:'8px'}}/>
               </Button>
+            </Box>
+
+            <Box>
+              {project.ownerId == auth.user?._id ?
+                <Button
+                    onClick={handleDeleteTileset}
+                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: 'red' }}>
+                    <Typography>Delete Map</Typography>
+                    <DeleteIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
+                  </Button>
+                : <></>
+              }
             </Box>
 
           </Box>
@@ -448,6 +486,28 @@ export default function TilesetRightBar() {
               <Button onClick={handleCloseExportTileset}>
                 <Typography>Cancel</Typography>
                 <Clear/>
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openDeleteTileset}
+        onClose={handleCloseDeleteTileset}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column'>
+            <Typography variant='h3' color='azure'>Delete Tileset</Typography>
+            <Typography variant='h5' color='azure'>Tileset will be permanently deleted. Are you sure?</Typography>
+            <Stack direction='row'>
+              <Button onClick={deleteTileset}>
+                <Typography >Confirm</Typography>
+                <Check />
+              </Button>
+              <Button onClick={handleCloseDeleteTileset}>
+                <Typography>Cancel</Typography>
+                <Clear />
               </Button>
             </Stack>
           </Stack>

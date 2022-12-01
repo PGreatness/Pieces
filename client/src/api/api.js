@@ -17,6 +17,7 @@ export const logoutUser = () => api.get(`/logout/`)
 export const getUserById = (id) => api.get(`/users/userId/${id}/`)
 export const getUserByUsername = (username) => api.get(`/users/username/${username}/`)
 export const getUsersByUsername = (username) => api.get(`/users/usernameAll/${username}/`)
+export const getFavorites = (payload) => api.get(`/users/getUserFavorites/`, {params: payload})
 export const getAllUsers = () => api.get(`/users/all/`)
 export const changePassword = (payload) => api.post(`/changePassword/`, payload)
 export const forgotPassword = (payload) => api.get(`/forgotPassword/`, {params: payload})
@@ -50,6 +51,7 @@ export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromM
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
 export const createNewTileset = (payload) => api.post(`/tileset/newTileset`, payload)
+export const deleteTileset = (payload) => api.post(`/tileset/deleteTileset`, payload)
 export const addTilesetCollaborator = (payload) => api.post(`/tileset/addUserToTileset/`, payload)
 export const removeTilesetCollaborator = (payload) => api.post(`/tileset/removeUserFromTileset/`, payload)
 
@@ -119,6 +121,7 @@ const apis = {
     createNewTileset,
     createNewMap,
     deleteMap,
+    deleteTileset,
     publishMap,
     addMapCollaborator,
     removeMapCollaborator,
@@ -134,6 +137,7 @@ const apis = {
     getUserById,
     getAllUsers,
     getUserByUsername,
+    getFavorites,
     changePassword,
     updateUser,
     forgotPassword,
