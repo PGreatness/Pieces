@@ -13,18 +13,18 @@ export default function TilesetCanvas() {
 
     const { store } = useContext(GlobalStoreContext)
     const [ currentTile, setCurrentTile ] = useState(store.currentTile)
-    const [ height, setHeight ] = useState(5)
-    const [ width, setWidth ] = useState(5)
+    const [ height, setHeight ] = useState(store.currentTile ? store.currentTile.height : 0)
+    const [ width, setWidth ] = useState(store.currentTile ? store.currentTile.width : 0)
     const [ currentPixel, setCurrentPixel ] = useState([0, 0])
     const [ movePixels, setMovePixels ] = useState([])
 
     useEffect(() => {
-        store.loadTileset('6369f842a69ccddf5fbcb78e')
-    }, [])
-
-    useEffect(() => {
         setCurrentTile(store.currentTile)
+        setHeight(store.currentTile ? store.currentTile.height : 0)
+        setWidth(store.currentTile ? store.currentTile.width : 0)
+
     }, [store.currentTile])
+
 
     // Auto Update code (not working rn)
     // useEffect(() => {

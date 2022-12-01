@@ -77,6 +77,7 @@ export default function CreateButton(props) {
             console.log(response)
             setLocation(`/tileset/${response.data.tileset._id}`)
             store.changePageToTilesetEditor(response.data.tileset)
+            store.loadTileset(response.data.tileset._id)
         }
         setOpenCreateTilesetModal(false)
     }
