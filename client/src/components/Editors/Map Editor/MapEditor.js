@@ -6,7 +6,7 @@ import MapToolBar from './MapToolBar';
 import MapCanvas from './MapCanvas';
 import MapRightBar from './MapRightBar';
 
-export default function MapEditor() {
+export default function MapEditor(props) {
     
 
     return (
@@ -14,7 +14,7 @@ export default function MapEditor() {
             <Stack direction="row" justifyContent='space-between'>
                 <MapToolBar/>
                 <MapCanvas/>
-                <MapRightBar/>
+                <MapRightBar setLoc={props.setLoc}/>
             </Stack>
         </Box>
     );

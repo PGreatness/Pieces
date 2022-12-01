@@ -172,10 +172,10 @@ createMap = async (req, res) => {
 
 deleteMap = async (req, res) => {
 
-    let id = mongoose.Types.ObjectId(req.query.id)
-    let ownerObjectId = mongoose.Types.ObjectId(req.query.ownerId)
+    let id = mongoose.Types.ObjectId(req.body.id)
+    let ownerObjectId = mongoose.Types.ObjectId(req.body.ownerId)
 
-    Map.findById({ _id: id }, (err, map) => {
+    Map.findOne({ _id: id }, (err, map) => {
 
         // Checks if Map with given id exists
         if (err) {
@@ -746,6 +746,7 @@ var getAllProjectsWithUser = async (req, res) => {
         var { order } = req.query;
         var { userId } = req.query;
 
+        console.log(req.query)
         if (!page) {
             page = 1;
         }
