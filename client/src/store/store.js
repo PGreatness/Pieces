@@ -504,7 +504,7 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    store.publishProject = async function () {
+    store.publishMap = async function () {
         let query = {
             id: store.currentProject._id,
             ownerId: auth.user?._id
@@ -521,7 +521,7 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.unpublishProject = async function () {
+    store.unpublishMap = async function () {
         let query = {
             id: store.currentProject._id,
             ownerId: auth.user?._id
@@ -532,6 +532,40 @@ function GlobalStoreContextProvider(props) {
         }
         else {
             console.log("API FAILED TO PUBLISH MAP.")
+            console.log(response)
+        }
+
+    }
+
+
+    store.publishTileset = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishTileset(query, { isPublic: true });
+        console.log(response.data)
+        if (response.data.success) {
+            store.changePageToMapEditor(response.data.tileset)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH TILESET.")
+            console.log(response)
+        }
+
+    }
+
+    store.unpublishTileset = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishTileset(query, { isPublic: false });
+        if (response.data.success) {
+            store.changePageToMapEditor(response.data.tileset)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH TILESET.")
             console.log(response)
         }
 

@@ -69,6 +69,8 @@ router.post('/tileset/publishTileset', TilesetController.publishTileset)
 router.post('/tileset/addUserToTileset', TilesetController.addUserToTileset)
 router.post('/tileset/removeUserFromTileset', TilesetController.removeUserFromTileset)
 
+router.post('/tileset/publishTileset', TilesetController.publishTileset)
+
 
 // Tile Routes
 router.get('/tile/all', TileController.getAllTiles)

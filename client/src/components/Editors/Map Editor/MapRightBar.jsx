@@ -130,7 +130,7 @@ export default function MapRightBar(props) {
   }
 
   const publishMap = () => {
-    store.publishProject();
+    store.publishMap();
     handleClosePublishMap();
   }
 
@@ -143,7 +143,7 @@ export default function MapRightBar(props) {
   }
 
   const unpublishMap = () => {
-    store.unpublishProject();
+    store.unpublishMap();
     handleCloseUnpublishMap();
   }
 
@@ -156,7 +156,7 @@ export default function MapRightBar(props) {
   }
 
   const deleteMap = () => {
-    //store.unpublishProject();
+    //store.unpublishMap();
     handleCloseDeleteMap();
     store.deleteMap(project._id);
     props.setLoc('/library');

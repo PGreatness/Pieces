@@ -3,6 +3,7 @@ import { Box, Stack } from '@mui/system';
 import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
 import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
 import DeleteIcon from '@mui/icons-material/Delete';
+import PublicIcon from '@mui/icons-material/Public';
 import { styled } from "@mui/material/styles";
 import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
@@ -18,6 +19,8 @@ export default function TilesetRightBar(props) {
   const [ value, setValue ] = useState(0);
   const [ openImportTileset, setOpenImportTileset ] = useState(false);
   const [ openImportTile, setOpenImportTile ] = useState(false);
+  const [ openPublish, setOpenPublish] = useState(false);
+  const [ openUnpublish, setOpenUnpublish] = useState(false);
   const [ openExportTileset, setOpenExportTileset ] = useState(false);
   const [ openUserSettings, setOpenUserSettings ] = useState(false);
   const [ editMode, setEditMode ] = useState(false);
@@ -124,6 +127,32 @@ export default function TilesetRightBar(props) {
     setOpenUserSettings(false)
   }
 
+  const handlePublish = () => {
+    setOpenPublish(true)
+  }
+
+  const handleClosePublish = () => {
+    setOpenPublish(false)
+  }
+
+  const publish = () => {
+    store.publishTileset();
+    handleClosePublish();
+  }
+
+  const handleUnpublish = () => {
+    setOpenUnpublish(true)
+  }
+
+  const handleCloseUnpublish = () => {
+    setOpenUnpublish(false)
+  }
+
+  const unpublish = () => {
+    store.unpublishTileset();
+    handleCloseUnpublish();
+  }
+
   const handleDeleteTileset = () => {
     setOpenDeleteTileset(true)
   }
@@ -175,10 +204,17 @@ export default function TilesetRightBar(props) {
                 }
               </Stack>
             </Box>
+
             <Box>
-              <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+              <Button onClick={handleOpenImportTile} sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
+                <Typography>Import Tile</Typography>
+                <AddBox style={{marginLeft:'8px'}}/>
+              </Button>
+            </Box>
+            <Box>
+              <Button onClick={handleOpenImportTileset} sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
                 <Typography>Import Tileset</Typography>
-                <LibraryAdd style={{ marginLeft: '15px' }} />
+                <LibraryAdd style={{marginLeft:'8px'}}/>
               </Button>
             </Box>
           </Box>
@@ -339,22 +375,29 @@ export default function TilesetRightBar(props) {
             </Box>
 
             <Box>
-              <Button onClick={handleOpenImportTile} sx={{color:'black', width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                <Typography>Import Tile</Typography>
-                <AddBox style={{marginLeft:'8px'}}/>
-              </Button>
-            </Box>
-            <Box>
-              <Button onClick={handleOpenImportTileset} sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
-                <Typography>Import Tileset</Typography>
-                <LibraryAdd style={{marginLeft:'8px'}}/>
-              </Button>
-            </Box>
-            <Box>
               <Button onClick={handleOpenExportTileset} sx={{color:'black',width:'250px', marginTop: '15px', backgroundColor:'#2dd4cf'}}>
                 <Typography>Export Tileset</Typography>
                 <IosShare style={{marginLeft:'8px'}}/>
               </Button>
+            </Box>
+
+            <Box>
+              {project.ownerId == auth.user?._id ?
+                project.isPublic ?
+                  <Button
+                    onClick={handleUnpublish}
+                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+                    <Typography>Unpublish Tileset</Typography>
+                    <PublicIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
+                  </Button>
+                  : <Button
+                    onClick={handlePublish}
+                    sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+                    <Typography>Publish Tileset</Typography>
+                    <PublicIcon style={{ marginLeft: '15px' }} />
+                  </Button>
+                : <></>
+              }
             </Box>
 
             <Box>
@@ -453,6 +496,49 @@ export default function TilesetRightBar(props) {
                 <Check />
               </Button>
               <Button onClick={handleCloseDeleteTileset}>
+                <Typography>Cancel</Typography>
+                <Clear />
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openPublish}
+        onClose={handleClosePublish}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column'>
+            <Typography variant='h3' color='azure'>Publish Tileset</Typography>
+            <Stack direction='row'>
+              <Button onClick={publish}>
+                <Typography >Confirm</Typography>
+                <Check />
+              </Button>
+              <Button onClick={handleClosePublish}>
+                <Typography>Cancel</Typography>
+                <Clear />
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+
+
+      <Modal
+        open={openUnpublish}
+        onClose={handleCloseUnpublish}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column'>
+            <Typography variant='h3' color='azure'>Unpublish Tileset</Typography>
+            <Stack direction='row'>
+              <Button onClick={unpublish}>
+                <Typography >Confirm</Typography>
+                <Check />
+              </Button>
+              <Button onClick={handleCloseUnpublish}>
                 <Typography>Cancel</Typography>
                 <Clear />
               </Button>
