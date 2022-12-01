@@ -1,10 +1,11 @@
 import { styled } from '@mui/material';
-import React from 'react';
+import { React, useState, useContext, useEffect } from 'react';
 import SidebarUserList from './SidebarUserList';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { IconButton, Input, InputAdornment } from '@mui/material';
 import './css/SocialSidebar.css';
+import AuthContext from '../../auth/auth';
 
 const SearchBarWhite = styled(Input)({
     color: "white",
@@ -12,26 +13,35 @@ const SearchBarWhite = styled(Input)({
     borderRadius: '4px',
 });
 
-const createSearchButton = () => {
-    return (
-        <InputAdornment position="end">
-            <IconButton sx={{color:'white'}}><SearchIcon /></IconButton>
-        </InputAdornment>
-    );
-}
-
-
 export default function SocialSidebar(props) {
-    const search = createSearchButton();
+    const { auth } = useContext(AuthContext);
+    const [searching, setSearching] = useState("");
+    let id = auth.user._id;
+    // const search = createSearchButton();
+    
+
+    const createSearchButton = () => {
+        return (
+            <InputAdornment position="end">
+                <IconButton sx={{color:'white'}} onClick={() => {handleSearch()}}><SearchIcon /></IconButton>
+            </InputAdornment>
+        );
+    }
+    
+    const handleSearch = () => {
+        let query = document.getElementById('search_query').value
+        setSearching(query)
+    }
+    
     return (
         <div className='sidebar-container-container'>
 
         <div className='sidebar-container'>
             <div className='sidebar-search'>
-                <SearchBarWhite placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={search}/>
+                <SearchBarWhite id="search_query" placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()}/>
             </div>
             <div>
-                <SidebarUserList ownerId={props.id} username="John"/>
+                <SidebarUserList ownerId={id} query={searching}/>
             </div>
         </div>
         </div>

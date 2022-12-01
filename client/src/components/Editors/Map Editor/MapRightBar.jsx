@@ -588,6 +588,7 @@ export default function MapRightBar(props) {
                   options={users?.map(user => user.userName)}
                   renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
                   onChange={handleAddCollaborator}
+                  sx={{ width: 300 }}
                 />
                 :
                 <></>

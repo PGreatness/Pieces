@@ -101,6 +101,20 @@ getUserbyId = async (req, res) => {
     });
 }
 
+getUserFriends = async (req, res) => {
+    const savedUser = await User.findById(req.params.id);
+    const friends = savedUser.friends
+    let returnFriends = []
+    for (let i = 0; i < friends.length; i++) {
+        findFriend = await User.findById(mongoose.Types.ObjectId(friends[i]))
+        returnFriends.push(findFriend)
+    }
+    return res.status(200).json({
+        success: true,
+        friends: returnFriends
+    });
+}
+
 getUserbyUsername = async (req, res) => {
     const savedUser = await User.findOne({ userName: req.params.username });
     return res.status(200).json({
@@ -910,6 +924,7 @@ uploadImage = async (req, res) => {
         loginUser,
         logoutUser,
         getUserbyId,
+        getUserFriends,
         getUserbyUsername,
         updateUser,
         changePassword,
