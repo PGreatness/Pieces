@@ -32,8 +32,8 @@ export default function CreateButton(props) {
     const navigate = useNavigate();
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    const [ openCreateMapModal, setOpenCreateMapModal ] = useState(false)
-    const [ openCreateTilesetModal, setOpenCreateTilesetModal ] = useState(false)
+    const [openCreateMapModal, setOpenCreateMapModal] = useState(false)
+    const [openCreateTilesetModal, setOpenCreateTilesetModal] = useState(false)
 
     const setLocation = (loc) => {
         props.setLoc(loc);
@@ -54,13 +54,13 @@ export default function CreateButton(props) {
         else {
             let response = await store.createNewMap(title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
             console.log(response)
-            if (response.data.success) 
+            if (response.data.success)
                 setLocation(`/map/${response.data.id}`)
-                store.changePageToMapEditor(response.data.map)
+            store.changePageToMapEditor(response.data.map)
         }
         setOpenCreateMapModal(false)
     }
-    
+
     const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
         let tilesetHeight = Number(document.getElementById('tileset_height_input').value)
@@ -75,9 +75,19 @@ export default function CreateButton(props) {
         else {
             let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
             console.log(response)
+            //setLocation(`/tileset/${response.data.tileset._id}`)
+            //store.changePageToTilesetEditor(response.data.tileset)
+
+            await store.loadTileset(response.data.tileset._id).then
+            console.log(store)
+
+            await store.changePageToTilesetEditor(response.data.tileset)
+            console.log(store.currentPage)
+            
             setLocation(`/tileset/${response.data.tileset._id}`)
-            store.changePageToTilesetEditor(response.data.tileset)
-            store.loadTileset(response.data.tileset._id)
+           
+
+
         }
         setOpenCreateTilesetModal(false)
     }
@@ -126,39 +136,39 @@ export default function CreateButton(props) {
                 <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' top='30%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} variant='h5' color='azure'>Create Map</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>Create Map</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Map Name:</Typography>
-                            <TextField id='map_name_input' size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
-                        </Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Map Height:</Typography>
-                            <TextField id="map_height_input" size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
-                        </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Map Width:</Typography>
-                            <TextField id="map_width_input" size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Map Name:</Typography>
+                            <TextField id='map_name_input' size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tile Height:</Typography>
-                            <TextField id="tile_height_input"size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Map Height:</Typography>
+                            <TextField id="map_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tile Width:</Typography>
-                            <TextField id="tile_width_input" size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Map Width:</Typography>
+                            <TextField id="map_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Height:</Typography>
+                            <TextField id="tile_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
+                        </Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Width:</Typography>
+                            <TextField id="tile_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCloseCreateMapModal}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCreateNewMap}>
                                 Confirm
                             </Button>
@@ -174,39 +184,39 @@ export default function CreateButton(props) {
                 <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' top='30%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px'}} variant='h5' color='azure'>Create Tileset</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>Create Tileset</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tileset Name:</Typography>
-                            <TextField id='tileset_name_input' size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20}}}/>
-                        </Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tileset Height:</Typography>
-                            <TextField id="tileset_height_input" size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
-                        </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tileset Width:</Typography>
-                            <TextField id="tileset_width_input" size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tileset Name:</Typography>
+                            <TextField id='tileset_name_input' size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tile Height:</Typography>
-                            <TextField id="ts_tile_height_input"size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tileset Height:</Typography>
+                            <TextField id="tileset_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px'}} color='azure'>Tile Width:</Typography>
-                            <TextField id="ts_tile_width_input" size='small' style={{backgroundColor:'azure'}} sx={{marginTop:'5px', "& .MuiInputBase-root": {height: 20, width: 60}}}/>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tileset Width:</Typography>
+                            <TextField id="tileset_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Height:</Typography>
+                            <TextField id="ts_tile_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
+                        </Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Width:</Typography>
+                            <TextField id="ts_tile_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCloseCreateTilesetModal}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCreateNewTileset}>
                                 Confirm
                             </Button>
