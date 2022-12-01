@@ -30,6 +30,7 @@ router.post('/register', UserController.registerUser)
 router.post('/changePassword', UserController.changePassword)
 router.post('/resetPassword', UserController.resetPassword)
 router.post('/addFriend', UserController.addFriend)
+router.post('/removeFriend', UserController.removeFriend)
 router.post('/uploadImage', UserController.uploadImage)
 router.post('/deleteImage', UserController.deleteImage)
 

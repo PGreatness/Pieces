@@ -50,6 +50,10 @@ export default function SidebarUser(props) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleRemoveFriend = (removeId) => {
+    auth.removeFriend(auth.user._id, removeId);
+    setAnchorEl(null);
+  };
 
   const theme = createTheme({
     palette: {
@@ -101,7 +105,7 @@ export default function SidebarUser(props) {
                         >
                           <MenuItem onClick={handleClose}>Profile</MenuItem>
                           <MenuItem onClick={handleClose}>Chat</MenuItem>
-                          <MenuItem onClick={handleClose}>Remove</MenuItem>
+                          <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove</MenuItem>
                         </Menu>
                       </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
         </ListItemButton>

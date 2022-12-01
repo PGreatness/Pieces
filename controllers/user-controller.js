@@ -490,7 +490,61 @@ addFriend = async (req, res) => {
     }
 }
 
+removeFriend = async (req, res) => {
+    try {
+        const { userId, friendId } = req.body;
 
+        if (!friendId || !userId)
+            return res
+                .status(400)
+                .json({ message: "Must provide Ids of both users!" });
+        if (friendId === userId)
+            return res
+                .status(400)
+                .json({ message: "Cannot add yourself as friend!" });
+
+        const objectUserId = new ObjectId(userId);
+        const user = await User.findOne({ _id: objectUserId });
+        if (!user)
+            return res
+                .status(400)
+                .json({ message: "Account with specified id not found (current user)." });
+        const objectFriendId = new ObjectId(friendId);
+        const friend = await User.findOne({ _id: objectFriendId });
+        if (!friend)
+            return res
+                .status(400)
+                .json({ message: "Account with specified id not found (friend)." });
+
+        if (!(user.friends.includes(friendId))) {
+            return res.status(400).json({
+                success: false,
+                message: "You are not friends!"
+            })
+        }
+        friend.friends = friend.friends.filter(id => id !== userId)
+        await friend.save()
+
+        user.friends = user.friends.filter(id => id !== friendId)
+        await user.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                user: user,
+                message: 'Friend removed!'
+            })
+        }).catch((err) => {
+            console.log(err)
+            return res.status(404).json({
+                success: false,
+                message: 'Failed to remove friend'
+            })
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
 
 
 getOwnerAndCollaboratorOfMaps = async (req, res) => {
@@ -939,5 +993,6 @@ uploadImage = async (req, res) => {
         uploadImage,
         deleteImage,
         deleteUser,
-        addFriend
+        addFriend,
+        removeFriend
     }
