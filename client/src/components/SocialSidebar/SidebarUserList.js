@@ -105,7 +105,7 @@ export default function SidebarUserList(props) {
                 return (
                     <>
                         {/* <SidebarUser user={user} isFriend={false} isOnline={false} key={user.id}/> */}
-                        <SidebarUser user={user} isFriend={true} isOnline={true} key={user.id + 1}/>
+                        <SidebarUser user={user} isFriend={friendsList.includes(user)} isOnline={true} key={user.id + 1}/>
                         {/* remove the last one during non static trials */}
                     </>
                 );
