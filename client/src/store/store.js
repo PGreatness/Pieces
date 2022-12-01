@@ -1469,33 +1469,6 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-
-    store.addMapCollaborator = async function (mapId, collaboratorId) {
-        let payload = {
-            mapId: mapId,
-            requesterId: collaboratorId
-        }
-
-        const response = await api.addMapCollaborator(payload);
-        if (response.data.success) {
-            storeReducer({
-                type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                payload: {
-                    currentProject: response.data.map,
-                    currentPage: "mapEditor",
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
-                    publicProjects: store.publicProjects
-                }
-            })
-        }
-        else {
-            // TODO: display message to alert user like already collaborator
-            console.log("API FAILED TO ADD COLLABORATOR")
-        }
-
-    }
-
     store.setPrimaryColor = async function (newPrimaryColor) {
         console.log("Setting primary color to " + newPrimaryColor)
         storeReducer({
@@ -1578,6 +1551,33 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+
+    store.addMapCollaborator = async function (mapId, collaboratorId) {
+        let payload = {
+            mapId: mapId,
+            requesterId: collaboratorId
+        }
+
+        const response = await api.addMapCollaborator(payload);
+        if (response.data.success) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentProject: response.data.map,
+                    currentPage: "mapEditor",
+                    userMaps: store.userMaps,
+                    collabMaps: store.collabMaps,
+                    publicProjects: store.publicProjects
+                }
+            })
+        }
+        else {
+            // TODO: display message to alert user like already collaborator
+            console.log("API FAILED TO ADD COLLABORATOR")
+        }
+
+    }
+
     store.removeMapCollaborator = async function (mapId, collaboratorId) {
         let payload = {
             mapId: mapId,
@@ -1632,20 +1632,20 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.removeTilesetCollaborator = async function (mapId, collaboratorId) {
+    store.removeTilesetCollaborator = async function (tilesetId, userId) {
         let payload = {
-            mapId: mapId,
-            requesterId: collaboratorId
+            tilesetId: tilesetId,
+            userId: userId
         }
 
         const response = await api.removeTilesetCollaborator(payload);
         if (response.data.success) {
-
+            console.log(response.data.tileset)
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentProject: response.data.tileset,
-                    currentPage: "mapEditor",
+                    currentPage: "tilesetEditor",
                     userMaps: store.userMaps,
                     collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
