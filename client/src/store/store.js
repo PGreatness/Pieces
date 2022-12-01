@@ -546,7 +546,7 @@ function GlobalStoreContextProvider(props) {
         const response = await api.publishTileset(query, { isPublic: true });
         console.log(response.data)
         if (response.data.success) {
-            store.changePageToMapEditor(response.data.tileset)
+            store.changePageToTilesetEditor(response.data.tileset)
         }
         else {
             console.log("API FAILED TO PUBLISH TILESET.")
@@ -562,7 +562,7 @@ function GlobalStoreContextProvider(props) {
         }
         const response = await api.publishTileset(query, { isPublic: false });
         if (response.data.success) {
-            store.changePageToMapEditor(response.data.tileset)
+            store.changePageToTilesetEditor(response.data.tileset)
         }
         else {
             console.log("API FAILED TO PUBLISH TILESET.")
