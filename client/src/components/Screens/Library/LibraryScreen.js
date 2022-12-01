@@ -28,7 +28,6 @@ export default function LibraryScreen(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
 
-
     const [projects, setProjects] = useState(store.userProjects)
 
     const [sortOpt, setSortOpt] = useState("");
@@ -97,7 +96,8 @@ export default function LibraryScreen(props) {
             }
             else {
                 // Filters by basic filters (check boxes)
-                for (let i = 0; i < maps.length; i++) {
+
+                for (let i = 0; i < projects.length; i++) {
                     let map = maps[i]
 
                     // If map does not belong to user, remove
@@ -130,7 +130,7 @@ export default function LibraryScreen(props) {
 
         }
         else {
-            //setAllMaps(store.userMaps.concat(store.collabMaps))
+            setProjects(store.userProjects)
         }
     }, [filterOptions])
 
@@ -316,9 +316,14 @@ export default function LibraryScreen(props) {
     }
 
     const openProject = (project) => {
-        setLocation('/map/' + project._id);
         console.log(project);
-        store.changePageToMapEditor(project)
+        if (!project.tilesetDesc) {
+            setLocation('/map/'+project._id);
+            store.changePageToMapEditor(project);
+        }else{
+            setLocation('/tileset/'+project._id);
+            store.changePageToTilesetEditor(project);
+        }
     }
 
     return (
@@ -438,6 +443,7 @@ export default function LibraryScreen(props) {
             >
 
                 {sortOption === "" && !filterActive
+
                     ? (projects && projects.map((project) => (
 
                         <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
@@ -446,6 +452,7 @@ export default function LibraryScreen(props) {
                             <img className='library_image' src={project.tilesetDesc? require("../../images/tile.png") : require("../../images/map.jpg")} 
                                 width="100%" height="100%" border-radius="16px">
                             </img>
+
                             {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                 ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                                 : <LockIcon className='library_lock_icon'></LockIcon>
@@ -475,7 +482,7 @@ export default function LibraryScreen(props) {
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                         <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                             <div className="library_project_title">{project.title}</div>
-                                            <div className="library_project_desc">{project.mapDescription}</div>
+                                            <div className="library_project_desc">{project.mapDescription ? project.mapDescription : project.tilesetDesc}</div>
                                         </Box>
                                     </Box>
                                 </div>

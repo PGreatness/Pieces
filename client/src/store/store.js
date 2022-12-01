@@ -140,6 +140,7 @@ function GlobalStoreContextProvider(props) {
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
                     currentPage: payload.currentPage,
+                    userProjects: payload.userProjects
                 });
             }
 
@@ -518,20 +519,20 @@ function GlobalStoreContextProvider(props) {
 
     store.changePageToLibrary = async function () {
 
-        let id = "6357194e0a81cb803bbb913e"
-        //let id = auth.user?._id
+        // let id = "6357194e0a81cb803bbb913e"
+        let id = auth.user?._id
 
-        const response = await api.getUserAndCollabMaps({ "id": id });
+        const response = await api.getAllUserProjects({ "userId": id });
         if (response.data.success) {
-            let userMaps = response.data.owner;
-            let collabMaps = response.data.collaborator;
+            let userProjects = response.data.projects;
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentProject: null,
                     currentPage: "library",
-                    userMaps: userMaps,
-                    collabMaps: collabMaps,
+                    userMaps: [],
+                    collabMaps: [],
+                    userProjects: userProjects,
                     publicProjects: store.publicProjects
                 }
             })
@@ -777,6 +778,18 @@ function GlobalStoreContextProvider(props) {
         };
         let response = await api.createNewMap(payload)
         console.log(response)
+        return response;
+    }
+
+    store.deleteMap = async function (id) {
+        console.log(id)
+        let query = {
+            id: id,
+            ownerId: auth.user._id
+        }
+        let response = await api.deleteMap(query)
+        console.log(response);
+        store.changePageToLibrary();
         return response;
     }
 

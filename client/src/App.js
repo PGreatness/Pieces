@@ -77,7 +77,7 @@ const App = () => {
                   />
                   <Route
                     path="/map/:id"
-                    element={<MapEditor />}
+                    element={<MapEditor setLoc={setLocation} />}
                   />
                 </Routes>
               </div>

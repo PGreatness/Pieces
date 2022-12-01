@@ -15,10 +15,11 @@ import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
 import UserModalItem from './UserModalItem';
 import { Form } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
+import {useNavigate} from 'react-router-dom';
 
 import './css/mapRightBar.css';
 
-export default function MapRightBar() {
+export default function MapRightBar(props) {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
 
@@ -39,6 +40,7 @@ export default function MapRightBar() {
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [users, setUsers] = useState([]);
 
+  const navigate = useNavigate();
   console.log(owner)
   console.log(collaborators)
   console.log(project)
@@ -148,6 +150,9 @@ export default function MapRightBar() {
   const deleteMap = () => {
     //store.unpublishProject();
     handleCloseDeleteMap();
+    store.deleteMap(project._id);
+    props.setLoc('/library');
+    navigate('/library');
   }
 
   const handleAddCollaborator = async (e, value, reason) => {

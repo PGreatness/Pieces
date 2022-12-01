@@ -41,6 +41,7 @@ export const getAllUserAsCollaboratorMaps = (id) => api.get(`/map/getAllUserAsCo
 export const getUserAndCollabMaps = (id) => api.get(`/ownerAndCollabOf/`, {params: id})
 export const getLibraryMapsByName = (payload) => api.get(`/getLibraryMapsByName/`, {params: payload})
 export const createNewMap = (payload) => api.post(`/map/newMap/`, payload)
+export const deleteMap = (payload) => api.post(`/map/deleteMap/`, payload)
 export const publishMap = (query, payload) => api.post(`/map/publishMap/`, payload, {params: query})
 export const addMapCollaborator = (payload) => api.post(`/map/addUserToMap/`, payload)
 export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromMap/`, payload)
@@ -117,6 +118,7 @@ const apis = {
     updateTileset,
     createNewTileset,
     createNewMap,
+    deleteMap,
     publishMap,
     addMapCollaborator,
     removeMapCollaborator,
