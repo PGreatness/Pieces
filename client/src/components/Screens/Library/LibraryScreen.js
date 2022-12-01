@@ -294,9 +294,14 @@ export default function LibraryScreen(props) {
     }
 
     const openProject = (project) => {
-        setLocation('/map/'+project._id);
         console.log(project);
-        store.changePageToMapEditor(project)
+        if (!project.tilesetDesc) {
+            setLocation('/map/'+project._id);
+            store.changePageToMapEditor(project);
+        }else{
+            setLocation('/tileset/'+project._id);
+            store.changePageToTilesetEditor(project);
+        }
     }
 
     return (
