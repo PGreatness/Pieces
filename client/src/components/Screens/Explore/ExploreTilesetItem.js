@@ -125,7 +125,7 @@ export default function ExploreTilesetItem(props) {
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
                         onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color:`${isUnlocked? "white" : "gray"}`}}
-                        onClick={isUnlocked? () => {setLocation('/tileset/1'); store.changePageToTilesetEditor()} : handleConfirmRequest} ></EditIcon>
+                        onClick={isUnlocked? () => {setLocation('/tileset/'+project._id); store.changePageToTilesetEditor(project)} : handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>
