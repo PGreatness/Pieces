@@ -93,6 +93,11 @@ export default function ExploreTilesetItem(props) {
         console.log(props.projectId)
     }
 
+    const navigateToTilesetEditor = async function () {
+        await store.changePageToTilesetEditor(project)
+        setLocation('/tileset/'+project._id);       
+    }
+
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
@@ -125,10 +130,7 @@ export default function ExploreTilesetItem(props) {
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
                         onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color:`${isUnlocked? "white" : "gray"}`}}
-                        onClick={isUnlocked? () => {
-                            setLocation('/tileset/'+project._id); 
-                            store.changePageToTilesetEditor(project)
-                        } : handleConfirmRequest} ></EditIcon>
+                        onClick={isUnlocked? navigateToTilesetEditor: handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>
