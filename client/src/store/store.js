@@ -8,14 +8,17 @@ export const GlobalStoreContext = createContext({});
 export const GlobalStoreActionType = {
     LOAD_PUBLIC_PROJECTS: "LOAD_PUBLIC_PROJECTS",
     LOAD_USER_PROJECTS: "LOAD_USER_PROJECTS",
-    LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
-    LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
-    LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
     GET_MAP_OWNER: "GET_MAP_OWNER",
     LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS",
+    
+    LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
+    LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
+    LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
+    
     SET_EXPLORE_SORT: "SET_EXPLORE_SORT",
+    SET_LIBRARY_SORT: "SET_LIBRARY_SORT",
     SET_PAGINATION: "SET_PAGINATION",
     SET_PRIMARY_COLOR: "SET_PRIMARY_COLOR",
     SET_SECONDARY_COLOR: "SET_SECONDARY_COLOR",
@@ -163,6 +166,15 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_EXPLORE_SORT: {
                 return setStore({
                     ...store,
+                    projSortOpt: payload.projSortOpt,
+                    projSortDir: payload.projSortDir,
+                })
+            }
+
+            case GlobalStoreActionType.SET_LIBRARY_SORT: {
+                return setStore({
+                    ...store,
+                    userProjects: payload.userProjects,
                     projSortOpt: payload.projSortOpt,
                     projSortDir: payload.projSortDir,
                 })
@@ -774,7 +786,8 @@ function GlobalStoreContextProvider(props) {
             mapWidth: mapWidth,
             tileHeight: tileHeight,
             tileWidth: tileWidth,
-            ownerId: ownerId
+            ownerId: ownerId,
+            mapDescription: "No Description"
         };
         let response = await api.createNewMap(payload)
         console.log(response)
@@ -1120,6 +1133,44 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
+    store.changePagination = async function (page, limit, sort, order) {
+        sort = sort ? sort : store.pagination.sort;
+        order = order ? order : store.pagination.order;
+
+        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit, sort: sort, order: order });
+        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit, sort: sort, order: order });
+        let paginate = { page: page + 1, limit: limit, stopPagination: false, sort: sort, order: order };
+        if (nextResponse.data.projects.length === 0) {
+            paginate = { ...paginate, page: page, stopPagination: true };
+        }
+        storeReducer({
+            type: GlobalStoreActionType.SET_PAGINATION,
+            payload: {
+                publicProjects: response.data.projects,
+                pagination: paginate
+            }
+        });
+    }
+
+    store.changeLibrarySort = async function (projSortOpt, projSortDir) {
+
+        let sortOpt;
+        if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
+        if (projSortOpt.toLowerCase().includes('download')) sortOpt = 'downloads';
+        if (projSortOpt.toLowerCase().includes('like')) sortOpt = 'likes';
+        if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
+
+        const response = await api.getAllUserProjects({ userId: auth.user._id, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 });
+        storeReducer({
+            type: GlobalStoreActionType.SET_LIBRARY_SORT,
+            payload: {
+                userProjects: response.data.projects,
+                projSortOpt: projSortOpt,
+                projSortDir: projSortDir
+            }
+        });
+    }
+
 
     store.updateTilesetLikes = async function (id, setLikeDislikeCallback) {
         await api.getTilesetById(id).then(response => {
@@ -1298,24 +1349,6 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             updatingComment(comment)
-        });
-    }
-
-    store.changePagination = async function (page, limit, sort, order) {
-        sort = sort ? sort : store.pagination.sort;
-        order = order ? order : store.pagination.order;
-        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit, sort: sort, order: order });
-        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit, sort: sort, order: order });
-        let paginate = { page: page + 1, limit: limit, stopPagination: false, sort: sort, order: order };
-        if (nextResponse.data.projects.length === 0) {
-            paginate = { ...paginate, page: page, stopPagination: true };
-        }
-        storeReducer({
-            type: GlobalStoreActionType.SET_PAGINATION,
-            payload: {
-                publicProjects: response.data.projects,
-                pagination: paginate
-            }
         });
     }
 

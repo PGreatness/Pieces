@@ -185,69 +185,92 @@ export default function LibraryScreen(props) {
         setAnchorEl2(null);
     };
 
-    const handleSortByNameClick = () => {
-        if (sortOption !== "name") {
-            setSortOption("name");
-            setSortDirection("up");
+    const handleSortClick = (event) => {
+        handleSortMenuClose();
+        console.log(event.target.innerText)
+
+        if (sortOpt != event.target.innerText) {
+            console.log('setting now?')
+            setSortOpt(event.target.innerText);
+            setSortDir("up");
+            store.changeLibrarySort(event.target.innerText, "up");
         }
         else {
-            if (sortDirection === "up") {
-                setSortDirection("down");
+            if (sortDir === "up") {
+                setSortDir("down");
+                store.changeLibrarySort(event.target.innerText, "down");
             }
             else {
-                setSortOption("name");
-                setSortDirection("up");
+                setSortDir("up");
+                store.changeLibrarySort(event.target.innerText, "up");
             }
         }
+
     }
 
-    const handleSortByCreationDateClick = () => {
-        if (sortOption !== "date") {
-            setSortOption("date");
-            setSortDirection("up");
-        }
-        else {
-            if (sortDirection === "up") {
-                setSortDirection("down");
-            }
-            else {
-                setSortOption("name");
-                setSortDirection("up");
-            }
-        }
-    }
+    // const handleSortByNameClick = () => {
+    //     if (sortOption !== "name") {
+    //         setSortOption("name");
+    //         setSortDirection("up");
+    //     }
+    //     else {
+    //         if (sortDirection === "up") {
+    //             setSortDirection("down");
+    //         }
+    //         else {
+    //             setSortOption("name");
+    //             setSortDirection("up");
+    //         }
+    //     }
+    // }
 
-    const handleSortByMostLikedClick = () => {
-        if (sortOption !== "liked") {
-            setSortOption("liked");
-            setSortDirection("up");
-        }
-        else {
-            if (sortDirection === "up") {
-                setSortDirection("down");
-            }
-            else {
-                setSortOption("name");
-                setSortDirection("up");
-            }
-        }
-    }
+    // const handleSortByCreationDateClick = () => {
+    //     if (sortOption !== "date") {
+    //         setSortOption("date");
+    //         setSortDirection("up");
+    //     }
+    //     else {
+    //         if (sortDirection === "up") {
+    //             setSortDirection("down");
+    //         }
+    //         else {
+    //             setSortOption("name");
+    //             setSortDirection("up");
+    //         }
+    //     }
+    // }
 
-    const handleSortBySizeClick = () => {
-        if (sortOption !== "size") {
-            setSortOption("size");
-            setSortDirection("up");
-        }
-        else {
-            if (sortDirection === "up") {
-                setSortDirection("down");
-            }
-            else {
-                setSortOption("name");
-                setSortDirection("up");
-            }
-        }
-    }
+    // const handleSortByMostLikedClick = () => {
+    //     if (sortOption !== "liked") {
+    //         setSortOption("liked");
+    //         setSortDirection("up");
+    //     }
+    //     else {
+    //         if (sortDirection === "up") {
+    //             setSortDirection("down");
+    //         }
+    //         else {
+    //             setSortOption("name");
+    //             setSortDirection("up");
+    //         }
+    //     }
+    // }
+
+    // const handleSortBySizeClick = () => {
+    //     if (sortOption !== "size") {
+    //         setSortOption("size");
+    //         setSortDirection("up");
+    //     }
+    //     else {
+    //         if (sortDirection === "up") {
+    //             setSortDirection("down");
+    //         }
+    //         else {
+    //             setSortOption("name");
+    //             setSortDirection("up");
+    //         }
+    //     }
+    // }
 
     const handleFilterOwnedClick = () => {
         if (filterOptions[0] === 0) {
@@ -318,10 +341,10 @@ export default function LibraryScreen(props) {
     const openProject = (project) => {
         console.log(project);
         if (!project.tilesetDesc) {
-            setLocation('/map/'+project._id);
+            setLocation('/map/' + project._id);
             store.changePageToMapEditor(project);
-        }else{
-            setLocation('/tileset/'+project._id);
+        } else {
+            setLocation('/tileset/' + project._id);
             store.changePageToTilesetEditor(project);
         }
     }
@@ -355,7 +378,7 @@ export default function LibraryScreen(props) {
             </Box>
 
 
-            <Menu
+            {/* <Menu
                 anchorEl={anchorEl}
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -393,6 +416,71 @@ export default function LibraryScreen(props) {
                         ? <MenuItem onClick={handleSortBySizeClick}>Size <ArrowUpward /></MenuItem>
                         : <MenuItem onClick={handleSortBySizeClick}>Size <ArrowDownward /></MenuItem>
                     : <MenuItem onClick={handleSortBySizeClick}>Size</MenuItem>
+                }
+            </Menu> */}
+
+            <Menu
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                className='sort_filter_dropdown'
+                keepMounted
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                open={isSortMenuOpen}
+                onClose={handleSortMenuClose}
+            >
+                {sortOpt === 'Project Name'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Project Name</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Project Name</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Project Name</MenuItem>
+                }
+                {sortOpt === 'Creation Date'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Creation Date</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Creation Date</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Creation Date</MenuItem>
+                }
+                {sortOpt === 'Most Liked'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
+                }
+                {sortOpt === 'Size'
+                    ? sortDir === 'up'
+                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Size</MenuItem>
+                            <ArrowUpward />
+                        </Box>
+                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                            <MenuItem onClick={handleSortClick}>Size</MenuItem>
+                            <ArrowDownward />
+                        </Box>
+                    : <MenuItem onClick={handleSortClick}>Size</MenuItem>
                 }
             </Menu>
 
@@ -442,14 +530,14 @@ export default function LibraryScreen(props) {
                 }}
             >
 
-                {sortOption === "" && !filterActive
+                {!filterActive
 
                     ? (projects && projects.map((project) => (
 
                         <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
                             style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
                             onClick={() => openProject(project)}>
-                            <img className='library_image' src={project.tilesetDesc? require("../../images/tile.png") : require("../../images/map.jpg")} 
+                            <img className='library_image' src={project.tilesetDesc ? require("../../images/tile.png") : require("../../images/map.jpg")}
                                 width="100%" height="100%" border-radius="16px">
                             </img>
 
@@ -461,38 +549,38 @@ export default function LibraryScreen(props) {
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                     <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                         <div className="library_project_title">{project.title}</div>
-                                        <div className="library_project_desc">{project.tilesetDesc? project.tilesetDesc: project.mapDescription }</div>
+                                        <div className="library_project_desc">{project.tilesetDesc ? project.tilesetDesc : project.mapDescription}</div>
                                     </Box>
                                 </Box>
                             </div>
                         </Box>
 
                     )))
-                    : !filterActive
-                        ? (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
-                            <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
-                                style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
-                                onClick={() => openProject(project)}>
-                                <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
-                                {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
-                                    ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
-                                    : <LockIcon className='library_lock_icon'></LockIcon>
-                                }
-                                <div className="library_overlay">
-                                    <Box style={{ display: 'flex', flexDirection: 'row' }} >
-                                        <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
-                                            <div className="library_project_title">{project.title}</div>
-                                            <div className="library_project_desc">{project.mapDescription ? project.mapDescription : project.tilesetDesc}</div>
-                                        </Box>
-                                    </Box>
-                                </div>
-                            </Box>
-                        )))
+                    // :  (store.sortedLibraryList && store.sortedLibraryList.map((project) => (
+                    //         <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
+                    //             style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
+                    //             onClick={() => openProject(project)}>
+                    //             <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                    //             {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
+                    //                 ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
+                    //                 : <LockIcon className='library_lock_icon'></LockIcon>
+                    //             }
+                    //             <div className="library_overlay">
+                    //                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
+                    //                     <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
+                    //                         <div className="library_project_title">{project.title}</div>
+                    //                         <div className="library_project_desc">{project.mapDescription ? project.mapDescription : project.tilesetDesc}</div>
+                    //                     </Box>
+                    //                 </Box>
+                    //             </div>
+                    //         </Box>
+                    //     )))
                         : (filteredMaps && filteredMaps.map((project) => (
                             <Box id={project._id} sx={{ marginLeft: "20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
                                 style={{ marginBottom: "60px", width: '25%', height: '40%', position: 'relative' }}
                                 onClick={() => openProject(project)}>
-                                <img className='library_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+                                <img className='library_image' src={project.tilesetDesc ? require("../../images/tile.png") : require("../../images/map.jpg")}
+                                     width="100%" height="100%" border-radius="16px"></img>
                                 {project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id
                                     ? <LockOpenIcon className='library_lock_icon'></LockOpenIcon>
                                     : <LockIcon className='library_lock_icon'></LockIcon>
@@ -501,7 +589,7 @@ export default function LibraryScreen(props) {
                                     <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                         <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
                                             <div className="library_project_title">{project.title}</div>
-                                            <div className="library_project_desc">{project.mapDescription}</div>
+                                            <div className="library_project_desc">{project.tilesetDesc ? project.tilesetDesc : project.mapDescription}</div>
                                         </Box>
                                     </Box>
                                 </div>

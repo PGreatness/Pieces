@@ -336,7 +336,6 @@ export default function Explore(props) {
                             />)
                         ))
                 }
-                {/* Shouldnt count here be projects.length/limit(=10) */}
                 <MakePaginations count={projects.length} />
 
             </Box>
