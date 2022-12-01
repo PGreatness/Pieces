@@ -50,6 +50,9 @@ export default function SidebarUser(props) {
 
   var online = (jsx) => <ThemeProvider theme={theme}><Badge overlap='circular' anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant='dot' color='online'>{jsx}</Badge></ThemeProvider>;
   var offline = (jsx) => <ThemeProvider theme={theme}><Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color='offline'>{jsx}</Badge></ThemeProvider>;
+  let name = props.user.firstName.concat(" ", props.user.lastName);
+  let startinguser = "@"
+  let username = startinguser.concat(props.user.userName);
   const buildUser = () => {
     // see if user is logged in currently
     return (
@@ -57,7 +60,7 @@ export default function SidebarUser(props) {
         <ListItemAvatar>
           {isOnline ? online(<Avatar alt={props.username} src={props.profilePic} />) : offline(<Avatar alt={props.username} src={props.profilePic} />)}
         </ListItemAvatar>
-        <ListItemText primary={props.user.username} style={{ width: '100%' }} />
+        <ListItemText primary={name} secondary={username} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
           {isFriend ? <WhiteMore /> : <WhitePersonAdd />}
         </ListItemButton>

@@ -125,6 +125,7 @@ getUserbyUsername = async (req, res) => {
 getUsersbyUsername = async (req, res) => {
     const savedUsers = await User.find({ userName: req.params.username });
     return res.status(200).json({
+        success: true,
         users: savedUsers
     });
 }

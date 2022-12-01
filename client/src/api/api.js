@@ -142,6 +142,7 @@ const apis = {
     getUserById,
     getAllUsers,
     getUserByUsername,
+    getUsersByUsername,
     getFavorites,
     changePassword,
     updateUser,
