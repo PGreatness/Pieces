@@ -308,25 +308,12 @@ function AuthContextProvider(props) {
         }
     }
 
-
-    auth.getOwnerAndCollabs = async function (ownerId, collaboratorIds, setUsersCallback) {
-        let owner = null;
-        const ownerResponse = await api.getUserById(ownerId);
-        if (ownerResponse.status === 200) {
-            owner = ownerResponse.data.user
+    auth.getOwnerAndCollaborators = async function (id, isMap) {
+        const response = await api.getOwnerAndCollaborators({id:id, isMap: isMap});
+        console.log(response)
+        if (response.status < 400) {
+            return response.data;
         }
-
-        let collabs = []
-        for (const collabId of collaboratorIds) {
-            const collabResponse = await api.getUserById(collabId);
-            if (collabResponse.status === 200) {
-                collabs.push(collabResponse.data.user)
-            }
-        }
-
-        console.log(owner)
-        console.log(collabs)
-        setUsersCallback(owner, collabs)
     }
 
     auth.removeNotification = async function (id, userId, callback) {

@@ -1,5 +1,6 @@
 const Map = require('../models/map-model')
 const User = require('../models/user-model')
+const Tileset = require('../models/tileset-model')
 const ProjectComment = require('../models/project-comment-model')
 const mongoose = require('mongoose')
 
@@ -1066,6 +1067,75 @@ removeUserFromMap = async (req, res) => {
         })
 }
 
+var getOwnerAndCollaborator = async (req, res) => {
+    var { id } = req.query;
+    var { isMap } = req.query;
+    console.log("Getting id of " + id);
+    console.log('isMap: '+ isMap );
+    if (isMap == undefined || isMap == null) {
+        isMap = false;
+    }
+
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: 'Id not given'
+        })
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Id is not valid'
+        })
+    }
+
+    id = mongoose.Types.ObjectId(id);
+
+    var map;
+    console.log("Map is now: " + isMap);
+    if (isMap === 'true') {
+        console.log("map found");
+        map = await Map.findOne({_id:id});
+    } else {
+        console.log('tileset found');
+        map = await Tileset.findOne({_id:id});
+    }
+    console.log(map);
+    console.log(isMap)
+    if (!map) {
+        return res.status(400).json({
+            success: false,
+            message: 'Map does not exist'
+        })
+    }
+
+    const owner = await User.findOne({_id:map.ownerId});
+    if (!owner) {
+        return res.status(400).json({
+            success: false,
+            message: 'Owner does not exist'
+        })
+    }
+
+    const aggregate = await User.aggregate([
+        {
+            $match: {
+                _id: {
+                    $in: map.collaboratorIds
+                }
+            }
+        }
+    ]);
+
+    return res.status(200).json({
+        success: true,
+        owner: owner,
+        collaborators: aggregate,
+        message: 'Successfully got owner and collaborators'
+    })
+}
+
 module.exports = {
     getAllUserMaps,
     getAllUserAsCollaboratorMaps,
@@ -1080,5 +1150,6 @@ module.exports = {
     getAllPublicProjects,
     getPublicProjectsByName,
     removeUserFromMap,
-    getAllProjectsWithUser
+    getAllProjectsWithUser,
+    getOwnerAndCollaborator
 }
