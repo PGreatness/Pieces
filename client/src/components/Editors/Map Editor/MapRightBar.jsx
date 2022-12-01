@@ -549,7 +549,7 @@ export default function MapRightBar() {
               onInputChange={(_,value)=>setOpenAutocomplete(value.trim().length > 0)}
               onClose={()=>setOpenAutocomplete(false)}
               freeSolo
-              options={users?.map(user => user.userName)} // TODO: Iman - get list of users from backend and put them here
+              options={users?.map(user => user.userName)} 
               renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
               onChange={handleAddCollaborator}
               />
