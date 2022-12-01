@@ -77,8 +77,8 @@ export default function SidebarUserList(props) {
         //     ]
         // };
         if (response.data.success) {
-            console.log("user search is here")
-            console.log(response)
+            // console.log("user search is here")
+            // console.log(response)
             setSearchList(response.data.users)
         }
     }

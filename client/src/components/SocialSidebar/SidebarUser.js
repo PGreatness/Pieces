@@ -9,7 +9,8 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ThemeProvider } from '@mui/material/styles';
-import React from 'react';
+import { React, useState, useContext, useEffect } from 'react';
+import AuthContext from '../../auth/auth';
 
 // import './css/SidebarUser.css';
 
@@ -34,8 +35,9 @@ const WhitePersonAdd = styled(PersonAddIcon)({
 });
 
 export default function SidebarUser(props) {
-  const [isOnline, setIsOnline] = React.useState(props.isOnline);
-  const [isFriend, setIsFriend] = React.useState(props.isFriend);
+  const [isOnline, setIsOnline] = useState(props.isOnline);
+  const [isFriend, setIsFriend] = useState(props.isFriend);
+  const { auth } = useContext(AuthContext);
 
   const theme = createTheme({
     palette: {
@@ -47,6 +49,10 @@ export default function SidebarUser(props) {
       }
     }
   });
+
+  const handleAddFriend = async (sendToId) => {
+    let response = await auth.sendFriendRequest(auth.user._id, sendToId)
+  }
 
   var online = (jsx) => <ThemeProvider theme={theme}><Badge overlap='circular' anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant='dot' color='online'>{jsx}</Badge></ThemeProvider>;
   var offline = (jsx) => <ThemeProvider theme={theme}><Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color='offline'>{jsx}</Badge></ThemeProvider>;
@@ -62,7 +68,7 @@ export default function SidebarUser(props) {
         </ListItemAvatar>
         <ListItemText primary={name} secondary={username} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
-          {isFriend ? <WhiteMore /> : <WhitePersonAdd />}
+          {isFriend ? <WhiteMore /> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
         </ListItemButton>
         <Divider />
       </ListItem>
