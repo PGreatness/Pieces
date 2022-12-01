@@ -350,32 +350,27 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
-    store.createNewComment = async function (projectId, ownerId, text) {
-        console.log("handling create comment in store...")
-        let payload = {
-            projectId: projectId,
-            userId: ownerId,
-            text: text
-        };
-        let response = await api.createNewComment(payload)
-        console.log(response)
 
-        let response1 = await api.getAllProjectComments();
-        if (response1.data.success) {
-            let projectComments = response1.data.comments;
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
-                payload: projectComments
-            });
-        } else {
-            console.log("API FAILED TO GET THE PROJECT COMMENTS");
-        }
-    }
+    // -----------------------------------------  GET PROJECTS  ---------------------------------------------------
 
+    // GET all projects for EXPLORE
     store.loadPublicProjects = async function () {
 
         let page = store.pagination.page;
@@ -396,55 +391,7 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.loadPublicProjectComments = async function () {
-        const response = await api.getAllProjectComments();
-        if (response.data.success) {
-            let projectComments = response.data.comments;
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
-                payload: projectComments
-            });
-        } else {
-            console.log("API FAILED TO GET THE PROJECT COMMENTS");
-        }
-    }
-
-    store.loadAllUserMaps = async function (userId) {
-
-        const response = await api.getAllUserMaps(userId);
-        if (response.data.success) {
-            let userMaps = response.data.maps;
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_ALL_USER_MAPS,
-                payload: userMaps
-            })
-            return userMaps;
-        }
-        else {
-            console.log("API FAILED TO FETCH USER MAPS.")
-            console.log(response)
-        }
-
-    }
-
-    store.loadAllUserAsCollaboratorMaps = async function (id) {
-        const response = await api.getAllUserAsCollaboratorMaps(id);
-        if (response.data.success) {
-            let collabMaps = response.data.maps;
-            console.log(collabMaps)
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_ALL_USER_AS_COLLABORATOR_MAPS,
-                payload: collabMaps
-            })
-            return collabMaps;
-        }
-        else {
-            console.log("API FAILED TO FETCH USER AS COLLABORATOR MAPS.")
-            console.log(response)
-        }
-
-    }
-
+    // GET all projects for LIBRARY 
     store.loadUserProjects = async function (userId) {
 
         //let page = store.pagination.page;
@@ -464,6 +411,7 @@ function GlobalStoreContextProvider(props) {
 
     }
 
+    // GET all user favourited projects
     store.loadFavorites = async function (id, filter) {
         let payload = {
             id: id,
@@ -482,8 +430,42 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    // store.loadUserAndCollabMaps = async function (id) {
 
+    // TOMMYS OLD CODE FOR LIBRARY
+    // store.loadAllUserMaps = async function (userId) {
+    //     const response = await api.getAllUserMaps(userId);
+    //     if (response.data.success) {
+    //         let userMaps = response.data.maps;
+    //         storeReducer({
+    //             type: GlobalStoreActionType.LOAD_ALL_USER_MAPS,
+    //             payload: userMaps
+    //         })
+    //         return userMaps;
+    //     }
+    //     else {
+    //         console.log("API FAILED TO FETCH USER MAPS.")
+    //         console.log(response)
+    //     }
+    // }
+
+    // store.loadAllUserAsCollaboratorMaps = async function (id) {
+    //     const response = await api.getAllUserAsCollaboratorMaps(id);
+    //     if (response.data.success) {
+    //         let collabMaps = response.data.maps;
+    //         console.log(collabMaps)
+    //         storeReducer({
+    //             type: GlobalStoreActionType.LOAD_ALL_USER_AS_COLLABORATOR_MAPS,
+    //             payload: collabMaps
+    //         })
+    //         return collabMaps;
+    //     }
+    //     else {
+    //         console.log("API FAILED TO FETCH USER AS COLLABORATOR MAPS.")
+    //         console.log(response)
+    //     }
+    // }
+
+    // store.loadUserAndCollabMaps = async function (id) {
     //     const response = await api.getUserAndCollabMaps({ "id": id });
     //     if (response.data.success) {
     //         let userMaps = response.data.owner;
@@ -504,73 +486,16 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    store.publishMap = async function () {
-        let query = {
-            id: store.currentProject._id,
-            ownerId: auth.user?._id
-        }
-        const response = await api.publishMap(query, { isPublic: true });
-        console.log(response.data)
-        if (response.data.success) {
-            store.changePageToMapEditor(response.data.map)
-        }
-        else {
-            console.log("API FAILED TO PUBLISH MAP.")
-            console.log(response)
-        }
-
-    }
-
-    store.unpublishMap = async function () {
-        let query = {
-            id: store.currentProject._id,
-            ownerId: auth.user?._id
-        }
-        const response = await api.publishMap(query, { isPublic: false });
-        if (response.data.success) {
-            store.changePageToMapEditor(response.data.map)
-        }
-        else {
-            console.log("API FAILED TO PUBLISH MAP.")
-            console.log(response)
-        }
-
-    }
 
 
-    store.publishTileset = async function () {
-        let query = {
-            id: store.currentProject._id,
-            ownerId: auth.user?._id
-        }
-        const response = await api.publishTileset(query, { isPublic: true });
-        console.log(response.data)
-        if (response.data.success) {
-            store.changePageToTilesetEditor(response.data.tileset)
-        }
-        else {
-            console.log("API FAILED TO PUBLISH TILESET.")
-            console.log(response)
-        }
 
-    }
 
-    store.unpublishTileset = async function () {
-        let query = {
-            id: store.currentProject._id,
-            ownerId: auth.user?._id
-        }
-        const response = await api.publishTileset(query, { isPublic: false });
-        if (response.data.success) {
-            store.changePageToTilesetEditor(response.data.tileset)
-        }
-        else {
-            console.log("API FAILED TO PUBLISH TILESET.")
-            console.log(response)
-        }
 
-    }
 
+
+
+
+    // -----------------------------------------    NAVIGATION  ---------------------------------------------------
 
     store.changePageToExplore = async function () {
         let page = store.pagination.page;
@@ -678,67 +603,184 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    store.changeSearchName = async function (search) {
-        console.log(store.currentPage)
 
-        switch (store.currentPage) {
 
-            case "explore": {
-                const response = await api.getPublicProjectsByName(search);
-                if (response.data.success) {
-                    let publicProjects = response.data.projects;
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_SEARCH_NAME,
-                        payload: {
-                            publicProjects: publicProjects,
-                            newSearch: search,
-                            userMaps: store.userMaps,
-                            collabMaps: store.collabMaps
-                        }
-                    });
-                } else {
-                    console.log("API FAILED TO GET THE LIST PAIRS");
-                }
-                break;
-            }
 
-            case "library": {
-                let payload = {
-                    id: "6357194e0a81cb803bbb913e",
-                    name: search
-                }
-                const response = await api.getLibraryMapsByName(payload);
 
-                if (response.data.success) {
-                    console.log("success" + response);
-                    let userMaps = response.data.owner;
-                    let collabMaps = response.data.collaborator;
-                    console.log(response.data)
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_SEARCH_NAME,
-                        payload: {
-                            publicProjects: store.publicProjects,
-                            newSearch: search,
-                            userMaps: userMaps,
-                            collabMaps: collabMaps
 
-                        }
-                    });
-                } else {
-                    console.log("API FAILED TO GET THE LIST PAIRS");
-                }
-                break;
-            }
 
-            // case "community" : {
-            //     break;
-            // }
 
-            default: {
-                return;
-            }
-        }
+
+
+
+
+    // -----------------------------------------   CREATE/DELETE PROJECTS  ---------------------------------------------------
+
+
+
+    store.createNewMap = async function (title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
+        console.log("handling create map in store...")
+        let payload = {
+            title: title,
+            mapHeight: mapHeight,
+            mapWidth: mapWidth,
+            tileHeight: tileHeight,
+            tileWidth: tileWidth,
+            ownerId: ownerId,
+            mapDescription: "No Description"
+        };
+        let response = await api.createNewMap(payload)
+        console.log(response)
+        return response;
     }
+
+    store.deleteMap = async function (id) {
+        console.log(id)
+        let query = {
+            id: id,
+            ownerId: auth.user._id
+        }
+        let response = await api.deleteMap(query)
+        console.log(response);
+        store.changePageToLibrary();
+        return response;
+    }
+
+    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+        let payload = {
+            title: title,
+            imagePixelHeight: tilesetHeight,
+            imagePixelWidth: tilesetWidth,
+            tileHeight: tileHeight,
+            tileWidth: tileWidth,
+            ownerId: ownerId,
+            isLocked: true,
+            isPublic: false,
+            source: null
+        };
+        let response = await api.createNewTileset(payload)
+        console.log(response)
+        return response;
+    }
+
+    store.deleteTileset = async function (id) {
+        console.log(id)
+        let query = {
+            id: id,
+            ownerId: auth.user?._id,
+        }
+        let response = await api.deleteTileset(query)
+        console.log(response);
+        store.changePageToLibrary();
+        return response;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    PUBLISH/UNPUBLISH  ---------------------------------------------------
+
+
+    store.publishMap = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishMap(query, { isPublic: true });
+        console.log(response.data)
+        if (response.data.success) {
+            store.changePageToMapEditor(response.data.map)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH MAP.")
+            console.log(response)
+        }
+
+    }
+
+    store.unpublishMap = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishMap(query, { isPublic: false });
+        if (response.data.success) {
+            store.changePageToMapEditor(response.data.map)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH MAP.")
+            console.log(response)
+        }
+
+    }
+
+
+    store.publishTileset = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishTileset(query, { isPublic: true });
+        console.log(response.data)
+        if (response.data.success) {
+            store.changePageToTilesetEditor(response.data.tileset)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH TILESET.")
+            console.log(response)
+        }
+
+    }
+
+    store.unpublishTileset = async function () {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: auth.user?._id
+        }
+        const response = await api.publishTileset(query, { isPublic: false });
+        if (response.data.success) {
+            store.changePageToTilesetEditor(response.data.tileset)
+        }
+        else {
+            console.log("API FAILED TO PUBLISH TILESET.")
+            console.log(response)
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ----------------------------------------    LIKE/DISLIKE/FAV   -----------------------------------------------------
+
+
 
     store.updateMapLikes = async function (id, setLikeDislikeCallback) {
         await api.getMapById(id).then(response => {
@@ -845,410 +887,6 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createNewMap = async function (title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
-        console.log("handling create map in store...")
-        let payload = {
-            title: title,
-            mapHeight: mapHeight,
-            mapWidth: mapWidth,
-            tileHeight: tileHeight,
-            tileWidth: tileWidth,
-            ownerId: ownerId,
-            mapDescription: "No Description"
-        };
-        let response = await api.createNewMap(payload)
-        console.log(response)
-        return response;
-    }
-
-    store.deleteMap = async function (id) {
-        console.log(id)
-        let query = {
-            id: id,
-            ownerId: auth.user._id
-        }
-        let response = await api.deleteMap(query)
-        console.log(response);
-        store.changePageToLibrary();
-        return response;
-    }
-
-    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
-        console.log("handling create map in store...")
-        console.log(title)
-        console.log(tilesetHeight)
-        console.log(tilesetWidth)
-        console.log(tileHeight)
-        console.log(tileWidth)
-        console.log(ownerId)
-        let payload = {
-            title: title,
-            imagePixelHeight: tilesetHeight,
-            imagePixelWidth: tilesetWidth,
-            tileHeight: tileHeight,
-            tileWidth: tileWidth,
-            ownerId: ownerId,
-            isLocked: true,
-            isPublic: false,
-            source: null
-        };
-        let response = await api.createNewTileset(payload)
-        console.log(response)
-        return response;
-    }
-
-    store.deleteTileset = async function (id) {
-        console.log(id)
-        let query = {
-            id: id,
-            ownerId: auth.user?._id,
-        }
-        let response = await api.deleteTileset(query)
-        console.log(response);
-        store.changePageToLibrary();
-        return response;
-    }
-
-
-    store.setLibrarySort = async function (sortOpt, sortDir) {
-
-        let allMaps = store.collabMaps.concat(store.userMaps)
-
-        switch (sortOpt) {
-            case 'name':
-                if (sortDir === "up") {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.title
-                        let b = map2.title
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                else {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.title
-                        let b = map2.title
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                break;
-            case 'date':
-                if (sortDir === "up") {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.createdAt
-                        let b = map2.createdAt
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                else {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.createdAt
-                        let b = map2.createdAt
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                break;
-            // case 'popular':
-            //     if (sortDir === 'up') {
-            //         allMaps.sort((map1, map2) => {
-            //             let a = 0
-            //             let b = 0
-            //             if (map1.dislikes.length > 0) {
-            //                 a = map1.likes.length / map1.dislikes.length
-            //             }
-            //             else {
-            //                 a = map1.likes.length
-            //             }
-            //             if (map2.dislikes.length > 0) {
-            //                 b = map2.likes.length / map2.dislikes.length
-            //             }
-            //             else {
-            //                 b = map2.likes.length
-            //             }
-            //             if (a > b) {
-            //                 return -1;
-            //             }
-            //             else if (b > a) { 
-            //                 return 1;
-            //             }
-            //             else {
-            //                 return 0
-            //             }
-            //         });
-            //         storeReducer({
-            //             type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-            //             payload: {
-            //                 "allMaps": allMaps,
-            //                 "sortDir": sortDir,
-            //                 "sortOpt": sortOpt
-            //             }
-            //         })
-            //     }
-            //     else {
-            //         allMaps.sort((map1, map2) => {
-            //             let a = 0
-            //             let b = 0
-            //             if (map1.dislikes.length > 0) {
-            //                 a = map1.likes.length / map1.dislikes.length
-            //             }
-            //             else {
-            //                 a = map1.likes.length
-            //             }
-            //             if (map2.dislikes.length > 0) {
-            //                 b = map2.likes.length / map2.dislikes.length
-            //             }
-            //             else {
-            //                 b = map2.likes.length
-            //             }
-            //             if (a > b) {
-            //                 return 1;
-            //             }
-            //             else if (b > a) { 
-            //                 return -1;
-            //             }
-            //             else {
-            //                 return 0
-            //             }
-            //         });
-            //         storeReducer({
-            //             type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-            //             payload: {
-            //                 "allMaps": allMaps,
-            //                 "sortDir": sortDir,
-            //                 "sortOpt": sortOpt
-            //             }
-            //         })
-            //     }
-            //     break;
-            case 'liked':
-                if (sortDir === "up") {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.likes.length
-                        let b = map2.likes.length
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                else {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.likes.length
-                        let b = map2.likes.length
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                break;
-            case 'size':
-                if (sortDir === "up") {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.mapHeight * map1.mapWidth
-                        let b = map2.mapHeight * map2.mapWidth
-                        if (a > b) {
-                            return 1;
-                        }
-                        else if (b > a) {
-                            return -1;
-                        }
-                        else {
-                            return 0
-                        }
-                    }); storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-                else {
-                    allMaps.sort((map1, map2) => {
-                        let a = map1.mapHeight * map1.mapWidth
-                        let b = map2.mapHeight * map2.mapWidth
-                        if (a > b) {
-                            return -1;
-                        }
-                        else if (b > a) {
-                            return 1;
-                        }
-                        else {
-                            return 0
-                        }
-                    });
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_LIBRARY_SORTED_LIST,
-                        payload: {
-                            "allMaps": allMaps,
-                            "sortDir": sortDir,
-                            "sortOpt": sortOpt
-                        }
-                    })
-                }
-        }
-
-    }
-
-
-    store.changeExploreSort = async function (projSortOpt, projSortDir) {
-
-        console.log(projSortOpt)
-        console.log(projSortDir)
-
-        let sortOpt;
-        if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
-        if (projSortOpt.toLowerCase().includes('download')) sortOpt = 'downloads';
-        if (projSortOpt.toLowerCase().includes('like')) sortOpt = 'likes';
-        if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
-
-        let pagination = { ...store.pagination, page: 0, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 };
-        store.changePagination(pagination.page, pagination.limit, pagination.sort, pagination.order);
-        storeReducer({
-            type: GlobalStoreActionType.SET_EXPLORE_SORT,
-            payload: {
-                projSortOpt: projSortOpt,
-                projSortDir: projSortDir
-            }
-        });
-    }
-
-    store.changePagination = async function (page, limit, sort, order) {
-        sort = sort ? sort : store.pagination.sort;
-        order = order ? order : store.pagination.order;
-
-        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit, sort: sort, order: order });
-        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit, sort: sort, order: order });
-        let paginate = { page: page + 1, limit: limit, stopPagination: false, sort: sort, order: order };
-        if (nextResponse.data.projects.length === 0) {
-            paginate = { ...paginate, page: page, stopPagination: true };
-        }
-        storeReducer({
-            type: GlobalStoreActionType.SET_PAGINATION,
-            payload: {
-                publicProjects: response.data.projects,
-                pagination: paginate
-            }
-        });
-    }
-
-    store.changeLibrarySort = async function (projSortOpt, projSortDir) {
-
-        let sortOpt;
-        if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
-        if (projSortOpt.toLowerCase().includes('download')) sortOpt = 'downloads';
-        if (projSortOpt.toLowerCase().includes('like')) sortOpt = 'likes';
-        if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
-
-        const response = await api.getAllUserProjects({ userId: auth.user._id, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 });
-        storeReducer({
-            type: GlobalStoreActionType.SET_LIBRARY_SORT,
-            payload: {
-                userProjects: response.data.projects,
-                projSortOpt: projSortOpt,
-                projSortDir: projSortDir
-            }
-        });
-    }
 
 
     store.updateTilesetLikes = async function (id, setLikeDislikeCallback) {
@@ -1357,79 +995,20 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
-        await api.getCommentbyId(id).then(response => {
-            // console.log(response)
-            let comment = response.data.comment;
-            if (comment.likes.includes(auth.user._id)) {
-                let index = comment.likes.indexOf(auth.user._id);
-                comment.likes.splice(index, 1);
-            } else if (comment.dislikes.includes(auth.user._id)) {
-                let index = comment.dislikes.indexOf(auth.user._id);
-                comment.dislikes.splice(index, 1);
-                comment.likes.push(auth.user._id);
-            } else {
-                comment.likes.push(auth.user._id);
-            }
 
 
-            async function updatingComment(comment) {
-                let payload = {
-                    likes: comment.likes,
-                    dislikes: comment.dislikes
-                };
 
-                let query = {
-                    id: comment._id,
-                    ownerId: auth.user._id
-                }
-                console.log(comment._id)
-                response = await api.updateComment(query, payload);
 
-                if (response.data.success) {
-                    setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjectComments();
-                }
-            }
 
-            updatingComment(comment)
-        });
-    }
 
-    store.updateCommentDislikes = async function (id, setLikeDislikeCallback) {
-        await api.getCommentbyId(id).then(response => {
-            console.log("hello");
-            let comment = response.data.comment;
-            if (comment.dislikes.includes(auth.user._id)) {
-                let index = comment.dislikes.indexOf(auth.user._id);
-                comment.dislikes.splice(index, 1);
-            } else if (comment.likes.includes(auth.user._id)) {
-                let index = comment.likes.indexOf(auth.user._id);
-                comment.likes.splice(index, 1);
-                comment.dislikes.push(auth.user._id);
-            } else {
-                comment.dislikes.push(auth.user._id);
-            }
-            async function updatingComment(comment) {
-                let payload = {
-                    likes: comment.likes,
-                    dislikes: comment.dislikes
-                };
-                let query = {
-                    id: comment._id,
-                    ownerId: auth.user._id
-                }
 
-                response = await api.updateComment(query, payload);
 
-                if (response.data.success) {
-                    setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjectComments();
-                }
-            }
-            updatingComment(comment)
-        });
-    }
+
+
+
+
+
+    // -----------------------------------------    EDIT REQUESTS  ---------------------------------------------------
 
 
     store.editMapRequest = async function (receiverId, mapId, title) {
@@ -1469,88 +1048,14 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    store.setPrimaryColor = async function (newPrimaryColor) {
-        console.log("Setting primary color to " + newPrimaryColor)
-        storeReducer({
-            type: GlobalStoreActionType.SET_PRIMARY_COLOR,
-            payload: {
-                newPrimaryColor: newPrimaryColor
-            }
-        });
-    }
 
-    store.setSecondaryColor = async function (newSecondaryColor) {
-        storeReducer({
-            type: GlobalStoreActionType.SET_SECONDARY_COLOR,
-            payload: {
-                newSecondaryColor: newSecondaryColor
-            }
-        });
-    }
 
-    store.swapColors = async function () {
-        let primary = store.primaryColor.slice()
-        let secondary = store.secondaryColor.slice()
-        storeReducer({
-            type: GlobalStoreActionType.SWAP_COLORS,
-            payload: {
-                newPrimary: secondary,
-                newSecondary: primary
-            }
-        })
-    }
 
-    store.setPrimaryTile = async function (newPrimaryTile) {
-        console.log("Setting primary color to " + newPrimaryTile)
-        storeReducer({
-            type: GlobalStoreActionType.SET_PRIMARY_TILE,
-            payload: {
-                newPrimaryTile: newPrimaryTile
-            }
-        });
-        console.log(store.primaryTile)
-    }
 
-    store.setSecondaryTile = async function (newSecondaryTile) {
-        storeReducer({
-            type: GlobalStoreActionType.SET_SECONDARY_TILE,
-            payload: {
-                newSecondaryTile: newSecondaryTile
-            }
-        });
-    }
 
-    store.swapTiles = async function () {
-        let primary = store.primaryTile
-        let secondary = store.secondaryTile
-        console.log("SWAP TILES")
-        storeReducer({
-            type: GlobalStoreActionType.SWAP_TILES,
-            payload: {
-                newPrimary: secondary,
-                newSecondary: primary
-            }
-        })
-    }
 
-    store.setTilesetTool = async function (newTilesetTool) {
-        storeReducer({
-            type: GlobalStoreActionType.SET_TILESET_TOOL,
-            payload: {
-                newTilesetTool: newTilesetTool
-            }
-        })
-    }
 
-    store.setCurrentMapTiles = async function (currentMapTiles) {
-        storeReducer({
-            type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
-            payload: {
-                currentMapTiles: currentMapTiles
-            }
-        })
-    }
-
+    // -----------------------------------------    ADD/REMOVE COLLABORATOS  ---------------------------------------------------
 
     store.addMapCollaborator = async function (mapId, collaboratorId) {
         let payload = {
@@ -1658,18 +1163,185 @@ function GlobalStoreContextProvider(props) {
 
     }
 
-    store.setCurrentTile = async function (tileId) {
-        const response = await api.getTileById(tileId)
 
-        if (response.status === 200) {
-            storeReducer({
-                type: GlobalStoreActionType.SET_CURRENT_TILE,
-                payload: {
-                    currentTile: response.data.tile
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    SEARCH/SORT/FILTER  ---------------------------------------------------
+
+    store.changeSearchName = async function (search) {
+        console.log(store.currentPage)
+
+        switch (store.currentPage) {
+
+            case "explore": {
+                const response = await api.getPublicProjectsByName(search);
+                if (response.data.success) {
+                    let publicProjects = response.data.projects;
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SEARCH_NAME,
+                        payload: {
+                            publicProjects: publicProjects,
+                            newSearch: search,
+                            userMaps: store.userMaps,
+                            collabMaps: store.collabMaps
+                        }
+                    });
+                } else {
+                    console.log("API FAILED TO GET THE LIST PAIRS");
                 }
-            })
+                break;
+            }
+
+            case "library": {
+                let payload = {
+                    id: "6357194e0a81cb803bbb913e",
+                    name: search
+                }
+                const response = await api.getLibraryMapsByName(payload);
+
+                if (response.data.success) {
+                    console.log("success" + response);
+                    let userMaps = response.data.owner;
+                    let collabMaps = response.data.collaborator;
+                    console.log(response.data)
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SEARCH_NAME,
+                        payload: {
+                            publicProjects: store.publicProjects,
+                            newSearch: search,
+                            userMaps: userMaps,
+                            collabMaps: collabMaps
+
+                        }
+                    });
+                } else {
+                    console.log("API FAILED TO GET THE LIST PAIRS");
+                }
+                break;
+            }
+
+            // case "community" : {
+            //     break;
+            // }
+
+            default: {
+                return;
+            }
         }
     }
+
+
+    store.changeExploreSort = async function (projSortOpt, projSortDir) {
+
+        console.log(projSortOpt)
+        console.log(projSortDir)
+
+        let sortOpt;
+        if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
+        if (projSortOpt.toLowerCase().includes('download')) sortOpt = 'downloads';
+        if (projSortOpt.toLowerCase().includes('like')) sortOpt = 'likes';
+        if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
+
+        let pagination = { ...store.pagination, page: 0, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 };
+        store.changePagination(pagination.page, pagination.limit, pagination.sort, pagination.order);
+        storeReducer({
+            type: GlobalStoreActionType.SET_EXPLORE_SORT,
+            payload: {
+                projSortOpt: projSortOpt,
+                projSortDir: projSortDir
+            }
+        });
+    }
+
+
+    store.changeLibrarySort = async function (projSortOpt, projSortDir) {
+
+        let sortOpt;
+        if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
+        if (projSortOpt.toLowerCase().includes('download')) sortOpt = 'downloads';
+        if (projSortOpt.toLowerCase().includes('like')) sortOpt = 'likes';
+        if (projSortOpt.toLowerCase().includes('date')) sortOpt = 'date';
+
+        const response = await api.getAllUserProjects({ userId: auth.user._id, sort: sortOpt, order: projSortDir === "up" ? 1 : -1 });
+        storeReducer({
+            type: GlobalStoreActionType.SET_LIBRARY_SORT,
+            payload: {
+                userProjects: response.data.projects,
+                projSortOpt: projSortOpt,
+                projSortDir: projSortDir
+            }
+        });
+    }
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+   
+    // -----------------------------------------    PAGINATION   ---------------------------------------------------
+
+    store.changePagination = async function (page, limit, sort, order) {
+        sort = sort ? sort : store.pagination.sort;
+        order = order ? order : store.pagination.order;
+
+        const response = await api.getAllPublicProjects({ page: page + 1, limit: limit, sort: sort, order: order });
+        const nextResponse = await api.getAllPublicProjects({ page: page + 2, limit: limit, sort: sort, order: order });
+        let paginate = { page: page + 1, limit: limit, stopPagination: false, sort: sort, order: order };
+        if (nextResponse.data.projects.length === 0) {
+            paginate = { ...paginate, page: page, stopPagination: true };
+        }
+        storeReducer({
+            type: GlobalStoreActionType.SET_PAGINATION,
+            payload: {
+                publicProjects: response.data.projects,
+                pagination: paginate
+            }
+        });
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    // -----------------------------------------    SET CURRENT   ---------------------------------------------------
+
 
     store.setCurrentProject = async function (mapId) {
         const response = await api.getMapById(mapId)
@@ -1683,6 +1355,43 @@ function GlobalStoreContextProvider(props) {
             })
         }
     }
+
+
+    store.setCurrentMapTiles = async function (currentMapTiles) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
+            payload: {
+                currentMapTiles: currentMapTiles
+            }
+        })
+    }
+
+
+
+    store.setCurrentTile = async function (tileId) {
+        const response = await api.getTileById(tileId)
+
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_TILE,
+                payload: {
+                    currentTile: response.data.tile
+                }
+            })
+        }
+    }
+
+
+
+
+
+
+
+
+
+    
+
+    // -----------------------------------------    TILESETS   ---------------------------------------------------
 
     store.loadTileset = async function (id) {
         const response = await api.getTilesetById(id)
@@ -1728,6 +1437,39 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+
+    store.updateTilesetProperties = async function (payload) {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: store.currentProject.ownerId,
+        }
+        console.log(query)
+        const response = await api.updateTileset(payload, query)
+    }
+
+
+    store.setTilesetTool = async function (newTilesetTool) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_TILESET_TOOL,
+            payload: {
+                newTilesetTool: newTilesetTool
+            }
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------   ADD/DELETE TILES TO TILESET ---------------------------------------------------
+
     store.addTileToCurrentTileset = async function () {
         let payload = {
             tilesetId: store.currentProject._id,
@@ -1768,6 +1510,23 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    TILES   ---------------------------------------------------
+
     store.updateTile = async function (tileId, tilesetId, tileData) {
         const tilesetResponse = await api.getTilesetById(tilesetId)
         let payload = {
@@ -1786,14 +1545,221 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.updateTilesetProperties = async function (payload) {
-        let query = {
-            id: store.currentProject._id,
-            ownerId: store.currentProject.ownerId,
-        }
-        console.log(query)
-        const response = await api.updateTileset(payload, query)
+    store.setPrimaryTile = async function (newPrimaryTile) {
+        console.log("Setting primary color to " + newPrimaryTile)
+        storeReducer({
+            type: GlobalStoreActionType.SET_PRIMARY_TILE,
+            payload: {
+                newPrimaryTile: newPrimaryTile
+            }
+        });
+        console.log(store.primaryTile)
     }
+
+    store.setSecondaryTile = async function (newSecondaryTile) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_SECONDARY_TILE,
+            payload: {
+                newSecondaryTile: newSecondaryTile
+            }
+        });
+    }
+
+    store.swapTiles = async function () {
+        let primary = store.primaryTile
+        let secondary = store.secondaryTile
+        console.log("SWAP TILES")
+        storeReducer({
+            type: GlobalStoreActionType.SWAP_TILES,
+            payload: {
+                newPrimary: secondary,
+                newSecondary: primary
+            }
+        })
+    }
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    COLORS   ---------------------------------------------------
+
+
+    store.setPrimaryColor = async function (newPrimaryColor) {
+        console.log("Setting primary color to " + newPrimaryColor)
+        storeReducer({
+            type: GlobalStoreActionType.SET_PRIMARY_COLOR,
+            payload: {
+                newPrimaryColor: newPrimaryColor
+            }
+        });
+    }
+
+    store.setSecondaryColor = async function (newSecondaryColor) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_SECONDARY_COLOR,
+            payload: {
+                newSecondaryColor: newSecondaryColor
+            }
+        });
+    }
+
+    store.swapColors = async function () {
+        let primary = store.primaryColor.slice()
+        let secondary = store.secondaryColor.slice()
+        storeReducer({
+            type: GlobalStoreActionType.SWAP_COLORS,
+            payload: {
+                newPrimary: secondary,
+                newSecondary: primary
+            }
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    COMMENTS  ---------------------------------------------------
+
+
+    store.loadPublicProjectComments = async function () {
+        const response = await api.getAllProjectComments();
+        if (response.data.success) {
+            let projectComments = response.data.comments;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+                payload: projectComments
+            });
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
+        }
+    }
+
+    store.createNewComment = async function (projectId, ownerId, text) {
+        console.log("handling create comment in store...")
+        let payload = {
+            projectId: projectId,
+            userId: ownerId,
+            text: text
+        };
+        let response = await api.createNewComment(payload)
+        console.log(response)
+
+        let response1 = await api.getAllProjectComments();
+        if (response1.data.success) {
+            let projectComments = response1.data.comments;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+                payload: projectComments
+            });
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
+        }
+    }
+
+    store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
+        await api.getCommentbyId(id).then(response => {
+            // console.log(response)
+            let comment = response.data.comment;
+            if (comment.likes.includes(auth.user._id)) {
+                let index = comment.likes.indexOf(auth.user._id);
+                comment.likes.splice(index, 1);
+            } else if (comment.dislikes.includes(auth.user._id)) {
+                let index = comment.dislikes.indexOf(auth.user._id);
+                comment.dislikes.splice(index, 1);
+                comment.likes.push(auth.user._id);
+            } else {
+                comment.likes.push(auth.user._id);
+            }
+
+
+            async function updatingComment(comment) {
+                let payload = {
+                    likes: comment.likes,
+                    dislikes: comment.dislikes
+                };
+
+                let query = {
+                    id: comment._id,
+                    ownerId: auth.user._id
+                }
+                console.log(comment._id)
+                response = await api.updateComment(query, payload);
+
+                if (response.data.success) {
+                    setLikeDislikeCallback(comment.likes, comment.dislikes);
+                    store.loadPublicProjectComments();
+                }
+            }
+
+            updatingComment(comment)
+        });
+    }
+
+    store.updateCommentDislikes = async function (id, setLikeDislikeCallback) {
+        await api.getCommentbyId(id).then(response => {
+            console.log("hello");
+            let comment = response.data.comment;
+            if (comment.dislikes.includes(auth.user._id)) {
+                let index = comment.dislikes.indexOf(auth.user._id);
+                comment.dislikes.splice(index, 1);
+            } else if (comment.likes.includes(auth.user._id)) {
+                let index = comment.likes.indexOf(auth.user._id);
+                comment.likes.splice(index, 1);
+                comment.dislikes.push(auth.user._id);
+            } else {
+                comment.dislikes.push(auth.user._id);
+            }
+            async function updatingComment(comment) {
+                let payload = {
+                    likes: comment.likes,
+                    dislikes: comment.dislikes
+                };
+                let query = {
+                    id: comment._id,
+                    ownerId: auth.user._id
+                }
+
+                response = await api.updateComment(query, payload);
+
+                if (response.data.success) {
+                    setLikeDislikeCallback(comment.likes, comment.dislikes);
+                    store.loadPublicProjectComments();
+                }
+            }
+            updatingComment(comment)
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    RESET  ---------------------------------------------------
 
     store.reset = function () {
         storeReducer({
