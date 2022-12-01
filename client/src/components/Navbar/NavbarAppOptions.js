@@ -166,6 +166,7 @@ export default function NavbarAppOptions(props) {
     const createLogo = () => {
         return (
             <div className='navbar_logo' onClick={() => { props.changeLoc('/'); navigate('/') }}>
+                <img src={require('../images/logo512.png')}/>
             </div>
         )
     }
