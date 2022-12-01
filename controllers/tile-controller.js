@@ -100,6 +100,7 @@ var createTile = async (req, res) => {
                 error: 'Tileset not updated!',
             });
         }
+        console.log("TILE CREATED SUCCESSFULLY")
         return res.status(200).json({
             success: true,
             id: savedTile._id,
@@ -287,12 +288,14 @@ var getAllTiles = async (req, res) => {
  */
 var getTileById = async (req, res) => {
     try {
+
         if (!req.params.id) {
             return res.status(400).json({
                 success: false,
                 error: 'You must provide an id',
             });
         }
+
         let tilesId = await tile.findOne({ _id: req.params.id });
         console.log(tilesId)
         if (!tilesId) {

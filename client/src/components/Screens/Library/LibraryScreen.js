@@ -346,6 +346,7 @@ export default function LibraryScreen(props) {
         } else {
             setLocation('/tileset/' + project._id);
             store.changePageToTilesetEditor(project);
+            store.loadTileset(project._id)
         }
     }
 

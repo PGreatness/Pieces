@@ -16,7 +16,8 @@ import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
 import UserModalItem from './UserModalItem';
 import { Form } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import MapTile from './MapTile.js'
 
 import './css/mapRightBar.css';
 
@@ -217,7 +218,11 @@ export default function MapRightBar(props) {
             <Box bgcolor="#ffffff" className="previewWindow" sx={{marginTop: '30px', marginBottom: '30px'}}>
               <Stack direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
-                <img src={require('../images/dummyMapPreview.png')} id="map_preview" />
+                <Grid container direction='row' rowSpacing={0} columns={store.currentProject.mapWidth} bgcolor='#000000' style={{ height: `250px`, width: `250px`}}>
+                  {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
+                      <MapTile index={index}/>
+                  ))}
+                </Grid>        
               </Stack>
             </Box>
             <Box>
