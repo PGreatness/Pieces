@@ -137,7 +137,7 @@ export default function TilesetCanvas() {
                 <Box sx={{padding:2}}>
                     {value === 0 && (
                         <Stack direction='row' spacing={2}>
-                            {store.currentTileset && store.currentTileset.tiles.map((tileId) => (
+                            {store.currentProject && store.currentProject.tiles.map((tileId) => (
                                 <Button onClick={() => handleSelectTile(tileId)}>
                                     <img src={require('../images/dummyTilePreview.png')} className='tile_option'/>
                                 </Button>
