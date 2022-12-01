@@ -197,7 +197,7 @@ export default function NavbarAppOptions(props) {
                         display: 'flex', flexDirection: 'row', marginRight: '10px', marginLeft: '10px', bottom: '0',
                         color: `${store.currentPage === 'library' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
-                        props.changeLoc('/library'); navigate("/library"); store.changePageToLibrary();
+                        store.changePageToLibrary().then(()=> {props.changeLoc('/library'); navigate("/library");})
                     }}>
                         <CollectionsBookmarkIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></CollectionsBookmarkIcon>
                         <Typography fontSize='26px' className='navbarappoptions-sections'>Library</Typography>
