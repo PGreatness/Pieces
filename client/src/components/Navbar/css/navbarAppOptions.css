@@ -43,9 +43,13 @@ h1:active {
     width: 100px;
     vertical-align: middle;
     border: 0 0 0 0;
-    background: url(../../images/logo.png) no-repeat;
     margin: 0;
     float: left;
+}
+
+.navbar_logo img {
+    width: inherit;
+    height: inherit;
 }
 
 .navbar_appflexbox {
