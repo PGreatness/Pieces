@@ -43,9 +43,9 @@ export default function MapRightBar(props) {
   const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
-  console.log(owner)
-  console.log(collaborators)
-  console.log(project)
+  // console.log(owner)
+  // console.log(collaborators)
+  // console.log(project)
 
   useEffect(() => {
     setProject(store.currentProject)

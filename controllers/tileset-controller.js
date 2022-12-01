@@ -521,6 +521,7 @@ addUserToTileset = async (req, res) => {
     tileset.save().then(() => {
         return res.status(200).json({
             success: true,
+            tileset: tileset,
             message: "User was successfully added to tileset"
         })
     }).catch(err => {
@@ -586,10 +587,11 @@ removeUserFromTileset = async (req, res) => {
         })
     }
 
-    tileset.collaboratorIds.push(uid);
+    tileset.collaboratorIds.remove(uid);
     tileset.save().then(() => {
         return res.status(200).json({
             success: true,
+            tileset: tileset,
             message: "User was successfully removed from tileset"
         })
     }).catch(err => {

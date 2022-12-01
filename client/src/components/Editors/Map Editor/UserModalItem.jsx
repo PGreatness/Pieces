@@ -8,11 +8,11 @@ import { Box, Stack } from '@mui/system';
 export default function UserModalItem(props) {
 
     return (
-        <Grid container style={{ backgroundColor: "#1f293a" }}>
+        <Grid container style={{ backgroundColor: "#1f293a", height: "50px"}}>
             <Grid item xs={1}>
                 <AccountCircle />
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={7}>
                 <Typography color='azure'>{props.user.firstName} {props.user.lastName}</Typography>
             </Grid>
             <Grid item xs={1}>
@@ -22,7 +22,7 @@ export default function UserModalItem(props) {
                     }
                 </Button>
             </Grid>
-            <Grid align='center' item xs={5}>
+            <Grid align='center' item xs={3}>
                 <Typography color='azure'>Collaborator</Typography>
             </Grid>
         </Grid>

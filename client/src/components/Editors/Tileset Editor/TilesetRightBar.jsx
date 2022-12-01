@@ -9,6 +9,8 @@ import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth'
 import { useNavigate } from 'react-router-dom';
+import UserModalItem from '../Map Editor/UserModalItem';
+import Autocomplete from '@mui/material/Autocomplete';
 import html2canvas from "html2canvas";
 
 
@@ -16,6 +18,7 @@ export default function TilesetRightBar(props) {
 
   const { store } = useContext(GlobalStoreContext)
   const { auth } = useContext(AuthContext)
+  
   const [ value, setValue ] = useState(0);
   const [ openImportTileset, setOpenImportTileset ] = useState(false);
   const [ openImportTile, setOpenImportTile ] = useState(false);
@@ -27,6 +30,10 @@ export default function TilesetRightBar(props) {
   const [ currentTile, setCurrentTile ] = useState(store.currentTile)
   const [ openDeleteTileset, setOpenDeleteTileset ] = useState(false)
   const [ project, setProject ] = useState(store.currentProject)
+  const [owner, setOwner] = useState(null);
+  const [collaborators, setCollaborators] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [openAutocomplete, setOpenAutocomplete] = useState(false);
 
   const navigate = useNavigate();
   var ndarray = require("ndarray")
@@ -36,8 +43,18 @@ export default function TilesetRightBar(props) {
     setCurrentTile(store.currentTile)
   }, [store.currentTile])
 
+  // useEffect(() => {
+  //   setProject(store.currentProject)
+  // }, [store.currentProject])
+
   useEffect(() => {
+    console.log(store.currentProject)
     setProject(store.currentProject)
+    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+      setOwner(owner);
+      setCollaborators(collabs);
+    })
+
   }, [store.currentProject])
 
   //let pixels = []
@@ -119,11 +136,22 @@ export default function TilesetRightBar(props) {
     setOpenExportTileset(false)
   }
 
-  const handleOpenUserSettings = () => {
-    setOpenUserSettings(true)
+
+
+  const handleOpenUserSettings = async function () {
+    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+      setOwner(owner);
+      setCollaborators(collabs);
+      setOpenUserSettings(true);
+    })
+
+    const users = await auth.getAllUsers();
+    setUsers(users)
+    console.log(users)
   }
 
-  const handleCloseUserSettings = () => {
+  const handleCloseUserSettings = async function () {
+    setCollaborators([])
     setOpenUserSettings(false)
   }
 
@@ -166,6 +194,28 @@ export default function TilesetRightBar(props) {
     store.deleteTileset(project._id);
     props.setLoc('/library');
     navigate('/library');
+  }
+
+
+  const handleAddCollaborator = async (e, value, reason) => {
+    if (reason === 'selectOption') {
+      await auth.getUserByUsername(value, (user)=>{
+        store.addTilesetCollaborator(project._id, user._id)
+        .then(()=>console.log(store))
+        .catch((err)=>console.log(err))
+      })
+    }
+  }
+
+  const removeCollaborator = async function (id) {
+    console.log("in remove collab tileset")
+    let newTileset = await store.removeTilesetCollaborator(project._id, id);
+    console.log(project)
+    // auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
+    //   setOwner(owner);
+    //   setCollaborators(collabs);
+    //   setOpenUserSettings(true);
+    // })
   }
 
 
@@ -405,7 +455,7 @@ export default function TilesetRightBar(props) {
                 <Button
                     onClick={handleDeleteTileset}
                     sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: 'red' }}>
-                    <Typography>Delete Map</Typography>
+                    <Typography>Delete Tileset</Typography>
                     <DeleteIcon sx={{ color: 'black' }} style={{ marginLeft: '15px' }} />
                   </Button>
                 : <></>
@@ -547,103 +597,71 @@ export default function TilesetRightBar(props) {
         </Box>
       </Modal>
 
+      
+
+
       <Modal
         open={openUserSettings}
         onClose={handleCloseUserSettings}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='25%' top='30%' left='30%'>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' height= '40%' top='30%' left='25%'>
           <Stack direction='column'>
-            <Typography style={{textAlign:'center', marginBottom:'5px'}} variant='h5' color='azure'>User Settings</Typography>
-            <Grid justify='center' container style={{backgroundColor:"#1f293a"}}>
+            <Typography style={{ textAlign: 'center', marginBottom: '20px' }} variant='h5' color='azure'>User Settings</Typography>
+
+        
+            <Grid justify='center' container style={{ backgroundColor: "#1f293a", height: "50px" }}>
               <Grid item xs={1}>
-                <AccountCircle/>
+                <AccountCircle />
               </Grid>
-              <Grid item xs={5}>
-                <Typography>Iman Ali</Typography>
+              <Grid item xs={8}>
+                <Typography color='azure'>{owner?.firstName} {owner?.lastName}</Typography>
               </Grid>
-              <Grid item xs={1}>
-                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
-                  <People/>
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
-                  <PersonRemove/>
-                </Button>
-              </Grid>
-              <Grid align='center' item xs={4}>
-                <Typography>Owner</Typography>
+              <Grid align='center' item xs={3}>
+                <Typography color='azure'>Owner</Typography>
               </Grid>
             </Grid>
-            <Grid container style={{backgroundColor:"#1f293a"}}>
-              <Grid item xs={1}>
-                <AccountCircle/>
-              </Grid>
-              <Grid item xs={5}>
-                <Typography>Iman Ali</Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
-                  <People/>
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
-                  <PersonRemove/>
-                </Button>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth size='small'>
-                  <InputLabel>Acess</InputLabel>
-                  <Select
-                  >
-                    <MenuItem>View</MenuItem>
-                    <MenuItem>Edit</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid container style={{backgroundColor:"#1f293a"}}>
-              <Grid item xs={1}>
-                <AccountCircle/>
-              </Grid>
-              <Grid item xs={5}>
-                <Typography>McKenna</Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
-                  <People/>
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button style={{minHeight: '30px', maxHeight:'30px', minWidth:'30px', maxWidth:'30px'}}>
-                  <PersonRemove/>
-                </Button>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth size='small'>
-                  <InputLabel>Acess</InputLabel>
-                  <Select
-                  >
-                    <MenuItem>View</MenuItem>
-                    <MenuItem>Edit</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Stack direction='row' justifyContent='space-between'>
-              <Button onClick={handleCloseUserSettings}>
-                <Typography >Confirm</Typography>
-                <Check/>
-              </Button>
-              <Button onClick={handleCloseUserSettings}>
-                <Typography>Cancel</Typography>
-                <Clear/>
-              </Button>
-            </Stack>
+
+            {collaborators.length === 0 ?
+              <Grid item xs={12}>
+                <Typography color='azure'>No Collaborators</Typography>
+              </Grid> :
+              collaborators.map((collabUser) => (
+                <UserModalItem
+                  owner={project.ownerId === auth?.user._id ? true : false}
+                  user={collabUser}
+                  removeCollaborator={removeCollaborator}
+                ></UserModalItem>
+              ))
+            }
+
+
+            {
+              project.ownerId === auth?.user._id ?
+              <Autocomplete
+              className='map-editor-add-collaborators'
+              open={openAutocomplete}
+              onInputChange={(_,value)=>setOpenAutocomplete(value.trim().length > 0)}
+              onClose={()=>setOpenAutocomplete(false)}
+              freeSolo
+              options={users?.map(user => user.userName)} 
+              renderInput={(params)=><TextField {...params} label='Add Collaborator' variant='filled' />}
+              onChange={handleAddCollaborator}
+              />
+              :
+              <></>
+            }
+
+
+
+
+            <Button onClick={handleCloseUserSettings}>
+              <Typography>Cancel</Typography>
+              <Clear />
+            </Button>
           </Stack>
         </Box>
       </Modal>
+
     </Box>
   )
 }
