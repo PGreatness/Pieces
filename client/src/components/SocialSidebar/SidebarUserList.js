@@ -12,6 +12,10 @@ export default function SidebarUserList(props) {
     const [friendsList, setFriendsList] = React.useState([]);
     const [searchList, setSearchList] = React.useState([]);
 
+    React.useEffect(() => {
+        getAllFriends();
+      }, []);
+    
     const getAllFriends = async function () {
         const response = await api.getUserFriends(props.ownerId);
         // await fetch(`/getFriends/userId/${currentUser}/`);
@@ -84,7 +88,6 @@ export default function SidebarUserList(props) {
     }
 
     if (!props.query) {
-        getAllFriends()
         return (
             <div className="sidebar-user-list">
                 {
