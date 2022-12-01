@@ -271,7 +271,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_TILESET: {
                 return setStore({
                     ...store,
-                    currentTileset: payload.currentTileset,
+                    currentProject: payload.currentProject,
                     currentTile: payload.currentTile
                 })
             }
@@ -300,7 +300,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.ADD_TILE_TO_CURRENT_TILESET: {
                 return setStore({
                     ...store,
-                    currentTileset: payload.tileset,
+                    currentProject: payload.tileset,
                     currentTile: payload.tile
                 })
             }
@@ -1695,7 +1695,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.LOAD_TILESET,
                 payload: {
-                    currentTileset: response.data.tileset,
+                    currentProject: response.data.tileset,
                     currentTile: null
                 }
             })
@@ -1712,7 +1712,7 @@ function GlobalStoreContextProvider(props) {
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_TILESET,
                     payload: {
-                        currentTileset: response.data.tileset,
+                        currentProject: response.data.tileset,
                         currentTile: tile
                     }
                 })
@@ -1730,10 +1730,10 @@ function GlobalStoreContextProvider(props) {
 
     store.addTileToCurrentTileset = async function () {
         let payload = {
-            tilesetId: store.currentTileset._id,
-            height: store.currentTileset.tileHeight,
-            width: store.currentTileset.tileWidth,
-            tileData: Array(store.currentTileset.tileHeight * store.currentTileset.tileWidth).fill(''),
+            tilesetId: store.currentProject._id,
+            height: store.currentProject.tileHeight,
+            width: store.currentProject.tileWidth,
+            tileData: Array(store.currentProject.tileHeight * store.currentProject.tileWidth).fill(''),
         }
         const response = await api.createTile(payload)
         if (response.status === 200) {
@@ -1788,8 +1788,8 @@ function GlobalStoreContextProvider(props) {
 
     store.updateTilesetProperties = async function (payload) {
         let query = {
-            id: store.currentTileset._id,
-            ownerId: store.currentTileset.ownerId,
+            id: store.currentProject._id,
+            ownerId: store.currentProject.ownerId,
         }
         console.log(query)
         const response = await api.updateTileset(payload, query)
