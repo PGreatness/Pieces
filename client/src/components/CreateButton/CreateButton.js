@@ -5,8 +5,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import MapIcon from '@mui/icons-material/Map';
 import GridViewIcon from '@mui/icons-material/GridView';
-import { Modal, TextField, Grid, Typography, Box, Button, Input } from '@mui/material'
-import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import { Modal, TextField, Grid, Typography, Box, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import { GlobalStoreContext } from '../../store/store'
 import AuthContext from '../../auth/auth'
@@ -35,7 +34,6 @@ export default function CreateButton(props) {
     const { auth } = useContext(AuthContext);
     const [openCreateMapModal, setOpenCreateMapModal] = useState(false)
     const [openCreateTilesetModal, setOpenCreateTilesetModal] = useState(false)
-    const [openFileInput, setOpenFileInput] = useState(false)
 
     const setLocation = (loc) => {
         props.setLoc(loc);
@@ -85,9 +83,9 @@ export default function CreateButton(props) {
 
             await store.changePageToTilesetEditor(response.data.tileset)
             console.log(store.currentPage)
-
+            
             setLocation(`/tileset/${response.data.tileset._id}`)
-
+           
 
 
         }
@@ -109,21 +107,6 @@ export default function CreateButton(props) {
     const handleCloseCreateTilesetModal = () => {
         setOpenCreateTilesetModal(false)
     }
-
-    const showFileInput = () => {
-        //setOpenFileInput(true)
-        console.log(openFileInput)
-    };
-
-    const closeFileInput = () => {
-        setOpenFileInput(false)
-    };
-
-    const onImageUploadHandler = async function (event) {
-        let image = event.target.files[0];
-        console.log(image)
-
-    };
 
     const actions = [
         { icon: <MapIcon />, name: 'Create a new Map', action: () => handleOpenCreateMapModal() },
@@ -228,19 +211,6 @@ export default function CreateButton(props) {
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid item xs={2}></Grid>
-
-
-                        <Grid item xs={1}>
-                            <Button onClick={showFileInput}>
-                                <DriveFolderUploadIcon style={{
-                                    fontSize: "100px", marginTop: "10px",
-                                    marginLeft: '30px', color: 'white'
-                                }} />
-                            </Button>
-                        </Grid>
-
-
-
                         <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCloseCreateTilesetModal}>
                                 Close
@@ -254,18 +224,6 @@ export default function CreateButton(props) {
                         <Grid item xs={2}></Grid>
                     </Grid>
                 </Box>
-
-                {openFileInput ?
-                    <Box>
-                        <Input
-                            type="file"
-                            id="avatarFileInput"
-                            sx={{ margin: "10px" }}
-                            onChange={e => onImageUploadHandler(e)}
-                        />
-                    </Box> : <></>
-                }
-
             </Modal>
         </div>
     );
