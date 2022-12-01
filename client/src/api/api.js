@@ -40,6 +40,7 @@ export const updateMap = (query, payload) => api.post(`/map/updateMap/`, payload
 export const getAllUserMaps = (userId) => api.get(`/map/getAllUserMaps/${userId}/`)
 export const getAllUserAsCollaboratorMaps = (id) => api.get(`/map/getAllUserAsCollaboratorMaps/${id}/`)
 export const getUserAndCollabMaps = (id) => api.get(`/ownerAndCollabOf/`, {params: id})
+export const getOwnerAndCollaborators = (id) => api.get(`/map/getOwnerAndCollaborators/`, {params: id})
 export const getLibraryMapsByName = (payload) => api.get(`/getLibraryMapsByName/`, {params: payload})
 export const createNewMap = (payload) => api.post(`/map/newMap/`, payload)
 export const deleteMap = (payload) => api.post(`/map/deleteMap/`, payload)
@@ -115,6 +116,7 @@ const apis = {
 
     getAllUserMaps,
     getUserAndCollabMaps,
+    getOwnerAndCollaborators,
     getMapById,
     updateMap,
     getTilesetById,

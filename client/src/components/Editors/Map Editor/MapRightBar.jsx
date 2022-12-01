@@ -50,11 +50,10 @@ export default function MapRightBar(props) {
 
   useEffect(() => {
     setProject(store.currentProject)
-    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
-      setOwner(owner);
-      setCollaborators(collabs);
+    auth.getOwnerAndCollaborators(project._id, true).then((data) => {
+      setOwner(data.owner);
+      setCollaborators(data.collaborators);
     })
-
   }, [store.currentProject])
 
   useEffect(() => {
@@ -71,13 +70,6 @@ export default function MapRightBar(props) {
     }
   });
 
-  useEffect(() => {
-    setProject(store.currentProject);
-    auth.getOwnerAndCollabs(store.currentProject.ownerId, store.currentProject.collaboratorIds, (owner, collab) => {
-      setOwner(owner);
-      setCollaborators(collab);
-    })
-  }, [store.currentProject])
 
   const handleOpenImportMap = async () => {
     await store.loadFavorites(auth.user._id, project._id);
@@ -106,9 +98,9 @@ export default function MapRightBar(props) {
   }
 
   const handleOpenUserSettings = async function () {
-    auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
-      setOwner(owner);
-      setCollaborators(collabs);
+    auth.getOwnerAndCollaborators(project._id, true).then((data) => {
+      setOwner(data.owner);
+      setCollaborators(data.collaborators);
       setOpenUserSettings(true);
     })
 

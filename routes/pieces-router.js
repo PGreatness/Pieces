@@ -40,6 +40,7 @@ router.get('/map/getAllUserAsCollaboratorMaps/:id', MapController.getAllUserAsCo
 router.get('/map/getMapsByName/:title', MapController.getMapsByName)
 router.get('/map/getMapById/:id', MapController.getMapbyId)
 router.get('/map/getAllPublicMaps', MapController.getAllPublicMapsOnPage)
+router.get('/map/getOwnerAndCollaborators', MapController.getOwnerAndCollaborator)
 
 router.post('/map/newMap', MapController.createMap)
 router.post('/map/deleteMap', MapController.deleteMap)
