@@ -12,12 +12,12 @@ export const GlobalStoreActionType = {
     LOAD_USER_FAVORITES: "LOAD_USER_FAVORITES",
     GET_MAP_OWNER: "GET_MAP_OWNER",
     LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS",
-    
+
     LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
     LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
     LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
-    
+
     SET_EXPLORE_SORT: "SET_EXPLORE_SORT",
     SET_LIBRARY_SORT: "SET_LIBRARY_SORT",
     SET_PAGINATION: "SET_PAGINATION",
@@ -65,7 +65,7 @@ function GlobalStoreContextProvider(props) {
         currentPage: "",
         mapOwner: null,
         searchName: "",
-        
+
         pagination: {
             page: 1,
             limit: 10,
@@ -73,7 +73,7 @@ function GlobalStoreContextProvider(props) {
             sort: 'date',
             order: -1
         },
-       
+
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
@@ -150,6 +150,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 console.log(store);
                 console.log("in gsat", payload)
+                console.log(payload.currentPage)
                 return setStore({
                     ...store,
                     currentProject: payload.currentProject,
@@ -285,7 +286,7 @@ function GlobalStoreContextProvider(props) {
 
             case GlobalStoreActionType.SET_CURRENT_PROJECT: {
                 return setStore({
-                    ...store,   
+                    ...store,
                     currentProject: payload.currentProject
                 })
             }
@@ -508,6 +509,7 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentProject: null,
+                    currentTile: null,
                     currentPage: "explore",
                     publicProjects: publicProjects,
                     userMaps: store.userMaps,
@@ -533,6 +535,7 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentProject: null,
+                    currentTile: null,
                     currentPage: "library",
                     userMaps: [],
                     collabMaps: [],
@@ -551,6 +554,8 @@ function GlobalStoreContextProvider(props) {
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
+                currentProject: null,
+                currentTile: null,
                 currentPage: "community",
                 userMaps: store.userMaps,
                 collabMaps: store.collabMaps,
@@ -565,6 +570,7 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
                 currentProject: null,
+                currentTile: null,
                 currentPage: "profile",
                 userMaps: store.userMaps,
                 collabMaps: store.collabMaps,
@@ -579,6 +585,7 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
                 currentProject: map,
+                currentTile: null,
                 currentPage: "mapEditor",
                 userMaps: store.userMaps,
                 collabMaps: store.collabMaps,
@@ -588,6 +595,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.changePageToTilesetEditor = async function (tileset) {
+        console.log('changing page to tileset')
 
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -599,6 +607,8 @@ function GlobalStoreContextProvider(props) {
                 publicProjects: store.publicProjects
             }
         })
+
+        console.log(store.currentPage)
     }
 
 
@@ -1285,7 +1295,6 @@ function GlobalStoreContextProvider(props) {
     }
 
 
-    
 
 
 
@@ -1300,8 +1309,9 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    
-   
+
+
+
     // -----------------------------------------    PAGINATION   ---------------------------------------------------
 
     store.changePagination = async function (page, limit, sort, order) {
@@ -1323,7 +1333,6 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    
 
 
 
@@ -1337,7 +1346,8 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    
+
+
 
 
     // -----------------------------------------    SET CURRENT   ---------------------------------------------------
@@ -1389,7 +1399,7 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    
+
 
     // -----------------------------------------    TILESETS   ---------------------------------------------------
 
@@ -1400,7 +1410,6 @@ function GlobalStoreContextProvider(props) {
             console.log("LOADED TILESET")
             console.log(response.data.tileset)
 
-            // Sets current tileset
             storeReducer({
                 type: GlobalStoreActionType.LOAD_TILESET,
                 payload: {
@@ -1429,7 +1438,11 @@ function GlobalStoreContextProvider(props) {
             // If no tiles, creates new one and sets new tileset and current tile
             else {
                 console.log("tile needs to be made")
-                this.addTileToTilesetById(id)
+                // error is here its not async bro!
+                await store.addTileToTilesetById(id)
+                console.log('after adding default tile')
+                console.log(store)
+
             }
         }
         else {
@@ -1490,8 +1503,12 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.addTileToTilesetById = async function (id) {
+        console.log('inside adding tile to tileset')
+        
         let tileset = (await api.getTilesetById(id)).data.tileset
         console.log("ADDING FIRST TILE TO TILESET " + id)
+        console.log(tileset)
+        
         let payload = {
             tilesetId: tileset._id,
             height: tileset.tileHeight,
@@ -1499,6 +1516,7 @@ function GlobalStoreContextProvider(props) {
             tileData: Array(tileset.tileHeight * tileset.tileWidth).fill(''),
         }
         const response = await api.createTile(payload)
+        
         if (response.status === 200) {
             storeReducer({
                 type: GlobalStoreActionType.ADD_TILE_TO_CURRENT_TILESET,
@@ -1515,7 +1533,7 @@ function GlobalStoreContextProvider(props) {
 
 
 
-    
+
 
 
 
