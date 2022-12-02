@@ -13,9 +13,6 @@ export const GlobalStoreActionType = {
     GET_MAP_OWNER: "GET_MAP_OWNER",
     LOAD_PROJECT_COMMENTS: "LOAD_PROJECT_COMMENTS",
 
-    LOAD_ALL_USER_MAPS: "LOAD_ALL_USER_MAPS",
-    LOAD_ALL_USER_AS_COLLABORATOR_MAPS: "LOAD_ALL_USER_AS_COLLABORATOR_MAPS",
-    LOAD_USER_AND_COLLAB_MAPS: "LOAD_USER_AND_COLLAB_MAPS",
     SET_LIBRARY_SORTED_LIST: "SET_LIBRARY_SORTED_LIST",
 
     SET_EXPLORE_SORT: "SET_EXPLORE_SORT",
@@ -32,6 +29,8 @@ export const GlobalStoreActionType = {
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
     ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET",
     SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT",
+    IMPORT_TILESET_TO_TILESET: "IMPORT_TILESET_TO_TILESET",
+    IMPORT_TILESET_TO_MAP: "IMPORT_TILESET_TO_MAP",
     SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
     CLEAR_STORE: "CLEAR_STORE",
 }
@@ -48,8 +47,6 @@ function GlobalStoreContextProvider(props) {
         projectComments: [],
         currentProject: null,
 
-        userMaps: [],
-        collabMaps: [],
         userFavs: {
             maps: [],
             tilesets: []
@@ -77,7 +74,6 @@ function GlobalStoreContextProvider(props) {
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
-        currentTileset: null,
         currentTile: null,
         primaryTile: null,
         secondaryTile: null,
@@ -116,47 +112,34 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.LOAD_USER_FAVORITES: {
-                console.log("Got here with")
-                console.log(payload)
                 return setStore({
                     ...store,
                     userFavs: payload
                 })
             }
 
-            case GlobalStoreActionType.LOAD_ALL_USER_MAPS: {
+
+            case GlobalStoreActionType.IMPORT_TILESET_TO_TILESET: {
                 return setStore({
                     ...store,
-                    userMaps: payload,
+                    currentProject: payload,
                 })
             }
 
-            case GlobalStoreActionType.LOAD_ALL_USER_AS_COLLABORATOR_MAPS: {
+            case GlobalStoreActionType.IMPORT_TILESET_TO_MAP: {
                 return setStore({
                     ...store,
-                    collabMaps: payload,
-                })
-            }
-
-            case GlobalStoreActionType.LOAD_USER_AND_COLLAB_MAPS: {
-                return setStore({
-                    ...store,
-                    currentPage: payload.currentPage,
-                    userMaps: payload.userMaps,
-                    collabMaps: payload.collabMaps,
+                    currentProject: payload,
                 })
             }
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 console.log(store);
-                console.log("in gsat", payload)
-                console.log(payload.currentPage)
                 return setStore({
                     ...store,
+                    currentTile: payload.currentTile,
                     currentProject: payload.currentProject,
                     publicProjects: payload.publicProjects,
-                    userMaps: payload.userMaps,
-                    collabMaps: payload.collabMaps,
                     currentPage: payload.currentPage,
                     userProjects: payload.userProjects
                 });
@@ -199,8 +182,6 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     ...store,
                     publicProjects: payload.publicProjects,
-                    userMaps: payload.userMaps,
-                    collabMaps: payload.collabMaps,
                     searchName: payload.newSearch
                 });
             }
@@ -319,8 +300,6 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: [],
                     projectComments: [],
                     currentProject: null,
-                    userMaps: [],
-                    collabMaps: [],
                     userAndCollabMaps: [],
                     librarySortOption: "",
                     librarySortDirection: "",
@@ -340,7 +319,6 @@ function GlobalStoreContextProvider(props) {
                     primaryColor: '#000000',
                     secondaryColor: '#ffffff',
                     tilesetTool: 'brush',
-                    currentTileset: null,
                     currentTile: null
                 });
             }
@@ -416,7 +394,9 @@ function GlobalStoreContextProvider(props) {
     store.loadFavorites = async function (id, filter) {
         let payload = {
             id: id,
-            filteredId: filter
+            filteredId: filter,
+            tileHeight: store.currentProject.tileHeight,
+            tileWidth: store.currentProject.tileWidth
         };
         const response = await api.getFavorites(payload);
         console.log(response)
@@ -431,6 +411,36 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.importTilesetToTileset = async function (importedProjectId) {
+        let payload = {
+            importId: importedProjectId,
+            tilesetId: store.currentProject._id
+        }
+        const response = await api.importTilesetToTileset(payload);
+        console.log(response);
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.IMPORT_TILESET_TO_TILESET,
+                payload: response.data.tileset
+            })
+        }
+    }
+
+
+    store.importTilesetToMap = async function (importedId) {
+        let payload = {
+            tilesetId: importedId,
+            mapId: store.currentProject._id
+        }
+        const response = await api.importTilesetToMap(payload);
+        console.log(response);
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
+                payload: response.data.map
+            })
+        }
+    }
 
     // TOMMYS OLD CODE FOR LIBRARY
     // store.loadAllUserMaps = async function (userId) {
@@ -511,9 +521,8 @@ function GlobalStoreContextProvider(props) {
                     currentProject: null,
                     currentTile: null,
                     currentPage: "explore",
-                    publicProjects: publicProjects,
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
+                    userProjects: store.userProjects,
+                    publicProjects: publicProjects
                 }
             });
         } else {
@@ -537,8 +546,6 @@ function GlobalStoreContextProvider(props) {
                     currentProject: null,
                     currentTile: null,
                     currentPage: "library",
-                    userMaps: [],
-                    collabMaps: [],
                     userProjects: userProjects,
                     publicProjects: store.publicProjects
                 }
@@ -557,8 +564,7 @@ function GlobalStoreContextProvider(props) {
                 currentProject: null,
                 currentTile: null,
                 currentPage: "community",
-                userMaps: store.userMaps,
-                collabMaps: store.collabMaps,
+                userProjects: store.userProjects,
                 publicProjects: store.publicProjects
             }
         })
@@ -572,8 +578,7 @@ function GlobalStoreContextProvider(props) {
                 currentProject: null,
                 currentTile: null,
                 currentPage: "profile",
-                userMaps: store.userMaps,
-                collabMaps: store.collabMaps,
+                userProjects: store.userProjects,
                 publicProjects: store.publicProjects
             }
         })
@@ -587,8 +592,7 @@ function GlobalStoreContextProvider(props) {
                 currentProject: map,
                 currentTile: null,
                 currentPage: "mapEditor",
-                userMaps: store.userMaps,
-                collabMaps: store.collabMaps,
+                userProjects: store.userProjects,
                 publicProjects: store.publicProjects
             }
         })
@@ -601,9 +605,9 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
             payload: {
                 currentProject: tileset,
+                currentTile: store.currentTile,
                 currentPage: "tilesetEditor",
-                userMaps: store.userMaps,
-                collabMaps: store.collabMaps,
+                userProjects: store.userProjects,
                 publicProjects: store.publicProjects
             }
         })
@@ -1080,8 +1084,6 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentProject: response.data.map,
                     currentPage: "mapEditor",
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
                 }
             })
@@ -1109,8 +1111,6 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentProject: currentMap,
                     currentPage: "mapEditor",
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
                 }
             })
@@ -1136,8 +1136,6 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentProject: response.data.tileset,
                     currentPage: "tilesetEditor",
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
                 }
             })
@@ -1161,8 +1159,6 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentProject: response.data.tileset,
                     currentPage: "tilesetEditor",
-                    userMaps: store.userMaps,
-                    collabMaps: store.collabMaps,
                     publicProjects: store.publicProjects
                 }
             })
@@ -1203,8 +1199,6 @@ function GlobalStoreContextProvider(props) {
                         payload: {
                             publicProjects: publicProjects,
                             newSearch: search,
-                            userMaps: store.userMaps,
-                            collabMaps: store.collabMaps
                         }
                     });
                 } else {
@@ -1222,16 +1216,14 @@ function GlobalStoreContextProvider(props) {
 
                 if (response.data.success) {
                     console.log("success" + response);
-                    let userMaps = response.data.owner;
-                    let collabMaps = response.data.collaborator;
+                    //let userMaps = response.data.owner;
+                    //let collabMaps = response.data.collaborator;
                     console.log(response.data)
                     storeReducer({
                         type: GlobalStoreActionType.SET_SEARCH_NAME,
                         payload: {
                             publicProjects: store.publicProjects,
                             newSearch: search,
-                            userMaps: userMaps,
-                            collabMaps: collabMaps
 
                         }
                     });
@@ -1366,6 +1358,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.setCurrentTileset = async function (tilesetId) {
+        const response = await api.getTilesetById(tilesetId)
+
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+                payload: {
+                    currentProject: response.data.tileset
+                }
+            })
+        }
+    }
 
     store.setCurrentMapTiles = async function (currentMapTiles) {
         storeReducer({
@@ -1528,6 +1532,17 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.createTile = async function (tilesetId, height, width, tileData) {
+        console.log("creating new tile")
+        let payload = {
+            tilesetId: tilesetId,
+            height: height,
+            width: width,
+            tileData: tileData
+        }
+        const response = await api.createTile(payload)
+        console.log(response)
+    }
 
 
 

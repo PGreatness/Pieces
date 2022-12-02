@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Box, Stack } from '@mui/system';
 import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
 import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
+import { Avatar } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PublicIcon from '@mui/icons-material/Public';
 import { styled } from "@mui/material/styles";
@@ -12,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import UserModalItem from '../Map Editor/UserModalItem';
 import Autocomplete from '@mui/material/Autocomplete';
 import html2canvas from "html2canvas";
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
 
 export default function TilesetRightBar(props) {
@@ -21,11 +23,9 @@ export default function TilesetRightBar(props) {
 
   const [value, setValue] = useState(0);
   const [openImportTileset, setOpenImportTileset] = useState(false);
-  const [openImportTile, setOpenImportTile] = useState(false);
   const [openPublish, setOpenPublish] = useState(false);
   const [openUnpublish, setOpenUnpublish] = useState(false);
   const [openExportTileset, setOpenExportTileset] = useState(false);
-  const [openUserSettings, setOpenUserSettings] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentTile, setCurrentTile] = useState(store.currentTile)
   const [openDeleteTileset, setOpenDeleteTileset] = useState(false)
@@ -34,12 +34,18 @@ export default function TilesetRightBar(props) {
   const [collaborators, setCollaborators] = useState([]);
   const [users, setUsers] = useState([]);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
+  const [showError, setShowError] = useState(false)
+  const [image, setImage] = useState(null)
+  const [favs, setFavs] = useState([])
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
   var ndarray = require("ndarray")
   var zeros = require("zeros")
 
   useEffect(() => {
+    console.log(store)
+    console.log(store.currentTile)
     setCurrentTile(store.currentTile)
   }, [store.currentTile])
 
@@ -48,14 +54,19 @@ export default function TilesetRightBar(props) {
   // }, [store.currentProject])
 
   useEffect(() => {
+    console.log(store)
     console.log(store.currentProject)
     setProject(store.currentProject)
     auth.getOwnerAndCollaborators(project._id, false).then((data) => {
-      console.log(data)
+      //console.log(data)
       setOwner(data.owner)
       setCollaborators(data.collaborators)
     })
   }, [store.currentProject])
+
+  useEffect(() => {
+    setFavs(store.userFavs)
+  }, [store.userFavs])
 
   //let pixels = []
   // var savePixels = require("save-pixels")
@@ -103,6 +114,9 @@ export default function TilesetRightBar(props) {
   }
 
   const handleChange = (event, newValue) => {
+    if (newValue === 1) {
+      handleOpenUserSettings()
+    }
     setValue(newValue);
   }
 
@@ -112,20 +126,15 @@ export default function TilesetRightBar(props) {
     }
   });
 
-  const handleOpenImportTileset = () => {
+  const handleOpenImportTileset = async () => {
+    await store.loadFavorites(auth.user._id, project._id)
+    console.log(store);
     setOpenImportTileset(true)
   }
 
   const handleCloseImportTileset = () => {
+    setImage(null)
     setOpenImportTileset(false)
-  }
-
-  const handleOpenImportTile = () => {
-    setOpenImportTile(true)
-  }
-
-  const handleCloseImportTile = () => {
-    setOpenImportTile(false)
   }
 
   const handleOpenExportTileset = () => {
@@ -142,7 +151,6 @@ export default function TilesetRightBar(props) {
     const data = await auth.getOwnerAndCollaborators(project._id, false);
     setOwner(data.owner);
     setCollaborators(data.collaborators);
-    setOpenUserSettings(true);
 
     const users = await auth.getAllUsers();
     setUsers(users)
@@ -151,7 +159,6 @@ export default function TilesetRightBar(props) {
 
   const handleCloseUserSettings = async function () {
     setCollaborators([])
-    setOpenUserSettings(false)
   }
 
   const handlePublish = () => {
@@ -217,6 +224,125 @@ export default function TilesetRightBar(props) {
     // })
   }
 
+  const handleOpenFileInput = () => {
+    inputRef.current.click();
+  }
+
+
+  const handleFileChange = async function (event) {
+    let image = event.target.files[0];
+    console.log(image)
+    setImage(image)
+  };
+
+  const handleImportTileset = async function (tileset) {
+    console.log(tileset)
+    await store.importTilesetToTileset(tileset._id)
+    handleCloseImportTileset()
+  }
+
+
+
+
+  const handleImportImageTileset = async () => {
+    // let title = document.getElementById('tileset_name_input').value
+    let tilesetHeight = Number(5);
+    let tilesetWidth = Number(5);
+    let tileHeight = Number(document.getElementById('ts_tile_height_input').value);
+    let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
+    let ownerId = auth.user._id
+    let hexArray = []
+
+    if (image) {
+
+      var context = document.getElementById('canvas').getContext('2d');
+      var img = new Image()
+      console.log(image);
+      img.src = URL.createObjectURL(image);
+      console.log(img);
+
+      img.onload = async function () {
+
+        // Check if the dimensions are correct
+        let iw = img.width
+        let ih = img.height
+
+        tilesetHeight = ih
+        tilesetWidth = iw
+        console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
+        if (iw % tileWidth !== 0 || ih % tileHeight !== 0) {
+          console.log("error was found")
+          setShowError(true)
+          return
+        }
+
+        context.drawImage(img, 0, 0)
+        var imgd = context.getImageData(0, 0, iw, ih);
+        var pix = imgd.data;
+        console.log("Image Data:")
+        console.log(pix)
+
+        function componentToHex(c) {
+          var hex = c.toString(16);
+          return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        for (var i = 0; i < pix.length; i += 4) {
+          let r = componentToHex(pix[i])
+          let g = componentToHex(pix[i + 1])
+          let b = componentToHex(pix[i + 2])
+
+          hexArray.push(`#${r}${g}${b}`)
+        }
+
+        console.log("RGBARRAY")
+        console.log(hexArray)
+
+
+        // WHERE IS RESPONSE COMING FROM?????
+        await store.loadTileset(store.currentProject._id)
+        // console.log(store)
+
+
+        let tiles = []
+        let check = img.width - tileWidth
+        for (i = 0; i < (img.height * img.width); i += tileWidth) {
+          let tile = []
+          for (let j = i; j < (tileHeight * img.width) + i; j += img.width) {
+            tile.push(hexArray.slice(j, j + tileWidth))
+          }
+          // concat each array in tile
+          tiles.push(tile.flat())
+          if (i === (check)) {
+            check += (tileHeight * img.width)
+            i += ((tileHeight - 1) * img.width)
+          }
+        }
+
+        console.log("TILES")
+        console.log(tiles)
+        // console.log(title)
+        console.log(tilesetHeight)
+        console.log(tileHeight)
+        console.log(ownerId)
+
+        // Create new tileset
+        // let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+
+        // Create new tiles to go into tileset
+        for (let i = 0; i < tiles.length; i++) {
+          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
+          console.log(createTileResponse)
+        }
+        await store.setCurrentTileset(project._id);
+      }
+    }
+
+  }
+
+
+
+
 
   return (
     <Box bgcolor={"#11182a"} flex={4} className="tile_rightbar">
@@ -239,10 +365,10 @@ export default function TilesetRightBar(props) {
         {value === 0 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
-            <Typography color='azure' variant='h4' 
-              sx={{marginTop: '10px', marginLeft: '30px', marginRight: '15px'}}>Tileset: {store.currentProject.title}</Typography>
+            <Typography color='azure' variant='h4'
+              sx={{ marginTop: '10px', marginLeft: '30px', marginRight: '15px' }}>Tileset: {store.currentProject.title}</Typography>
 
-            <Box bgcolor="#ffffff" className="previewWindow" sx={{marginTop: '30px', marginBottom: '30px'}}>
+            <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack id='preview-window' direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 {currentTile
@@ -258,12 +384,7 @@ export default function TilesetRightBar(props) {
               </Stack>
             </Box>
 
-            <Box>
-              <Button onClick={handleOpenImportTile} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                <Typography>Import Tile</Typography>
-                <AddBox style={{ marginLeft: '8px' }} />
-              </Button>
-            </Box>
+
             <Box>
               <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
                 <Typography>Import Tileset</Typography>
@@ -272,154 +393,170 @@ export default function TilesetRightBar(props) {
             </Box>
           </Box>
         )}
+
+
+
         {value === 1 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
+            <Box className='user_settings_container'>
+              <Stack direction='column'>
+                <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>User Settings</Typography>
 
 
-            <Box className='conferenceContainer'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
-                <Typography bgcolor="#1f293a" color='azure'> Conference </Typography>
-                <List disablePadding style={{ maxHeight: '100%', overflow: 'auto' }}>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Iman:  </Typography>
-                    <Typography size='10px' color='black'> Hey guys! </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Ahnaf:  </Typography>
-                    <Typography size='10px' color='black'> How's it going </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'antiquewhite', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Working on tiles </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Vincent:  </Typography>
-                    <Typography size='10px' color='black'> Pretty good! </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Iman:  </Typography>
-                    <Typography size='10px' color='black'> Cool! I'm deploying it rn </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Ahnaf:  </Typography>
-                    <Typography size='10px' color='black'> Lmk if you guys need help </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'antiquewhite', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Yep </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Vincent:  </Typography>
-                    <Typography size='10px' color='black'> Sounds good </Typography>
-                  </ListItem>
-                </List>
-                <Box justifyContent='right' style={{ backgroundColor: '#1f293a' }}>
-                  <Grid container>
+                <Grid item xs={12} sx={{ paddingTop: "20px", paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+                  <Typography color='azure' style={{ fontSize: '25px' }}>Owner</Typography>
+
+                  <Grid container style={{ backgroundColor: "#1f293a", height: "50px", paddingTop: "10px", }}>
+                    <Grid item xs={2} style={{ paddingLeft: '5px' }}>
+                      <Avatar src={owner?.profilePic?.url}
+                        sx={{
+                          width: 35,
+                          height: 35,
+                          fontSize: "20px",
+                          bgcolor: "rgb(2, 0, 36)",
+                          border: "rgba(59, 130, 206, 1) 2px solid"
+                        }}>
+                        {owner?.firstName.charAt(0)}{owner?.lastName.charAt(0)}
+                      </Avatar>
+                    </Grid>
                     <Grid item xs={10}>
-                      <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <Typography color='azure' sx={{ paddingLeft: "10px", marginTop: '8px' }}>{owner?.firstName} {owner?.lastName}</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                      <Button style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
-                        <Add />
-                      </Button>
-                    </Grid>
+
                   </Grid>
-                </Box>
+                </Grid>
+
+                <Grid item xs={12} sx={{ paddingTop: "40px", paddingBottom: "20px", marginBottom: '30px', paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+
+                  {collaborators.length === 0 ?
+                    <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
+                    :
+                    <>
+                      <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
+
+                      {collaborators.map((collabUser) => (
+
+                        <UserModalItem
+                          owner={project.ownerId === auth?.user._id ? true : false}
+                          user={collabUser}
+                          removeCollaborator={removeCollaborator}
+                        ></UserModalItem>
+                      ))}
+                    </>
+                  }
+
+
+                  {
+                    project.ownerId === auth?.user._id ?
+                      <Autocomplete
+                        className='map-editor-add-collaborators'
+                        open={openAutocomplete}
+                        onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
+                        onClose={() => setOpenAutocomplete(false)}
+                        freeSolo
+                        options={users?.map(user => user.userName)}
+                        renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
+                        sx={{ width: '90%', borderRadius: "10px", marginTop: "20px" }}
+                        onChange={handleAddCollaborator}
+                      />
+                      :
+                      <></>
+                  }
+
+                </Grid>
+
+
               </Stack>
             </Box>
-
-            <Box>
-              <Button onClick={handleOpenUserSettings} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                <Typography>User Settings</Typography>
-                <People />
-              </Button>
-            </Box>
-
           </Box>
         )}
+
+
+
+
         {value === 2 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Box className='properties_container'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
+              <Stack direction='column' textAlign='center'>
                 {!editMode
-                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                     <Grid item xs={10}>
-                      <Typography color='azure'>Properties</Typography>
+                      <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '50px' }}>
                         <Edit />
                       </Button>
                     </Grid>
                   </Grid>
-                  : <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+                  : <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                     <Grid item xs={8}>
-                      <Typography color='azure'>Properties</Typography>
+                      <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '30px' }}>
                         <Check />
                       </Button>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '20px' }}>
                         <Clear />
                       </Button>
                     </Grid>
                   </Grid>
                 }
                 {!editMode
-                  ? <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                  ? <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.title}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px' }} color='azure'>{store.currentProject.title}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tilesetDesc}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tilesetDesc}</Typography>
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tile Size: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
                     </Grid>
                     <Grid item xs={7} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tilesetTags}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tilesetTags.join(', ')}</Typography>
                     </Grid>
                   </Grid>
-                  : <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                  : <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tile Size: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '0px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
                     </Grid>
                     <Grid item xs={7} zeroMinWidth>
                       <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags.join(', ')} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                   </Grid>
                 }
@@ -469,49 +606,6 @@ export default function TilesetRightBar(props) {
         )}
       </Box>
 
-      <Modal
-        open={openImportTileset}
-        onClose={handleCloseImportTileset}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%' id="importTilesetModal">
-          <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Import Tileset</Typography>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-            <Stack direction='row'>
-              <Button onClick={handleCloseImportTileset}>
-                <Typography >Confirm</Typography>
-                <Check />
-              </Button>
-              <Button onClick={handleCloseImportTileset}>
-                <Typography>Cancel</Typography>
-                <Clear />
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
-
-      <Modal
-        open={openImportTile}
-        onClose={handleCloseImportTile}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
-          <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Import Tile</Typography>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-            <Stack direction='row'>
-              <Button onClick={handleCloseImportTile}>
-                <Typography >Confirm</Typography>
-                <Check />
-              </Button>
-              <Button onClick={handleCloseImportTile}>
-                <Typography>Cancel</Typography>
-                <Clear />
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
 
       <Modal
         open={openExportTileset}
@@ -520,6 +614,7 @@ export default function TilesetRightBar(props) {
         <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
           <Stack direction='column'>
             <Typography variant='h5' color='azure'>Export Tileset</Typography>
+
             <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
             <Stack direction='row'>
               <Button onClick={handleCloseExportTileset}>
@@ -603,67 +698,103 @@ export default function TilesetRightBar(props) {
 
 
 
+
+
       <Modal
-        open={openUserSettings}
-        onClose={handleCloseUserSettings}
+        open={openImportTileset}
+        onClose={handleCloseImportTileset}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' height='40%' top='30%' left='25%'>
-          <Stack direction='column'>
-            <Typography style={{ textAlign: 'center', marginBottom: '20px' }} variant='h5' color='azure'>User Settings</Typography>
-
-
-            <Grid justify='center' container style={{ backgroundColor: "#1f293a", height: "50px" }}>
-              <Grid item xs={1}>
-                <AccountCircle />
-              </Grid>
-              <Grid item xs={8}>
-                <Typography color='azure'>{owner?.firstName} {owner?.lastName}</Typography>
-              </Grid>
-              <Grid align='center' item xs={3}>
-                <Typography color='azure'>Owner</Typography>
-              </Grid>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='fit-content' top='30%' left='20%'>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Upload Tileset</Typography>
             </Grid>
 
-            {collaborators.length === 0 ?
-              <Grid item xs={12}>
-                <Typography color='azure'>No Collaborators</Typography>
-              </Grid> :
-              collaborators.map((collabUser) => (
-                <UserModalItem
-                  owner={project.ownerId === auth?.user._id ? true : false}
-                  user={collabUser}
-                  removeCollaborator={removeCollaborator}
-                ></UserModalItem>
-              ))
-            }
 
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
+              <input
+                style={{ display: 'none' }}
+                ref={inputRef}
+                type="file"
+                onChange={handleFileChange}
+              />
+              <TextField
+                value={image ? image.name : "Import Tileset..."}
+                InputProps={{
+                  readOnly: true,
+                }}
+                style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 400, fontSize: '20px' } }}
+              />
 
-            {
-              project.ownerId === auth?.user._id ?
-                <Autocomplete
-                  className='map-editor-add-collaborators'
-                  open={openAutocomplete}
-                  onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
-                  onClose={() => setOpenAutocomplete(false)}
-                  freeSolo
-                  options={users?.map(user => user.userName)}
-                  renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
-                  onChange={handleAddCollaborator}
-                />
-                :
-                <></>
-            }
+              <Button onClick={handleOpenFileInput}>
+                <DriveFolderUploadIcon style={{
+                  fontSize: "60px",
+                  marginLeft: '10px', color: 'white'
+                }} />
+              </Button>
 
+            </Grid>
 
+            <Grid item xs={3}></Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+              <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
+              <TextField id="ts_tile_height_input" value={project.tileHeight} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
+            </Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={3}>
+              <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
+              <TextField id="ts_tile_width_input" value={project.tileWidth} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
+            </Grid>
+            <Grid item xs={2}></Grid>
 
+            <Grid item xs={12}>
+              <Box sx={{ width: '100%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '100px' }}>
+                <Typography variant='h6' sx={{fontStyle: 'italic', color: 'white'}}>
+                  Your favorites:
+                </Typography>
+                {
+                  favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
+                      return (
+                        <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex'}}>
+                          <Typography variant='h5' sx={{color: 'white', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
+                            {tileset.title}
+                          </Typography>
+                          <Typography variant='h6' sx={{color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
+                            {tileset.description ? tileset.description : 'No Description'}
+                          </Typography>
+                          <Button onClick={()=>handleImportTileset(tileset)} sx={{width: '10%', display: 'flex'}}>
+                            <Typography variant='p'>
+                              Import
+                            </Typography>
+                          </Button>
+                        </Box>
+                      )
+                  }) : <Typography variant='h6' sx={{color: 'white'}}>
+                    You don't have any compatible favorites! Get out there and start liking!
+                    </Typography>
+                }
+              </Box>
+            </Grid>
 
-            <Button onClick={handleCloseUserSettings}>
-              <Typography>Cancel</Typography>
-              <Clear />
-            </Button>
-          </Stack>
+            <Grid item xs={2}></Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
+              <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
+                Close
+                            </Button>
+            </Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
+              <Button sx={{ fontSize: '20px' }} onClick={()=>{handleImportImageTileset();handleCloseImportTileset();}}>
+                Confirm
+                            </Button>
+            </Grid>
+            <Grid item xs={2}></Grid>
+          </Grid>
         </Box>
       </Modal>
+
+      <canvas style={{ display: 'none' }} id='canvas'></canvas>
 
     </Box>
   )
