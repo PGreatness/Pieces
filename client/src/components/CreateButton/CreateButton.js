@@ -395,8 +395,8 @@ export default function CreateButton(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom:'2 0px'}} color='red'>
-                                {showError ? 'An error occured when trying to load the tileset image. Please try again.' : ''}
+                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom:'20px'}} color='red'>
+                                {showError ? 'The given tileset image could not be split into tiles of the given dimensions. Please try again.' : ''}
                             </Typography>
                         </Grid>
 
