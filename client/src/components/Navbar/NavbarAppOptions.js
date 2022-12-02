@@ -318,7 +318,7 @@ export default function NavbarAppOptions(props) {
         ) : (<></>);
     }
 
-    console.log(props.reset)
+    // console.log(props.reset)
 
     // return the logo, app buttons, and login buttons
     // the login buttons should be on the right side of the navbar

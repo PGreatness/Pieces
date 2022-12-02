@@ -6,6 +6,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
 import { Brush, HighlightAlt, OpenWith, Map, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add } from '@mui/icons-material'
 import PublicIcon from '@mui/icons-material/Public';
+import { Avatar } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
 import { TabPanel, TabContext, TabList } from '@mui/lab'
@@ -33,7 +34,6 @@ export default function MapRightBar(props) {
   const [openImportMap, setOpenImportMap] = useState(false);
   const [openExportMap, setOpenExportMap] = useState(false);
   const [openImportTileset, setOpenImportTileset] = useState(false);
-  const [openUserSettings, setOpenUserSettings] = useState(false);
   const [openPublishMap, setOpenPublishMap] = useState(false);
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
   const [openDeleteMap, setOpenDeleteMap] = useState(false);
@@ -61,6 +61,9 @@ export default function MapRightBar(props) {
   }, [store.userFavs])
 
   const handleChange = (event, newValue) => {
+    if (newValue === 1) {
+      handleOpenUserSettings()
+    } 
     setValue(newValue);
   }
 
@@ -101,7 +104,6 @@ export default function MapRightBar(props) {
     auth.getOwnerAndCollaborators(project._id, true).then((data) => {
       setOwner(data.owner);
       setCollaborators(data.collaborators);
-      setOpenUserSettings(true);
     })
 
     const users = await auth.getAllUsers();
@@ -111,7 +113,6 @@ export default function MapRightBar(props) {
 
   const handleCloseUserSettings = async function () {
     setCollaborators([])
-    setOpenUserSettings(false)
   }
 
   const handlePublishMap = () => {
@@ -226,71 +227,79 @@ export default function MapRightBar(props) {
           </Box>
         )}
         {value === 1 && (
-          <Box display="flex" flexDirection='column' alignItems="center" justifyContent="start" height='100%' >
+          <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
+          <Box className='user_settings_container'>
+            <Stack direction='column'>
+              <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>User Settings</Typography>
 
 
+              <Grid item xs={12} sx={{ paddingTop: "20px", paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+                <Typography color='azure' style={{ fontSize: '25px' }}>Owner</Typography>
 
-            <Box className='conferenceContainer'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
-                <Typography bgcolor="#1f293a" color='azure'> Conference </Typography>
-                <List disablePadding style={{ maxHeight: '100%', overflow: 'auto' }}>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Iman:  </Typography>
-                    <Typography size='10px' color='black'> Hey guys! </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Ahnaf:  </Typography>
-                    <Typography size='10px' color='black'> How's it going </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'antiquewhite', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Working on maps </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Vincent:  </Typography>
-                    <Typography size='10px' color='black'> Pretty good! </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Iman:  </Typography>
-                    <Typography size='10px' color='black'> Cool! I'm deploying it rn </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Ahnaf:  </Typography>
-                    <Typography size='10px' color='black'> Lmk if you guys need help </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'antiquewhite', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Yep </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Vincent:  </Typography>
-                    <Typography size='10px' color='black'> Sounds good </Typography>
-                  </ListItem>
-                </List>
-                <Box justifyContent='right' style={{ backgroundColor: '#1f293a' }}>
-                  <Grid container>
-                    <Grid item xs={10}>
-                      <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <Button style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
-                        <Add />
-                      </Button>
-                    </Grid>
+                <Grid container style={{ backgroundColor: "#1f293a", height: "50px", paddingTop: "10px", }}>
+                  <Grid item xs={2} style={{ paddingLeft: '5px' }}>
+                    <Avatar src={owner?.profilePic?.url}
+                      sx={{
+                        width: 35,
+                        height: 35,
+                        fontSize: "20px",
+                        bgcolor: "rgb(2, 0, 36)",
+                        border: "rgba(59, 130, 206, 1) 2px solid"
+                      }}>
+                      {owner?.firstName.charAt(0)}{owner?.lastName.charAt(0)}
+                    </Avatar>
                   </Grid>
-                </Box>
-              </Stack>
-            </Box>
+                  <Grid item xs={10}>
+                    <Typography color='azure' sx={{paddingLeft: "10px", marginTop: '8px'}}>{owner?.firstName} {owner?.lastName}</Typography>
+                  </Grid>
 
-            <Box>
-              <Button onClick={handleOpenUserSettings} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                <Typography>Users Settings</Typography>
-                <People style={{ marginLeft: '15px' }} />
-              </Button>
-            </Box>
+                </Grid>
+              </Grid>
 
+              <Grid item xs={12} sx={{ paddingTop: "40px", paddingBottom: "20px", marginBottom: '30px', paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+
+              {collaborators.length === 0 ?
+                <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
+                :
+                <>
+                <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
+
+                  {collaborators.map((collabUser) => (
+
+                    <UserModalItem
+                      owner={project.ownerId === auth?.user._id ? true : false}
+                      user={collabUser}
+                      removeCollaborator={removeCollaborator}
+                    ></UserModalItem>
+                  ))}
+                </>
+              }
+              
+
+              {
+                project.ownerId === auth?.user._id ?
+                  <Autocomplete
+                    className='map-editor-add-collaborators'
+                    open={openAutocomplete}
+                    onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
+                    onClose={() => setOpenAutocomplete(false)}
+                    freeSolo
+                    options={users?.map(user => user.userName)}
+                    renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
+                    sx={{width: '90%', borderRadius: "10px", marginTop: "20px"}}
+                    onChange={handleAddCollaborator}
+                  />
+                  :
+                  <></>
+              }
+
+            </Grid>
+
+            
+            </Stack>
           </Box>
-        )}
+        </Box>
+      )}
         {value === 2 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
@@ -532,70 +541,6 @@ export default function MapRightBar(props) {
         </Box>
       </Modal>
 
-
-
-      <Modal
-        open={openUserSettings}
-        onClose={handleCloseUserSettings}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='25%' top='30%' left='30%'>
-          <Stack direction='column'>
-            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>User Settings</Typography>
-
-
-            <Grid justify='center' container style={{ backgroundColor: "#1f293a" }}>
-              <Grid item xs={1}>
-                <AccountCircle />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography color='azure'>{owner?.firstName} {owner?.lastName}</Typography>
-              </Grid>
-              <Grid align='center' item xs={5}>
-                <Typography color='azure'>Owner</Typography>
-              </Grid>
-            </Grid>
-
-            {collaborators.length === 0 ?
-              <Grid item xs={12}>
-                <Typography color='azure'>No Collaborators</Typography>
-              </Grid> :
-              collaborators.map((collabUser) => (
-                <UserModalItem
-                  owner={project.ownerId === auth?.user._id ? true : false}
-                  user={collabUser}
-                  removeCollaborator={removeCollaborator}
-                ></UserModalItem>
-              ))
-            }
-
-
-            {
-              project.ownerId === auth?.user._id ?
-                <Autocomplete
-                  className='map-editor-add-collaborators'
-                  open={openAutocomplete}
-                  onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
-                  onClose={() => setOpenAutocomplete(false)}
-                  freeSolo
-                  options={users?.map(user => user.userName)}
-                  renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
-                  onChange={handleAddCollaborator}
-                  sx={{ width: 300 }}
-                />
-                :
-                <></>
-            }
-
-
-
-
-            <Button onClick={handleCloseUserSettings}>
-              <Typography>Cancel</Typography>
-              <Clear />
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
 
     </Box>
   )

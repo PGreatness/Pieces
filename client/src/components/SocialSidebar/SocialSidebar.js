@@ -16,9 +16,14 @@ const SearchBarWhite = styled(Input)({
 export default function SocialSidebar(props) {
     const { auth } = useContext(AuthContext);
     const [searching, setSearching] = useState("");
-    let id = auth.user._id;
+    const [id, setId] = useState('');
     // const search = createSearchButton();
     
+    useEffect(() => {
+        if (auth.user) {
+            setId(auth.user._id);
+        }
+    }, [auth.user]);
 
     const createSearchButton = () => {
         return (

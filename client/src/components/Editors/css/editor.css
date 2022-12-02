@@ -87,6 +87,13 @@
     border-radius: 3px;
 }
 
+.user_settings_container {
+    width: 300px;
+    background-color: #303139;
+    margin-top: 15px;
+    border-radius: 15px;
+}
+
 .layer_item, .suggestion_item {
     background-color: aliceblue;
     border-style: solid;
