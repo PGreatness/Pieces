@@ -197,10 +197,10 @@ export default function CreateButton(props) {
                 open={openCreateTilesetModal}
                 onClose={handleCloseCreateTilesetModal}
             >
-                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='50%' top='30%' left='30%'>
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='25%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Create Tileset</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '80px' }} variant='h3' color='azure'>Create Tileset</Typography>
                         </Grid>
                         <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
                             <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tileset Name:</Typography>
@@ -248,12 +248,12 @@ export default function CreateButton(props) {
 
 
                         <Grid item xs={2}></Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px' }} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
                             <Button sx={{ fontSize: '20px' }} onClick={handleCloseCreateTilesetModal}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px' }} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
                             <Button sx={{ fontSize: '20px' }} onClick={handleCreateNewTileset}>
                                 Confirm
                             </Button>
