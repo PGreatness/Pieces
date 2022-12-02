@@ -13,38 +13,22 @@ export default function SidebarUserList(props) {
     const [searchList, setSearchList] = React.useState([]);
 
     React.useEffect(() => {
-        getAllFriends();
+        getAllFriends(props.ownerId);
       }, []);
-    
-    const getAllFriends = async function () {
-        const response = await api.getUserFriends(props.ownerId);
-        // await fetch(`/getFriends/userId/${currentUser}/`);
-        // const response = {
-        //     "friends": [
-        //         {
-        //             "id": 1,
-        //             "username": "test1",
-        //             "email": "test@test.com",
-        //             "profilePic": "https://i.imgur.com/0s3pdnc.png",
-        //             "bio": "I am a test user",
-        //             "firstName": "Test",
-        //             "lastName": "User"
-        //             // User Objects with all the friends of the user
-        //         },
-        //         {
-        //             "id": 2,
-        //             "username": "test2",
-        //             "email": "test@test.com",
-        //             "bio": "I am a test user",
-        //             "firstName": "Randy",
-        //             "lastName": "Orton"
-        //         }
-        //     ]
-        // };
 
-        
+    React.useEffect(() => {
+        setCurrentUser(props.ownerId);
+        getAllFriends(props.ownerId);
+    }, [props.ownerId]);
+
+    const getAllFriends = async function (id) {
+        const response = await api.getUserFriends(id);
+
+
+        // console.log("FRIENDS RESPONSE")
+        // console.log(response)
         if (response.data.success) {
-            // console.log("friends are here")
+            console.log("friends are here")
             setFriendsList(response.data.friends)
             // console.log(response)
         }
