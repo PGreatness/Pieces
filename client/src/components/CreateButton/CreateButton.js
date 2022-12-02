@@ -36,6 +36,7 @@ export default function CreateButton(props) {
 
     const [openCreateMapModal, setOpenCreateMapModal] = useState(false)
     const [openCreateTilesetModal, setOpenCreateTilesetModal] = useState(false)
+    const [openInvalidDimensionsModal, setOpenInvalidDimensionsModal] = useState(false)
     const [image, setImage] = useState(null)
     const inputRef = useRef(null);
 
@@ -118,8 +119,18 @@ export default function CreateButton(props) {
             var img = new Image()
             img.src = URL.createObjectURL(image);
             img.onload = function() {
+
+                // Check if the dimensions are correct
+                let iw = img.width
+                let ih = img.height
+                console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
+                if (iw % tileWidth !== 0 || ih % tileHeight !== 0) {
+                    handleOpenInvalidDimensionsModal()
+                    return
+                }
+
                 context.drawImage(img, 0, 0)
-                var imgd = context.getImageData(0, 0, img.width, img.height);
+                var imgd = context.getImageData(0, 0, iw, ih);
                 var pix = imgd.data; 
                 console.log("Image Data:")
                 console.log(pix)
@@ -165,6 +176,13 @@ export default function CreateButton(props) {
         setOpenCreateTilesetModal(false)
     }
 
+    const handleOpenInvalidDimensionsModal = () => {
+        setOpenInvalidDimensionsModal(true)
+    }
+
+    const handleCloseInvalidDimensionsModal = () => {
+        setOpenInvalidDimensionsModal(false)
+    }
     
     const handleOpenCreateMapModal = () => {
         setOpenCreateMapModal(true)
@@ -321,6 +339,31 @@ export default function CreateButton(props) {
                     </Grid>
                 </Box>
             </Modal>
+
+
+            <Modal
+                open={openInvalidDimensionsModal}
+                onClose={handleCloseInvalidDimensionsModal}
+            >
+                <Box
+                    borderRadius='10px' padding='10px' bgcolor='#11182a' position='absolute' width='50%' top='25%' left='30%'
+                >
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Typography style={{ textAlign: 'center',  marginTop:'10px'}} variant='h4' color='azure'>Upload Failed</Typography>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={8}>
+                            <Typography style={{ fontSize: '18px', textAlign: 'center', marginTop:'20px', marginBottom:'20px' }} color='azure'>The given tileset image could not be split into tiles of the given dimensions.</Typography>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid style={{display:'flex', justifyContent: 'center', alignItems: 'center'}} item xs={12}>
+                            <Button onClick={handleCloseInvalidDimensionsModal}>Okay</Button>        
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Modal>
+
 
             <canvas style={{display:'none'}} id='canvas'></canvas>
 
