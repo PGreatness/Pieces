@@ -71,7 +71,7 @@ router.post('/tileset/updateTileset', TilesetController.updateTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
 router.post('/tileset/addUserToTileset', TilesetController.addUserToTileset)
 router.post('/tileset/removeUserFromTileset', TilesetController.removeUserFromTileset)
-
+router.post('/tileset/importTileset', TilesetController.importTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
 
 

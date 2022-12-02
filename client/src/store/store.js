@@ -32,6 +32,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
     ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET",
     SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT",
+    IMPORT_TILESET_TO_TILESET: "IMPORT_TILESET_TO_TILESET",
     SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
     CLEAR_STORE: "CLEAR_STORE",
 }
@@ -144,6 +145,13 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     userMaps: payload.userMaps,
                     collabMaps: payload.collabMaps,
+                })
+            }
+
+            case GlobalStoreActionType.IMPORT_TILESET_TO_TILESET: {
+                return setStore({
+                    ...store,
+                    currentProject: payload,
                 })
             }
 
@@ -416,7 +424,9 @@ function GlobalStoreContextProvider(props) {
     store.loadFavorites = async function (id, filter) {
         let payload = {
             id: id,
-            filteredId: filter
+            filteredId: filter,
+            tileHeight: store.currentProject.tileHeight,
+            tileWidth: store.currentProject.tileWidth
         };
         const response = await api.getFavorites(payload);
         console.log(response)
@@ -431,6 +441,20 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.importTilesetToTileset = async function (importedProjectId) {
+        let payload = {
+            importId: importedProjectId,
+            tilesetId: store.currentProject._id
+        }
+        const response = await api.importTilesetToTileset(payload);
+        console.log(response);
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.IMPORT_TILESET_TO_TILESET,
+                payload: response.data.tileset
+            })
+        }
+    }
 
     // TOMMYS OLD CODE FOR LIBRARY
     // store.loadAllUserMaps = async function (userId) {

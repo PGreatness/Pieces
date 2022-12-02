@@ -653,12 +653,22 @@ getLibraryMapsByName = async (req, res) => {
 var getUserFavorites = async (req, res) => {
     const { id } = req.query;
     var { filteredId } = req.query;
+    var { tileHeight, tileWidth } = req.query;
 
-    if (!id) {
+    if (!id || !tileHeight || !tileWidth) {
         return res
             .status(400)
             .json({ message: "Must Provide All Required Arguments to Get User Favorites" });
     }
+
+    if (Number.isNaN(+tileHeight) || Number.isNaN(+tileWidth)) {
+        return res
+            .status(400)
+            .json({ message: "Tile Height and Tile Width must be numbers" });
+    }
+
+    tileHeight = +tileHeight;
+    tileWidth = +tileWidth;
 
     var uid;
     var fid;
@@ -675,21 +685,55 @@ var getUserFavorites = async (req, res) => {
 
     var aggregation;
     if (!fid) {
+        console.log('doing fid')
         aggregation = [
             // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
             {
-                $match: { favs: { $in: [uid] } },
-            },
+                $match: { $or: [
+                    { $and: [
+                        {favs: { $in: [uid] }},
+                        {ownerId: { $ne: uid }},
+                    ]},
+                    { $and: [
+                        {favs: { $in: [uid] }},
+                        {isPublic: true}
+                        ] },
+                    { ownerId: uid },
+                    { $and: [
+                        {favs: { $in: [uid] }},
+                        {collaboratorIds: { $in: [uid] }}
+                        ]
+                    },
+                ],
+                "tileHeight": tileHeight,
+                "tileWidth": tileWidth }
+            }
         ];
     } else {
+        console.log('not doing fid')
         aggregation = [
             // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
             {
                 $match: {
-                    $and: [
-                        { favs: { $in: [uid] } },
-                        { _id: { $ne: fid } },
+                    $or: [
+                        { $and: [
+                            {favs: { $in: [uid] }},
+                            {ownerId: { $ne: uid }},
+                        ]},
+                        { $and: [
+                            {favs: { $in: [uid] }},
+                            {isPublic: true}
+                            ] },
+                        { ownerId: uid },
+                        { $and: [
+                            {favs: { $in: [uid] }},
+                            {collaboratorIds: { $in: [uid] }}
+                            ]
+                        },
                     ],
+                    _id: { $ne: fid },
+                    "tileHeight": tileHeight,
+                    "tileWidth": tileWidth
                 },
             },
         ];
@@ -698,6 +742,9 @@ var getUserFavorites = async (req, res) => {
     const maps = await Map.aggregate(aggregation);
     const tilesets = await Tileset.aggregate(aggregation);
 
+    console.log(id, filteredId, tileHeight, tileWidth)
+    console.log(maps)
+    console.log(tilesets)
     return res.status(200).json({
         success: true,
         maps: maps,
