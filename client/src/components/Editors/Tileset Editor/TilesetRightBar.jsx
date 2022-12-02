@@ -362,85 +362,85 @@ export default function TilesetRightBar(props) {
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Box className='properties_container'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
+              <Stack direction='column' textAlign='center'>
                 {!editMode
-                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                     <Grid item xs={10}>
-                      <Typography color='azure'>Properties</Typography>
+                    <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '50px' }}>
                         <Edit />
                       </Button>
                     </Grid>
                   </Grid>
-                  : <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+                  : <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                     <Grid item xs={8}>
-                      <Typography color='azure'>Properties</Typography>
+                    <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '30px' }}>
                         <Check />
                       </Button>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '20px' }}>
                         <Clear />
                       </Button>
                     </Grid>
                   </Grid>
                 }
                 {!editMode
-                  ? <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                  ? <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.title}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px' }} color='azure'>{store.currentProject.title}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tilesetDesc}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px'  }} color='azure'>{store.currentProject.tilesetDesc}</Typography>
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tile Size: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
                     </Grid>
                     <Grid item xs={7} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px'  }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tilesetTags}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px'  }} color='azure'>{store.currentProject.tilesetTags.join(', ')}</Typography>
                     </Grid>
                   </Grid>
-                  : <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                  : <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px' , borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tile Size: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '0px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
                     </Grid>
                     <Grid item xs={7} zeroMinWidth>
                       <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags.join(', ')} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                   </Grid>
                 }
