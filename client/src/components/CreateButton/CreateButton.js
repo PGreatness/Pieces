@@ -173,8 +173,8 @@ export default function CreateButton(props) {
 
 
 
-            await store.loadTileset(response.data.tileset._id)
-            console.log(store)
+            // await store.loadTileset(response.data.tileset._id)
+            // console.log(store)
 
                 // EXAMPLE IMAGE = img.height: 6, img.width: 6)
                 // tile height : 3,  tile width : 2
