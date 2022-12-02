@@ -283,10 +283,8 @@ export default function TilesetRightBar(props) {
         console.log(hexArray)
 
 
-
-
         // WHERE IS RESPONSE COMING FROM?????
-        // await store.loadTileset(response.data.tileset._id)
+        await store.loadTileset(store.currentProject._id)
         // console.log(store)
 
 
@@ -316,19 +314,10 @@ export default function TilesetRightBar(props) {
         // let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
 
         // Create new tiles to go into tileset
-        // for (let i = 0; i < tiles.length; i++) {
-        //   let createTileResponse = await store.createTile(response.data.tileset._id, response.data.tileset.tileHeight, response.data.tileset.tileWidth, tiles[i])
-        //   console.log(createTileResponse)
-        // }
-
-        // Navigate to tileset
-        // await store.loadTileset(response.data.tileset._id).then
-        // console.log(store)
-
-        // await store.changePageToTilesetEditor(response.data.tileset)
-        // console.log(store.currentPage)
-
-        // setLocation(`/tileset/${response.data.tileset._id}`)
+        for (let i = 0; i < tiles.length; i++) {
+          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
+          console.log(createTileResponse)
+        }
       }
     }
 
