@@ -28,8 +28,8 @@ export default function ExploreTilesetItem(props) {
     const [showRequestModal, setShowRequestModal] = useState(false);
     const [tilesetOwner, setTilesetOwner] = useState(null);
 
-    const [likes, setLikes] = useState(project.likes.length); 
-    const [dislikes, setDislikes] = useState(project.dislikes.length);  
+    const [likes, setLikes] = useState(project.likes.length);
+    const [dislikes, setDislikes] = useState(project.dislikes.length);
     const [isLiked, setIsLiked] = useState(project.likes.includes(auth.user?._id));
     const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
@@ -93,13 +93,21 @@ export default function ExploreTilesetItem(props) {
         console.log(props.projectId)
     }
 
+    const openTileset = async function (project) {
+        await store.loadTileset(project._id)
+        console.log(store)
+        await store.changePageToTilesetEditor(project);
+        setLocation('/tileset/' + project._id);
+
+    }
+
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
             <img class='image' src={require("../../images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
-            {isUnlocked? 
-            <LockOpenIcon className='lock_icon'></LockOpenIcon> :
-            <LockIcon className='lock_icon'></LockIcon>
+            {isUnlocked ?
+                <LockOpenIcon className='lock_icon'></LockOpenIcon> :
+                <LockIcon className='lock_icon'></LockIcon>
             }
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
@@ -109,26 +117,23 @@ export default function ExploreTilesetItem(props) {
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <ThumbUpIcon sx={{ fontSize: 50, px: 1, pt: 1, color:`${isLiked ? "#2dd4cf" : "white"}` }}
-                            onClick={handleLikeClick} ></ThumbUpIcon>
+                            <ThumbUpIcon sx={{ fontSize: 50, px: 1, pt: 1, color: `${isLiked ? "#2dd4cf" : "white"}` }}
+                                onClick={handleLikeClick} ></ThumbUpIcon>
                             <div class="like_num">{likes}</div>
                         </Box>
 
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <ThumbDownIcon sx={{ fontSize: 50, px: 2, pt: 1, color:`${isDisliked ? "#2dd4cf" : "white"}` }}
-                            onClick={handleDislikeClick} ></ThumbDownIcon>
+                            <ThumbDownIcon sx={{ fontSize: 50, px: 2, pt: 1, color: `${isDisliked ? "#2dd4cf" : "white"}` }}
+                                onClick={handleDislikeClick} ></ThumbDownIcon>
                             <div class="like_num">{dislikes}</div>
                         </Box>
 
                         <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={handleComments}></CommentIcon>
                         <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
-                        <FavoriteIcon sx={{ fontSize: 50, px: 1, color:`${isFav ? "#2dd4cf" : "white"}` }}
-                        onClick={handleFavClick}></FavoriteIcon>
-                        <EditIcon sx={{ fontSize: 50, color:`${isUnlocked? "white" : "gray"}`}}
-                        onClick={isUnlocked? () => {
-                            setLocation('/tileset/'+project._id); 
-                            store.changePageToTilesetEditor(project)
-                        } : handleConfirmRequest} ></EditIcon>
+                        <FavoriteIcon sx={{ fontSize: 50, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
+                            onClick={handleFavClick}></FavoriteIcon>
+                        <EditIcon sx={{ fontSize: 50, color: `${isUnlocked ? "white" : "gray"}` }}
+                            onClick={isUnlocked ? () => openTileset(project) : handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>
@@ -142,31 +147,31 @@ export default function ExploreTilesetItem(props) {
                 <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='30%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'50px'}} variant='h3' color='azure'>Request Access to Edit Tileset</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Request Access to Edit Tileset</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Tileset Name:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.title}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>Tileset Name:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>{project.title}</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'10px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>Current Collaborators:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>{project.collaboratorIds.length + 1}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>Current Collaborators:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>{project.collaboratorIds.length + 1}</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Tileset Owner:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{tilesetOwner?.firstName} {tilesetOwner?.lastName}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>Tileset Owner:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>{tilesetOwner?.firstName} {tilesetOwner?.lastName}</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'50px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'px', marginRight: '10px', fontSize: '20px'}} color='azure'>Username:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>@{tilesetOwner?.userName}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: 'px', marginRight: '10px', fontSize: '20px' }} color='azure'>Username:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>@{tilesetOwner?.userName}</Typography>
                         </Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCloseAccessRequest}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleRequestAccess}>
                                 Request Access
                             </Button>

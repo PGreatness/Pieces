@@ -34,6 +34,7 @@ export default function TilesetRightBar(props) {
   const [collaborators, setCollaborators] = useState([]);
   const [users, setUsers] = useState([]);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
+  const [showError, setShowError] = useState(false)
   const [image, setImage] = useState(null)
   const inputRef = useRef(null);
 
@@ -42,6 +43,8 @@ export default function TilesetRightBar(props) {
   var zeros = require("zeros")
 
   useEffect(() => {
+    console.log(store)
+    console.log(store.currentTile)
     setCurrentTile(store.currentTile)
   }, [store.currentTile])
 
@@ -50,10 +53,11 @@ export default function TilesetRightBar(props) {
   // }, [store.currentProject])
 
   useEffect(() => {
+    console.log(store)
     console.log(store.currentProject)
     setProject(store.currentProject)
     auth.getOwnerAndCollaborators(project._id, false).then((data) => {
-      console.log(data)
+      //console.log(data)
       setOwner(data.owner)
       setCollaborators(data.collaborators)
     })
@@ -225,6 +229,104 @@ export default function TilesetRightBar(props) {
   };
 
 
+
+
+  const handleImportTileset = async () => {
+    // let title = document.getElementById('tileset_name_input').value
+    let tilesetHeight = Number(5);
+    let tilesetWidth = Number(5);
+    let tileHeight = Number(document.getElementById('ts_tile_height_input').value);
+    let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
+    let ownerId = auth.user._id
+    let hexArray = []
+
+    if (image) {
+
+      var context = document.getElementById('canvas').getContext('2d');
+      var img = new Image()
+      img.src = URL.createObjectURL(image);
+
+      img.onload = async function () {
+
+        // Check if the dimensions are correct
+        let iw = img.width
+        let ih = img.height
+
+        tilesetHeight = ih
+        tilesetWidth = iw
+        console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
+        if (iw % tileWidth !== 0 || ih % tileHeight !== 0) {
+          setShowError(true)
+          return
+        }
+
+        context.drawImage(img, 0, 0)
+        var imgd = context.getImageData(0, 0, iw, ih);
+        var pix = imgd.data;
+        console.log("Image Data:")
+        console.log(pix)
+
+        function componentToHex(c) {
+          var hex = c.toString(16);
+          return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        for (var i = 0; i < pix.length; i += 4) {
+          let r = componentToHex(pix[i])
+          let g = componentToHex(pix[i + 1])
+          let b = componentToHex(pix[i + 2])
+
+          hexArray.push(`#${r}${g}${b}`)
+        }
+
+        console.log("RGBARRAY")
+        console.log(hexArray)
+
+
+        // WHERE IS RESPONSE COMING FROM?????
+        await store.loadTileset(store.currentProject._id)
+        // console.log(store)
+
+
+        let tiles = []
+        let check = img.width - tileWidth
+        for (i = 0; i < (img.height * img.width); i += tileWidth) {
+          let tile = []
+          for (let j = i; j < (tileHeight * img.width) + i; j += img.width) {
+            tile.push(hexArray.slice(j, j + tileWidth))
+          }
+          // concat each array in tile
+          tiles.push(tile.flat())
+          if (i === (check)) {
+            check += (tileHeight * img.width)
+            i += ((tileHeight - 1) * img.width)
+          }
+        }
+
+        console.log("TILES")
+        console.log(tiles)
+        // console.log(title)
+        console.log(tilesetHeight)
+        console.log(tileHeight)
+        console.log(ownerId)
+
+        // Create new tileset
+        // let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+
+        // Create new tiles to go into tileset
+        for (let i = 0; i < tiles.length; i++) {
+          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
+          console.log(createTileResponse)
+        }
+      }
+    }
+
+  }
+
+
+
+
+
   return (
     <Box bgcolor={"#11182a"} flex={4} className="tile_rightbar">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -301,7 +403,7 @@ export default function TilesetRightBar(props) {
                       </Avatar>
                     </Grid>
                     <Grid item xs={10}>
-                      <Typography color='azure' sx={{paddingLeft: "10px", marginTop: '8px'}}>{owner?.firstName} {owner?.lastName}</Typography>
+                      <Typography color='azure' sx={{ paddingLeft: "10px", marginTop: '8px' }}>{owner?.firstName} {owner?.lastName}</Typography>
                     </Grid>
 
                   </Grid>
@@ -309,44 +411,44 @@ export default function TilesetRightBar(props) {
 
                 <Grid item xs={12} sx={{ paddingTop: "40px", paddingBottom: "20px", marginBottom: '30px', paddingLeft: '20px', backgroundColor: "#1f293a" }}>
 
-                {collaborators.length === 0 ?
-                  <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
-                  :
-                  <>
-                  <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
-
-                    {collaborators.map((collabUser) => (
-
-                      <UserModalItem
-                        owner={project.ownerId === auth?.user._id ? true : false}
-                        user={collabUser}
-                        removeCollaborator={removeCollaborator}
-                      ></UserModalItem>
-                    ))}
-                  </>
-                }
-                
-
-                {
-                  project.ownerId === auth?.user._id ?
-                    <Autocomplete
-                      className='map-editor-add-collaborators'
-                      open={openAutocomplete}
-                      onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
-                      onClose={() => setOpenAutocomplete(false)}
-                      freeSolo
-                      options={users?.map(user => user.userName)}
-                      renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
-                      sx={{width: '90%', borderRadius: "10px", marginTop: "20px"}}
-                      onChange={handleAddCollaborator}
-                    />
+                  {collaborators.length === 0 ?
+                    <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
                     :
-                    <></>
-                }
+                    <>
+                      <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
 
-              </Grid>
+                      {collaborators.map((collabUser) => (
 
-              
+                        <UserModalItem
+                          owner={project.ownerId === auth?.user._id ? true : false}
+                          user={collabUser}
+                          removeCollaborator={removeCollaborator}
+                        ></UserModalItem>
+                      ))}
+                    </>
+                  }
+
+
+                  {
+                    project.ownerId === auth?.user._id ?
+                      <Autocomplete
+                        className='map-editor-add-collaborators'
+                        open={openAutocomplete}
+                        onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
+                        onClose={() => setOpenAutocomplete(false)}
+                        freeSolo
+                        options={users?.map(user => user.userName)}
+                        renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
+                        sx={{ width: '90%', borderRadius: "10px", marginTop: "20px" }}
+                        onChange={handleAddCollaborator}
+                      />
+                      :
+                      <></>
+                  }
+
+                </Grid>
+
+
               </Stack>
             </Box>
           </Box>
@@ -359,85 +461,85 @@ export default function TilesetRightBar(props) {
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Box className='properties_container'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
+              <Stack direction='column' textAlign='center'>
                 {!editMode
-                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                     <Grid item xs={10}>
-                      <Typography color='azure'>Properties</Typography>
+                      <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '50px' }}>
                         <Edit />
                       </Button>
                     </Grid>
                   </Grid>
-                  : <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+                  : <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                     <Grid item xs={8}>
-                      <Typography color='azure'>Properties</Typography>
+                      <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '30px' }}>
                         <Check />
                       </Button>
                     </Grid>
                     <Grid item xs={2}>
-                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
+                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '20px' }}>
                         <Clear />
                       </Button>
                     </Grid>
                   </Grid>
                 }
                 {!editMode
-                  ? <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                  ? <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.title}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px' }} color='azure'>{store.currentProject.title}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tilesetDesc}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tilesetDesc}</Typography>
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tile Size: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
                     </Grid>
                     <Grid item xs={7} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tilesetTags}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tilesetTags.join(', ')}</Typography>
                     </Grid>
                   </Grid>
-                  : <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                  : <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='desc_input' defaultValue={store.currentProject.tilesetDesc} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tile Size: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '0px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
                     </Grid>
                     <Grid item xs={7} zeroMinWidth>
                       <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <TextField id='tags_input' defaultValue={store.currentProject.tilesetTags.join(', ')} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
                     </Grid>
                   </Grid>
                 }
@@ -645,6 +747,8 @@ export default function TilesetRightBar(props) {
           </Grid>
         </Box>
       </Modal>
+
+      <canvas style={{ display: 'none' }} id='canvas'></canvas>
 
     </Box>
   )

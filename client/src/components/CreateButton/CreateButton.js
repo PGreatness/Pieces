@@ -80,9 +80,9 @@ export default function CreateButton(props) {
 
     const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
-        let tilesetHeight = 5;
-        let tilesetWidth = 5;
-        let tileHeight = Number(document.getElementById('ts_tile_height_input').value)
+        let tilesetHeight = Number(5);
+        let tilesetWidth = Number(5);
+        let tileHeight = Number(document.getElementById('ts_tile_height_input').value);
         let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
         let ownerId = auth.user._id
         let hexArray = []
@@ -173,7 +173,8 @@ export default function CreateButton(props) {
 
 
 
-                // Import 
+            await store.loadTileset(response.data.tileset._id)
+            console.log(store)
 
                 // EXAMPLE IMAGE = img.height: 6, img.width: 6)
                 // tile height : 3,  tile width : 2
@@ -394,8 +395,8 @@ export default function CreateButton(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom:'2 0px'}} color='red'>
-                                {showError ? 'An error occured when trying to load the tileset image. Please try again.' : ''}
+                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom:'20px'}} color='red'>
+                                {showError ? 'The given tileset image could not be split into tiles of the given dimensions. Please try again.' : ''}
                             </Typography>
                         </Grid>
 

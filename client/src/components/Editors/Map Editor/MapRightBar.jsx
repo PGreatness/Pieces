@@ -17,7 +17,7 @@ import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
 import UserModalItem from './UserModalItem';
 import { Form } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MapTile from './MapTile.js'
 
 import './css/mapRightBar.css';
@@ -63,7 +63,7 @@ export default function MapRightBar(props) {
   const handleChange = (event, newValue) => {
     if (newValue === 1) {
       handleOpenUserSettings()
-    } 
+    }
     setValue(newValue);
   }
 
@@ -205,17 +205,17 @@ export default function MapRightBar(props) {
         {value === 0 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
-            <Typography color='azure' variant='h4' 
-              sx={{marginTop: '10px', marginLeft: '15px', marginRight: '15px'}}>Map: {store.currentProject.title}</Typography>
+            <Typography color='azure' variant='h4'
+              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject.title}</Typography>
 
-            <Box bgcolor="#ffffff" className="previewWindow" sx={{marginTop: '30px', marginBottom: '30px'}}>
+            <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
-                <Grid container direction='row' rowSpacing={0} columns={store.currentProject.mapWidth} bgcolor='#000000' style={{ height: `250px`, width: `250px`}}>
+                <Grid container direction='row' rowSpacing={0} columns={store.currentProject.mapWidth} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
                   {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
-                      <MapTile index={index}/>
+                    <MapTile index={index} />
                   ))}
-                </Grid>        
+                </Grid>
               </Stack>
             </Box>
             <Box>
@@ -228,128 +228,122 @@ export default function MapRightBar(props) {
         )}
         {value === 1 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
-          <Box className='user_settings_container'>
-            <Stack direction='column'>
-              <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>User Settings</Typography>
+            <Box className='user_settings_container'>
+              <Stack direction='column'>
+                <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>User Settings</Typography>
 
 
-              <Grid item xs={12} sx={{ paddingTop: "20px", paddingLeft: '20px', backgroundColor: "#1f293a" }}>
-                <Typography color='azure' style={{ fontSize: '25px' }}>Owner</Typography>
+                <Grid item xs={12} sx={{ paddingTop: "20px", paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+                  <Typography color='azure' style={{ fontSize: '25px' }}>Owner</Typography>
 
-                <Grid container style={{ backgroundColor: "#1f293a", height: "50px", paddingTop: "10px", }}>
-                  <Grid item xs={2} style={{ paddingLeft: '5px' }}>
-                    <Avatar src={owner?.profilePic?.url}
-                      sx={{
-                        width: 35,
-                        height: 35,
-                        fontSize: "20px",
-                        bgcolor: "rgb(2, 0, 36)",
-                        border: "rgba(59, 130, 206, 1) 2px solid"
-                      }}>
-                      {owner?.firstName.charAt(0)}{owner?.lastName.charAt(0)}
-                    </Avatar>
+                  <Grid container style={{ backgroundColor: "#1f293a", height: "50px", paddingTop: "10px", }}>
+                    <Grid item xs={2} style={{ paddingLeft: '5px' }}>
+                      <Avatar src={owner?.profilePic?.url}
+                        sx={{
+                          width: 35,
+                          height: 35,
+                          fontSize: "20px",
+                          bgcolor: "rgb(2, 0, 36)",
+                          border: "rgba(59, 130, 206, 1) 2px solid"
+                        }}>
+                        {owner?.firstName.charAt(0)}{owner?.lastName.charAt(0)}
+                      </Avatar>
+                    </Grid>
+                    <Grid item xs={10}>
+                      <Typography color='azure' sx={{ paddingLeft: "10px", marginTop: '8px' }}>{owner?.firstName} {owner?.lastName}</Typography>
+                    </Grid>
+
                   </Grid>
-                  <Grid item xs={10}>
-                    <Typography color='azure' sx={{paddingLeft: "10px", marginTop: '8px'}}>{owner?.firstName} {owner?.lastName}</Typography>
-                  </Grid>
+                </Grid>
+
+                <Grid item xs={12} sx={{ paddingTop: "40px", paddingBottom: "20px", marginBottom: '30px', paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+
+                  {collaborators.length === 0 ?
+                    <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
+                    :
+                    <>
+                      <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
+
+                      {collaborators.map((collabUser) => (
+
+                        <UserModalItem
+                          owner={project.ownerId === auth?.user._id ? true : false}
+                          user={collabUser}
+                          removeCollaborator={removeCollaborator}
+                        ></UserModalItem>
+                      ))}
+                    </>
+                  }
+
+
+                  {
+                    project.ownerId === auth?.user._id ?
+                      <Autocomplete
+                        className='map-editor-add-collaborators'
+                        open={openAutocomplete}
+                        onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
+                        onClose={() => setOpenAutocomplete(false)}
+                        freeSolo
+                        options={users?.map(user => user.userName)}
+                        renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
+                        sx={{ width: '90%', borderRadius: "10px", marginTop: "20px" }}
+                        onChange={handleAddCollaborator}
+                      />
+                      :
+                      <></>
+                  }
 
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12} sx={{ paddingTop: "40px", paddingBottom: "20px", marginBottom: '30px', paddingLeft: '20px', backgroundColor: "#1f293a" }}>
 
-              {collaborators.length === 0 ?
-                <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
-                :
-                <>
-                <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
-
-                  {collaborators.map((collabUser) => (
-
-                    <UserModalItem
-                      owner={project.ownerId === auth?.user._id ? true : false}
-                      user={collabUser}
-                      removeCollaborator={removeCollaborator}
-                    ></UserModalItem>
-                  ))}
-                </>
-              }
-              
-
-              {
-                project.ownerId === auth?.user._id ?
-                  <Autocomplete
-                    className='map-editor-add-collaborators'
-                    open={openAutocomplete}
-                    onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
-                    onClose={() => setOpenAutocomplete(false)}
-                    freeSolo
-                    options={users?.map(user => user.userName)}
-                    renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
-                    sx={{width: '90%', borderRadius: "10px", marginTop: "20px"}}
-                    onChange={handleAddCollaborator}
-                  />
-                  :
-                  <></>
-              }
-
-            </Grid>
-
-            
-            </Stack>
+              </Stack>
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
         {value === 2 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Box className='properties_container'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
-                <Grid container style={{ backgroundColor: "#1f293a", height: '30px' }}>
+              <Stack direction='column' textAlign='center'>
+                <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
                   <Grid item xs={10}>
-                    <Typography color='azure'>Properties</Typography>
+                    <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <Button style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
-                      <Edit />
+                    <Button style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '50px' }}>
+                      <Edit/>
                     </Button>
                   </Grid>
                 </Grid>
-                <Grid container textAlign='left' style={{ height: '195px', width: '100%', padding: '5px' }}>
+                <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
                   <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>Name: </Typography>
+                    <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                   </Grid>
                   <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>Simple Grassy Plains Map </Typography>
+                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px'}} color='azure'>{project.title}</Typography>
                   </Grid>
                   <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>Desc: </Typography>
+                    <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
                   </Grid>
                   <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>An orthogonal 2D map that resembles a grassy plain. </Typography>
+                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{project.mapDescription}</Typography>
                   </Grid>
                   <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>Size: </Typography>
+                    <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Size: </Typography>
                   </Grid>
                   <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>64 x 64 </Typography>
+                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{project.mapHeight} x {project.mapWidth}</Typography>
                   </Grid>
                   <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>Tags: </Typography>
+                    <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
                   </Grid>
                   <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word" }} color='azure'>Grassy, Plains, Pixel </Typography>
+                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{project.tags.join(', ')}</Typography>
                   </Grid>
                 </Grid>
               </Stack>
             </Box>
 
-            <Box>
-              <Button onClick={handleOpenImportMap} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                <Typography>Import Map</Typography>
-                <Map style={{ marginLeft: '15px' }} />
-              </Button>
-            </Box>
 
             <Box>
               <Button onClick={handleOpenExportMap} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
@@ -393,41 +387,7 @@ export default function MapRightBar(props) {
         )}
       </Box>
 
-      <Modal
-        open={openImportMap}
-        onClose={handleCloseImportMap}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%' id="importTilesetModal">
-          <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Import Map</Typography>
-            <Box display="flex" alignContent="space-evenly" alignItems="end">
-              <Typography color='azure' sx={{ width: 'fit-content', display: 'flex', paddingRight: '5px' }}>Import a map from a file: </Typography>
-              <Button variant="contained" sx={{ color: 'black', backgroundColor: '#2dd4cf', minWidth: 'fit-content', height: '2em' }}>
-                <Typography variant='p'>Browse</Typography>
-                <FolderOpenIcon style={{ marginLeft: '5px', width: '1em' }} />
-              </Button>
-            </Box>
-            <Box>
-              {
-                favs.tilesets.map((tilesets) => (
-                  <h1>{tilesets.title}</h1>
-                ))
-              }
-            </Box>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-            <Stack direction='row'>
-              <Button onClick={handleCloseImportMap}>
-                <Typography >Confirm</Typography>
-                <Check />
-              </Button>
-              <Button onClick={handleCloseImportMap}>
-                <Typography>Cancel</Typography>
-                <Clear />
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
+
 
       <Modal
         open={openImportTileset}
