@@ -127,7 +127,7 @@ export default function SidebarUser(props) {
                             'aria-labelledby': 'basic-button',
                           }}
                         >
-                          <MenuItem onClick={handleOpenModal}>Profile</MenuItem>
+                          <MenuItem onClick={handleOpenModal}>View Profile</MenuItem>
                           <Modal
                             open={openModal}
                             onClose={handleCloseModal}
@@ -140,13 +140,13 @@ export default function SidebarUser(props) {
                               </Typography>
                               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                                 Email: {props.user.email} <br></br>
-                                Bio: {props.user.bio}
+                                Bio: {props.user.bio ? props.user.bio : "No bio provided for this user."}
                               </Typography>
                             </Box>
                           </Modal>
 
                           <MenuItem onClick={handleClose}>Chat</MenuItem>
-                          <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove</MenuItem>
+                          <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove Friend</MenuItem>
                         </Menu>
                       </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
         </ListItemButton>

@@ -88,6 +88,7 @@ export default function SidebarUserList(props) {
     }
 
     if (!props.query) {
+        // getAllFriends();
         return (
             <div className="sidebar-user-list">
                 {
