@@ -71,9 +71,10 @@ export default function CreateButton(props) {
         else {
             let response = await store.createNewMap(title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
             console.log(response)
-            if (response.data.success)
+            if (response.data.success) {
+                await store.changePageToMapEditor(response.data.map)
                 setLocation(`/map/${response.data.id}`)
-            store.changePageToMapEditor(response.data.map)
+            }
         }
         setOpenCreateMapModal(false)
     }
@@ -221,10 +222,6 @@ export default function CreateButton(props) {
                     let createTileResponse = await store.createTile(response.data.tileset._id, response.data.tileset.tileHeight, response.data.tileset.tileWidth, tiles[i])
                     console.log(createTileResponse)
                 }
-
-
-                // Update tiledata for each new tile
-
 
                 // Navigate to tileset
                 await store.loadTileset(response.data.tileset._id)

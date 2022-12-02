@@ -145,7 +145,7 @@ export default function MapCanvas() {
                 <Box sx={{padding:2}}>
                 <Stack direction='row' spacing={2}>
                     {
-                        tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
+                        tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
                             <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option'/>
                         ))
                     }
