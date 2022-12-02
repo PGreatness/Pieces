@@ -52,7 +52,7 @@ export default function CreateButton(props) {
     const handleFileChange = async function (event) {
         let image = event.target.files[0];
         console.log(image)
-        setImage(image.name)
+        setImage(image)
     };
 
     const handleCreateNewMap = async () => {
@@ -78,11 +78,69 @@ export default function CreateButton(props) {
 
     const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
-        let tilesetHeight = Number(document.getElementById('tileset_height_input').value)
-        let tilesetWidth = 5;
-        let tileHeight = 5;
+        let tilesetHeight = Number(5)
+        let tilesetWidth = Number(5);
+        let tileHeight = Number(document.getElementById('ts_tile_height_input').value)
         let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
         let ownerId = auth.user._id
+        let hexArray = []
+
+        /*
+            Example 1: 
+            (10, 20)
+            tileheight = 10
+            tilewidth = 10
+
+            10/10 = 1
+            20/10 = 2
+
+            1x2 tile
+            [10x10][10x10]
+
+
+            Example 2:
+            (30, 20)
+            tileheight = 10
+            tilewidth = 10
+
+            30/10 = 3
+            20/10 = 2
+
+            3x2 tile
+            [10x10][10x10]
+            [10x10][10x10]
+            [10x10][10x10]
+        */
+
+        if (image) {
+            
+            var context = document.getElementById('canvas').getContext('2d');
+            var img = new Image()
+            img.src = URL.createObjectURL(image);
+            img.onload = function() {
+                context.drawImage(img, 0, 0)
+                var imgd = context.getImageData(0, 0, img.width, img.height);
+                var pix = imgd.data; 
+                console.log("Image Data:")
+                console.log(pix)
+                
+                function componentToHex(c) {
+                    var hex = c.toString(16);
+                    return hex.length == 1 ? "0" + hex : hex;
+                }
+
+                for (var i = 0; i < pix.length; i += 4) {
+                    let r = componentToHex(pix[i])
+                    let g = componentToHex(pix[i+1])
+                    let b = componentToHex(pix[i+2])
+
+                    hexArray.push(`#${r}${g}${b}`)
+                }
+
+                console.log("RGBARRAY")
+                console.log(hexArray)
+            }
+        }
 
         if (tilesetHeight === NaN || tilesetWidth === NaN || tileHeight === NaN || tileWidth === NaN) {
             console.log("Not a valid number.")
@@ -107,6 +165,7 @@ export default function CreateButton(props) {
         setOpenCreateTilesetModal(false)
     }
 
+    
     const handleOpenCreateMapModal = () => {
         setOpenCreateMapModal(true)
     }
@@ -216,7 +275,7 @@ export default function CreateButton(props) {
                                 onChange={handleFileChange}
                             />
                             <TextField 
-                                value={image? image : "Import Tileset..."}
+                                value={image? image.name : "Import Tileset..."}
                                 InputProps={{
                                     readOnly: true,
                                 }} 
@@ -263,6 +322,7 @@ export default function CreateButton(props) {
                 </Box>
             </Modal>
 
+            <canvas style={{display:'none'}} id='canvas'></canvas>
 
         </div>
     );
