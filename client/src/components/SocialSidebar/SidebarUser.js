@@ -11,12 +11,28 @@ import ListItemText from '@mui/material/ListItemText';
 import { ThemeProvider } from '@mui/material/styles';
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../../auth/auth';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import * as React from 'react';
 
 // import './css/SidebarUser.css';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: '#111',
+  color: '#fff',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const WhiteMore = styled(moreHorizIcon)({
   color: "white",
@@ -39,6 +55,14 @@ const WhitePersonAdd = styled(PersonAddIcon)({
 });
 
 export default function SidebarUser(props) {
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  }
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  }
+
   const [isOnline, setIsOnline] = useState(props.isOnline);
   const [isFriend, setIsFriend] = useState(props.isFriend);
   const { auth } = useContext(AuthContext);
@@ -82,7 +106,7 @@ export default function SidebarUser(props) {
         <ListItemAvatar>
           {isOnline ? online(<Avatar alt={props.username} src={props.profilePic} />) : offline(<Avatar alt={props.username} src={props.profilePic} />)}
         </ListItemAvatar>
-        <ListItemText primary={name} secondary={username} style={{ width: '100%' }} />
+        <ListItemText primary={name} secondary={<Typography style={{ fontSize:'10px', color: '#FFFFFF' }}>{username}</Typography>} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
           {isFriend ? <div>
                         <Button
@@ -103,7 +127,24 @@ export default function SidebarUser(props) {
                             'aria-labelledby': 'basic-button',
                           }}
                         >
-                          <MenuItem onClick={handleClose}>Profile</MenuItem>
+                          <MenuItem onClick={handleOpenModal}>Profile</MenuItem>
+                          <Modal
+                            open={openModal}
+                            onClose={handleCloseModal}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box sx={style}>
+                              <Typography id="modal-modal-title" variant="h6" component="h2">
+                               {props.user.firstName} {props.user.lastName}'s Profile
+                              </Typography>
+                              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Email: {props.user.email} <br></br>
+                                Bio: {props.user.bio}
+                              </Typography>
+                            </Box>
+                          </Modal>
+
                           <MenuItem onClick={handleClose}>Chat</MenuItem>
                           <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove</MenuItem>
                         </Menu>

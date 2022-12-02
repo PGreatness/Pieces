@@ -135,7 +135,6 @@ function GlobalStoreContextProvider(props) {
 
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
                 console.log(store);
-                console.log("in set current page", payload)
                 return setStore({
                     ...store,
                     currentTile: payload.currentTile,
@@ -1544,7 +1543,6 @@ function GlobalStoreContextProvider(props) {
         const response = await api.createTile(payload)
         console.log(response)
     }
-
 
 
 
