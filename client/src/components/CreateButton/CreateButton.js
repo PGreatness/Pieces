@@ -78,9 +78,9 @@ export default function CreateButton(props) {
 
     const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
-        let tilesetHeight = Number(document.getElementById('tileset_height_input').value)
-        let tilesetWidth = 5;
-        let tileHeight = 5;
+        let tilesetHeight = Number(5);
+        let tilesetWidth = Number(5);
+        let tileHeight = Number(document.getElementById('ts_tile_height_input').value);
         let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
         let ownerId = auth.user._id
 
@@ -93,7 +93,7 @@ export default function CreateButton(props) {
             //setLocation(`/tileset/${response.data.tileset._id}`)
             //store.changePageToTilesetEditor(response.data.tileset)
 
-            await store.loadTileset(response.data.tileset._id).then
+            await store.loadTileset(response.data.tileset._id)
             console.log(store)
 
             await store.changePageToTilesetEditor(response.data.tileset)

@@ -43,6 +43,8 @@ export default function TilesetRightBar(props) {
   var zeros = require("zeros")
 
   useEffect(() => {
+    console.log(store)
+    console.log(store.currentTile)
     setCurrentTile(store.currentTile)
   }, [store.currentTile])
 
@@ -51,10 +53,11 @@ export default function TilesetRightBar(props) {
   // }, [store.currentProject])
 
   useEffect(() => {
+    console.log(store)
     console.log(store.currentProject)
     setProject(store.currentProject)
     auth.getOwnerAndCollaborators(project._id, false).then((data) => {
-      console.log(data)
+      //console.log(data)
       setOwner(data.owner)
       setCollaborators(data.collaborators)
     })

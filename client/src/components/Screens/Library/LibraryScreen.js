@@ -284,7 +284,7 @@ export default function LibraryScreen(props) {
         else if (filterOptions[0] === -1) {
             setFilterOptions([0, 0])
             setFilterActive(false)
-            setFilteredMaps(store.userMaps.concat(store.collabMaps))
+            setFilteredMaps(store.userProjects)
         }
     }
 
@@ -300,8 +300,7 @@ export default function LibraryScreen(props) {
         else if (filterOptions[1] === -1) {
             setFilterOptions([0, 0])
             setFilterActive(false)
-            setFilteredMaps(store.userMaps.concat(store.collabMaps))
-            console.log(store.userMaps)
+            setFilteredMaps(store.userProjects)
         }
     }
 
