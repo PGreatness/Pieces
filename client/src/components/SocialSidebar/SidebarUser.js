@@ -106,7 +106,7 @@ export default function SidebarUser(props) {
         <ListItemAvatar>
           {isOnline ? online(<Avatar alt={props.username} src={props.profilePic} />) : offline(<Avatar alt={props.username} src={props.profilePic} />)}
         </ListItemAvatar>
-        <ListItemText primary={name} secondary={username} style={{ width: '100%' }} />
+        <ListItemText primary={name} secondary={<Typography style={{ fontSize:'10px', color: '#FFFFFF' }}>{username}</Typography>} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
           {isFriend ? <div>
                         <Button
