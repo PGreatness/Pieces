@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { Box, Stack } from '@mui/system';
 import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
 import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
+import { Avatar } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PublicIcon from '@mui/icons-material/Public';
 import { styled } from "@mui/material/styles";
@@ -22,11 +23,9 @@ export default function TilesetRightBar(props) {
 
   const [value, setValue] = useState(0);
   const [openImportTileset, setOpenImportTileset] = useState(false);
-  const [openImportTile, setOpenImportTile] = useState(false);
   const [openPublish, setOpenPublish] = useState(false);
   const [openUnpublish, setOpenUnpublish] = useState(false);
   const [openExportTileset, setOpenExportTileset] = useState(false);
-  const [openUserSettings, setOpenUserSettings] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentTile, setCurrentTile] = useState(store.currentTile)
   const [openDeleteTileset, setOpenDeleteTileset] = useState(false)
@@ -106,6 +105,9 @@ export default function TilesetRightBar(props) {
   }
 
   const handleChange = (event, newValue) => {
+    if (newValue === 1) {
+      handleOpenUserSettings()
+    }
     setValue(newValue);
   }
 
@@ -124,14 +126,6 @@ export default function TilesetRightBar(props) {
     setOpenImportTileset(false)
   }
 
-  const handleOpenImportTile = () => {
-    setOpenImportTile(true)
-  }
-
-  const handleCloseImportTile = () => {
-    setOpenImportTile(false)
-  }
-
   const handleOpenExportTileset = () => {
     setOpenExportTileset(true)
   }
@@ -146,7 +140,6 @@ export default function TilesetRightBar(props) {
     const data = await auth.getOwnerAndCollaborators(project._id, false);
     setOwner(data.owner);
     setCollaborators(data.collaborators);
-    setOpenUserSettings(true);
 
     const users = await auth.getAllUsers();
     setUsers(users)
@@ -155,7 +148,6 @@ export default function TilesetRightBar(props) {
 
   const handleCloseUserSettings = async function () {
     setCollaborators([])
-    setOpenUserSettings(false)
   }
 
   const handlePublish = () => {
@@ -273,12 +265,7 @@ export default function TilesetRightBar(props) {
               </Stack>
             </Box>
 
-            <Box>
-              <Button onClick={handleOpenImportTile} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                <Typography>Import Tile</Typography>
-                <AddBox style={{ marginLeft: '8px' }} />
-              </Button>
-            </Box>
+
             <Box>
               <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
                 <Typography>Import Tileset</Typography>
@@ -287,71 +274,87 @@ export default function TilesetRightBar(props) {
             </Box>
           </Box>
         )}
+
+
+
         {value === 1 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
+            <Box className='user_settings_container'>
+              <Stack direction='column'>
+                <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>User Settings</Typography>
 
 
-            <Box className='conferenceContainer'>
-              <Stack direction='column' textAlign='center' style={{ height: '225px' }}>
-                <Typography bgcolor="#1f293a" color='azure'> Conference </Typography>
-                <List disablePadding style={{ maxHeight: '100%', overflow: 'auto' }}>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Iman:  </Typography>
-                    <Typography size='10px' color='black'> Hey guys! </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Ahnaf:  </Typography>
-                    <Typography size='10px' color='black'> How's it going </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'antiquewhite', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Working on tiles </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Vincent:  </Typography>
-                    <Typography size='10px' color='black'> Pretty good! </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Iman:  </Typography>
-                    <Typography size='10px' color='black'> Cool! I'm deploying it rn </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Ahnaf:  </Typography>
-                    <Typography size='10px' color='black'> Lmk if you guys need help </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'antiquewhite', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Me:  </Typography>
-                    <Typography size='10px' color='black'> Yep </Typography>
-                  </ListItem>
-                  <ListItem className='conference_message' style={{ backgroundColor: 'azure', borderRadius: '2px', padding: '2px', margin: '5px 0px 5px 0px' }}>
-                    <Typography style={{ marginRight: '5px' }} size='10px' color='black'> Vincent:  </Typography>
-                    <Typography size='10px' color='black'> Sounds good </Typography>
-                  </ListItem>
-                </List>
-                <Box justifyContent='right' style={{ backgroundColor: '#1f293a' }}>
-                  <Grid container>
+                <Grid item xs={12} sx={{ paddingTop: "20px", paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+                  <Typography color='azure' style={{ fontSize: '25px' }}>Owner</Typography>
+
+                  <Grid container style={{ backgroundColor: "#1f293a", height: "50px", paddingTop: "10px", }}>
+                    <Grid item xs={2} style={{ paddingLeft: '5px' }}>
+                      <Avatar src={owner?.profilePic?.url}
+                        sx={{
+                          width: 35,
+                          height: 35,
+                          fontSize: "20px",
+                          bgcolor: "rgb(2, 0, 36)",
+                          border: "rgba(59, 130, 206, 1) 2px solid"
+                        }}>
+                        {owner?.firstName.charAt(0)}{owner?.lastName.charAt(0)}
+                      </Avatar>
+                    </Grid>
                     <Grid item xs={10}>
-                      <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                      <Typography color='azure' sx={{paddingLeft: "10px", marginTop: '8px'}}>{owner?.firstName} {owner?.lastName}</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                      <Button style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px' }}>
-                        <Add />
-                      </Button>
-                    </Grid>
+
                   </Grid>
-                </Box>
+                </Grid>
+
+                <Grid item xs={12} sx={{ paddingTop: "40px", paddingBottom: "20px", marginBottom: '30px', paddingLeft: '20px', backgroundColor: "#1f293a" }}>
+
+                {collaborators.length === 0 ?
+                  <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>No Collaborators</Typography>
+                  :
+                  <>
+                  <Typography color='azure' style={{ fontSize: '25px', paddingBottom: '10px' }}>Collaborators</Typography>
+
+                    {collaborators.map((collabUser) => (
+
+                      <UserModalItem
+                        owner={project.ownerId === auth?.user._id ? true : false}
+                        user={collabUser}
+                        removeCollaborator={removeCollaborator}
+                      ></UserModalItem>
+                    ))}
+                  </>
+                }
+                
+
+                {
+                  project.ownerId === auth?.user._id ?
+                    <Autocomplete
+                      className='map-editor-add-collaborators'
+                      open={openAutocomplete}
+                      onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
+                      onClose={() => setOpenAutocomplete(false)}
+                      freeSolo
+                      options={users?.map(user => user.userName)}
+                      renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
+                      sx={{width: '90%', borderRadius: "10px", marginTop: "20px"}}
+                      onChange={handleAddCollaborator}
+                    />
+                    :
+                    <></>
+                }
+
+              </Grid>
+
+              
               </Stack>
             </Box>
-
-            <Box>
-              <Button onClick={handleOpenUserSettings} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
-                <Typography>User Settings</Typography>
-                <People />
-              </Button>
-            </Box>
-
           </Box>
         )}
+
+
+
+
         {value === 2 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
@@ -484,27 +487,6 @@ export default function TilesetRightBar(props) {
         )}
       </Box>
 
-      <Modal
-        open={openImportTile}
-        onClose={handleCloseImportTile}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
-          <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Import Tile</Typography>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-            <Stack direction='row'>
-              <Button onClick={handleCloseImportTile}>
-                <Typography >Confirm</Typography>
-                <Check />
-              </Button>
-              <Button onClick={handleCloseImportTile}>
-                <Typography>Cancel</Typography>
-                <Clear />
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
 
       <Modal
         open={openExportTileset}
@@ -593,70 +575,6 @@ export default function TilesetRightBar(props) {
         </Box>
       </Modal>
 
-
-
-
-      <Modal
-        open={openUserSettings}
-        onClose={handleCloseUserSettings}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' height='40%' top='30%' left='25%'>
-          <Stack direction='column'>
-            <Typography style={{ textAlign: 'center', marginBottom: '20px' }} variant='h5' color='azure'>User Settings</Typography>
-
-
-            <Grid justify='center' container style={{ backgroundColor: "#1f293a", height: "50px" }}>
-              <Grid item xs={1}>
-                <AccountCircle />
-              </Grid>
-              <Grid item xs={8}>
-                <Typography color='azure'>{owner?.firstName} {owner?.lastName}</Typography>
-              </Grid>
-              <Grid align='center' item xs={3}>
-                <Typography color='azure'>Owner</Typography>
-              </Grid>
-            </Grid>
-
-            {collaborators.length === 0 ?
-              <Grid item xs={12}>
-                <Typography color='azure'>No Collaborators</Typography>
-              </Grid> :
-              collaborators.map((collabUser) => (
-                <UserModalItem
-                  owner={project.ownerId === auth?.user._id ? true : false}
-                  user={collabUser}
-                  removeCollaborator={removeCollaborator}
-                ></UserModalItem>
-              ))
-            }
-
-
-            {
-              project.ownerId === auth?.user._id ?
-                <Autocomplete
-                  className='map-editor-add-collaborators'
-                  open={openAutocomplete}
-                  onInputChange={(_, value) => setOpenAutocomplete(value.trim().length > 0)}
-                  onClose={() => setOpenAutocomplete(false)}
-                  freeSolo
-                  options={users?.map(user => user.userName)}
-                  renderInput={(params) => <TextField {...params} label='Add Collaborator' variant='filled' />}
-                  onChange={handleAddCollaborator}
-                />
-                :
-                <></>
-            }
-
-
-
-
-            <Button onClick={handleCloseUserSettings}>
-              <Typography>Cancel</Typography>
-              <Clear />
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
 
 
 

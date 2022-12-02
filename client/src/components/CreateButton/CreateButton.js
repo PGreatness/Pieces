@@ -119,11 +119,13 @@ export default function CreateButton(props) {
             var context = document.getElementById('canvas').getContext('2d');
             var img = new Image()
             img.src = URL.createObjectURL(image);
+
             img.onload = async function() {
 
                 // Check if the dimensions are correct
                 let iw = img.width
                 let ih = img.height
+
                 tilesetHeight = ih
                 tilesetWidth = iw
                 console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
