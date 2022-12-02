@@ -50,7 +50,7 @@ router.post('/map/updateMap', MapController.updateMap)
 router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
 router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
-
+router.post('/map/importTilesetToMap', MapController.importTilesetToMap)
 
 router.post('/comments/updateComment', ProjectCommentController.updateComment)
 router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
@@ -71,7 +71,7 @@ router.post('/tileset/updateTileset', TilesetController.updateTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
 router.post('/tileset/addUserToTileset', TilesetController.addUserToTileset)
 router.post('/tileset/removeUserFromTileset', TilesetController.removeUserFromTileset)
-
+router.post('/tileset/importTileset', TilesetController.importTileset)
 router.post('/tileset/publishTileset', TilesetController.publishTileset)
 
 

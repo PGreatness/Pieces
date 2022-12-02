@@ -49,6 +49,7 @@ export const deleteMap = (payload) => api.post(`/map/deleteMap/`, payload)
 export const publishMap = (query, payload) => api.post(`/map/publishMap/`, payload, {params: query})
 export const addMapCollaborator = (payload) => api.post(`/map/addUserToMap/`, payload)
 export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromMap/`, payload)
+export const importTilesetToMap = (payload) => api.post(`/map/importTilesetToMap/`, payload)
 
 // Tileset
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
@@ -58,6 +59,7 @@ export const deleteTileset = (payload) => api.post(`/tileset/deleteTileset`, pay
 export const addTilesetCollaborator = (payload) => api.post(`/tileset/addUserToTileset/`, payload)
 export const removeTilesetCollaborator = (payload) => api.post(`/tileset/removeUserFromTileset/`, payload)
 export const publishTileset = (query, payload) => api.post(`/tileset/publishTileset/`, payload, {params: query})
+export const importTilesetToTileset = (payload) => api.post(`/tileset/importTileset/`, payload)
 
 // Tile
 export const createTile = (payload) => api.post(`/tile/newTile`, payload)
@@ -128,6 +130,8 @@ const apis = {
     deleteMap,
     deleteTileset,
     publishMap,
+    importTilesetToTileset,
+    importTilesetToMap,
     addMapCollaborator,
     removeMapCollaborator,
 

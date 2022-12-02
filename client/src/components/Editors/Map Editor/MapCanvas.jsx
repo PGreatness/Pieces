@@ -22,10 +22,17 @@ export default function MapCanvas() {
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight/Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth/Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
+    const [tilesets, setTilesets] = useState(store.currentProject.tilesets)
 
     useEffect(() => {
         store.setCurrentMapTiles(currentMapTiles)
     }, [])
+
+    useEffect(() => {
+        console.log("Changing to store tilesets")
+        console.log(store.currentProject.tilesets)
+        setTilesets(store.currentProject.tilesets)
+    }, [store.currentProject.tilesets])
     
     const fillHelper = async (x, y, originalTile) => {
 
@@ -128,19 +135,21 @@ export default function MapCanvas() {
                         sx={{
                             '& .MuiTab-root': { color: "azure" },
                         }}>
-                        <StyledTab label="Palette One"/>
+                        {
+                            tilesets.map((tileset, index) => (
+                                <StyledTab label={tileset.name}/>
+                            ))
+                        }
                     </Tabs>
                 </Box>
                 <Box sx={{padding:2}}>
-                    {value === 0 && (
-                        <Stack direction='row' spacing={2}>
-                            <img onClick={handleClickTileOption} src={require("../images/dummyTile1.png")} className='palette_option'/>
-                            <img onClick={handleClickTileOption} src={require("../images/pixil-frame-4.png")} className='palette_option'/>
-                            <img onClick={handleClickTileOption} src={require("../images/pixil-frame-6.png")} className='palette_option'/>
-                            <img onClick={handleClickTileOption} src={require("../images/pixil-frame-0.png")} className='palette_option'/>
-                            <img onClick={handleClickTileOption} src={require("../images/pixil-frame-0 (1).png")} className='palette_option'/>
-                        </Stack>
-                    )}
+                <Stack direction='row' spacing={2}>
+                    {
+                        tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
+                            <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option'/>
+                        ))
+                    }
+                    </Stack>
                 </Box>
             </Box>
         </Box>

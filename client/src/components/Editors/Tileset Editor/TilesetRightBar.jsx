@@ -36,6 +36,7 @@ export default function TilesetRightBar(props) {
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [showError, setShowError] = useState(false)
   const [image, setImage] = useState(null)
+  const [favs, setFavs] = useState([])
   const inputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -62,6 +63,10 @@ export default function TilesetRightBar(props) {
       setCollaborators(data.collaborators)
     })
   }, [store.currentProject])
+
+  useEffect(() => {
+    setFavs(store.userFavs)
+  }, [store.userFavs])
 
   //let pixels = []
   // var savePixels = require("save-pixels")
@@ -121,7 +126,9 @@ export default function TilesetRightBar(props) {
     }
   });
 
-  const handleOpenImportTileset = () => {
+  const handleOpenImportTileset = async () => {
+    await store.loadFavorites(auth.user._id, project._id)
+    console.log(store);
     setOpenImportTileset(true)
   }
 
@@ -227,6 +234,12 @@ export default function TilesetRightBar(props) {
     console.log(image)
     setImage(image.name)
   };
+
+  const handleImportTileset = async function (tileset) {
+    console.log(tileset)
+    await store.importTilesetToTileset(tileset._id)
+    handleCloseImportTileset()
+  }
 
 
 
@@ -597,6 +610,7 @@ export default function TilesetRightBar(props) {
         <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
           <Stack direction='column'>
             <Typography variant='h5' color='azure'>Export Tileset</Typography>
+
             <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
             <Stack direction='row'>
               <Button onClick={handleCloseExportTileset}>
@@ -686,7 +700,7 @@ export default function TilesetRightBar(props) {
         open={openImportTileset}
         onClose={handleCloseImportTileset}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='50%' top='30%' left='20%'>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='fit-content' top='30%' left='20%'>
           <Grid container>
             <Grid item xs={12}>
               <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Upload Tileset</Typography>
@@ -721,24 +735,52 @@ export default function TilesetRightBar(props) {
             <Grid item xs={3}></Grid>
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
               <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
-              <TextField id="ts_tile_height_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
-                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
+              <TextField id="ts_tile_height_input" value={project.tileHeight} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
             </Grid>
             <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={3}>
               <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
-              <TextField id="ts_tile_width_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
-                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
+              <TextField id="ts_tile_width_input" value={project.tileWidth} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
             </Grid>
             <Grid item xs={2}></Grid>
 
+            <Grid item xs={12}>
+              <Box sx={{ width: '100%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '100px' }}>
+                <Typography variant='h6' sx={{fontStyle: 'italic', color: 'white'}}>
+                  Your favorites:
+                </Typography>
+                {
+                  favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
+                      return (
+                        <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex'}}>
+                          <Typography variant='h5' sx={{color: 'white', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
+                            {tileset.title}
+                          </Typography>
+                          <Typography variant='h6' sx={{color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
+                            {tileset.description ? tileset.description : 'No Description'}
+                          </Typography>
+                          <Button onClick={()=>handleImportTileset(tileset)} sx={{width: '10%', display: 'flex'}}>
+                            <Typography variant='p'>
+                              Import
+                            </Typography>
+                          </Button>
+                        </Box>
+                      )
+                  }) : <Typography variant='h6' sx={{color: 'white'}}>
+                    You don't have any compatible favorites! Get out there and start liking!
+                    </Typography>
+                }
+              </Box>
+            </Grid>
 
             <Grid item xs={2}></Grid>
-            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
               <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
                 Close
                             </Button>
             </Grid>
-            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
               <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
                 Confirm
                             </Button>
