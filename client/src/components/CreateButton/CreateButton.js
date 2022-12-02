@@ -36,8 +36,9 @@ export default function CreateButton(props) {
 
     const [openCreateMapModal, setOpenCreateMapModal] = useState(false)
     const [openCreateTilesetModal, setOpenCreateTilesetModal] = useState(false)
-    const [openInvalidDimensionsModal, setOpenInvalidDimensionsModal] = useState(false)
+    // const [openInvalidDimensionsModal, setOpenInvalidDimensionsModal] = useState(false)
     const [image, setImage] = useState(null)
+    const [showError, setShowError] = useState(false)
     const inputRef = useRef(null);
 
     const setLocation = (loc) => {
@@ -79,8 +80,8 @@ export default function CreateButton(props) {
 
     const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
-        let tilesetHeight = Number(5)
-        let tilesetWidth = Number(5);
+        let tilesetHeight = 5;
+        let tilesetWidth = 5;
         let tileHeight = Number(document.getElementById('ts_tile_height_input').value)
         let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
         let ownerId = auth.user._id
@@ -118,14 +119,16 @@ export default function CreateButton(props) {
             var context = document.getElementById('canvas').getContext('2d');
             var img = new Image()
             img.src = URL.createObjectURL(image);
-            img.onload = function() {
+            img.onload = async function() {
 
                 // Check if the dimensions are correct
                 let iw = img.width
                 let ih = img.height
+                tilesetHeight = ih
+                tilesetWidth = iw
                 console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
                 if (iw % tileWidth !== 0 || ih % tileHeight !== 0) {
-                    handleOpenInvalidDimensionsModal()
+                    setShowError(true)
                     return
                 }
 
@@ -202,39 +205,64 @@ export default function CreateButton(props) {
 
                 console.log("TILES")
                 console.log(tiles)
+                console.log(title)
+                console.log(tilesetHeight)
+                console.log(tileHeight)
+                console.log(ownerId )
+
+                // Create new tileset
+                let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+
+                // Create new tiles to go into tileset
+                for (let i = 0; i < tiles.length; i++) {
+                    let createTileResponse = await store.createTile(response.data.tileset._id, response.data.tileset.tileHeight, response.data.tileset.tileWidth, tiles[i])
+                    console.log(createTileResponse)
+                }
+
+
+                // Update tiledata for each new tile
+
+
+                // Navigate to tileset
+                await store.loadTileset(response.data.tileset._id).then
+                console.log(store)
+
+                await store.changePageToTilesetEditor(response.data.tileset)
+                console.log(store.currentPage)
+
+                setLocation(`/tileset/${response.data.tileset._id}`)
+
+            }
+        }
+        else {
+            if (tilesetHeight === NaN || tilesetWidth === NaN || tileHeight === NaN || tileWidth === NaN) {
+                console.log("Not a valid number.")
+            }
+            else {
+                let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+                console.log(response)
+                //setLocation(`/tileset/${response.data.tileset._id}`)
+                //store.changePageToTilesetEditor(response.data.tileset)
+
+                await store.loadTileset(response.data.tileset._id).then
+                console.log(store)
+
+                await store.changePageToTilesetEditor(response.data.tileset)
+                console.log(store.currentPage)
+
+                setLocation(`/tileset/${response.data.tileset._id}`)
             }
         }
 
-        if (tilesetHeight === NaN || tilesetWidth === NaN || tileHeight === NaN || tileWidth === NaN) {
-            console.log("Not a valid number.")
-        }
-        else {
-            let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
-            console.log(response)
-            //setLocation(`/tileset/${response.data.tileset._id}`)
-            //store.changePageToTilesetEditor(response.data.tileset)
-
-            await store.loadTileset(response.data.tileset._id).then
-            console.log(store)
-
-            await store.changePageToTilesetEditor(response.data.tileset)
-            console.log(store.currentPage)
-
-            setLocation(`/tileset/${response.data.tileset._id}`)
-
-
-
-        }
-        setOpenCreateTilesetModal(false)
     }
 
-    const handleOpenInvalidDimensionsModal = () => {
-        setOpenInvalidDimensionsModal(true)
-    }
+    // const handleOpenInvalidDimensionsModal = () => {
+    //     setOpenInvalidDimensionsModal(true)
+    // }
 
-    const handleCloseInvalidDimensionsModal = () => {
-        setOpenInvalidDimensionsModal(false)
-    }
+    // const handleCloseInvalidDimensionsModal = () => {
+    //     setOpenInvalidDimensionsModal(false)
+    // }
     
     const handleOpenCreateMapModal = () => {
         setOpenCreateMapModal(true)
@@ -246,6 +274,7 @@ export default function CreateButton(props) {
 
     const handleOpenCreateTilesetModal = () => {
         setOpenCreateTilesetModal(true)
+        setShowError(false)
     }
 
     const handleCloseCreateTilesetModal = () => {
@@ -337,7 +366,7 @@ export default function CreateButton(props) {
                                 sx={{ "& .MuiInputBase-root": { height: 40, width: 300 } }} />
                         </Grid>
 
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '5px' }} item xs={12}>
                             <input
                                 style={{ display: 'none' }}
                                 ref={inputRef}
@@ -360,6 +389,12 @@ export default function CreateButton(props) {
                                 }} />
                             </Button>
 
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom:'2 0px'}} color='red'>
+                                {showError ? 'An error occured when trying to load the tileset image. Please try again.' : ''}
+                            </Typography>
                         </Grid>
 
                         <Grid item xs={3}></Grid>
@@ -391,7 +426,7 @@ export default function CreateButton(props) {
                     </Grid>
                 </Box>
             </Modal>
-
+{/* 
 
             <Modal
                 open={openInvalidDimensionsModal}
@@ -414,7 +449,7 @@ export default function CreateButton(props) {
                         </Grid>
                     </Grid>
                 </Box>
-            </Modal>
+            </Modal> */}
 
 
             <canvas style={{display:'none'}} id='canvas'></canvas>

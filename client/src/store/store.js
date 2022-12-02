@@ -1528,6 +1528,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.createTile = async function (tilesetId, height, width, tileData) {
+        console.log("creating new tile")
+        let payload = {
+            tilesetId: tilesetId,
+            height: height,
+            width: width,
+            tileData: tileData
+        }
+        const response = await api.createTile(payload)
+        console.log(response)
+    }
+
 
 
 
