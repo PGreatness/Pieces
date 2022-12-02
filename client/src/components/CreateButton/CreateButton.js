@@ -114,7 +114,7 @@ export default function CreateButton(props) {
         */
 
         if (image) {
-            
+
             var context = document.getElementById('canvas').getContext('2d');
             var img = new Image()
             img.src = URL.createObjectURL(image);
@@ -134,7 +134,7 @@ export default function CreateButton(props) {
                 var pix = imgd.data; 
                 console.log("Image Data:")
                 console.log(pix)
-                
+
                 function componentToHex(c) {
                     var hex = c.toString(16);
                     return hex.length == 1 ? "0" + hex : hex;
@@ -142,14 +142,66 @@ export default function CreateButton(props) {
 
                 for (var i = 0; i < pix.length; i += 4) {
                     let r = componentToHex(pix[i])
-                    let g = componentToHex(pix[i+1])
-                    let b = componentToHex(pix[i+2])
+                    let g = componentToHex(pix[i + 1])
+                    let b = componentToHex(pix[i + 2])
 
                     hexArray.push(`#${r}${g}${b}`)
                 }
 
                 console.log("RGBARRAY")
                 console.log(hexArray)
+
+
+                // Uploads 
+
+
+                // Export Tileset
+                // 1. Images
+                // From pieces app (downloaded) {show modal before download and change image name}
+                // From pixel art (then thats their headache!!!!!!) 
+
+
+                // 2. Hex Array (Favorited Tilesets), tile height, tile width -> auto fill
+
+
+                // dropdown with factors of height and width
+
+
+
+                // Import 
+
+                // EXAMPLE IMAGE = img.height: 6, img.width: 6)
+                // tile height : 3,  tile width : 2
+                
+                // hexArray[0]  hexArray[1]    |  hexArray[2] hexArray[3]   | hexArray[4]   hexArray[5]
+                // hexArray[6]  hexArray[7]   |  hexArray[8] hexArray[9]   | hexArray[10]  hexArray[11]
+                // hexArray[12] hexArray[13] |  hexArray[14] hexArray[15] | hexArray[16]  hexArray[17]
+                // ==================================================================================
+                // hexArray[18] hexArray[19] | hexArray[20] hexArray[21] | hexArray[22]  hexArray[23]
+                // hexArray[24] hexArray[25] | hexArray[26] hexArray[27] | hexArray[28]  hexArray[29]
+                // hexArray[30] hexArray[31] | hexArray[32] hexArray[33] | hexArray[34]  hexArray[35]
+                // ==================================================================================
+                // hexArray[36] hexArray[37] |  hexArray[38] hexArray[39] | hexArray[40]  hexArray[41]
+                // hexArray[42] hexArray[43] |  hexArray[44] hexArray[45] | hexArray[46]  hexArray[47]
+                // hexArray[48] hexArray[49] |  hexArray[50] hexArray[51] | hexArray[52]  hexArray[53]
+
+                let tiles = []
+                let check = img.width - tileWidth
+                for (i = 0; i < (img.height * img.width); i += tileWidth) {
+                    let tile = []
+                    for (let j = i; j < (tileHeight * img.width) + i; j+=img.width) {
+                        tile.push(hexArray.slice(j, j + tileWidth))
+                    }
+                    // concat each array in tile
+                    tiles.push(tile.flat())
+                    if (i === (check)) {
+                        check += (tileHeight * img.width)
+                        i += ((tileHeight - 1) * img.width)
+                    }
+                }
+
+                console.log("TILES")
+                console.log(tiles)
             }
         }
 
@@ -292,11 +344,11 @@ export default function CreateButton(props) {
                                 type="file"
                                 onChange={handleFileChange}
                             />
-                            <TextField 
-                                value={image? image.name : "Import Tileset..."}
+                            <TextField
+                                value={image ? image.name : "Import Tileset..."}
                                 InputProps={{
                                     readOnly: true,
-                                }} 
+                                }}
                                 style={{ backgroundColor: 'azure', borderRadius: 10 }}
                                 sx={{ "& .MuiInputBase-root": { height: 40, width: 400, fontSize: '20px' } }}
                             />
