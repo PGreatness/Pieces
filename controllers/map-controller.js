@@ -1136,6 +1136,67 @@ var getOwnerAndCollaborator = async (req, res) => {
     })
 }
 
+var importTilesetToMap = async (req, res) => {
+    var { mapId, tilesetId } = req.body;
+
+    if (!tilesetId || !mapId) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a tileset id and a map id",
+        })
+    }
+
+    var mid;
+    var tid;
+    try {
+        mid = mongoose.Types.ObjectId(mapId);
+        tid = mongoose.Types.ObjectId(tilesetId);
+    }
+    catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Map ID or Tileset ID format",
+            error: err
+        })
+    }
+
+    const chosenMap = await Map.findById(mid);
+    const chosenTileset = await Tileset.findById(tid);
+    if (!chosenMap) {
+        return res.status(400).json({
+            success: false,
+            message: "Map does not exist"
+        })
+    }
+
+    if (!chosenTileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Tileset does not exist"
+        })
+    }
+
+    if (!chosenMap.tilesets.includes(tid)) {
+        chosenMap.tilesets.push(tid);
+    }
+
+    console.log(chosenMap.tilesets);
+    chosenMap.save()
+        .then((map) => {
+            return res.status(200).json({
+                success: true,
+                message: "Tileset added to map",
+                map: map
+            })
+        }).catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Error adding tileset to map",
+                error: err
+            })
+        })
+}
+
 module.exports = {
     getAllUserMaps,
     getAllUserAsCollaboratorMaps,
@@ -1151,5 +1212,6 @@ module.exports = {
     getPublicProjectsByName,
     removeUserFromMap,
     getAllProjectsWithUser,
-    getOwnerAndCollaborator
+    getOwnerAndCollaborator,
+    importTilesetToMap
 }

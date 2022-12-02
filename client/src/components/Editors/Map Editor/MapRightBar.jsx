@@ -71,9 +71,7 @@ export default function MapRightBar(props) {
   });
 
 
-  const handleOpenImportMap = async () => {
-    await store.loadFavorites(auth.user._id, project._id);
-    console.log(store);
+  const handleOpenImportMap = () => {
     setOpenImportMap(true)
   }
 
@@ -89,7 +87,9 @@ export default function MapRightBar(props) {
     setOpenExportMap(false)
   }
 
-  const handleOpenImportTileset = () => {
+  const handleOpenImportTileset = async () => {
+    console.log("HERE")
+    await store.loadFavorites(auth.user._id, project._id);
     setOpenImportTileset(true)
   }
 
@@ -146,6 +146,12 @@ export default function MapRightBar(props) {
 
   const handleCloseDeleteMap = () => {
     setOpenDeleteMap(false)
+  }
+
+  const handleImportTileset = (tileset) => {
+    console.log(favs);
+    store.importTilesetToMap(tileset._id);
+    handleCloseImportTileset();
   }
 
   const deleteMap = () => {
@@ -428,6 +434,32 @@ export default function MapRightBar(props) {
           <Stack direction='column'>
             <Typography variant='h5' color='azure'>Import Tileset</Typography>
             <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+            <Box sx={{ width: '100%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '100px' }}>
+                <Typography variant='h6' sx={{fontStyle: 'italic', color: 'white'}}>
+                  Your favorites:
+                </Typography>
+                {
+                  favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
+                      return (
+                        <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex'}}>
+                          <Typography variant='h5' sx={{color: 'white', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
+                            {tileset.title}
+                          </Typography>
+                          <Typography variant='h6' sx={{color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
+                            {tileset.description ? tileset.description : 'No Description'}
+                          </Typography>
+                          <Button onClick={()=>handleImportTileset(tileset)} sx={{width: '10%', display: 'flex'}}>
+                            <Typography variant='p'>
+                              Import
+                            </Typography>
+                          </Button>
+                        </Box>
+                      )
+                  }) : <Typography variant='h6' sx={{color: 'white'}}>
+                    You don't have any compatible favorites! Get out there and start liking!
+                    </Typography>
+                }
+              </Box>
             <Stack direction='row'>
               <Button onClick={handleCloseImportTileset}>
                 <Typography >Confirm</Typography>

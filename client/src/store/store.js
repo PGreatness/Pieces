@@ -33,6 +33,7 @@ export const GlobalStoreActionType = {
     ADD_TILE_TO_CURRENT_TILESET: "ADD_TILE_TO_CURRENT_TILESET",
     SET_CURRENT_PROJECT: "SET_CURRENT_PROJECT",
     IMPORT_TILESET_TO_TILESET: "IMPORT_TILESET_TO_TILESET",
+    IMPORT_TILESET_TO_MAP: "IMPORT_TILESET_TO_MAP",
     SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
     CLEAR_STORE: "CLEAR_STORE",
 }
@@ -149,6 +150,13 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.IMPORT_TILESET_TO_TILESET: {
+                return setStore({
+                    ...store,
+                    currentProject: payload,
+                })
+            }
+
+            case GlobalStoreActionType.IMPORT_TILESET_TO_MAP: {
                 return setStore({
                     ...store,
                     currentProject: payload,
@@ -452,6 +460,21 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.IMPORT_TILESET_TO_TILESET,
                 payload: response.data.tileset
+            })
+        }
+    }
+
+    store.importTilesetToMap = async function (importedId) {
+        let payload = {
+            tilesetId: importedId,
+            mapId: store.currentProject._id
+        }
+        const response = await api.importTilesetToMap(payload);
+        console.log(response);
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
+                payload: response.data.map
             })
         }
     }
