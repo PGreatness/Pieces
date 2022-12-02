@@ -677,6 +677,79 @@ publishTileset = async (req, res) => {
 
 }
 
+var importTileset = async (req, res) => {
+    var { tilesetId, importId } = req.body;
+
+    if (!tilesetId || !importId) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a tilesetId and importId"
+        })
+    }
+
+    var tid;
+    var iid;
+    try {
+        tid = mongoose.Types.ObjectId(tilesetId);
+        iid = mongoose.Types.ObjectId(importId);
+    }
+    catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a valid tilesetId and importId"
+        })
+    }
+
+    var tileset = await Tileset.findById(tid);
+    var importTileset = await Tileset.findById(iid);
+
+    if (!tileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Tileset does not exist"
+        })
+    }
+
+    if (!importTileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Import Tileset does not exist"
+        })
+    }
+
+    var importedTiles = []
+    const promises = importTileset.tiles.map(async (tile) => {
+        foundTile = await Tile.findOne({ _id: tile._id });
+        var newTile = new Tile({
+            tilesetId: tid,
+            width: foundTile.width,
+            height: foundTile.height,
+            tileData: foundTile.tileData,
+        })
+        await newTile.save();
+        importedTiles.push(newTile);
+    })
+
+    Promise.all(promises).then(() => {
+        tileset.tiles.push(...importedTiles);
+        console.log("importedTiles is: ", importedTiles);
+        console.log("TILESET CHANGED");
+        console.log(tileset.tiles)
+        tileset.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                tileset: tileset,
+                message: "Tileset was successfully imported"
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                success: false,
+                message: "Tileset was not imported"
+            })
+        })
+    })
+
+}
 
 module.exports = {
     getAllUserTilesets,
@@ -688,5 +761,6 @@ module.exports = {
     publishTileset,
     addUserToTileset,
     removeUserFromTileset,
-    publishTileset
+    publishTileset,
+    importTileset
 }

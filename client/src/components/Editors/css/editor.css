@@ -79,12 +79,22 @@
     border-radius: 3px;
 }
 
-.layersContainer, .suggestionsContainer, .conferenceContainer, .properties_container {
-    height: 225px;
-    width: 250px;
-    background-color: #444444;
+.properties_container {
+    height: 250px;
+    width: 300px;
+    background-color: #303139;
     margin-top: 15px;
-    border-radius: 3px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+
+.user_settings_container {
+    width: 300px;
+    background-color: #303139;
+    margin-top: 15px;
+    border-radius: 15px;
 }
 
 .layer_item, .suggestion_item {
