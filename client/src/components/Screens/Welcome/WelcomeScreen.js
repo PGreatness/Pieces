@@ -19,13 +19,20 @@ import { CommunityStoreContext } from '../../../store/communityStore';
 export default function WelcomeScreen() {
     const { store } = useContext(GlobalStoreContext);
     const { communityStore } = useContext(CommunityStoreContext);
+    const [publicProjects, setPublicProjects] = useState([]);
+    const [topThreads, setTopThreads] = useState([]);
+
+    useEffect(() => {
+        store.loadPublicProjects().then(()=>{
+            communityStore.getAllThreads().then(()=>{
+                setPublicProjects(store.publicProjects)
+                setTopThreads(communityStore.ALL_THREADS)
+            })
+        })
+    }, []);
 
     // let x = db.serverStatus().connections
 
-    store.loadPublicProjects();
-    communityStore.getAllThreads();
-    let publicProjects = store.publicProjects;
-    let threads = communityStore.ALL_THREADS;
 
     return (
         <div className="welcome_body">
@@ -71,7 +78,7 @@ export default function WelcomeScreen() {
                             <div className="welcome_stats">
                                 <ForumIcon></ForumIcon>
                             </div>
-                            {threads.length} Ongoing Discussions
+                            {topThreads.length} Ongoing Discussions
                             <br></br>
                             <div className="welcome_stats">
                                 <DownloadIcon></DownloadIcon>
