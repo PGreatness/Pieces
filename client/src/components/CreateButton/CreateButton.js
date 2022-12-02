@@ -118,17 +118,6 @@ export default function CreateButton(props) {
             var context = document.getElementById('canvas').getContext('2d');
             var img = new Image()
             img.src = URL.createObjectURL(image);
-<<<<<<< HEAD
-            img.onload = function () {
-
-                // Give the user error if img.height/tileHeight
-                // Give the user error if img.width/tilewidth
-
-
-                context.drawImage(img, 0, 0)
-                var imgd = context.getImageData(0, 0, img.width, img.height);
-                var pix = imgd.data;
-=======
             img.onload = function() {
 
                 // Check if the dimensions are correct
@@ -143,7 +132,6 @@ export default function CreateButton(props) {
                 context.drawImage(img, 0, 0)
                 var imgd = context.getImageData(0, 0, iw, ih);
                 var pix = imgd.data; 
->>>>>>> d83331ff8b8d3f19f48bbe83c93d323559993275
                 console.log("Image Data:")
                 console.log(pix)
 
@@ -240,9 +228,6 @@ export default function CreateButton(props) {
         setOpenCreateTilesetModal(false)
     }
 
-<<<<<<< HEAD
-
-=======
     const handleOpenInvalidDimensionsModal = () => {
         setOpenInvalidDimensionsModal(true)
     }
@@ -251,7 +236,6 @@ export default function CreateButton(props) {
         setOpenInvalidDimensionsModal(false)
     }
     
->>>>>>> d83331ff8b8d3f19f48bbe83c93d323559993275
     const handleOpenCreateMapModal = () => {
         setOpenCreateMapModal(true)
     }
@@ -408,9 +392,6 @@ export default function CreateButton(props) {
                 </Box>
             </Modal>
 
-<<<<<<< HEAD
-            <canvas style={{ display: 'none' }} id='canvas'></canvas>
-=======
 
             <Modal
                 open={openInvalidDimensionsModal}
@@ -437,7 +418,6 @@ export default function CreateButton(props) {
 
 
             <canvas style={{display:'none'}} id='canvas'></canvas>
->>>>>>> d83331ff8b8d3f19f48bbe83c93d323559993275
 
         </div>
     );
