@@ -517,6 +517,21 @@ function AuthContextProvider(props) {
         }
     }
 
+    auth.removeFriend = async function (userId, friendId) {
+        let payload = {
+            userId: userId,
+            friendId: friendId
+        }
+
+        const response = await api.removeFriend(payload);
+        if (response.data.success) {
+            console.log(response)
+        }
+        else {
+            console.log("API ADDED FRIEND")
+        }
+    }
+
 
     auth.approveFriendRequest = async function (senderId, receiverId, callback) {
         let payload = {

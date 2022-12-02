@@ -24,6 +24,7 @@ export const forgotPassword = (payload) => api.get(`/forgotPassword/`, {params: 
 export const resetPassword = (payload) => api.post(`/resetPassword/`, payload)
 export const updateUser = (payload) => api.post(`/updateUser/`, payload)
 export const addFriend = (payload) => api.post(`/addFriend/`, payload)
+export const removeFriend = (payload) => api.post(`/removeFriend/`, payload)
 export const getUserFriends = (id) => api.get(`/getFriends/userId/${id}/`)
 export const uploadImage = (payload) => api.post(`/uploadImage/`, payload)
 export const deleteImage = (payload) => api.post(`/deleteImage/`, payload)
@@ -142,6 +143,7 @@ const apis = {
     getUserById,
     getAllUsers,
     getUserByUsername,
+    getUsersByUsername,
     getFavorites,
     changePassword,
     updateUser,
@@ -180,6 +182,7 @@ const apis = {
     deleteThread,
 
     addFriend,
+    removeFriend,
     getUserFriends,
 }
 

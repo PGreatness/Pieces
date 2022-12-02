@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Box, Stack } from '@mui/system';
 import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
 import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import UserModalItem from '../Map Editor/UserModalItem';
 import Autocomplete from '@mui/material/Autocomplete';
 import html2canvas from "html2canvas";
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
 
 export default function TilesetRightBar(props) {
@@ -34,6 +35,8 @@ export default function TilesetRightBar(props) {
   const [collaborators, setCollaborators] = useState([]);
   const [users, setUsers] = useState([]);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
+  const [image, setImage] = useState(null)
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
   var ndarray = require("ndarray")
@@ -117,6 +120,7 @@ export default function TilesetRightBar(props) {
   }
 
   const handleCloseImportTileset = () => {
+    setImage(null)
     setOpenImportTileset(false)
   }
 
@@ -217,6 +221,17 @@ export default function TilesetRightBar(props) {
     // })
   }
 
+  const handleOpenFileInput = () => {
+    inputRef.current.click();
+  }
+
+
+  const handleFileChange = async function (event) {
+    let image = event.target.files[0];
+    console.log(image)
+    setImage(image.name)
+  };
+
 
   return (
     <Box bgcolor={"#11182a"} flex={4} className="tile_rightbar">
@@ -239,10 +254,10 @@ export default function TilesetRightBar(props) {
         {value === 0 && (
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
-            <Typography color='azure' variant='h4' 
-              sx={{marginTop: '10px', marginLeft: '30px', marginRight: '15px'}}>Tileset: {store.currentProject.title}</Typography>
+            <Typography color='azure' variant='h4'
+              sx={{ marginTop: '10px', marginLeft: '30px', marginRight: '15px' }}>Tileset: {store.currentProject.title}</Typography>
 
-            <Box bgcolor="#ffffff" className="previewWindow" sx={{marginTop: '30px', marginBottom: '30px'}}>
+            <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack id='preview-window' direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 {currentTile
@@ -470,28 +485,6 @@ export default function TilesetRightBar(props) {
       </Box>
 
       <Modal
-        open={openImportTileset}
-        onClose={handleCloseImportTileset}
-      >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%' id="importTilesetModal">
-          <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Import Tileset</Typography>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-            <Stack direction='row'>
-              <Button onClick={handleCloseImportTileset}>
-                <Typography >Confirm</Typography>
-                <Check />
-              </Button>
-              <Button onClick={handleCloseImportTileset}>
-                <Typography>Cancel</Typography>
-                <Clear />
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
-
-      <Modal
         open={openImportTile}
         onClose={handleCloseImportTile}
       >
@@ -662,6 +655,76 @@ export default function TilesetRightBar(props) {
               <Clear />
             </Button>
           </Stack>
+        </Box>
+      </Modal>
+
+
+
+
+
+      <Modal
+        open={openImportTileset}
+        onClose={handleCloseImportTileset}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='50%' top='30%' left='20%'>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Upload Tileset</Typography>
+            </Grid>
+
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
+              <input
+                style={{ display: 'none' }}
+                ref={inputRef}
+                type="file"
+                onChange={handleFileChange}
+              />
+              <TextField
+                value={image ? image : "Import Tileset..."}
+                InputProps={{
+                  readOnly: true,
+                }}
+                style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 400, fontSize: '20px' } }}
+              />
+
+              <Button onClick={handleOpenFileInput}>
+                <DriveFolderUploadIcon style={{
+                  fontSize: "60px",
+                  marginLeft: '10px', color: 'white'
+                }} />
+              </Button>
+
+            </Grid>
+
+            <Grid item xs={3}></Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+              <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
+              <TextField id="ts_tile_height_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
+            </Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={3}>
+              <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
+              <TextField id="ts_tile_width_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
+            </Grid>
+            <Grid item xs={2}></Grid>
+
+
+            <Grid item xs={2}></Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+              <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
+                Close
+                            </Button>
+            </Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+              <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
+                Confirm
+                            </Button>
+            </Grid>
+            <Grid item xs={2}></Grid>
+          </Grid>
         </Box>
       </Modal>
 

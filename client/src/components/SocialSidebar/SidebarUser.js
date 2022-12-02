@@ -9,7 +9,12 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ThemeProvider } from '@mui/material/styles';
-import React from 'react';
+import { useState, useContext, useEffect } from 'react';
+import AuthContext from '../../auth/auth';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import * as React from 'react';
 
 // import './css/SidebarUser.css';
 
@@ -34,8 +39,21 @@ const WhitePersonAdd = styled(PersonAddIcon)({
 });
 
 export default function SidebarUser(props) {
-  const [isOnline, setIsOnline] = React.useState(props.isOnline);
-  const [isFriend, setIsFriend] = React.useState(props.isFriend);
+  const [isOnline, setIsOnline] = useState(props.isOnline);
+  const [isFriend, setIsFriend] = useState(props.isFriend);
+  const { auth } = useContext(AuthContext);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleRemoveFriend = (removeId) => {
+    auth.removeFriend(auth.user._id, removeId);
+    setAnchorEl(null);
+  };
 
   const theme = createTheme({
     palette: {
@@ -48,8 +66,15 @@ export default function SidebarUser(props) {
     }
   });
 
+  const handleAddFriend = async (sendToId) => {
+    let response = await auth.sendFriendRequest(auth.user._id, sendToId)
+  }
+
   var online = (jsx) => <ThemeProvider theme={theme}><Badge overlap='circular' anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant='dot' color='online'>{jsx}</Badge></ThemeProvider>;
   var offline = (jsx) => <ThemeProvider theme={theme}><Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color='offline'>{jsx}</Badge></ThemeProvider>;
+  let name = props.user.firstName.concat(" ", props.user.lastName);
+  let startinguser = "@"
+  let username = startinguser.concat(props.user.userName);
   const buildUser = () => {
     // see if user is logged in currently
     return (
@@ -57,9 +82,32 @@ export default function SidebarUser(props) {
         <ListItemAvatar>
           {isOnline ? online(<Avatar alt={props.username} src={props.profilePic} />) : offline(<Avatar alt={props.username} src={props.profilePic} />)}
         </ListItemAvatar>
-        <ListItemText primary={props.user.username} style={{ width: '100%' }} />
+        <ListItemText primary={name} secondary={username} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
-          {isFriend ? <WhiteMore /> : <WhitePersonAdd />}
+          {isFriend ? <div>
+                        <Button
+                          id="basic-button"
+                          aria-controls={open ? 'basic-menu' : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={open ? 'true' : undefined}
+                          onClick={handleClick}
+                        >
+                          <WhiteMore />
+                        </Button>
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleClose}
+                          MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                          }}
+                        >
+                          <MenuItem onClick={handleClose}>Profile</MenuItem>
+                          <MenuItem onClick={handleClose}>Chat</MenuItem>
+                          <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove</MenuItem>
+                        </Menu>
+                      </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
         </ListItemButton>
         <Divider />
       </ListItem>
