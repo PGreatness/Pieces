@@ -227,7 +227,7 @@ export default function CreateButton(props) {
 
 
                 // Navigate to tileset
-                await store.loadTileset(response.data.tileset._id).then
+                await store.loadTileset(response.data.tileset._id)
                 console.log(store)
 
                 await store.changePageToTilesetEditor(response.data.tileset)

@@ -136,9 +136,9 @@ export default function TilesetCanvas() {
                 </Box>
                 <Box sx={{padding:2}}>
                     {value === 0 && (
-                        <Stack direction='row' spacing={2}>
+                        <Stack direction='row' sx={{overflowX: 'scroll'}}>
                             {store.currentProject && store.currentProject.tiles.map((tileId) => (
-                                <Button onClick={() => handleSelectTile(tileId)}>
+                                <Button className='tile_option' onClick={() => handleSelectTile(tileId)} sx={{marginLeft: '15px', marginRight: '15px'}}>
                                     <img src={require('../images/dummyTilePreview.png')} className='tile_option'/>
                                 </Button>
                             ))}

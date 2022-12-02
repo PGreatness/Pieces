@@ -427,6 +427,7 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+
     store.importTilesetToMap = async function (importedId) {
         let payload = {
             tilesetId: importedId,
@@ -1358,6 +1359,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.setCurrentTileset = async function (tilesetId) {
+        const response = await api.getTilesetById(tilesetId)
+
+        if (response.status === 200) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+                payload: {
+                    currentProject: response.data.tileset
+                }
+            })
+        }
+    }
 
     store.setCurrentMapTiles = async function (currentMapTiles) {
         storeReducer({

@@ -232,7 +232,7 @@ export default function TilesetRightBar(props) {
   const handleFileChange = async function (event) {
     let image = event.target.files[0];
     console.log(image)
-    setImage(image.name)
+    setImage(image)
   };
 
   const handleImportTileset = async function (tileset) {
@@ -244,7 +244,7 @@ export default function TilesetRightBar(props) {
 
 
 
-  const handleImportTileset = async () => {
+  const handleImportImageTileset = async () => {
     // let title = document.getElementById('tileset_name_input').value
     let tilesetHeight = Number(5);
     let tilesetWidth = Number(5);
@@ -257,7 +257,9 @@ export default function TilesetRightBar(props) {
 
       var context = document.getElementById('canvas').getContext('2d');
       var img = new Image()
+      console.log(image);
       img.src = URL.createObjectURL(image);
+      console.log(img);
 
       img.onload = async function () {
 
@@ -269,6 +271,7 @@ export default function TilesetRightBar(props) {
         tilesetWidth = iw
         console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
         if (iw % tileWidth !== 0 || ih % tileHeight !== 0) {
+          console.log("error was found")
           setShowError(true)
           return
         }
@@ -331,6 +334,7 @@ export default function TilesetRightBar(props) {
           let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
           console.log(createTileResponse)
         }
+        await store.setCurrentTileset(project._id);
       }
     }
 
@@ -715,7 +719,7 @@ export default function TilesetRightBar(props) {
                 onChange={handleFileChange}
               />
               <TextField
-                value={image ? image : "Import Tileset..."}
+                value={image ? image.name : "Import Tileset..."}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -781,7 +785,7 @@ export default function TilesetRightBar(props) {
                             </Button>
             </Grid>
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
-              <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
+              <Button sx={{ fontSize: '20px' }} onClick={()=>{handleImportImageTileset();handleCloseImportTileset();}}>
                 Confirm
                             </Button>
             </Grid>
