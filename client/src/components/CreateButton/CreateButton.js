@@ -118,6 +118,11 @@ export default function CreateButton(props) {
             var img = new Image()
             img.src = URL.createObjectURL(image);
             img.onload = function() {
+
+                // Give the user error if img.height/tileHeight
+                // Give the user error if img.width/tilewidth
+
+
                 context.drawImage(img, 0, 0)
                 var imgd = context.getImageData(0, 0, img.width, img.height);
                 var pix = imgd.data; 
@@ -139,6 +144,21 @@ export default function CreateButton(props) {
 
                 console.log("RGBARRAY")
                 console.log(hexArray)
+
+
+
+                // hex array is orginazed row 
+
+                // EXAMPLE IMAGE = img.height: 6, img.width: 4)
+                // tile height : 3,  tile width : 2
+
+                // hexArray[0]  hexArray[1]  hexArray[2]  hexArray[3]  
+                // hexArray[5]  hexArray[6]  hexArray[7]  hexArray[8]  
+                // hexArray[10] hexArray[11] hexArray[12] hexArray[13] 
+                // hexArray[15] hexArray[16] hexArray[17] hexArray[18]  
+                // hexArray[19] hexArray[20] hexArray[21] hexArray[23]  
+                // hexArray[24] hexArray[25] hexArray[26] hexArray[27]  
+
             }
         }
 
