@@ -5,11 +5,12 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import MapIcon from '@mui/icons-material/Map';
 import GridViewIcon from '@mui/icons-material/GridView';
-import { Modal, TextField, Grid, Typography, Box, Button } from '@mui/material'
+import { Modal, TextField, Grid, Typography, Box, Button, Input } from '@mui/material'
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import { useNavigate } from 'react-router-dom';
 import { GlobalStoreContext } from '../../store/store'
 import AuthContext from '../../auth/auth'
-import { useContext, useState } from 'react'
+import { useContext, useState, useRef } from 'react'
 
 // const { auth } = useContext(AuthContext);
 
@@ -32,13 +33,27 @@ export default function CreateButton(props) {
     const navigate = useNavigate();
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+
     const [openCreateMapModal, setOpenCreateMapModal] = useState(false)
     const [openCreateTilesetModal, setOpenCreateTilesetModal] = useState(false)
+    const [image, setImage] = useState(null)
+    const inputRef = useRef(null);
 
     const setLocation = (loc) => {
         props.setLoc(loc);
         navigate(loc);
     }
+
+    const handleOpenFileInput = () => {
+        inputRef.current.click();
+    }
+
+
+    const handleFileChange = async function (event) {
+        let image = event.target.files[0];
+        console.log(image)
+        setImage(image.name)
+    };
 
     const handleCreateNewMap = async () => {
         let title = document.getElementById('map_name_input').value
@@ -64,8 +79,8 @@ export default function CreateButton(props) {
     const handleCreateNewTileset = async () => {
         let title = document.getElementById('tileset_name_input').value
         let tilesetHeight = Number(document.getElementById('tileset_height_input').value)
-        let tilesetWidth = Number(document.getElementById('tileset_width_input').value)
-        let tileHeight = Number(document.getElementById('ts_tile_height_input').value)
+        let tilesetWidth = 5;
+        let tileHeight = 5;
         let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
         let ownerId = auth.user._id
 
@@ -83,9 +98,9 @@ export default function CreateButton(props) {
 
             await store.changePageToTilesetEditor(response.data.tileset)
             console.log(store.currentPage)
-            
+
             setLocation(`/tileset/${response.data.tileset._id}`)
-           
+
 
 
         }
@@ -105,6 +120,7 @@ export default function CreateButton(props) {
     }
 
     const handleCloseCreateTilesetModal = () => {
+        setImage(null)
         setOpenCreateTilesetModal(false)
     }
 
@@ -133,7 +149,7 @@ export default function CreateButton(props) {
                 open={openCreateMapModal}
                 onClose={handleCloseCreateMapModal}
             >
-                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' top='30%' left='30%'>
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='50%' top='30%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
                             <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>Create Map</Typography>
@@ -181,43 +197,64 @@ export default function CreateButton(props) {
                 open={openCreateTilesetModal}
                 onClose={handleCloseCreateTilesetModal}
             >
-                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' top='30%' left='30%'>
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='25%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>Create Tileset</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '80px' }} variant='h3' color='azure'>Create Tileset</Typography>
                         </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={12}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tileset Name:</Typography>
-                            <TextField id='tileset_name_input' size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
+                            <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tileset Name:</Typography>
+                            <TextField id='tileset_name_input' size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 300 } }} />
+                        </Grid>
+
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
+                            <input
+                                style={{ display: 'none' }}
+                                ref={inputRef}
+                                type="file"
+                                onChange={handleFileChange}
+                            />
+                            <TextField 
+                                value={image? image : "Import Tileset..."}
+                                InputProps={{
+                                    readOnly: true,
+                                }} 
+                                style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 400, fontSize: '20px' } }}
+                            />
+
+                            <Button onClick={handleOpenFileInput}>
+                                <DriveFolderUploadIcon style={{
+                                    fontSize: "60px",
+                                    marginLeft: '10px', color: 'white'
+                                }} />
+                            </Button>
+
+                        </Grid>
+
+                        <Grid item xs={3}></Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
+                            <TextField id="ts_tile_height_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
+                        </Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={3}>
+                            <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
+                            <TextField id="ts_tile_width_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tileset Height:</Typography>
-                            <TextField id="tileset_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
-                        </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tileset Width:</Typography>
-                            <TextField id="tileset_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
-                        </Grid>
+
+
                         <Grid item xs={2}></Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Height:</Typography>
-                            <TextField id="ts_tile_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
-                        </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Width:</Typography>
-                            <TextField id="ts_tile_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
-                        </Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Button onClick={handleCloseCreateTilesetModal}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+                            <Button sx={{ fontSize: '20px' }} onClick={handleCloseCreateTilesetModal}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Button onClick={handleCreateNewTileset}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+                            <Button sx={{ fontSize: '20px' }} onClick={handleCreateNewTileset}>
                                 Confirm
                             </Button>
                         </Grid>
@@ -225,6 +262,8 @@ export default function CreateButton(props) {
                     </Grid>
                 </Box>
             </Modal>
+
+
         </div>
     );
 }
