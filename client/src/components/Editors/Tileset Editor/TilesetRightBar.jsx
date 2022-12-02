@@ -134,6 +134,7 @@ export default function TilesetRightBar(props) {
 
   const handleCloseImportTileset = () => {
     setImage(null)
+    setShowError(false)
     setOpenImportTileset(false)
   }
 
@@ -335,6 +336,7 @@ export default function TilesetRightBar(props) {
           console.log(createTileResponse)
         }
         await store.setCurrentTileset(project._id);
+        handleCloseImportTileset();
       }
     }
 
@@ -704,14 +706,14 @@ export default function TilesetRightBar(props) {
         open={openImportTileset}
         onClose={handleCloseImportTileset}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='fit-content' top='30%' left='20%'>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='fit-content' top='15%' left='20%'>
           <Grid container>
             <Grid item xs={12}>
-              <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Upload Tileset</Typography>
+              <Typography style={{ textAlign: 'center', marginBottom: '30px' }} variant='h3' color='azure'>Upload Tileset</Typography>
             </Grid>
 
 
-            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={12}>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
               <input
                 style={{ display: 'none' }}
                 ref={inputRef}
@@ -736,6 +738,12 @@ export default function TilesetRightBar(props) {
 
             </Grid>
 
+            <Grid item xs={12}>
+              <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom: '20px' }} color='red'>
+                {showError ? 'The given tileset image could not be split into tiles of the given dimensions. Please try again.' : ''}
+              </Typography>
+            </Grid>
+
             <Grid item xs={3}></Grid>
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
               <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
@@ -750,29 +758,29 @@ export default function TilesetRightBar(props) {
             <Grid item xs={2}></Grid>
 
             <Grid item xs={12}>
-              <Box sx={{ width: '100%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '100px' }}>
-                <Typography variant='h6' sx={{fontStyle: 'italic', color: 'white'}}>
+              <Box sx={{ marginTop: '40px', marginLeft: '70px', width: '80%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '250px' }}>
+                <Typography variant='h6' sx={{ fontStyle: 'italic', color: 'white', marginLeft: '20px' }}>
                   Your favorites:
                 </Typography>
                 {
                   favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
-                      return (
-                        <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex'}}>
-                          <Typography variant='h5' sx={{color: 'white', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
-                            {tileset.title}
-                          </Typography>
-                          <Typography variant='h6' sx={{color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
-                            {tileset.description ? tileset.description : 'No Description'}
-                          </Typography>
-                          <Button onClick={()=>handleImportTileset(tileset)} sx={{width: '10%', display: 'flex'}}>
-                            <Typography variant='p'>
-                              Import
+                    return (
+                      <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
+                        <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
+                          {tileset.title}
+                        </Typography>
+                        <Typography variant='h6' sx={{ color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
+                          {tileset.description ? tileset.description : 'No Description'}
+                        </Typography>
+                        <Button onClick={() => handleImportTileset(tileset)} sx={{ width: '10%', display: 'flex', marginRight: '40px' }}>
+                          <Typography variant='p'>
+                            Import
                             </Typography>
-                          </Button>
-                        </Box>
-                      )
-                  }) : <Typography variant='h6' sx={{color: 'white'}}>
-                    You don't have any compatible favorites! Get out there and start liking!
+                        </Button>
+                      </Box>
+                    )
+                  }) : <Typography variant='h6' sx={{ color: 'white' }}>
+                      You don't have any compatible favorites! Get out there and start liking!
                     </Typography>
                 }
               </Box>
@@ -782,10 +790,10 @@ export default function TilesetRightBar(props) {
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
               <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
                 Close
-                            </Button>
+              </Button>
             </Grid>
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
-              <Button sx={{ fontSize: '20px' }} onClick={()=>{handleImportImageTileset();handleCloseImportTileset();}}>
+              <Button sx={{ fontSize: '20px' }} onClick={() => { handleImportImageTileset(); }}>
                 Confirm
                             </Button>
             </Grid>
