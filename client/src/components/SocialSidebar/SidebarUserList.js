@@ -12,8 +12,6 @@ export default function SidebarUserList(props) {
     const [friendsList, setFriendsList] = React.useState([]);
     const [searchList, setSearchList] = React.useState([]);
 
-    const [loaded, setLoaded] = React.useState(false);
-
     React.useEffect(() => {
         getAllFriends();
       }, []);
@@ -90,11 +88,7 @@ export default function SidebarUserList(props) {
     }
 
     if (!props.query) {
-        // if (!loaded) {
-        //     getAllFriends();
-        //     setLoaded(true)
-        // }
-        getAllFriends();
+        // getAllFriends();
         return (
             <div className="sidebar-user-list">
                 {
