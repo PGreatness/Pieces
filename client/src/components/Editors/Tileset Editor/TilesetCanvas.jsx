@@ -1,10 +1,11 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
 import { Typography, Button, Tabs, Tab,Grid } from '@mui/material'
-import { Undo, Redo,Add, Translate } from '@mui/icons-material'
+import { Undo, Redo, Add, Translate, Delete, ContentCopy } from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
 import { useState, useContext, useEffect } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth';
 
 
 export default function TilesetCanvas() {
@@ -12,6 +13,8 @@ export default function TilesetCanvas() {
     // Tileset Editor Code Begin
 
     const { store } = useContext(GlobalStoreContext)
+    const { auth } = useContext(AuthContext);
+
     const [ currentTile, setCurrentTile ] = useState(store.currentTile)
     const [ height, setHeight ] = useState(store.currentTile ? store.currentTile.height : 0)
     const [ width, setWidth ] = useState(store.currentTile ? store.currentTile.width : 0)
@@ -98,7 +101,16 @@ export default function TilesetCanvas() {
 
         }
     }
+
+    const handleDeleteTile = (tileId) => {
+        console.log("Deleting tile " + tileId + " for user " + auth.user)
+        store.deleteTileById(tileId, auth.user._id)
+    }
     
+    const handleDuplicateTile = (tileId) => {
+        console.log("Duplicating tile " + tileId)
+    }
+
     // Tileset Editor Code End
 
     const [ value, setValue ] = useState(0);
@@ -138,9 +150,12 @@ export default function TilesetCanvas() {
                     {value === 0 && (
                         <Stack direction='row' sx={{overflowX: 'scroll'}}>
                             {store.currentProject && store.currentProject.tiles.map((tileId) => (
-                                <Button className='tile_option' onClick={() => handleSelectTile(tileId)} sx={{marginLeft: '15px', marginRight: '15px'}}>
-                                    <img src={require('../images/dummyTilePreview.png')} className='tile_option'/>
-                                </Button>
+                                <Box className='tile_option'>
+                                    <img src={require('../images/dummyTilePreview.png')} className='tile_option_image'/>
+                                    <Button style={{padding: '0px', maxWidth: '65%', top: '0px', left: '0px', minWidth: '65%'}} className='tile_option_select' onClick={() => handleSelectTile(tileId)}></Button>
+                                    <Button onClick={() => handleDeleteTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_delete'><Delete style={{color:'azure', height: '80%', width: '80%'}}/></Button>  
+                                    <Button onClick={() => handleDuplicateTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_dupe'><ContentCopy style={{color:'azure', height: '70%', width: '70%'}}/></Button>  
+                                </Box>
                             ))}
                             <Button>
                                 <Add onClick={handleAddTile} style={{minHeight: '80px', maxHeight:'80px', minWidth:'80px', maxWidth:'80px'}}/>

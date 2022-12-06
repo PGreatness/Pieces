@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    // baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 
@@ -65,6 +65,7 @@ export const importTilesetToTileset = (payload) => api.post(`/tileset/importTile
 export const createTile = (payload) => api.post(`/tile/newTile`, payload)
 export const getTileById = (id) => api.get(`/tile/${id}`)
 export const updateTile = (payload) => api.post(`/tile/updateTile`, payload)
+export const deleteTileById = (payload) => api.post(`/tile/deleteTile`, payload)
 
 // Comments
 export const getAllProjectComments = () => api.get(`/comments/getAllProjectComments/`)
@@ -138,6 +139,7 @@ const apis = {
     createTile,
     getTileById,
     updateTile,
+    deleteTileById,
     publishTileset,
 
     getLoggedIn,
