@@ -1611,6 +1611,21 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+    store.deleteTileById = async function (id, userId) {
+        console.log("Deleting tile (store)")
+        let payload = {
+            tileId: id,
+            userId: userId
+        }
+        let response = await api.deleteTileById(payload)
+        let newCurrentProject = response.data.tileset
+        let newCurrentTile = response.data.tileset.tiles[0]
+        console.log("old current tile: (tl)")
+        console.log(store.currentTile)
+        console.log("new current project: (tl)")
+        console.log(newCurrentProject)
+        console.log("new current tile: (tl)" + newCurrentTile)
+    }
 
 
 
