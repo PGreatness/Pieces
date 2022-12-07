@@ -31,8 +31,9 @@ export default function MapCanvas() {
     }, [])
 
     useEffect(() => {
-        //store.getMapTilesets(currentMapTiles)
-        //setTilesets(store.currentProject.tilesets)
+        store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+            setTilesets(tilesetObjs)
+        })
     }, [])
 
     useEffect(() => {
@@ -147,7 +148,7 @@ export default function MapCanvas() {
                         }}>
                         {
                             tilesets.map((tileset, index) => (
-                                <StyledTab label={tileset.name} />
+                                <StyledTab label={tileset.title} />
                             ))
                         }
                     </Tabs>

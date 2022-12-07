@@ -127,6 +127,6 @@ router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
 router.get('/getPublicProjectsByName/:name', MapController.getPublicProjectsByName)
 router.get('/getUserProjects', MapController.getAllProjectsWithUser)
 router.get('/changePage', MapController.getAllPublicProjects)
-router.get('/getMapTilesets', MapController.getMapTilesets)
+router.get('/getMapTilesets/:id', MapController.getMapTilesets)
 
 module.exports = router
