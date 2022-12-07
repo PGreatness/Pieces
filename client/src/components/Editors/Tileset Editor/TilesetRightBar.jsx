@@ -90,10 +90,10 @@ export default function TilesetRightBar(props) {
   //   }
   // }, [store.currentTile])
 
-  if (store.currentTile) {
-    console.log("Store tile data")
-    console.log(store.currentTile.tileData)
-  }
+  // if (store.currentTile) {
+  //   console.log("Store tile data")
+  //   console.log(store.currentTile.tileData)
+  // }
 
   const startEditing = () => {
     setEditMode(true)

@@ -92,8 +92,8 @@ function GlobalStoreContextProvider(props) {
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
         const { type, payload } = action;
-        // console.log(type)
-        // console.log(payload)
+        console.log(type)
+        console.log(payload)
         switch (type) {
 
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
@@ -266,6 +266,7 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.SET_CURRENT_PROJECT: {
+                console.log('setting current project')
                 return setStore({
                     ...store,
                     currentProject: payload.currentProject
@@ -1527,6 +1528,24 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+    store.deleteTilesetFromMap = async function (deletedId) {
+        let payload = {
+            tilesetId: deletedId,
+            mapId: store.currentProject._id
+        }
+        const response = await api.deleteMapTileset(payload);
+        console.log(response);
+        
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+                payload: {
+                    currentProject: response.data.map
+                }
+            })
+        }
+    }
+
 
 
 
@@ -1670,7 +1689,9 @@ function GlobalStoreContextProvider(props) {
             tileId: id,
             userId: userId
         }
+        
         let response = await api.deleteTileById(payload)
+        
         console.log("delete tileset response")
         console.log(response)
         let tilesetId = response.data.tileset_id
@@ -1678,6 +1699,7 @@ function GlobalStoreContextProvider(props) {
         let newCurrentProject = getTilesetResponse.data.tileset
         console.log("Updated current project after deleting tile from tileset...")
         console.log(newCurrentProject)
+        
         let tileId = newCurrentProject.tiles[0]
         let newCurrentTile = (await api.getTileById(tileId)).data.tile
         storeReducer({
