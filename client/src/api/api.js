@@ -50,6 +50,7 @@ export const publishMap = (query, payload) => api.post(`/map/publishMap/`, paylo
 export const addMapCollaborator = (payload) => api.post(`/map/addUserToMap/`, payload)
 export const removeMapCollaborator = (payload) => api.post(`/map/removeUserFromMap/`, payload)
 export const importTilesetToMap = (payload) => api.post(`/map/importTilesetToMap/`, payload)
+export const deleteMapTileset = (payload) => api.post(`/map/deleteMapTileset/`, payload)
 export const getMapTilesets = (id) => api.get(`/getMapTilesets/${id}`)
 
 // Tileset
@@ -195,6 +196,7 @@ const apis = {
 
     getTilesetTiles,
     getMapTilesets,
+    deleteMapTileset,
 }
 
 export default apis

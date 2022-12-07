@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Box, Stack } from '@mui/system';
 import { Modal, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, List, ListItem, Grid, Button } from '@mui/material'
-import { PersonRemove, AccountCircle, People, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
+import { Edit, IosShare, Clear, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
 import { Avatar } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PublicIcon from '@mui/icons-material/Public';
@@ -90,10 +90,10 @@ export default function TilesetRightBar(props) {
   //   }
   // }, [store.currentTile])
 
-  if (store.currentTile) {
-    console.log("Store tile data")
-    console.log(store.currentTile.tileData)
-  }
+  // if (store.currentTile) {
+  //   console.log("Store tile data")
+  //   console.log(store.currentTile.tileData)
+  // }
 
   const startEditing = () => {
     setEditMode(true)
@@ -806,6 +806,7 @@ export default function TilesetRightBar(props) {
                 style={{ display: 'none' }}
                 ref={inputRef}
                 type="file"
+                accept="image/png"
                 onChange={handleFileChange}
               />
               <TextField
