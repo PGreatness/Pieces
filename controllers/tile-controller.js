@@ -135,7 +135,7 @@ var updateTile = async (req, res) => {
             });
         }
 
-        let { tileId, userId, tileData } = req.body;
+        let { tileId, userId, tileData, tileImage } = req.body;
 
         let userTile = await tile.findOne({ _id: tileId });
         if (!userTile) {
@@ -162,14 +162,20 @@ var updateTile = async (req, res) => {
             }
         }
 
-        if (tileData.length == 0 && userTile.tileData.length == 0) {
-            tileData.push('rgba(0,0,0,0)');
+        let updatedTile;
+        if (tileData) {
+            if (tileData.length == 0 && userTile.tileData.length == 0) {
+                tileData.push('rgba(0,0,0,0)');
+            }
+            if (tileData.length == 0) {
+                tileData = userTile.tileData;
+            }
+            updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { tileData }, { new: true });
         }
-        if (tileData.length == 0) {
-            tileData = userTile.tileData;
+        if (tileImage) {
+            updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { tileImage }, { new: true });
         }
 
-        let updatedTile = await tile.findOneAndUpdate({ _id: tileId }, { tileData }, { new: true });
         if (!updatedTile) {
             return res.status(400).json({
                 success: false,
@@ -181,6 +187,21 @@ var updateTile = async (req, res) => {
             tile: updatedTile,
             message: 'Tile updated!',
         });
+
+        // if (tileImage) {
+        //     let updatedTile = await tile.findOneAndUpdate({_id: tileId}, {tileImage}, {new: true});
+        //     if (!updatedTile) {
+        //         return res.status(400).json({
+        //             success: false,
+        //             error: 'Tile not updated',
+        //         });
+        //     }
+        //     return res.status(200).json({
+        //         success: true,
+        //         tile: updatedTile,
+        //         message: 'Tile updated!',
+        //     });
+        // }
     } catch (err) {
         console.log(err);
         return res.status(503).json({

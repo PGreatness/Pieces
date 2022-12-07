@@ -19,11 +19,13 @@ export default function MapCanvas() {
             ? store.currentProject.tiles
             : Array(mapHeight * mapWidth).fill('')
     )
+    const [tileImages, setTileImages] = useState([])
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
     const [tilesets, setTilesets] = useState([])
     const [value, setValue] = useState(0);
+    const [currentIndices, setCurrentIndices] = useState([0, 0])
 
 
     useEffect(() => {
@@ -33,7 +35,102 @@ export default function MapCanvas() {
     useEffect(() => {
         store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
             setTilesets(tilesetObjs)
+            console.log(tilesetObjs)
+            console.log(tilesets)
+
+            let tileIds = []
+            let tileImages = []
+
+            // Build array of all tile ids
+            for (let i = 0; i < tilesetObjs.length; i++) {
+                tileIds = tileIds.concat(tilesetObjs[i].tiles)
+            }
+            console.log(tileIds)
+
+            // Get tile data from tile
+            // for (let i = 0; i < tileIds.length; i++) {
+            //     fetchTile(tileIds[i])
+            // }
+
+            const fetchTiles = async () => {
+                await Promise.all(tileIds.map(async (tileId) => {
+                    let tile = await store.getTileById(tileId)
+                    tileImages.push(tile.tileImage)
+                }));
+            }
+
+            fetchTiles()
+
+            console.log(tileImages)
+            setTileImages(tileImages)
         })
+    }, [])
+
+    // useEffect(() => {
+
+    //     let tileIds = []
+    //     let tiles = []
+    //     let tileImages = []
+
+    //     const fetchTile  = async(id) => {
+    //         let tile = await store.getTileById(id)
+    //         let td = tile.tileData
+    //         tiles.push(td)
+
+    //         let rgba = []
+
+    //         td.forEach((t) => {
+    //             if (t.length === 0) {
+    //                 rgba.push(0)
+    //                 rgba.push(0)
+    //                 rgba.push(0)
+    //                 rgba.push(0)
+    //             } 
+    //             else {
+    //                 var bigint = parseInt(t.slice(1), 16);
+    //                 var r = (bigint >> 16) & 255;
+    //                 var g = (bigint >> 8) & 255;
+    //                 var b = bigint & 255;
+    //                 rgba.push(r)
+    //                 rgba.push(g)
+    //                 rgba.push(b)
+    //                 rgba.push(255)
+    //             }
+    //         })
+
+    //         let rgbaArray = new ImageData(new Uint8ClampedArray(rgba), tile.width, tile.height);
+
+    //         let canvas = document.createElement('canvas');
+    //         let context = canvas.getContext('2d');
+    //         canvas.height = tile.height
+    //         canvas.width = tile.width
+
+    //         context.putImageData(rgbaArray, 0, 0);
+    //         let dataUrl = canvas.toDataURL()
+    //         tileImages.push(dataUrl)
+    //         setTileImages(tileImages)
+    //         canvas.remove()
+    //     }
+
+    //     //Build array of all tile ids
+    //     for (let i = 0; i < tilesets.length; i++) {
+    //         tileIds = tileIds.concat(tilesets[i].tiles)
+    //     }
+
+    //     //Get tile data from tile
+    //     for (let i = 0; i < tileIds.length; i++) {
+    //         fetchTile(tileIds[i])
+    //     }
+
+    // }, [])
+
+    useEffect(() => {
+        console.log("Changing to store tilesets")
+        console.log(store.currentProject.tilesets)
+
+        // TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
+        // setTilesets(store.currentProject.tilesets)
+
     }, [store.currentProject.tilesets])
 
 
@@ -94,7 +191,18 @@ export default function MapCanvas() {
 
 
     const handleChange = (event, newValue) => {
+        console.log("value changed...")
+        // get next tileset!
         setValue(newValue);
+        let startIndex = 0
+        for (let i = 0; i < newValue; i++) {
+            startIndex += tilesets[i].tiles.length
+        }
+        let endIndex = startIndex + tilesets[newValue].tiles.length
+        console.log("(" + startIndex + " , " + endIndex + ")")
+        setCurrentIndices([startIndex, endIndex])
+
+        console.log(tileImages)
     }
 
     const deleteTileset = () => {
@@ -170,8 +278,14 @@ export default function MapCanvas() {
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
                         {
-                            tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
-                                <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option' />
+                            // tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
+                            //     <img onClick={handleClickTileOption} src={tileImages[1] ? tileImages[1] : require('../images/dummyTile1.png')} className='palette_option' />
+                            // ))
+                            // console.log(tileImages)
+                            tileImages.map((image, index) => (
+                                // { console.log(image + " " + index) }
+                                // <img src={tileImages[1]} className='palette_option' />
+                                <img onClick={handleClickTileOption} src={image} className='palette_option' />
                             ))
                         }
                     </Stack>

@@ -411,6 +411,17 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    // GET ALL TILES OF A MAP
+    // store.getMapTiles = async function (tilesetIds) {
+
+    //     const response = await api.getTilesetTiles(tilesetIds)
+
+    //     if (response.status === 200) {
+    //         console.log(response.data.tiles)
+    //         return response.data.tiles
+    //     }
+    // }
+
     // GET all user favourited projects
     store.loadFavorites = async function (id, filter) {
         let payload = {
@@ -1642,14 +1653,18 @@ function GlobalStoreContextProvider(props) {
 
     // -----------------------------------------    TILES   ---------------------------------------------------
 
-    store.updateTile = async function (tileId, tilesetId, tileData) {
+    store.updateTile = async function (tileId, tilesetId, tileData, tileImage) {
         const tilesetResponse = await api.getTilesetById(tilesetId)
         let payload = {
             tileId: tileId,
             userId: tilesetResponse.data.tileset.ownerId,
-            tileData: tileData
+            tileData: tileData,
+            tileImage: tileImage
         }
         const response = await api.updateTile(payload)
+
+        //save as image
+
         if (response.status === 200) {
             storeReducer({
                 type: GlobalStoreActionType.UPDATE_TILE,
@@ -1725,6 +1740,14 @@ function GlobalStoreContextProvider(props) {
         //         currentTile: newCurrentTile
         //     }
         // })
+    }
+
+    store.getTileById = async function (id) {
+        const response = await api.getTileById(id)
+
+        if (response.status === 200) {
+            return response.data.tile
+        }
     }
 
 

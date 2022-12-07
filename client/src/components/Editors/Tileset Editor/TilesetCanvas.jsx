@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
-import { Typography, Button, Tabs, Tab,Grid } from '@mui/material'
+import { Typography, Button, Tabs, Tab, Grid } from '@mui/material'
 import { Undo, Redo, Add, Translate, Delete, ContentCopy } from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
 import { useState, useContext, useEffect } from 'react';
@@ -14,6 +14,7 @@ export default function TilesetCanvas() {
 
     const { store } = useContext(GlobalStoreContext)
     const { auth } = useContext(AuthContext);
+
 
     const [ tileset, setTileset ] = useState(store.currentProject)
     const [ currentTile, setCurrentTile ] = useState(store.currentTile)
@@ -44,7 +45,7 @@ export default function TilesetCanvas() {
     //             console.log("Auto updated")
     //         }
     //     }, 5000);
-      
+
     //     return () => clearInterval(interval);
     //   }, []); 
 
@@ -84,17 +85,20 @@ export default function TilesetCanvas() {
     const handleClickPixel = async (e) => {
 
         let tile = currentTile
+        let imgSrc = ''
         switch (store.tilesetTool) {
             case 'brush':
                 tile.tileData[currentPixel[0] * width + currentPixel[1]] = store.primaryColor
                 setCurrentTile(tile)
-                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
+                imgSrc = convertToImage(tile);
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
                 break
 
             case 'eraser':
                 tile.tileData[currentPixel[0] * width + currentPixel[1]] = ''
                 setCurrentTile(tile)
-                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
+                imgSrc = convertToImage(tile);
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
                 break
 
             case 'dropper':
@@ -104,24 +108,62 @@ export default function TilesetCanvas() {
             case 'bucket':
                 let originalColor = currentTile.tileData[currentPixel[0] * width + currentPixel[1]]
                 fillHelper(currentPixel[0], currentPixel[1], originalColor)
-                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
+                imgSrc = convertToImage(tile);
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
                 break
 
         }
     }
 
+    const convertToImage = (tile) => {
+        let rgba = []
+
+        tile.tileData.forEach((tile) => {
+            if (tile.length === 0) {
+                rgba.push(0)
+                rgba.push(0)
+                rgba.push(0)
+                rgba.push(0)
+            } else {
+                var bigint = parseInt(tile.slice(1), 16);
+                var r = (bigint >> 16) & 255;
+                var g = (bigint >> 8) & 255;
+                var b = bigint & 255;
+                rgba.push(r)
+                rgba.push(g)
+                rgba.push(b)
+                rgba.push(255)
+
+            }
+        })
+
+        var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), width, height);
+        console.log(rgbaArray)
+
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        canvas.height = height
+        canvas.width = width
+
+        context.putImageData(rgbaArray, 0, 0);
+        var imgSrc = canvas.toDataURL();
+        canvas.remove();
+        return imgSrc
+    }
+
+
     const handleDeleteTile = async (tileId) => {
         console.log("Deleting tile " + tileId + " for user " + auth.user)
         await store.deleteTileById(tileId, auth.user._id)
     }
-    
+
     const handleDuplicateTile = (tileId) => {
         console.log("Duplicating tile " + tileId)
     }
 
     // Tileset Editor Code End
 
-    const [ value, setValue ] = useState(0);
+    const [value, setValue] = useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
@@ -135,26 +177,26 @@ export default function TilesetCanvas() {
     return (
         <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
             <Typography variant='h5' id='cursor_coord' color='azure'>{currentPixel[0] + ", " + currentPixel[1]}</Typography>
-            <Button id='tile_undo_button' sx={{minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px'}}>
-                <Undo className='toolbar_mui_icon'/>
+            <Button id='tile_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+                <Undo className='toolbar_mui_icon' />
             </Button>
-            <Button id='tile_redo_button' sx={{minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px'}}>
-                <Redo className='toolbar_mui_icon'/>
+            <Button id='tile_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+                <Redo className='toolbar_mui_icon' />
             </Button>
 
-            <Grid container direction='row' id='tileset-canvas-grid' rowSpacing={0} columns={width} bgcolor='#000000' style={{position: 'absolute', height: '65vh', width: '65vh', top: '50%', left: '50%', transform: 'translate(-50%, -60%)'}}>
+            <Grid container direction='row' id='tileset-canvas-grid' rowSpacing={0} columns={width} bgcolor='#000000' style={{ position: 'absolute', height: '65vh', width: '65vh', top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
                 {currentTile && currentTile.tileData.map((pixel, index) => (
                     pixel === ''
-                        ? <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', height:`calc(100% / ${width}`}} bgcolor='#fff'></Grid>
-                        : <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{height:`calc(100% / ${width}`}} bgcolor={pixel}></Grid>
+                        ? <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{ borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', height: `calc(100% / ${width}` }} bgcolor='#fff'></Grid>
+                        : <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{ height: `calc(100% / ${width}` }} bgcolor={pixel}></Grid>
                 ))}
             </Grid>
 
             <Box bgcolor="#11182a" className="tileset_container">
-                <Box bgcolor="#11182a" style={{borderRadius:'15px 15px 0px 0px', height:'30px', width:'15%', position:'absolute', bottom:'100%'}}>
-                    <Typography style={{color:'azure'}}>Tileset</Typography>
+                <Box bgcolor="#11182a" style={{ borderRadius: '15px 15px 0px 0px', height: '30px', width: '15%', position: 'absolute', bottom: '100%' }}>
+                    <Typography style={{ color: 'azure' }}>Tileset</Typography>
                 </Box>
-                <Box sx={{padding:2}}>
+                <Box sx={{ padding: 2 }}>
                     {value === 0 && (
                         <Stack direction='row' sx={{overflowX: 'scroll'}}>
                             {tileset && tileset?.tiles.map((tileId) => (
@@ -166,9 +208,9 @@ export default function TilesetCanvas() {
                                 </Box>
                             ))}
                             <Button>
-                                <Add onClick={handleAddTile} style={{minHeight: '80px', maxHeight:'80px', minWidth:'80px', maxWidth:'80px'}}/>
+                                <Add onClick={handleAddTile} style={{ minHeight: '80px', maxHeight: '80px', minWidth: '80px', maxWidth: '80px' }} />
                             </Button>
-                            
+
                         </Stack>
                     )}
                 </Box>
