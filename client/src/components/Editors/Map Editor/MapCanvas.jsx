@@ -79,6 +79,8 @@ export default function MapCanvas() {
                 tileImages.push(dataUrl)
                 setTileImages(tileImages)
                 canvas.remove()
+                console.log("printing tile images")
+                console.log(tileImages)
             }
     
             //Build array of all tile ids
@@ -285,11 +287,11 @@ export default function MapCanvas() {
                             //     <img onClick={handleClickTileOption} src={tileImages[1] ? tileImages[1] : require('../images/dummyTile1.png')} className='palette_option' />
                             // ))
                     
-                            tileImages.map((image, index) => (
-                                // {console.log(image + " " + index)}
-                                <img src={tileImages[1]} className='palette_option' />
+                            tileImages?.map((image, index) => {
+                                {console.log(image + " " + index)}
+                                // <img src={tileImages[1]} className='palette_option' />
                                 // <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option' />
-                            ))
+                            })
                         }
                     </Stack>
                 </Box>

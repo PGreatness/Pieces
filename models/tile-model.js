@@ -16,6 +16,10 @@ const tileSchema = new Schema({
     tileData: {
         type: [String],
         required: true
+    },
+    tileImage: {
+        type: String,
+        required: false
     }
 });
 
