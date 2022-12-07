@@ -1694,6 +1694,14 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+    store.getTileById = async function (id) {
+        const response = await api.getTileById(id)
+
+        if (response.status === 200) {
+            return response.data.tile
+        }
+    }
+
 
 
 
