@@ -436,6 +436,20 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+    store.getMapTilesets = async function (id) {
+        console.log(id)
+        const response = await api.getMapTilesets(id)
+
+        if (response.status === 200) {
+            console.log(response.data.tilesets)
+            return response.data.tilesets
+        }
+        else {
+            console.log("LOADING TILESET FAILED")
+        }
+    }
+
+
 
     // TOMMYS OLD CODE FOR LIBRARY
     // store.loadAllUserMaps = async function (userId) {

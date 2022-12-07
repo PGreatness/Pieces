@@ -276,7 +276,7 @@ export default function MapRightBar(props) {
         // 2. ADD TILESET TO CURRENT MAP
 
         // Create new tileset
-        // let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+        //let response = await store.createNewTileset(image.name, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
 
         // Create new tiles to go into tileset
         for (let i = 0; i < tiles.length; i++) {
