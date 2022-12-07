@@ -103,10 +103,11 @@ export default function ExploreTilesetItem(props) {
     }
 
     const openTileset = async function (project) {
-        await store.loadTileset(project._id)
-        console.log(store)
-        await store.changePageToTilesetEditor(project);
-        setLocation('/tileset/' + project._id);
+        store.changePageToTilesetEditor(project).then(() => {
+            store.loadTileset(project._id).then(() => {
+                setLocation('/tileset/' + project._id);
+            })
+        })
 
     }
 

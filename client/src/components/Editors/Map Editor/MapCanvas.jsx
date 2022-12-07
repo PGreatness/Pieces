@@ -47,11 +47,6 @@ export default function MapCanvas() {
             }
             console.log(tileIds)
 
-            // Get tile data from tile
-            // for (let i = 0; i < tileIds.length; i++) {
-            //     fetchTile(tileIds[i])
-            // }
-
             const fetchTiles = async () => {
                 await Promise.all(tileIds.map(async (tileId) => {
                     let tile = await store.getTileById(tileId)
@@ -64,65 +59,9 @@ export default function MapCanvas() {
             console.log(tileImages)
             setTileImages(tileImages)
         })
-    }, [])
+    }, [store.currentProject])
 
-    // useEffect(() => {
-
-    //     let tileIds = []
-    //     let tiles = []
-    //     let tileImages = []
-
-    //     const fetchTile  = async(id) => {
-    //         let tile = await store.getTileById(id)
-    //         let td = tile.tileData
-    //         tiles.push(td)
-
-    //         let rgba = []
-
-    //         td.forEach((t) => {
-    //             if (t.length === 0) {
-    //                 rgba.push(0)
-    //                 rgba.push(0)
-    //                 rgba.push(0)
-    //                 rgba.push(0)
-    //             } 
-    //             else {
-    //                 var bigint = parseInt(t.slice(1), 16);
-    //                 var r = (bigint >> 16) & 255;
-    //                 var g = (bigint >> 8) & 255;
-    //                 var b = bigint & 255;
-    //                 rgba.push(r)
-    //                 rgba.push(g)
-    //                 rgba.push(b)
-    //                 rgba.push(255)
-    //             }
-    //         })
-
-    //         let rgbaArray = new ImageData(new Uint8ClampedArray(rgba), tile.width, tile.height);
-
-    //         let canvas = document.createElement('canvas');
-    //         let context = canvas.getContext('2d');
-    //         canvas.height = tile.height
-    //         canvas.width = tile.width
-
-    //         context.putImageData(rgbaArray, 0, 0);
-    //         let dataUrl = canvas.toDataURL()
-    //         tileImages.push(dataUrl)
-    //         setTileImages(tileImages)
-    //         canvas.remove()
-    //     }
-
-    //     //Build array of all tile ids
-    //     for (let i = 0; i < tilesets.length; i++) {
-    //         tileIds = tileIds.concat(tilesets[i].tiles)
-    //     }
-
-    //     //Get tile data from tile
-    //     for (let i = 0; i < tileIds.length; i++) {
-    //         fetchTile(tileIds[i])
-    //     }
-
-    // }, [])
+    
 
     useEffect(() => {
         console.log("Changing to store tilesets")
@@ -228,7 +167,7 @@ export default function MapCanvas() {
             </Button>
 
             <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `${70 * renderHeightRatio}vh`, width: `${70 * renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
-                {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
+                {store.currentMapTiles?.length > 0 && store.currentMapTiles.map((tile, index) => (
                     <MapTile
                         handleBucket={handleBucket}
                         updateCurrentMapTiles={updateCurrentMapTiles}

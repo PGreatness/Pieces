@@ -22,6 +22,7 @@ import NotificationSidebar from '../NotificationSidebar/NotificationSidebar';
 import { GlobalStoreContext } from '../../store/store'
 import { CommunityStoreContext } from '../../store/communityStore';
 import AuthContext from '../../auth/auth';
+import { PageviewOutlined } from '@mui/icons-material';
 
 
 export default function NavbarAppOptions(props) {
@@ -50,6 +51,7 @@ export default function NavbarAppOptions(props) {
     const [openPasswordModal, setOpenPasswordModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const isProfileMenuOpen = Boolean(anchorEl);
+    const [page, setPage] = useState('')
 
     useEffect(() => {
         auth.getLoggedIn(store, (loggedInUser) => {
@@ -57,6 +59,7 @@ export default function NavbarAppOptions(props) {
             setLoggedIn(true)
             props.changeLoc('/explore')
             store.changePageToExplore();
+            setPage('explore')
             navigate("/explore")
         });
     }, []);
@@ -65,6 +68,11 @@ export default function NavbarAppOptions(props) {
         console.log(auth.errorMessage)
         setOpenErrorModal(auth.errorMessage !== null)
     }, [auth]);
+
+    useEffect(() => {
+        console.log(store.currentPage)
+        setPage(store.currentPage)
+    }, [store.currentPage]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -182,7 +190,7 @@ export default function NavbarAppOptions(props) {
                 <>
                     <Box style={{
                         display: 'flex', flexDirection: 'row', marginRight: '10px', bottom: '0',
-                        color: `${store.currentPage === 'explore' ? "#2dd4cf" : "white"}`
+                        color: `${page === 'explore' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
                         props.changeLoc('/explore');
                         navigate("/explore"); store.changePageToExplore();
@@ -195,7 +203,7 @@ export default function NavbarAppOptions(props) {
 
                     <Box style={{
                         display: 'flex', flexDirection: 'row', marginRight: '10px', marginLeft: '10px', bottom: '0',
-                        color: `${store.currentPage === 'library' ? "#2dd4cf" : "white"}`
+                        color: `${page === 'library' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
                         store.changePageToLibrary().then(()=> {props.changeLoc('/library'); navigate("/library");})
                     }}>
@@ -206,7 +214,7 @@ export default function NavbarAppOptions(props) {
 
                     <Box style={{
                         display: 'flex', flexDirection: 'row', marginRight: '70px', marginLeft: '10px',
-                        color: `${store.currentPage === 'community' ? "#2dd4cf" : "white"}`
+                        color: `${page === 'community' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
                         props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity(); communityStore.getPopularThreads(1);
                     }}>

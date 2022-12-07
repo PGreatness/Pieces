@@ -340,8 +340,8 @@ export default function LibraryScreen(props) {
     const openProject = (project) => {
         console.log(project);
         if (!project.tilesetDesc) {
-            setLocation('/map/' + project._id);
             store.changePageToMapEditor(project);
+            setLocation('/map/' + project._id);
         } else {
             setLocation('/tileset/' + project._id);
             store.changePageToTilesetEditor(project);

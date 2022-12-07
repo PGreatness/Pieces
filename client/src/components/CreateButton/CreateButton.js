@@ -88,32 +88,6 @@ export default function CreateButton(props) {
         let ownerId = auth.user._id
         let hexArray = []
 
-        /*
-            Example 1: 
-            (10, 20)
-            tileheight = 10
-            tilewidth = 10
-
-            10/10 = 1
-            20/10 = 2
-
-            1x2 tile
-            [10x10][10x10]
-
-
-            Example 2:
-            (30, 20)
-            tileheight = 10
-            tilewidth = 10
-
-            30/10 = 3
-            20/10 = 2
-
-            3x2 tile
-            [10x10][10x10]
-            [10x10][10x10]
-            [10x10][10x10]
-        */
 
         if (image) {
 
@@ -161,26 +135,6 @@ export default function CreateButton(props) {
                 console.log("RGBARRAY")
                 console.log(hexArray)
 
-
-                // Uploads 
-
-
-                // Export Tileset
-                // 1. Images
-                // From pieces app (downloaded) {show modal before download and change image name}
-                // From pixel art (then thats their headache!!!!!!) 
-
-
-                // 2. Hex Array (Favorited Tilesets), tile height, tile width -> auto fill
-
-
-                // dropdown with factors of height and width
-
-
-
-                // await store.loadTileset(response.data.tileset._id)
-                // console.log(store)
-
                 // EXAMPLE IMAGE = img.height: 6, img.width: 6)
                 // tile height : 3,  tile width : 2
 
@@ -211,13 +165,6 @@ export default function CreateButton(props) {
                     }
                 }
 
-                console.log("TILES")
-                console.log(tiles)
-                console.log(title)
-                console.log(tilesetHeight)
-                console.log(tileHeight)
-                console.log(ownerId)
-
                 // Create new tileset
                 let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
 
@@ -228,13 +175,11 @@ export default function CreateButton(props) {
                 }
 
                 // Navigate to tileset
-                await store.loadTileset(response.data.tileset._id)
-                console.log(store)
-
-                await store.changePageToTilesetEditor(response.data.tileset)
-                console.log(store.currentPage)
-
-                setLocation(`/tileset/${response.data.tileset._id}`)
+                store.changePageToTilesetEditor(response.data.tileset).then(() => {
+                    store.loadTileset(response.data.tileset._id).then(() => {
+                        setLocation(`/tileset/${response.data.tileset._id}`);
+                    })
+                })
 
             }
         }
@@ -244,17 +189,13 @@ export default function CreateButton(props) {
             }
             else {
                 let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
-                console.log(response)
-                //setLocation(`/tileset/${response.data.tileset._id}`)
-                //store.changePageToTilesetEditor(response.data.tileset)
 
-                await store.loadTileset(response.data.tileset._id).then
-                console.log(store)
-
-                await store.changePageToTilesetEditor(response.data.tileset)
-                console.log(store.currentPage)
-
-                setLocation(`/tileset/${response.data.tileset._id}`)
+                // Navigate to tileset
+                store.changePageToTilesetEditor(response.data.tileset).then(() => {
+                    store.loadTileset(response.data.tileset._id).then(() => {
+                        setLocation(`/tileset/${response.data.tileset._id}`);
+                    })
+                })
             }
         }
 

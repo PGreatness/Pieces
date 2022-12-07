@@ -852,7 +852,7 @@ export default function TilesetRightBar(props) {
                   Compatible Tilesets:
                 </Typography>
                 {
-                  favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
+                  favs?.tilesets && favs?.tilesets.length > 0 ? favs?.tilesets.map((tileset, index) => {
                     return (
                       <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
                         <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>

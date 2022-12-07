@@ -255,8 +255,9 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOAD_TILESET: {
                 return setStore({
                     ...store,
+                    currentPage: "tilesetEditor",
                     currentProject: payload.currentProject,
-                    currentTile: payload.currentTile
+                    currentTile: payload.currentTile,
                 })
             }
 
@@ -293,6 +294,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.ADD_TILE_TO_CURRENT_TILESET: {
                 return setStore({
                     ...store,
+                    currentPage: "tilesetEditor",
                     currentProject: payload.tileset,
                     currentTile: payload.tile
                 })
@@ -600,6 +602,8 @@ function GlobalStoreContextProvider(props) {
                     publicProjects: publicProjects
                 }
             });
+
+            console.log(store.currentPage)
         } else {
             console.log("API FAILED TO GET THE PUBLIC PROJECTS");
         }
@@ -675,6 +679,7 @@ function GlobalStoreContextProvider(props) {
 
     store.changePageToTilesetEditor = async function (tileset) {
         console.log('changing page to tileset')
+        console.log(tileset)
 
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -1475,6 +1480,19 @@ function GlobalStoreContextProvider(props) {
 
 
 
+    // -----------------------------------------    MAPS   ---------------------------------------------------
+    store.loadMap = async function (id) {
+        const response = await api.getMapById(id)
+
+        if (response.status === 200) {
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -1486,20 +1504,9 @@ function GlobalStoreContextProvider(props) {
         const response = await api.getTilesetById(id)
 
         if (response.status === 200) {
-            console.log("LOADED TILESET")
-            console.log(response.data.tileset)
-
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_TILESET,
-                payload: {
-                    currentProject: response.data.tileset,
-                    currentTile: null
-                }
-            })
 
             // Sets current tile if applicable
             if (response.data.tileset.tiles[0]) {
-                console.log("LOADING TILE " + response.data.tileset.tiles[0])
                 const tile_res = await api.getTileById(response.data.tileset.tiles[0])
                 let tile;
                 if (tile_res.status === 200) {
@@ -1516,12 +1523,7 @@ function GlobalStoreContextProvider(props) {
             }
             // If no tiles, creates new one and sets new tileset and current tile
             else {
-                console.log("tile needs to be made")
-                // error is here its not async bro!
                 await store.addTileToTilesetById(id)
-                console.log('after adding default tile')
-                console.log(store)
-
             }
         }
         else {
@@ -1600,11 +1602,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.addTileToTilesetById = async function (id) {
-        console.log('inside adding tile to tileset')
-        
         let tileset = (await api.getTilesetById(id)).data.tileset
-        console.log("ADDING FIRST TILE TO TILESET " + id)
-        console.log(tileset)
         
         let payload = {
             tilesetId: tileset._id,
