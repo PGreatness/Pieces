@@ -1613,14 +1613,18 @@ function GlobalStoreContextProvider(props) {
 
     // -----------------------------------------    TILES   ---------------------------------------------------
 
-    store.updateTile = async function (tileId, tilesetId, tileData) {
+    store.updateTile = async function (tileId, tilesetId, tileData, tileImage) {
         const tilesetResponse = await api.getTilesetById(tilesetId)
         let payload = {
             tileId: tileId,
             userId: tilesetResponse.data.tileset.ownerId,
-            tileData: tileData
+            tileData: tileData,
+            tileImage: tileImage
         }
         const response = await api.updateTile(payload)
+
+        //save as image
+
         if (response.status === 200) {
             storeReducer({
                 type: GlobalStoreActionType.UPDATE_TILE,
