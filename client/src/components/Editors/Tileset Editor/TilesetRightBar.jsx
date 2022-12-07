@@ -806,6 +806,7 @@ export default function TilesetRightBar(props) {
                 style={{ display: 'none' }}
                 ref={inputRef}
                 type="file"
+                accept="image/png"
                 onChange={handleFileChange}
               />
               <TextField
