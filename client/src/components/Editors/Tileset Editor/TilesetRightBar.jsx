@@ -116,19 +116,14 @@ export default function TilesetRightBar(props) {
   const handleChange = (event, newValue) => {
     if (newValue === 1) {
       handleOpenUserSettings()
+    } else {
+      handleCloseUserSettings();
     }
     setValue(newValue);
   }
 
-  const StyledTab = styled(Tab)({
-    "&.Mui-selected": {
-      color: "#2dd4cf"
-    }
-  });
-
   const handleOpenImportTileset = async () => {
     await store.loadFavorites(auth.user._id, project._id)
-    console.log(store);
     setOpenImportTileset(true)
   }
 
@@ -289,11 +284,15 @@ export default function TilesetRightBar(props) {
         }
 
         for (var i = 0; i < pix.length; i += 4) {
-          let r = componentToHex(pix[i])
-          let g = componentToHex(pix[i + 1])
-          let b = componentToHex(pix[i + 2])
+          if (pix[i + 3] == 255) {
+            let r = componentToHex(pix[i])
+            let g = componentToHex(pix[i + 1])
+            let b = componentToHex(pix[i + 2])
 
-          hexArray.push(`#${r}${g}${b}`)
+            hexArray.push(`#${r}${g}${b}`)
+          } else {
+            hexArray.push('')
+          }
         }
 
         console.log("RGBARRAY")
@@ -344,6 +343,80 @@ export default function TilesetRightBar(props) {
 
 
 
+  const handleExportTileset = () => {
+    console.log("exporting tileset")
+
+    store.getTilesetTiles(store.currentProject._id).then((tiles) => {
+      console.log(tiles)
+
+      // if tile data = '' then put rgba a equal to 0
+      let tiles1 = tiles[0].tileData
+      let rgba = []
+
+      tiles.forEach((tileObj) => {
+        let tileData = tileObj.tileData
+
+        tileData.forEach((tile) => {
+          console.log(tile)
+          if (tile.length === 0) {
+            rgba.push(0)
+            rgba.push(0)
+            rgba.push(0)
+            rgba.push(0)
+          } else {
+            var bigint = parseInt(tile.slice(1), 16);
+            var r = (bigint >> 16) & 255;
+            var g = (bigint >> 8) & 255;
+            var b = bigint & 255;
+            rgba.push(r)
+            rgba.push(g)
+            rgba.push(b)
+            rgba.push(255)
+  
+          }
+        })
+
+      })
+
+      console.log(rgba)
+      let numTiles = tiles.length
+      var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), store.currentProject.tileWidth, store.currentProject.tileHeight*numTiles);
+      console.log(rgbaArray)
+
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+      canvas.height = store.currentProject.tileHeight*numTiles
+      canvas.width = store.currentProject.tileWidth
+
+      context.putImageData(rgbaArray, 0, 0);
+
+      var img = new Image();
+      img.src = canvas.toDataURL();
+
+      var link = document.createElement('a');
+      link.download = store.currentProject.title + '_' + store.currentProject.tileHeight + 'x' + store.currentProject.tileWidth;
+      link.href = canvas.toDataURL();
+      link.click();
+
+      canvas.remove();
+      link.remove();
+
+    })
+
+
+
+
+    setOpenExportTileset(false)
+  }
+
+
+
+
+  const StyledTab = styled(Tab)({
+    "&.Mui-selected": {
+      color: "#2dd4cf"
+    }
+  });
 
 
   return (
@@ -613,13 +686,27 @@ export default function TilesetRightBar(props) {
         open={openExportTileset}
         onClose={handleCloseExportTileset}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' height='40%' width='40%' top='30%' left='30%'>
           <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Export Tileset</Typography>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
+              <Typography variant='h3' style={{ textAlign: 'center', marginRight: '10px' }} color='azure'>Export Tileset</Typography>
+            </Grid>
 
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tileset Name: {store.currentProject.title}</Typography>
+            </Grid>
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Num Tiles: {store.currentProject.tiles.length}</Typography>
+            </Grid>
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject.tileHeight}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject.tileWidth}</Typography>
+            </Grid>
+
             <Stack direction='row'>
-              <Button onClick={handleCloseExportTileset}>
+              <Button onClick={handleExportTileset} sx={{ fontSize: '20px', marginLeft: '30%', marginRight: '50px' }}>
                 <Typography >Confirm</Typography>
                 <Check />
               </Button>
@@ -628,6 +715,7 @@ export default function TilesetRightBar(props) {
                 <Clear />
               </Button>
             </Stack>
+
           </Stack>
         </Box>
       </Modal>
@@ -709,7 +797,7 @@ export default function TilesetRightBar(props) {
         <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='fit-content' top='15%' left='20%'>
           <Grid container>
             <Grid item xs={12}>
-              <Typography style={{ textAlign: 'center', marginBottom: '30px' }} variant='h3' color='azure'>Upload Tileset</Typography>
+              <Typography style={{ textAlign: 'center', marginBottom: '30px' }} variant='h3' color='azure'>Import Tileset</Typography>
             </Grid>
 
 
@@ -759,8 +847,8 @@ export default function TilesetRightBar(props) {
 
             <Grid item xs={12}>
               <Box sx={{ marginTop: '40px', marginLeft: '70px', width: '80%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '250px' }}>
-                <Typography variant='h6' sx={{ fontStyle: 'italic', color: 'white', marginLeft: '20px' }}>
-                  Your favorites:
+                <Typography variant='h5' sx={{ fontStyle: 'italic', color: 'white', marginLeft: '20px', marginTop: '15px', marginBottom: '20px' }}>
+                  Compatible Tilesets:
                 </Typography>
                 {
                   favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
@@ -779,7 +867,7 @@ export default function TilesetRightBar(props) {
                         </Button>
                       </Box>
                     )
-                  }) : <Typography variant='h6' sx={{ color: 'white' }}>
+                  }) : <Typography variant='h6' sx={{ color: 'white', marginLeft: '20px', marginTop: '10px', overflow: 'hidden', textOverflow: 'ellipsis', }}>
                       You don't have any compatible favorites! Get out there and start liking!
                     </Typography>
                 }
@@ -802,7 +890,7 @@ export default function TilesetRightBar(props) {
         </Box>
       </Modal>
 
-      <canvas style={{ display: 'none' }} id='canvas'></canvas>
+      <canvas style={{}} id='canvas'></canvas>
 
     </Box>
   )

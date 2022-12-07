@@ -64,6 +64,7 @@ export const importTilesetToTileset = (payload) => api.post(`/tileset/importTile
 // Tile
 export const createTile = (payload) => api.post(`/tile/newTile`, payload)
 export const getTileById = (id) => api.get(`/tile/${id}`)
+export const getTilesetTiles = (id) => api.get(`/tile/tilesetTiles/${id}`)
 export const updateTile = (payload) => api.post(`/tile/updateTile`, payload)
 export const deleteTileById = (payload) => api.post(`/tile/deleteTile`, payload)
 
@@ -190,6 +191,8 @@ const apis = {
     addFriend,
     removeFriend,
     getUserFriends,
+
+    getTilesetTiles,
 }
 
 export default apis

@@ -17,7 +17,7 @@ var createTile = async (req, res) => {
 
     try {
         // TOMMMY commented out userId check for testing purposes as of writing this
-        
+
         if (!tilesetId || !height || !width || !tileData /*|| !userId*/) {
             return res.status(400).json({
                 success: false,
@@ -321,10 +321,52 @@ var getTileById = async (req, res) => {
     }
 }
 
+
+var getTilesetTiles = async (req, res) => {
+    try {
+
+        if (!req.params.id) {
+            return res.status(400).json({
+                success: false,
+                error: 'You must provide an id',
+            });
+        }
+
+        const savedTileset = await tileset.findById(req.params.id);
+        if (savedTileset == null) {
+            return res.status(404).json({
+                success: false,
+                message: "Tileset not found"
+            });
+        }
+
+        let tiles = await tile.find({ tilesetId: req.params.id });
+        console.log(tiles)
+        if (!tiles) {
+            return res.status(400).json({
+                success: false,
+                error: 'Tiles not found',
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            tiles: tiles,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(503).json({
+            message: 'An error occurred',
+        });
+    }
+}
+
+
+
 module.exports = {
     createTile,
     updateTile,
     deleteTile,
     getTileById,
-    getAllTiles
+    getAllTiles,
+    getTilesetTiles
 }

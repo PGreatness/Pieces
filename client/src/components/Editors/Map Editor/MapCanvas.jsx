@@ -15,25 +15,35 @@ export default function MapCanvas() {
     const [mapHeight, setMapHeight] = useState(store.currentProject.mapHeight)
     const [mapWidth, setMapWidth] = useState(store.currentProject.mapWidth)
     const [currentMapTiles, setCurrentMapTiles] = useState(
-        store.currentProject.tiles.length > 0 
+        store.currentProject.tiles.length > 0
             ? store.currentProject.tiles
             : Array(mapHeight * mapWidth).fill('')
     )
-    const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight/Math.max(mapHeight, mapWidth))
-    const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth/Math.max(mapHeight, mapWidth))
+    const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
+    const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
-    const [tilesets, setTilesets] = useState(store.currentProject.tilesets)
+    const [tilesets, setTilesets] = useState([])
+    const [value, setValue] = useState(0);
+
 
     useEffect(() => {
         store.setCurrentMapTiles(currentMapTiles)
     }, [])
 
     useEffect(() => {
+        //store.getMapTilesets(currentMapTiles)
+        //setTilesets(store.currentProject.tilesets)
+    }, [])
+
+    useEffect(() => {
         console.log("Changing to store tilesets")
         console.log(store.currentProject.tilesets)
-        setTilesets(store.currentProject.tilesets)
+
+        // TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
+        // setTilesets(store.currentProject.tilesets)
+
     }, [store.currentProject.tilesets])
-    
+
     const fillHelper = async (x, y, originalTile) => {
 
         let map = store.currentMapTiles
@@ -90,8 +100,8 @@ export default function MapCanvas() {
     // Map Editor Code End
 
 
-    const [ value, setValue ] = useState(0);
     const handleChange = (event, newValue) => {
+        // get next tileset!
         setValue(newValue);
     }
 
@@ -104,51 +114,51 @@ export default function MapCanvas() {
     return (
         <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
             <Typography variant='h5' id='cursor_coord' color='azure'>{currentTile[0] + ", " + currentTile[1]}</Typography>
-            <Button id='map_undo_button' sx={{minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px'}}>
-                <Undo className='toolbar_mui_icon'/>
+            <Button id='map_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+                <Undo className='toolbar_mui_icon' />
             </Button>
-            <Button id='map_redo_button' sx={{minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px'}}>
-                <Redo className='toolbar_mui_icon'/>
+            <Button id='map_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+                <Redo className='toolbar_mui_icon' />
             </Button>
 
-            <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{position: 'absolute', height: `${70*renderHeightRatio}vh`, width: `${70*renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-50%, -60%)'}}>
+            <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `${70 * renderHeightRatio}vh`, width: `${70 * renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
                 {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
-                    <MapTile 
+                    <MapTile
                         handleBucket={handleBucket}
                         updateCurrentMapTiles={updateCurrentMapTiles}
-                        mapHeight={mapHeight} 
+                        mapHeight={mapHeight}
                         mapWidth={mapWidth}
-                        index={index} 
-                        handleHoverTile={handleHoverTile} 
-                        // imgSrc={currentMapTiles[index]}/>
-                        />
+                        index={index}
+                        handleHoverTile={handleHoverTile}
+                    // imgSrc={currentMapTiles[index]}/>
+                    />
                 ))}
             </Grid>
-        
+
             <Box bgcolor="#11182a" className="palettes_container">
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs
-                        value={value} 
-                        onChange={handleChange} 
+                        value={value}
+                        onChange={handleChange}
                         centered
-                        TabIndicatorProps={{style: {backgroundColor: "#2dd4cf"}}}
+                        TabIndicatorProps={{ style: { backgroundColor: "#2dd4cf" } }}
                         sx={{
                             '& .MuiTab-root': { color: "azure" },
                         }}>
                         {
                             tilesets.map((tileset, index) => (
-                                <StyledTab label={tileset.name}/>
+                                <StyledTab label={tileset.name} />
                             ))
                         }
                     </Tabs>
                 </Box>
-                <Box sx={{padding:2}}>
-                <Stack direction='row' spacing={2}>
-                    {
-                        tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
-                            <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option'/>
-                        ))
-                    }
+                <Box sx={{ padding: 2 }}>
+                    <Stack direction='row' spacing={2}>
+                        {
+                            tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
+                                <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option' />
+                            ))
+                        }
                     </Stack>
                 </Box>
             </Box>

@@ -130,6 +130,7 @@
 .palettes_container {
     position: absolute;
     width: 90%;
+    height: 20%;
     border-radius: 10px 10px 0px 0px;
     margin-left: 5%;
     background-color: "#11182a";

@@ -71,13 +71,13 @@ function GlobalStoreContextProvider(props) {
             order: -1
         },
 
+        currentMapTiles: [],
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
         tilesetTool: 'brush',
         currentTile: null,
         primaryTile: null,
         secondaryTile: null,
-        currentMapTiles: []
     });
 
 
@@ -390,6 +390,16 @@ function GlobalStoreContextProvider(props) {
 
     }
 
+    // GET ALL TILES OF A TILESET
+    store.getTilesetTiles = async function (tilesetId) {
+        const response = await api.getTilesetTiles(tilesetId)
+
+        if (response.status === 200) {
+            console.log(response.data.tiles)
+            return response.data.tiles
+        }
+    }
+
     // GET all user favourited projects
     store.loadFavorites = async function (id, filter) {
         let payload = {
@@ -411,36 +421,21 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.importTilesetToTileset = async function (importedProjectId) {
-        let payload = {
-            importId: importedProjectId,
-            tilesetId: store.currentProject._id
+    store.getTilesetById = async function (id) {
+        const response = await api.getTilesetById(id)
+
+        if (response.status === 200) {
+            console.log("Got Tileset")
+            console.log(response.data.tileset)
+
+            return response.data.tileset
         }
-        const response = await api.importTilesetToTileset(payload);
-        console.log(response);
-        if (response.status < 400) {
-            storeReducer({
-                type: GlobalStoreActionType.IMPORT_TILESET_TO_TILESET,
-                payload: response.data.tileset
-            })
+        else {
+            console.log("LOADING TILESET FAILED")
         }
     }
 
 
-    store.importTilesetToMap = async function (importedId) {
-        let payload = {
-            tilesetId: importedId,
-            mapId: store.currentProject._id
-        }
-        const response = await api.importTilesetToMap(payload);
-        console.log(response);
-        if (response.status < 400) {
-            storeReducer({
-                type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
-                payload: response.data.map
-            })
-        }
-    }
 
     // TOMMYS OLD CODE FOR LIBRARY
     // store.loadAllUserMaps = async function (userId) {
@@ -494,6 +489,50 @@ function GlobalStoreContextProvider(props) {
     //         console.log("API FAILED TO FETCH USER AND COLLAB MAPS")
     //     }
     // }
+
+
+
+
+
+
+
+
+
+
+
+    // -----------------------------------------    IMPORTING  ---------------------------------------------------
+
+    store.importTilesetToTileset = async function (importedProjectId) {
+        let payload = {
+            importId: importedProjectId,
+            tilesetId: store.currentProject._id
+        }
+        const response = await api.importTilesetToTileset(payload);
+        console.log(response);
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.IMPORT_TILESET_TO_TILESET,
+                payload: response.data.tileset
+            })
+        }
+    }
+
+
+    store.importTilesetToMap = async function (importedId) {
+        let payload = {
+            tilesetId: importedId,
+            mapId: store.currentProject._id
+        }
+        const response = await api.importTilesetToMap(payload);
+        console.log(response);
+        if (response.status < 400) {
+            storeReducer({
+                type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
+                payload: response.data.map
+            })
+        }
+    }
+
 
 
 
