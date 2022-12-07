@@ -22,10 +22,11 @@ export default function TilesetCanvas() {
     const [ movePixels, setMovePixels ] = useState([])
 
     useEffect(() => {
+        console.log("Current tiles")
+        console.log(store.currentProject.tiles)
         setCurrentTile(store.currentTile)
         setHeight(store.currentTile ? store.currentTile.height : 0)
         setWidth(store.currentTile ? store.currentTile.width : 0)
-
     }, [store.currentTile])
 
 
@@ -46,7 +47,8 @@ export default function TilesetCanvas() {
     }
 
     const handleSelectTile = async (tileId) => {
-        await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
+        console.log(store.currentProject.tiles)
+        // await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
         await store.setCurrentTile(tileId)
         setCurrentTile(store.currentTile)
     }

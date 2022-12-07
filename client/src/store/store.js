@@ -1671,13 +1671,27 @@ function GlobalStoreContextProvider(props) {
             userId: userId
         }
         let response = await api.deleteTileById(payload)
-        let newCurrentProject = response.data.tileset
-        let newCurrentTile = response.data.tileset.tiles[0]
-        console.log("old current tile: (tl)")
-        console.log(store.currentTile)
-        console.log("new current project: (tl)")
+        console.log("delete tileset response")
+        console.log(response)
+        let tilesetId = response.data.tileset_id
+        let getTilesetResponse = await api.getTilesetById(tilesetId)
+        let newCurrentProject = getTilesetResponse.data.tileset
+        console.log("Updated current project after deleting tile from tileset...")
         console.log(newCurrentProject)
-        console.log("new current tile: (tl)" + newCurrentTile)
+        let tileId = newCurrentProject.tiles[0]
+        let newCurrentTile = (await api.getTileById(tileId)).data.tile
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+            payload: {
+                currentProject: newCurrentProject
+            }
+        })
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_TILE,
+            payload: {
+                currentTile: newCurrentTile
+            }
+        })
     }
 
 

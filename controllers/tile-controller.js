@@ -229,9 +229,6 @@ var deleteTile = async (req, res) => {
             }
         }
 
-        let newTilesetTiles = userTileset.tiles
-        newTilesetTiles.splice(newTilesetTiles.indexOf(req.body.tileId), 1)
-        tileset.findOneAndUpdate({_id: userTileset._id}, {newTilesetTiles})
 
         tile.findOneAndDelete({ _id: req.body.tileId }).then((deletedTile) => {
             if (!deletedTile) {
@@ -241,10 +238,12 @@ var deleteTile = async (req, res) => {
                 });
             }
 
-            tileset.updateMany({ tiles: tile._id }, { $pull: { tiles: tile._id } }).then(() => {
+            tileset.updateMany({ tiles: deletedTile._id }, { $pull: { tiles: deletedTile._id } }).then((result) => {
+                console.log("RESULT")
+                console.log(result)
                 return res.status(200).json({
                     success: true,
-                    tileset: userTileset,
+                    tileset_id: userTileset._id,
                     id: tile._id,
                     message: 'Tile deleted!',
                 });
