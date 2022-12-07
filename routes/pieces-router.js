@@ -78,6 +78,7 @@ router.post('/tileset/publishTileset', TilesetController.publishTileset)
 // Tile Routes
 router.get('/tile/all', TileController.getAllTiles)
 router.get('/tile/:id', TileController.getTileById)
+router.get('/tile/tilesetTiles/:id', TileController.getTilesetTiles)
 
 router.post('/tile/newTile', TileController.createTile)
 router.post('/tile/deleteTile', TileController.deleteTile)
@@ -126,5 +127,6 @@ router.get('/getAllPublicProjects', MapController.getAllPublicProjects)
 router.get('/getPublicProjectsByName/:name', MapController.getPublicProjectsByName)
 router.get('/getUserProjects', MapController.getAllProjectsWithUser)
 router.get('/changePage', MapController.getAllPublicProjects)
+router.get('/getMapTilesets', MapController.getMapTilesets)
 
 module.exports = router

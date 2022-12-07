@@ -121,7 +121,7 @@ export default function CreateButton(props) {
             var img = new Image()
             img.src = URL.createObjectURL(image);
 
-            img.onload = async function() {
+            img.onload = async function () {
 
                 // Check if the dimensions are correct
                 let iw = img.width
@@ -137,7 +137,7 @@ export default function CreateButton(props) {
 
                 context.drawImage(img, 0, 0)
                 var imgd = context.getImageData(0, 0, iw, ih);
-                var pix = imgd.data; 
+                var pix = imgd.data;
                 console.log("Image Data:")
                 console.log(pix)
 
@@ -147,11 +147,15 @@ export default function CreateButton(props) {
                 }
 
                 for (var i = 0; i < pix.length; i += 4) {
-                    let r = componentToHex(pix[i])
-                    let g = componentToHex(pix[i + 1])
-                    let b = componentToHex(pix[i + 2])
+                    if (pix[i + 3] == 255) {
+                        let r = componentToHex(pix[i])
+                        let g = componentToHex(pix[i + 1])
+                        let b = componentToHex(pix[i + 2])
 
-                    hexArray.push(`#${r}${g}${b}`)
+                        hexArray.push(`#${r}${g}${b}`)
+                    } else {
+                        hexArray.push('')
+                    }
                 }
 
                 console.log("RGBARRAY")
@@ -174,12 +178,12 @@ export default function CreateButton(props) {
 
 
 
-            // await store.loadTileset(response.data.tileset._id)
-            // console.log(store)
+                // await store.loadTileset(response.data.tileset._id)
+                // console.log(store)
 
                 // EXAMPLE IMAGE = img.height: 6, img.width: 6)
                 // tile height : 3,  tile width : 2
-                
+
                 // hexArray[0]  hexArray[1]    |  hexArray[2] hexArray[3]   | hexArray[4]   hexArray[5]
                 // hexArray[6]  hexArray[7]   |  hexArray[8] hexArray[9]   | hexArray[10]  hexArray[11]
                 // hexArray[12] hexArray[13] |  hexArray[14] hexArray[15] | hexArray[16]  hexArray[17]
@@ -196,7 +200,7 @@ export default function CreateButton(props) {
                 let check = img.width - tileWidth
                 for (i = 0; i < (img.height * img.width); i += tileWidth) {
                     let tile = []
-                    for (let j = i; j < (tileHeight * img.width) + i; j+=img.width) {
+                    for (let j = i; j < (tileHeight * img.width) + i; j += img.width) {
                         tile.push(hexArray.slice(j, j + tileWidth))
                     }
                     // concat each array in tile
@@ -212,7 +216,7 @@ export default function CreateButton(props) {
                 console.log(title)
                 console.log(tilesetHeight)
                 console.log(tileHeight)
-                console.log(ownerId )
+                console.log(ownerId)
 
                 // Create new tileset
                 let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
@@ -263,7 +267,7 @@ export default function CreateButton(props) {
     // const handleCloseInvalidDimensionsModal = () => {
     //     setOpenInvalidDimensionsModal(false)
     // }
-    
+
     const handleOpenCreateMapModal = () => {
         setOpenCreateMapModal(true)
     }
@@ -307,43 +311,54 @@ export default function CreateButton(props) {
                 open={openCreateMapModal}
                 onClose={handleCloseCreateMapModal}
             >
-                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='50%' top='30%' left='30%'>
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='25%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px' }} variant='h5' color='azure'>Create Map</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '80px' }} variant='h3' color='azure'>Create Map</Typography>
                         </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={12}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Map Name:</Typography>
-                            <TextField id='map_name_input' size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
+                            <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name:</Typography>
+                            <TextField id='map_name_input' size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 300 } }} />
+                        </Grid>
+
+                        <Grid item xs={2}></Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }} item xs={4}>
+                            <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Map Height:</Typography>
+                            <TextField id="map_height_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
+                        </Grid>
+                        <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '20px' }} item xs={4}>
+                            <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Map Width:</Typography>
+                            <TextField id="map_width_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Map Height:</Typography>
-                            <TextField id="map_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
-                        </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Map Width:</Typography>
-                            <TextField id="map_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
-                        </Grid>
-                        <Grid item xs={2}></Grid>
+
+
+
                         <Grid item xs={2}></Grid>
                         <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Height:</Typography>
-                            <TextField id="tile_height_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
+                            <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
+                            <TextField id="tile_height_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
                         </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px' }} color='azure'>Tile Width:</Typography>
-                            <TextField id="tile_width_input" size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20, width: 60 } }} />
+                        <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={4}>
+                            <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
+                            <TextField id="tile_width_input" size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} />
                         </Grid>
                         <Grid item xs={2}></Grid>
+
+
                         <Grid item xs={2}></Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Button onClick={handleCloseCreateMapModal}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+                            <Button sx={{ fontSize: '20px' }} onClick={handleCloseCreateMapModal}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
-                            <Button onClick={handleCreateNewMap}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }} item xs={4}>
+                            <Button sx={{ fontSize: '20px' }} onClick={handleCreateNewMap}>
                                 Confirm
                             </Button>
                         </Grid>
@@ -351,6 +366,24 @@ export default function CreateButton(props) {
                     </Grid>
                 </Box>
             </Modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <Modal
                 open={openCreateTilesetModal}
                 onClose={handleCloseCreateTilesetModal}
@@ -392,7 +425,7 @@ export default function CreateButton(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom:'20px'}} color='red'>
+                            <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom: '20px' }} color='red'>
                                 {showError ? 'The given tileset image could not be split into tiles of the given dimensions. Please try again.' : ''}
                             </Typography>
                         </Grid>
@@ -426,7 +459,7 @@ export default function CreateButton(props) {
                     </Grid>
                 </Box>
             </Modal>
-{/* 
+            {/* 
 
             <Modal
                 open={openInvalidDimensionsModal}
@@ -452,7 +485,7 @@ export default function CreateButton(props) {
             </Modal> */}
 
 
-            <canvas style={{display:'none'}} id='canvas'></canvas>
+            <canvas style={{ display: 'none' }} id='canvas'></canvas>
 
         </div>
     );

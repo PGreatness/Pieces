@@ -4,8 +4,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
 
-    // baseURL: 'http://localhost:4000/api',
-    baseURL: 'https://pieces-316.herokuapp.com/api',
+    baseURL: 'http://localhost:4000/api',
+    // baseURL: 'https://pieces-316.herokuapp.com/api',
 })
 
 
@@ -64,6 +64,7 @@ export const importTilesetToTileset = (payload) => api.post(`/tileset/importTile
 // Tile
 export const createTile = (payload) => api.post(`/tile/newTile`, payload)
 export const getTileById = (id) => api.get(`/tile/${id}`)
+export const getTilesetTiles = (id) => api.get(`/tile/tilesetTiles/${id}`)
 export const updateTile = (payload) => api.post(`/tile/updateTile`, payload)
 
 // Comments
@@ -188,6 +189,8 @@ const apis = {
     addFriend,
     removeFriend,
     getUserFriends,
+
+    getTilesetTiles,
 }
 
 export default apis

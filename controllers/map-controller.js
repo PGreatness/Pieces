@@ -613,6 +613,7 @@ getMapbyId = async (req, res) => {
     });
 }
 
+
 getAllPublicMapsOnPage = async (req, res) => {
     var { page } = req.query;
     var { limit } = req.body;
@@ -1197,6 +1198,22 @@ var importTilesetToMap = async (req, res) => {
         })
 }
 
+
+getMapTilesets = async (req, res) => {
+
+    const savedMap = await Map.findById(req.params.id);
+    let tilesetIds = savedMap.tilesets
+
+    var tilesets = await Tileset.find({ "_id": { $in: tilesetIds } });
+    console.log(tilesets)
+    
+
+    return res.status(200).json({
+        success: true,
+        tilesets: tilesets
+    });
+}
+
 module.exports = {
     getAllUserMaps,
     getAllUserAsCollaboratorMaps,
@@ -1213,5 +1230,6 @@ module.exports = {
     removeUserFromMap,
     getAllProjectsWithUser,
     getOwnerAndCollaborator,
-    importTilesetToMap
+    importTilesetToMap,
+    getMapTilesets
 }

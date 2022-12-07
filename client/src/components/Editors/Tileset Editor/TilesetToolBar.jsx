@@ -151,7 +151,7 @@ export default function TilesetToolBar() {
                     />
                 </Grid>
 
-                <Grid item xs={12} style={{marginTop:'20px'}}>
+                <Grid item xs={12} style={{marginTop:'20px', marginLeft: '10px'}}>
                     <Typography style={{color:'azure'}}>Recent Colors:</Typography>
                 </Grid>
                 <Grid item xs={12} style={{marginTop:'5px'}}>

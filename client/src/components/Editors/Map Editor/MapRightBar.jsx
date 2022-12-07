@@ -1,10 +1,11 @@
 import React from 'react'
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { Box, Stack } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import { Modal, Slider, TextField, Tab, Tabs, FormControl, MenuItem, InputLabel, Select, Typography, TabIndicatorProps, List, ListItem, Grid, Button } from '@mui/material'
-import { Brush, HighlightAlt, OpenWith, Map, AccountCircle, People, Colorize, Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add } from '@mui/icons-material'
+import { Modal, Slider, TextField, Tab, Tabs, Typography, Grid, Button } from '@mui/material'
+import { Edit, IosShare, Clear, AddBox, LibraryAdd, Check, Add } from '@mui/icons-material'
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import PublicIcon from '@mui/icons-material/Public';
 import { Avatar } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -42,6 +43,9 @@ export default function MapRightBar(props) {
   const [favs, setFavs] = useState(store.userFavs);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [users, setUsers] = useState([]);
+  const [image, setImage] = useState(null)
+  const [showError, setShowError] = useState(false)
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
   // console.log(owner)
@@ -63,6 +67,8 @@ export default function MapRightBar(props) {
   const handleChange = (event, newValue) => {
     if (newValue === 1) {
       handleOpenUserSettings()
+    } else {
+      handleCloseUserSettings();
     }
     setValue(newValue);
   }
@@ -82,6 +88,17 @@ export default function MapRightBar(props) {
     setOpenImportMap(false)
   }
 
+  const handleOpenFileInput = () => {
+    inputRef.current.click();
+  }
+
+
+  const handleFileChange = async function (event) {
+    let image = event.target.files[0];
+    console.log(image)
+    setImage(image)
+  };
+
   const handleOpenExportMap = () => {
     setOpenExportMap(true)
   }
@@ -91,12 +108,13 @@ export default function MapRightBar(props) {
   }
 
   const handleOpenImportTileset = async () => {
-    console.log("HERE")
     await store.loadFavorites(auth.user._id, project._id);
     setOpenImportTileset(true)
   }
 
   const handleCloseImportTileset = () => {
+    setImage(null)
+    setShowError(false)
     setOpenImportTileset(false)
   }
 
@@ -150,7 +168,6 @@ export default function MapRightBar(props) {
   }
 
   const handleImportTileset = (tileset) => {
-    console.log(favs);
     store.importTilesetToMap(tileset._id);
     handleCloseImportTileset();
   }
@@ -175,15 +192,103 @@ export default function MapRightBar(props) {
 
   const removeCollaborator = async function (id) {
     let newMap = await store.removeMapCollaborator(project._id, id);
-    //console.log(idk)
-    //console.log(store.currentProject)
-    //setProject(idk);
     console.log(project)
-    // auth.getOwnerAndCollabs(project.ownerId, project.collaboratorIds, (owner, collabs) => {
-    //   setOwner(owner);
-    //   setCollaborators(collabs);
-    //   setOpenUserSettings(true);
-    // })
+  }
+
+  const handleImportImageTileset = async () => {
+    // let title = document.getElementById('tileset_name_input').value
+    let tilesetHeight = Number(5);
+    let tilesetWidth = Number(5);
+    let tileHeight = Number(document.getElementById('ts_tile_height_input').value);
+    let tileWidth = Number(document.getElementById('ts_tile_width_input').value)
+    let ownerId = auth.user._id
+    let hexArray = []
+
+    if (image) {
+
+      var context = document.getElementById('canvas').getContext('2d');
+      var img = new Image()
+      console.log(image);
+      img.src = URL.createObjectURL(image);
+      console.log(img);
+
+      img.onload = async function () {
+
+        // Check if the dimensions are correct
+        let iw = img.width
+        let ih = img.height
+
+        tilesetHeight = ih
+        tilesetWidth = iw
+        console.log(`Image Height: ${ih}, Image Width: ${iw}, Tile Height: ${tileHeight}, Tile Width: ${tileWidth}`)
+        if (iw % tileWidth !== 0 || ih % tileHeight !== 0) {
+          console.log("error was found")
+          setShowError(true)
+          return
+        }
+
+        context.drawImage(img, 0, 0)
+        var imgd = context.getImageData(0, 0, iw, ih);
+        var pix = imgd.data;
+        console.log("Image Data:")
+        console.log(pix)
+
+        function componentToHex(c) {
+          var hex = c.toString(16);
+          return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        for (var i = 0; i < pix.length; i += 4) {
+          if (pix[i + 3] == 255) {
+            let r = componentToHex(pix[i])
+            let g = componentToHex(pix[i + 1])
+            let b = componentToHex(pix[i + 2])
+
+            hexArray.push(`#${r}${g}${b}`)
+          } else {
+            hexArray.push('')
+          }
+        }
+
+        console.log("RGBARRAY")
+        console.log(hexArray)
+
+        let tiles = []
+        let check = img.width - tileWidth
+        for (i = 0; i < (img.height * img.width); i += tileWidth) {
+          let tile = []
+          for (let j = i; j < (tileHeight * img.width) + i; j += img.width) {
+            tile.push(hexArray.slice(j, j + tileWidth))
+          }
+          // concat each array in tile
+          tiles.push(tile.flat())
+          if (i === (check)) {
+            check += (tileHeight * img.width)
+            i += ((tileHeight - 1) * img.width)
+          }
+        }
+        
+        
+        // TODO: CALL STORE FUNCTION TO :
+        // 1. CREATE NEW TILES 
+        // 2. CREATE NEW TILESET
+        // 3. ADD TILES TO TILESET
+        // 2. ADD TILESET TO CURRENT MAP
+
+        // Create new tileset
+        // let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+
+        // Create new tiles to go into tileset
+        for (let i = 0; i < tiles.length; i++) {
+          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
+          console.log(createTileResponse)
+        }
+        
+        
+        handleCloseImportTileset();
+      }
+    }
+
   }
 
   return (
@@ -399,49 +504,102 @@ export default function MapRightBar(props) {
         open={openImportTileset}
         onClose={handleCloseImportTileset}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%' id="importTilesetModal">
-          <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Import Tileset</Typography>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
-            <Box sx={{ width: '100%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '100px' }}>
-                <Typography variant='h6' sx={{fontStyle: 'italic', color: 'white'}}>
-                  Your favorites:
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' height='fit-content' top='15%' left='20%'>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography style={{ textAlign: 'center', marginBottom: '30px' }} variant='h3' color='azure'>Import Tileset</Typography>
+            </Grid>
+
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+              <input
+                style={{ display: 'none' }}
+                ref={inputRef}
+                type="file"
+                onChange={handleFileChange}
+              />
+              <TextField
+                value={image ? image.name : "Import Tileset..."}
+                InputProps={{
+                  readOnly: true,
+                }}
+                style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 400, fontSize: '20px' } }}
+              />
+
+              <Button onClick={handleOpenFileInput}>
+                <DriveFolderUploadIcon style={{
+                  fontSize: "60px",
+                  marginLeft: '10px', color: 'white'
+                }} />
+              </Button>
+
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography style={{ fontSize: '15px', textAlign: 'center', marginBottom: '20px' }} color='red'>
+                {showError ? 'The given tileset image could not be split into tiles of the given dimensions. Please try again.' : ''}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={3}></Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
+              <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
+              <TextField id="ts_tile_height_input" value={project.tileHeight} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
+            </Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={3}>
+              <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
+              <TextField id="ts_tile_width_input" value={project.tileWidth} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+                sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
+            </Grid>
+            <Grid item xs={2}></Grid>
+
+            <Grid item xs={12}>
+              <Box sx={{ marginTop: '40px', marginLeft: '70px', width: '80%', borderRadius: '10px', backgroundColor: 'rgb(30, 30, 30)', overflow: 'scroll', height: '250px' }}>
+                <Typography variant='h5' sx={{ fontStyle: 'italic', color: 'white', marginLeft: '20px', marginTop: '15px', marginBottom: '20px' }}>
+                  Compatible Tilesets:
                 </Typography>
                 {
                   favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
-                      return (
-                        <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex'}}>
-                          <Typography variant='h5' sx={{color: 'white', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
-                            {tileset.title}
-                          </Typography>
-                          <Typography variant='h6' sx={{color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex'}}>
-                            {tileset.description ? tileset.description : 'No Description'}
-                          </Typography>
-                          <Button onClick={()=>handleImportTileset(tileset)} sx={{width: '10%', display: 'flex'}}>
-                            <Typography variant='p'>
-                              Import
+                    return (
+                      <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
+                        <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
+                          {tileset.title}
+                        </Typography>
+                        <Typography variant='h6' sx={{ color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
+                          {tileset.description ? tileset.description : 'No Description'}
+                        </Typography>
+                        <Button onClick={() => handleImportTileset(tileset)} sx={{ width: '10%', display: 'flex', marginRight: '40px' }}>
+                          <Typography variant='p'>
+                            Import
                             </Typography>
-                          </Button>
-                        </Box>
-                      )
-                  }) : <Typography variant='h6' sx={{color: 'white'}}>
-                    You don't have any compatible favorites! Get out there and start liking!
+                        </Button>
+                      </Box>
+                    )
+                  }) : <Typography variant='h6' sx={{ color: 'white', marginLeft: '20px', marginTop: '10px', overflow: 'hidden', textOverflow: 'ellipsis', }}>
+                      You don't have any compatible favorites! Get out there and start liking!
                     </Typography>
                 }
               </Box>
-            <Stack direction='row'>
-              <Button onClick={handleCloseImportTileset}>
-                <Typography >Confirm</Typography>
-                <Check />
+            </Grid>
+
+            <Grid item xs={2}></Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
+              <Button sx={{ fontSize: '20px' }} onClick={handleCloseImportTileset}>
+                Close
               </Button>
-              <Button onClick={handleCloseImportTileset}>
-                <Typography>Cancel</Typography>
-                <Clear />
+            </Grid>
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }} item xs={4}>
+              <Button sx={{ fontSize: '20px' }} onClick={() => { handleImportImageTileset(); }}>
+                Confirm
               </Button>
-            </Stack>
-          </Stack>
+            </Grid>
+            <Grid item xs={2}></Grid>
+          </Grid>
         </Box>
       </Modal>
+
 
       <Modal
         open={openExportMap}
