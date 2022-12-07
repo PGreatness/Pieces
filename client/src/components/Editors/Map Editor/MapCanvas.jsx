@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
 import { Typography, Button, Tabs, Tab, Grid } from '@mui/material'
-import { Undo, Redo } from '@mui/icons-material'
+import { Undo, Redo, Delete } from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
 import { useState, useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../../../store/store'
@@ -34,16 +34,8 @@ export default function MapCanvas() {
         store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
             setTilesets(tilesetObjs)
         })
-    }, [])
-
-    useEffect(() => {
-        console.log("Changing to store tilesets")
-        console.log(store.currentProject.tilesets)
-
-        // TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
-        // setTilesets(store.currentProject.tilesets)
-
     }, [store.currentProject.tilesets])
+
 
     const fillHelper = async (x, y, originalTile) => {
 
@@ -102,8 +94,13 @@ export default function MapCanvas() {
 
 
     const handleChange = (event, newValue) => {
-        // get next tileset!
         setValue(newValue);
+    }
+
+    const deleteTileset = () => {
+        console.log(tilesets[value]._id)
+        store.deleteTilesetFromMap(tilesets[value]._id)
+        setValue(0);
     }
 
     const StyledTab = styled(Tab)({
@@ -137,22 +134,39 @@ export default function MapCanvas() {
             </Grid>
 
             <Box bgcolor="#11182a" className="palettes_container">
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        centered
-                        TabIndicatorProps={{ style: { backgroundColor: "#2dd4cf" } }}
-                        sx={{
-                            '& .MuiTab-root': { color: "azure" },
-                        }}>
-                        {
-                            tilesets.map((tileset, index) => (
-                                <StyledTab label={tileset.title} />
-                            ))
-                        }
-                    </Tabs>
-                </Box>
+                {tilesets.length > 0 ?
+                    <Grid container >
+                        <Grid item xs={11}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    centered
+                                    TabIndicatorProps={{ style: { backgroundColor: "#2dd4cf" } }}
+                                    sx={{
+                                        '& .MuiTab-root': { color: "azure" },
+                                    }}>
+                                    {
+                                        tilesets.map((tileset, index) => (
+                                            <StyledTab label={tileset.title} />
+                                        ))
+                                    }
+                                </Tabs>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={1}>
+                        {tilesets.length > 0 ?
+                            <Button onClick={deleteTileset} className='tileset_option_delete'>
+                                <Delete style={{ color: 'azure', fontSize: '25px' }} />
+                            </Button> : <></>}
+                    </Grid>
+                    </Grid>
+                    : <Box sx={{ textAlign: 'center', marginTop: '40px' }}>
+                        <Typography sx={{ fontSize: '25px' }} color='azure'>
+                            Import Tilesets to start working!
+                    </Typography>
+                    </Box>
+                }
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
                         {

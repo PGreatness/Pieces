@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useState, useContext, useEffect } from 'react';
 import { Modal, Grid, TextField, Button, Typography, Backdrop } from '@mui/material';
-import Box from '@mui/material/Box';
+import { Edit, IosShare, Clear, LibraryAdd, Check, Add, Visibility } from '@mui/icons-material'
+import { Box, Stack } from '@mui/system';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -34,8 +35,16 @@ export default function ExploreTilesetItem(props) {
     const [isDisliked, setIsDisliked] = useState(project.dislikes.includes(auth.user?._id));
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
     const [isUnlocked, setIsUnlocked] = useState(project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id)
+    const [openExportTileset, setOpenExportTileset] = useState(false);
 
 
+    const handleOpenExportTileset = () => {
+        setOpenExportTileset(true)
+    }
+
+    const handleCloseExportTileset = () => {
+        setOpenExportTileset(false)
+    }
 
     const handleLikeClick = (event) => {
         event.stopPropagation();
@@ -101,6 +110,69 @@ export default function ExploreTilesetItem(props) {
 
     }
 
+    const handleExportTileset = () => {
+        console.log("exporting tileset")
+
+        store.getTilesetTiles(project._id).then((tiles) => {
+            console.log(tiles)
+
+            // if tile data = '' then put rgba a equal to 0
+            let tiles1 = tiles[0].tileData
+            let rgba = []
+
+            tiles.forEach((tileObj) => {
+                let tileData = tileObj.tileData
+
+                tileData.forEach((tile) => {
+                    console.log(tile)
+                    if (tile.length === 0) {
+                        rgba.push(0)
+                        rgba.push(0)
+                        rgba.push(0)
+                        rgba.push(0)
+                    } else {
+                        var bigint = parseInt(tile.slice(1), 16);
+                        var r = (bigint >> 16) & 255;
+                        var g = (bigint >> 8) & 255;
+                        var b = bigint & 255;
+                        rgba.push(r)
+                        rgba.push(g)
+                        rgba.push(b)
+                        rgba.push(255)
+
+                    }
+                })
+
+            })
+
+            console.log(rgba)
+            let numTiles = tiles.length
+            var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), project.tileWidth, project.tileHeight * numTiles);
+            console.log(rgbaArray)
+
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.height = project.tileHeight * numTiles
+            canvas.width = project.tileWidth
+
+            context.putImageData(rgbaArray, 0, 0);
+
+            var img = new Image();
+            img.src = canvas.toDataURL();
+
+            var link = document.createElement('a');
+            link.download = project.title + '_' + project.tileHeight + 'x' + project.tileWidth;
+            link.href = canvas.toDataURL();
+            link.click();
+
+            canvas.remove();
+            link.remove();
+
+        })
+
+        setOpenExportTileset(false)
+    }
+
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
@@ -129,7 +201,7 @@ export default function ExploreTilesetItem(props) {
                         </Box>
 
                         <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={handleComments}></CommentIcon>
-                        <DownloadIcon sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
+                        <DownloadIcon sx={{ fontSize: 50, px: 1 }} onClick={handleOpenExportTileset}></DownloadIcon>
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
                             onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color: `${isUnlocked ? "white" : "gray"}` }}
@@ -178,6 +250,44 @@ export default function ExploreTilesetItem(props) {
                         </Grid>
                         <Grid item xs={2}></Grid>
                     </Grid>
+                </Box>
+            </Modal>
+
+            <Modal
+                open={openExportTileset}
+                onClose={handleCloseExportTileset}
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' height='40%' width='40%' top='30%' left='30%'>
+                    <Stack direction='column'>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
+                            <Typography variant='h3' style={{ textAlign: 'center', marginRight: '10px' }} color='azure'>Export Tileset</Typography>
+                        </Grid>
+
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+                            <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tileset Name: {project.title}</Typography>
+                        </Grid>
+
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+                            <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Num Tiles: {project.tiles.length}</Typography>
+                        </Grid>
+
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
+                            <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {project.tileHeight}</Typography>
+                            <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {project.tileWidth}</Typography>
+                        </Grid>
+
+                        <Stack direction='row'>
+                            <Button onClick={handleCloseExportTileset} sx={{ fontSize: '20px', marginLeft: '25%', marginRight: '50px' }}>
+                                <Typography>Cancel</Typography>
+                                <Clear />
+                            </Button>
+                            <Button onClick={handleExportTileset} >
+                                <Typography >Download</Typography>
+                                <Check />
+                            </Button>
+                        </Stack>
+
+                    </Stack>
                 </Box>
             </Modal>
 

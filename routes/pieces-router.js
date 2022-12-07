@@ -51,6 +51,7 @@ router.post('/map/publishMap', MapController.publishMap)
 router.post('/map/addUserToMap', MapController.addUserToMap)
 router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
 router.post('/map/importTilesetToMap', MapController.importTilesetToMap)
+router.post('/map/deleteMapTileset', MapController.deleteMapTileset)
 
 router.post('/comments/updateComment', ProjectCommentController.updateComment)
 router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)

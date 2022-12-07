@@ -149,7 +149,7 @@
     height: 80px;
 }
 
-.tile_option_image { 
+.tile_option_image {
     position: absolute;
     padding: 0px;
     width: 100%;
@@ -171,6 +171,20 @@
     top: calc(-50% + 16%);
     left: 3%;
 }
+
+.tileset_option_delete :hover {
+    color: red;
+}
+
+.tileset_option_delete {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
 
 .tile_option_dupe {
     position: absolute;
@@ -230,7 +244,7 @@
     width: 250px;
     background-color: blueviolet;
 }
- 
+
 #map_canvas, #tile_canvas {
     width: 500px;
     height: 500px;
@@ -246,13 +260,13 @@
 
 #map_undo_button, #tile_undo_button {
     position: absolute;
-    right:8%;
+    right: 8%;
     top: 8%;
 }
 
 #map_redo_button, #tile_redo_button {
     position: absolute;
-    right:3%;
+    right: 3%;
     top: 8%;
 }
 

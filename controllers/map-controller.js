@@ -1219,6 +1219,77 @@ getMapTilesets = async (req, res) => {
     });
 }
 
+deleteMapTileset = async (req, res) => {
+    var { mapId, tilesetId } = req.body;
+
+    if (!tilesetId || !mapId) {
+        return res.status(400).json({
+            success: false,
+            message: "You must provide a tileset id and a map id",
+        })
+    }
+
+    var mid;
+    var tid;
+    try {
+        mid = mongoose.Types.ObjectId(mapId);
+        tid = mongoose.Types.ObjectId(tilesetId);
+    }
+    catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Map ID or Tileset ID format",
+            error: err
+        })
+    }
+
+    const chosenMap = await Map.findById(mid);
+    const chosenTileset = await Tileset.findById(tid);
+    if (!chosenMap) {
+        return res.status(400).json({
+            success: false,
+            message: "Map does not exist"
+        })
+    }
+
+    if (!chosenTileset) {
+        return res.status(400).json({
+            success: false,
+            message: "Tileset does not exist"
+        })
+    }
+
+    if (!chosenMap.tilesets.includes(tid)) {
+        return res.status(400).json({
+            success: false,
+            message: "Map does not include Tileset"
+        })
+    }
+
+    await Map.findOneAndUpdate(
+        { '_id': mid },
+        { $pull: { tilesets: tilesetId } },
+        { returnOriginal: false },
+    ).then((newMap) => {
+        console.log(newMap)
+        return res.status(200).json({
+            success: true,
+            map: newMap,
+            message: 'Tileset has been deleted!'
+        })
+
+    }).catch((err) => {
+        console.log(err)
+        return res.status(404).json({
+            success: false,
+            message: 'Failed to delete tileset!!!'
+        })
+
+    })
+
+
+}
+
 module.exports = {
     getAllUserMaps,
     getAllUserAsCollaboratorMaps,
@@ -1236,5 +1307,6 @@ module.exports = {
     getAllProjectsWithUser,
     getOwnerAndCollaborator,
     importTilesetToMap,
-    getMapTilesets
+    getMapTilesets,
+    deleteMapTileset
 }
