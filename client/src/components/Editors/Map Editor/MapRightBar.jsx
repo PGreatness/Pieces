@@ -206,7 +206,8 @@ export default function MapRightBar(props) {
 
     if (image) {
 
-      var context = document.getElementById('canvas').getContext('2d');
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
       var img = new Image()
       console.log(image);
       img.src = URL.createObjectURL(image);
@@ -276,15 +277,18 @@ export default function MapRightBar(props) {
         // 2. ADD TILESET TO CURRENT MAP
 
         // Create new tileset
-        //let response = await store.createNewTileset(image.name, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+        let response = await store.createNewTileset(image.name.slice(0, -4), tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+        let newTileset = response.data.tileset
 
         // Create new tiles to go into tileset
         for (let i = 0; i < tiles.length; i++) {
-          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
+          let createTileResponse = await store.createTile(newTileset._id, tileHeight, tileWidth, tiles[i])
           console.log(createTileResponse)
         }
-        
-        
+
+
+        await store.importTilesetToMap(newTileset._id);
+        canvas.remove();
         handleCloseImportTileset();
       }
     }
@@ -516,6 +520,7 @@ export default function MapRightBar(props) {
                 style={{ display: 'none' }}
                 ref={inputRef}
                 type="file"
+                accept="image/png" 
                 onChange={handleFileChange}
               />
               <TextField
