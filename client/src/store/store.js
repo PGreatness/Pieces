@@ -33,6 +33,8 @@ export const GlobalStoreActionType = {
     IMPORT_TILESET_TO_MAP: "IMPORT_TILESET_TO_MAP",
     SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
     CLEAR_STORE: "CLEAR_STORE",
+
+    SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE'
 }
 
 
@@ -261,6 +263,14 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_CURRENT_TILE: {
                 return setStore({
                     ...store,
+                    currentTile: payload.currentTile
+                })
+            }
+
+            case GlobalStoreActionType.SET_CURRENT_PROJECT_AND_TILE: {
+                return setStore({
+                    ...store,
+                    currentProject: payload.currentProject,
                     currentTile: payload.currentTile
                 })
             }
@@ -1703,17 +1713,18 @@ function GlobalStoreContextProvider(props) {
         let tileId = newCurrentProject.tiles[0]
         let newCurrentTile = (await api.getTileById(tileId)).data.tile
         storeReducer({
-            type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+            type: GlobalStoreActionType.SET_CURRENT_PROJECT_AND_TILE,
             payload: {
-                currentProject: newCurrentProject
-            }
-        })
-        storeReducer({
-            type: GlobalStoreActionType.SET_CURRENT_TILE,
-            payload: {
+                currentProject: newCurrentProject,
                 currentTile: newCurrentTile
             }
         })
+        // storeReducer({
+        //     type: GlobalStoreActionType.SET_CURRENT_TILE,
+        //     payload: {
+        //         currentTile: newCurrentTile
+        //     }
+        // })
     }
 
 
