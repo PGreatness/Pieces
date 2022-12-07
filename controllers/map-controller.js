@@ -1,6 +1,7 @@
 const Map = require('../models/map-model')
 const User = require('../models/user-model')
 const Tileset = require('../models/tileset-model')
+const Tile = require('../models/tile-model')
 const ProjectComment = require('../models/project-comment-model')
 const ObjectId = require("mongoose").Types.ObjectId;
 const mongoose = require('mongoose')
@@ -1204,18 +1205,24 @@ getMapTilesets = async (req, res) => {
     console.log('atleast here')
     console.log(req.params.id)
     const savedMap = await Map.findById(req.params.id);
+
     let tilesetIds = savedMap.tilesets
     const tilesetIdObjs = tilesetIds.map(id => new ObjectId(id));
-
     console.log(tilesetIds)
+    
     var tilesets = await Tileset.find({ "_id": { $in: tilesetIdObjs } });
-    console.log('these are the tilesets')
-    console.log(tilesets)
+
+    //var tiles = await Tile.find({ "tilesetId": { $in: tilesetIdObjs } });
+    
+    
+    // console.log('these are the tilesets')
+    // console.log(tilesets)
     
 
     return res.status(200).json({
         success: true,
-        tilesets: tilesets
+        tilesets: tilesets,
+        //tiles: tiles
     });
 }
 

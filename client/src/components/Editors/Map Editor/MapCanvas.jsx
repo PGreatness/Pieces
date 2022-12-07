@@ -25,7 +25,7 @@ export default function MapCanvas() {
     const [currentTile, setCurrentTile] = useState([0, 0])
     const [tilesets, setTilesets] = useState([])
     const [value, setValue] = useState(0);
-    const [currentIndices, setCurrentIndices] = useState([0,0])
+    const [currentIndices, setCurrentIndices] = useState([0, 0])
 
 
     useEffect(() => {
@@ -36,67 +36,38 @@ export default function MapCanvas() {
         store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
             setTilesets(tilesetObjs)
             console.log(tilesetObjs)
+            console.log(tilesets)
 
             let tileIds = []
-            let tiles = []
             let tileImages = []
-    
-            const fetchTile  = async(id) => {
-                let tile = await store.getTileById(id)
-                let td = tile.tileData
-                tiles.push(td)
-    
-                let rgba = []
-    
-                td.forEach((t) => {
-                    if (t.length === 0) {
-                        rgba.push(0)
-                        rgba.push(0)
-                        rgba.push(0)
-                        rgba.push(0)
-                    } 
-                    else {
-                        var bigint = parseInt(t.slice(1), 16);
-                        var r = (bigint >> 16) & 255;
-                        var g = (bigint >> 8) & 255;
-                        var b = bigint & 255;
-                        rgba.push(r)
-                        rgba.push(g)
-                        rgba.push(b)
-                        rgba.push(255)
-                    }
-                })
-    
-                let rgbaArray = new ImageData(new Uint8ClampedArray(rgba), tile.width, tile.height);
-    
-                let canvas = document.createElement('canvas');
-                let context = canvas.getContext('2d');
-                canvas.height = tile.height
-                canvas.width = tile.width
-    
-                context.putImageData(rgbaArray, 0, 0);
-                let dataUrl = canvas.toDataURL()
-                tileImages.push(dataUrl)
-                setTileImages(tileImages)
-                canvas.remove()
-                console.log("printing tile images")
-                console.log(tileImages)
+
+            // Build array of all tile ids
+            for (let i = 0; i < tilesetObjs.length; i++) {
+                tileIds = tileIds.concat(tilesetObjs[i].tiles)
             }
-    
-            //Build array of all tile ids
-            for (let i = 0; i < tilesets.length; i++) {
-                tileIds = tileIds.concat(tilesets[i].tiles)
+            console.log(tileIds)
+
+            // Get tile data from tile
+            // for (let i = 0; i < tileIds.length; i++) {
+            //     fetchTile(tileIds[i])
+            // }
+
+            const fetchTiles = async () => {
+                await Promise.all(tileIds.map(async (tileId) => {
+                    let tile = await store.getTileById(tileId)
+                    tileImages.push(tile.tileImage)
+                }));
             }
-    
-            //Get tile data from tile
-            for (let i = 0; i < tileIds.length; i++) {
-                fetchTile(tileIds[i])
-            }
+
+            fetchTiles()
+
+            console.log(tileImages)
+            setTileImages(tileImages)
         })
     }, [])
 
     // useEffect(() => {
-        
+
     //     let tileIds = []
     //     let tiles = []
     //     let tileImages = []
@@ -286,12 +257,12 @@ export default function MapCanvas() {
                             // tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
                             //     <img onClick={handleClickTileOption} src={tileImages[1] ? tileImages[1] : require('../images/dummyTile1.png')} className='palette_option' />
                             // ))
-                    
-                            tileImages?.map((image, index) => {
-                                {console.log(image + " " + index)}
+                            // console.log(tileImages)
+                            tileImages.map((image, index) => (
+                                // { console.log(image + " " + index) }
                                 // <img src={tileImages[1]} className='palette_option' />
-                                // <img onClick={handleClickTileOption} src={require('../images/dummyTile1.png')} className='palette_option' />
-                            })
+                                <img onClick={handleClickTileOption} src={image} className='palette_option' />
+                            ))
                         }
                     </Stack>
                 </Box>

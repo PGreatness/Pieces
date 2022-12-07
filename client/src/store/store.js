@@ -400,6 +400,17 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    // GET ALL TILES OF A MAP
+    // store.getMapTiles = async function (tilesetIds) {
+
+    //     const response = await api.getTilesetTiles(tilesetIds)
+
+    //     if (response.status === 200) {
+    //         console.log(response.data.tiles)
+    //         return response.data.tiles
+    //     }
+    // }
+
     // GET all user favourited projects
     store.loadFavorites = async function (id, filter) {
         let payload = {
