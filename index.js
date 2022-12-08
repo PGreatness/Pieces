@@ -4,7 +4,8 @@ const cors = require('cors')
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
 const config = require("config");
-const path = require('path')
+const path = require('path');
+const sockets = require('./sockets');
 
 // CREATE OUR SERVER
 const PORT = process.env.PORT || 4000;
@@ -60,19 +61,7 @@ mongoose.connect(config.get("mongo_uri"), { useNewUrlParser: true, useUnifiedTop
         var server = app.listen({ port: PORT }, () => {
             console.log(`Server is running on port ${PORT}`)
         });
-        const { Server } = require("socket.io");
-        const io = new Server(server, {
-            cors: {
-                origin: "http://localhost:3000",
-                methods: ["GET", "POST"]
-            }
-        });
-        io.on('connection', (socket) => {
-            console.log('a user connected');
-            socket.on('disconnect', () => {
-                console.log('user disconnected');
-            });
-        });
+        sockets(server);
     })
     .catch(error => {
         console.log(error)

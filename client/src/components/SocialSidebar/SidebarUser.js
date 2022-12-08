@@ -92,6 +92,7 @@ export default function SidebarUser(props) {
 
   const handleAddFriend = async (sendToId) => {
     let response = await auth.sendFriendRequest(auth.user._id, sendToId)
+    auth.socket.emit('addFriend', { sendTo: sendToId });
   }
 
   var online = (jsx) => <ThemeProvider theme={theme}><Badge overlap='circular' anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant='dot' color='online'>{jsx}</Badge></ThemeProvider>;
