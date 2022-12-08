@@ -31,18 +31,19 @@ export default function MapRightBar(props) {
   //const project = store.currentProject;
 
   const [project, setProject] = useState(store.currentProject);
+  const [owner, setOwner] = useState(null);
+  const [collaborators, setCollaborators] = useState([]);
+  const [users, setUsers] = useState([]);
   const [value, setValue] = useState(0);
+  
   const [openImportMap, setOpenImportMap] = useState(false);
   const [openExportMap, setOpenExportMap] = useState(false);
   const [openImportTileset, setOpenImportTileset] = useState(false);
   const [openPublishMap, setOpenPublishMap] = useState(false);
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
   const [openDeleteMap, setOpenDeleteMap] = useState(false);
-  const [owner, setOwner] = useState(null);
-  const [collaborators, setCollaborators] = useState([]);
   const [favs, setFavs] = useState(store.userFavs);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
-  const [users, setUsers] = useState([]);
   const [image, setImage] = useState(null)
   const [showError, setShowError] = useState(false)
   const inputRef = useRef(null);
@@ -566,7 +567,7 @@ export default function MapRightBar(props) {
                   Compatible Tilesets:
                 </Typography>
                 {
-                  favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
+                  favs?.tilesets && favs?.tilesets.length > 0 ? favs?.tilesets.map((tileset, index) => {
                     return (
                       <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
                         <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>

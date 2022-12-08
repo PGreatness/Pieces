@@ -12,65 +12,66 @@ export default function MapCanvas() {
     // Map Editor Code Start
 
     const { store } = useContext(GlobalStoreContext)
+    
+    const [map, setMap] = useState(store.currentProject)
     const [mapHeight, setMapHeight] = useState(store.currentProject.mapHeight)
     const [mapWidth, setMapWidth] = useState(store.currentProject.mapWidth)
-    const [currentMapTiles, setCurrentMapTiles] = useState(
-        store.currentProject.tiles.length > 0
-            ? store.currentProject.tiles
-            : Array(mapHeight * mapWidth).fill('')
-    )
-    const [tileImages, setTileImages] = useState([])
+    const [currentMapTiles, setCurrentMapTiles] = useState(store.currentMapTiles)
+    const [tilesets, setTilesets] = useState(store.mapTilesets)
+    const [tileImages, setTileImages] = useState(store.mapTiles.map(function(tile){ return tile.tileImage}))
+    console.log(tileImages)
+    
+    
+    const [value, setValue] = useState(0);
+    const [currentIndices, setCurrentIndices] = useState([0, 0])
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
-    const [tilesets, setTilesets] = useState([])
-    const [value, setValue] = useState(0);
-    const [currentIndices, setCurrentIndices] = useState([0, 0])
 
 
-    useEffect(() => {
-        store.setCurrentMapTiles(currentMapTiles)
-    }, [])
+    // useEffect(() => {
+    //     store.setCurrentMapTiles(currentMapTiles)
+    // }, [])
 
-    useEffect(() => {
-        store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
-            setTilesets(tilesetObjs)
-            console.log(tilesetObjs)
-            console.log(tilesets)
+    // useEffect(() => {
+    //     console.log("Changing to store tilesets")
+    //     console.log(store.currentProject.tilesets)
 
-            let tileIds = []
-            let tileImages = []
+    //     TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
+    //     setTilesets(store.currentProject.tilesets)
 
-            // Build array of all tile ids
-            for (let i = 0; i < tilesetObjs.length; i++) {
-                tileIds = tileIds.concat(tilesetObjs[i].tiles)
-            }
-            console.log(tileIds)
+    // }, [store.currentProject.tilesets])
 
-            const fetchTiles = async () => {
-                await Promise.all(tileIds.map(async (tileId) => {
-                    let tile = await store.getTileById(tileId)
-                    tileImages.push(tile.tileImage)
-                }));
-            }
+    // useEffect(() => {
+    //     store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+    //         setTilesets(tilesetObjs)
+    //         console.log(tilesetObjs)
+    //         console.log(tilesets)
 
-            fetchTiles()
+    //         let tileIds = []
+    //         let tileImages = []
 
-            console.log(tileImages)
-            setTileImages(tileImages)
-        })
-    }, [store.currentProject])
+    //         // Build array of all tile ids
+    //         for (let i = 0; i < tilesetObjs.length; i++) {
+    //             tileIds = tileIds.concat(tilesetObjs[i].tiles)
+    //         }
+    //         console.log(tileIds)
 
-    
+    //         const fetchTiles = async () => {
+    //             await Promise.all(tileIds.map(async (tileId) => {
+    //                 let tile = await store.getTileById(tileId)
+    //                 tileImages.push(tile.tileImage)
+    //             }));
+    //         }
 
-    useEffect(() => {
-        console.log("Changing to store tilesets")
-        console.log(store.currentProject.tilesets)
+    //         fetchTiles()
 
-        // TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
-        // setTilesets(store.currentProject.tilesets)
+    //         console.log(tileImages)
+    //         setTileImages(tileImages)
+    //     })
+    // }, [store.currentProject])
 
-    }, [store.currentProject.tilesets])
+
 
 
     const fillHelper = async (x, y, originalTile) => {
