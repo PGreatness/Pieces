@@ -52,6 +52,24 @@ const startWebSockets = (server) => {
             socket.to(data.sendTo).emit('updateNotifications');
             console.log('update sent');
         })
+
+        socket.on('openProject', (data) => {
+            console.log(`opening project ${data.project} for ${socket.user}`);
+            // join the project room
+            socket.join(data.project);
+        });
+
+        socket.on('closeProject', (data) => {
+            console.log(`closing project ${data.project} for ${socket.user}`);
+            // leave the project room
+            socket.leave(data.project);
+        });
+
+        socket.on('updateMap', (data) => {
+            console.log('a collaborator updated the map, pushing update to all collaborators');
+            socket.broadcast.to(data.project).emit('recieveUpdateMap', data);
+        })
+
     });
 }
 

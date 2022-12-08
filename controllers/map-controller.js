@@ -1217,7 +1217,7 @@ getMapTilesets = async (req, res) => {
     
     
     console.log('these are the tiles')
-    console.log(tiles)
+    // console.log(tiles)
     
 
     return res.status(200).json({
