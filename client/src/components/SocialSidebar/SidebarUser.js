@@ -65,6 +65,7 @@ export default function SidebarUser(props) {
 
   const [isOnline, setIsOnline] = useState(props.isOnline);
   const [isFriend, setIsFriend] = useState(props.isFriend);
+  const [isPending, setIsPending] = useState(props.pending);
   const { auth } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -90,9 +91,16 @@ export default function SidebarUser(props) {
     }
   });
 
+  useEffect(()=> {
+    setIsPending(props.pending)
+  }, [props.pending])
+
   const handleAddFriend = async (sendToId) => {
+    if (isPending) return;
     let response = await auth.sendFriendRequest(auth.user._id, sendToId)
     auth.socket.emit('addFriend', { sendTo: sendToId });
+    setIsPending(true);
+    props.addPending(sendToId)
   }
 
   var online = (jsx) => <ThemeProvider theme={theme}><Badge overlap='circular' anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant='dot' color='online'>{jsx}</Badge></ThemeProvider>;
@@ -149,7 +157,7 @@ export default function SidebarUser(props) {
                           <MenuItem onClick={handleClose}>Chat</MenuItem>
                           <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove Friend</MenuItem>
                         </Menu>
-                      </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} />}
+                      </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} disabled={isPending} sx={{color: isPending ? 'grey' : 'white' }}/>}
         </ListItemButton>
         <Divider />
       </ListItem>

@@ -85,7 +85,7 @@ export default function Notification(props) {
 
         } else {
             // friend request case
-
+            auth.socket.emit('friendRequestAction', { sendTo: props.notification.senderId, action: 'approve' })
             // add friend
             auth.addFriend(auth.user?._id, props.notification.senderId, (user) => {
 
@@ -137,6 +137,7 @@ export default function Notification(props) {
 
         } else {
             // friend request case
+            auth.socket.emit('friendRequestAction', { sendTo: props.notification.senderId, action: 'deny' })
             // remove notification
             auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
 
