@@ -410,7 +410,7 @@ export default function MapRightBar(props) {
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 <Grid container direction='row' rowSpacing={0} columns={store.currentProject.mapWidth} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
                   {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
-                    <MapTile index={index} />
+                    <MapTile index={index} preview={true}/>
                   ))}
                 </Grid>
               </Stack>
