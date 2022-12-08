@@ -295,6 +295,92 @@ export default function MapRightBar(props) {
 
   }
 
+  const exportMapAsJSON = () => {
+
+    let layers = {
+      //class
+      compression: '',
+      data: [],
+      encoding: "csv", //not sure what this is
+      height: store.currentProject.mapHeight,
+      id: 1,
+      layers: [],
+      locked: false,
+      name: 'Default Map Layer',
+      offsetx: 0,
+      offsety: 0,
+      opacity: 1,
+      parallaxx: 0,
+      parallaxy: 0,
+      properties: {
+
+      },
+      type: 'tilelayer',
+      visible: true,
+      width: store.currentProject.mapWidth,
+      x: 0,
+      y: 0
+    }
+    
+    let tilesets = []
+    
+    store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+
+      tilesetObjs.forEach((tileset) => {
+        let tileset = {
+          backgroundColor: '#00FFFFFF',
+          //class
+          columns: 1,
+          fillmode: 'stretch',
+          firstgid: 0,
+          image: '',
+          imageHeight: -1,
+          imageWidth: -1,
+          margin: 0,
+          name: tileset.title,
+          objectalignment: 'unspecified',
+          properties: {
+            "name": tileset.title,
+            "description": tileset.tilesetDescription,
+            "tags": tileset.tags
+          },
+          source: '',
+          spacing: 0,
+          tilecount: tileset.tiles.length,
+          
+        }
+      })
+    })
+
+    let mapObject = {
+      backgroundColor: '#00FFFFFF',
+      //class
+      compressionLevel: -1,
+      height: store.currentProject.mapHeight,
+      infinite: false,
+      layers: [],
+      nextlayerid: 1,
+      nextobjectid: 1,
+      orientation: 'orthogonal',
+      parallaxoriginx: 0,
+      parallaxoriginy: 0,
+      properties: {
+        "name": store.currentProject.title,
+        "description": store.currentProject.mapDescription,
+        "tags": store.currentProject.tags
+      },
+      renderorder: "right-down",
+      //tiledversion
+      tileheight: store.currentProject.tileHeight,
+      tilesets: [],
+      tilewidth: store.currentProject.tileWidth,
+      type: "map",
+      width: store.currentProject.mapWidth,
+    }
+
+
+  }
+
   return (
     <Box bgcolor={"#11182a"} flex={4} className="map_rightbar">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

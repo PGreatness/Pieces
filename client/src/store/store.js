@@ -1484,8 +1484,8 @@ function GlobalStoreContextProvider(props) {
     store.loadMap = async function (id) {
 
         // set store 
-        // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, currentMapTiles, userFavs, mapTilesets, mapTiles [images]
-
+        // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, currentMapTiles, userFavs, mapTilesets, mapTiles [images], 
+        
     
         
         const response = await api.getMapById(id)
