@@ -57,7 +57,7 @@ export default function MapRightBar(props) {
 
   useEffect(() => {
     setProject(store.currentProject)
-    auth.getOwnerAndCollaborators(project._id, true).then((data) => {
+    auth.getOwnerAndCollaborators(project ? project._id : '', true).then((data) => {
       setOwner(data.owner);
       setCollaborators(data.collaborators);
     })
@@ -412,12 +412,12 @@ export default function MapRightBar(props) {
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Typography color='azure' variant='h4'
-              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject.title}</Typography>
+              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject ? store.currentProject.title : ''}</Typography>
 
             <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
-                <Grid container direction='row' rowSpacing={0} columns={store.currentProject.mapWidth} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
+                <Grid container direction='row' rowSpacing={0} columns={store.currentProject ? store.currentProject.mapWidth : 0} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
                   {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
                     <MapTile index={index} preview={true}/>
                   ))}
@@ -687,12 +687,12 @@ export default function MapRightBar(props) {
             <Grid item xs={3}></Grid>
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
               <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Height:</Typography>
-              <TextField id="ts_tile_height_input" value={project.tileHeight} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+              <TextField id="ts_tile_height_input" value={store.currentProject ? store.currentProject.tileHeight : 0} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
                 sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
             </Grid>
             <Grid style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }} item xs={3}>
               <Typography style={{ fontSize: '20px', textAlign: 'center', marginRight: '12px' }} color='azure'>Tile Width:</Typography>
-              <TextField id="ts_tile_width_input" value={project.tileWidth} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
+              <TextField id="ts_tile_width_input" value={store.currentProject ? store.currentProject.tileWidth : 0} size='small' style={{ backgroundColor: 'azure', borderRadius: 10 }}
                 sx={{ "& .MuiInputBase-root": { height: 40, width: 70 } }} disabled />
             </Grid>
             <Grid item xs={2}></Grid>

@@ -1805,6 +1805,8 @@ function GlobalStoreContextProvider(props) {
             mapId: store.currentProject._id
         }
         const response = await api.deleteMapTileset(payload);
+        const response2 = await store.deleteTileset(deletedId);
+        
         console.log(response);
 
         if (response.status < 400) {
@@ -1846,6 +1848,8 @@ function GlobalStoreContextProvider(props) {
 
 
 
+                console.log("response data map")
+                console.log(response.data.map)
                 storeReducer({
                     type: GlobalStoreActionType.DELETE_TILESET_FROM_MAP,
                     payload: {

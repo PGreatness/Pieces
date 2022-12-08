@@ -106,13 +106,11 @@ createTileset = async (req, res) => {
 deleteTileset = async (req, res) => {
     if (req.body.id == undefined) {
         return res.status(404).json({
-            err,
             message: 'ID empty',
         })
     }
     if (req.body.ownerId == undefined) {
         return res.status(404).json({
-            err,
             message: 'ownerId empty',
         })
     }
