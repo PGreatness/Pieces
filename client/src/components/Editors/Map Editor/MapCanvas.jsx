@@ -12,16 +12,15 @@ export default function MapCanvas() {
     // Map Editor Code Start
 
     const { store } = useContext(GlobalStoreContext)
-    
-    const [map, setMap] = useState(store.currentProject)
+
     const [mapHeight, setMapHeight] = useState(store.currentProject.mapHeight)
     const [mapWidth, setMapWidth] = useState(store.currentProject.mapWidth)
     const [currentMapTiles, setCurrentMapTiles] = useState(store.currentMapTiles)
     const [tilesets, setTilesets] = useState(store.mapTilesets)
-    const [tileImages, setTileImages] = useState(store.mapTiles.map(function(tile){ return tile.tileImage}))
+    const [tileImages, setTileImages] = useState(store.mapTiles.map(function (tile) { return tile.tileImage }))
     console.log(tileImages)
-    
-    
+
+
     const [value, setValue] = useState(0);
     const [currentIndices, setCurrentIndices] = useState([0, store.mapTilesets[0].tiles.length])
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
@@ -29,9 +28,27 @@ export default function MapCanvas() {
     const [currentTile, setCurrentTile] = useState([0, 0])
 
 
-    // useEffect(() => {
-    //     store.setCurrentMapTiles(currentMapTiles)
-    // }, [])
+    useEffect(() => {
+        setMapHeight(store.currentProject.mapHeight)
+        setMapWidth(store.currentProject.mapWidth)
+        // TODO: probably update currentMapTiles as well
+        // setCurrentMapTiles(store.currentMapTiles)
+    }, [store.currentProject])
+
+    // Updating map object in canvas
+    useEffect(() => {
+        //console.log(store.currentMapTiles)
+        setCurrentMapTiles(store.currentMapTiles)
+    }, [store.currentMapTiles])
+
+    // updating map tilesets
+    useEffect(() => {
+        setTilesets(store.mapTilesets)
+        setTileImages(store.mapTiles.map(function (tile) { return tile.tileImage }))
+        console.log(store.mapTiles.map(function (tile) { return tile.tileImage }))
+    }, [store.mapTilesets])
+
+
 
     // useEffect(() => {
     //     console.log("Changing to store tilesets")
@@ -71,10 +88,6 @@ export default function MapCanvas() {
     //     })
     // }, [store.currentProject])
 
-
-    // useEffect(() => {
-    //         store.setCurrentMapTiles(currentMapTiles)
-    // }, [store.currentPorject])
 
 
     const fillHelper = async (x, y, originalTile) => {
@@ -200,11 +213,11 @@ export default function MapCanvas() {
                             </Box>
                         </Grid>
                         <Grid item xs={1}>
-                        {tilesets.length > 0 ?
-                            <Button onClick={deleteTileset} className='tileset_option_delete'>
-                                <Delete style={{ color: 'azure', fontSize: '25px' }} />
-                            </Button> : <></>}
-                    </Grid>
+                            {tilesets.length > 0 ?
+                                <Button onClick={deleteTileset} className='tileset_option_delete'>
+                                    <Delete style={{ color: 'azure', fontSize: '25px' }} />
+                                </Button> : <></>}
+                        </Grid>
                     </Grid>
                     : <Box sx={{ textAlign: 'center', marginTop: '40px' }}>
                         <Typography sx={{ fontSize: '25px' }} color='azure'>
