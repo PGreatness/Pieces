@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
-import { Typography, Button, Tabs, Tab, Grid } from '@mui/material'
+import { Modal, Typography, Button, Tabs, Tab, Grid } from '@mui/material'
 import { Undo, Redo, Add, Translate, Delete, ContentCopy } from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
 import { useState, useContext, useEffect } from 'react';
@@ -22,6 +22,7 @@ export default function TilesetCanvas() {
     const [ width, setWidth ] = useState(store.currentTile ? store.currentTile.width : 0)
     const [ currentPixel, setCurrentPixel ] = useState([0, 0])
     const [ movePixels, setMovePixels ] = useState([])
+    const [ openDeleteLastTileModal, setOpenDeleteLastTileModal ] = useState(false)
 
     useEffect(() => {
         console.log(store.currentProject.tiles)
@@ -29,7 +30,6 @@ export default function TilesetCanvas() {
     }, [store.currentProject])
     
     useEffect(() => {
-        console.log("Current tiles")
         console.log(store.currentProject.tiles)
         setCurrentTile(store.currentTile)
         setHeight(store.currentTile ? store.currentTile.height : 0)
@@ -138,7 +138,6 @@ export default function TilesetCanvas() {
         })
 
         var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), width, height);
-        console.log(rgbaArray)
 
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
@@ -154,6 +153,11 @@ export default function TilesetCanvas() {
 
     const handleDeleteTile = async (tileId) => {
         console.log("Deleting tile " + tileId + " for user " + auth.user)
+        if (store.currentProject.tiles.length === 1) {
+            console.log("LAST TILE DON'T DELETE")
+            handleOpenDeleteLastTileModal()
+            return
+        }
         await store.deleteTileById(tileId, auth.user._id)
     }
 
@@ -166,6 +170,14 @@ export default function TilesetCanvas() {
     const [value, setValue] = useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    }
+
+    const handleOpenDeleteLastTileModal = () => {
+        setOpenDeleteLastTileModal(true)
+    }
+
+    const handleCloseDeleteLastTileModal = () => {
+        setOpenDeleteLastTileModal(false)
     }
 
     const StyledTab = styled(Tab)({
@@ -184,13 +196,21 @@ export default function TilesetCanvas() {
                 <Redo className='toolbar_mui_icon' />
             </Button>
 
-            <Grid container direction='row' id='tileset-canvas-grid' rowSpacing={0} columns={width} bgcolor='#000000' style={{ position: 'absolute', height: '65vh', width: '65vh', top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
-                {currentTile && currentTile.tileData.map((pixel, index) => (
-                    pixel === ''
-                        ? <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{ borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', height: `calc(100% / ${width}` }} bgcolor='#fff'></Grid>
-                        : <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{ height: `calc(100% / ${width}` }} bgcolor={pixel}></Grid>
-                ))}
-            </Grid>
+            {currentTile 
+                ? <Grid container direction='row' id='tileset-canvas-grid'
+                    rowSpacing={0} columns={width} bgcolor='#000000'
+                    style={{ position: 'absolute', height: '65vh', width: '65vh', top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
+                    {currentTile.tileData.map((pixel, index) => (
+                            pixel === ''
+                                ? <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{ borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', height: `calc(100% / ${width}` }} bgcolor='#fff'></Grid>
+                                : <Grid onMouseOver={handleHoverPixel} onClick={handleClickPixel} id={`pixel_${index}`} className='pixel' item xs={1} style={{ height: `calc(100% / ${width}` }} bgcolor={pixel}></Grid>
+                    ))}
+                </Grid>
+                // : <Box style={{height: '80%', display:'flex', flexWrap: 'wrap', alignItems:'center', justifyContent:'center'}}>
+                //     <Typography>Please create a tile to start working!</Typography>
+                // </Box>
+                : null
+            }
 
             <Box bgcolor="#11182a" className="tileset_container">
                 <Box bgcolor="#11182a" style={{ borderRadius: '15px 15px 0px 0px', height: '30px', width: '15%', position: 'absolute', bottom: '100%' }}>
@@ -199,14 +219,19 @@ export default function TilesetCanvas() {
                 <Box sx={{ padding: 2 }}>
                     {value === 0 && (
                         <Stack direction='row' sx={{overflowX: 'scroll'}}>
-                            {tileset && tileset?.tiles.map((tileId) => (
-                                <Box className='tile_option'>
-                                    <img src={require('../images/dummyTilePreview.png')} className='tile_option_image'/>
-                                    <Button style={{padding: '0px', maxWidth: '65%', top: '0px', left: '0px', minWidth: '65%'}} className='tile_option_select' onClick={() => handleSelectTile(tileId)}></Button>
-                                    <Button onClick={() => handleDeleteTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_delete'><Delete style={{color:'azure', height: '80%', width: '80%'}}/></Button>  
-                                    {/* <Button onClick={() => handleDuplicateTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_dupe'><ContentCopy style={{color:'azure', height: '70%', width: '70%'}}/></Button>   */}
-                                </Box>
-                            ))}
+                            {console.log("tileset tiles")}
+                            {console.log(tileset.tiles)}
+                            {tileset && tileset.tiles.length > 0
+                                ? tileset?.tiles.map((tileId) => (
+                                    <Box className='tile_option'>
+                                        <img src={require('../images/dummyTilePreview.png')} className='tile_option_image'/>
+                                        <Button style={{padding: '0px', maxWidth: '65%', top: '0px', left: '0px', minWidth: '65%'}} className='tile_option_select' onClick={() => handleSelectTile(tileId)}></Button>
+                                        <Button onClick={() => handleDeleteTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_delete'><Delete style={{color:'azure', height: '80%', width: '80%'}}/></Button>  
+                                        {/* <Button onClick={() => handleDuplicateTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_dupe'><ContentCopy style={{color:'azure', height: '70%', width: '70%'}}/></Button>   */}
+                                    </Box>
+                                ))
+                                : null
+                            }   
                             <Button>
                                 <Add onClick={handleAddTile} style={{ minHeight: '80px', maxHeight: '80px', minWidth: '80px', maxWidth: '80px' }} />
                             </Button>
@@ -215,6 +240,20 @@ export default function TilesetCanvas() {
                     )}
                 </Box>
             </Box>
+
+            <Modal
+                open={openDeleteLastTileModal}
+                onClose={handleCloseDeleteLastTileModal}
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+                <Stack direction='column' style={{margin:'10px'}}>
+                    <Typography style={{textAlign:'center', marginBottom:'10px'}} variant='h5' color='#2dd4cf'>Warning</Typography>
+                    <Typography style={{textAlign:'center'}} color='azure'>Can't delete the last tile in the tileset!</Typography>
+                    <Typography style={{textAlign:'center'}} color='azure'>Did you mean to delete the whole tileset?</Typography>
+                </Stack>
+                </Box>
+            </Modal>
+
             {/* <img style={{marginTop:'50px', height:'450px', width:'450px'}} src={require('../images/dummyTilePreview.png')} className='tile_canvas'/> */}
         </Box>
     )

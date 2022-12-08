@@ -15,8 +15,6 @@ export default function MapToolBar() {
 
     useEffect(() => {
         setCurrTool(currTool)
-        console.log("MapToolBar rerender")
-        console.log(store.primaryTile)
     }, [store.primaryTile, store.secondaryTile])
 
     const handleOpenClearConfirm = () => {
@@ -29,17 +27,11 @@ export default function MapToolBar() {
 
     const handleSwapTiles = async () => {
         await store.swapTiles()
-        console.log("after swapping tiles")
-        console.log(store.primaryTile)
-        console.log(store.secondaryTile)
-
     }
 
     const handleToolClick = (event) => {
         let tool = event.currentTarget.id
-
         setCurrTool(tool)
-        console.log("tl Selected " + tool)
         store.setTilesetTool(tool)
     }
 
@@ -48,7 +40,7 @@ export default function MapToolBar() {
         // let map = store.currentProject
         // map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
         // store.setCurrentProject(map._id)
-        store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(''))
+        store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
     }
 
     return (
@@ -111,12 +103,12 @@ export default function MapToolBar() {
 
                 <Grid item xs={12}>
                     <Box style={{marginTop: '10px'}} className="brush_selections_container">
-                        {store.primaryTile
-                            ? <img src={store.primaryTile} className="brush_selection" id="tile_primary"/>
+                        {store.primaryTile !== -1
+                            ? <img src={store.mapTiles[store.primaryTile].tileImage} className="brush_tile_selection" id="tile_primary"/>
                             : <Box style={{height:'80px', width:'80px'}} className="brush_selection" bgcolor='white' id="tile_primary"></Box>
                         }
-                        {store.secondaryTile
-                            ? <img src={store.secondaryTile} className="brush_selection_tileset" id="tile_secondary"/>
+                        {store.secondaryTile !== -1
+                            ? <img src={store.mapTiles[store.secondaryTile].tileImage} className="brush_tile_selection_tileset" id="tile_secondary"/>
                             : <Box className="brush_selection_tileset" bgcolor='white' id="tile_secondary"></Box>
                         }
                         <Button onClick={handleSwapTiles} className="toolbar_mui_icon" id="swap_primary">

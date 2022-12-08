@@ -10,7 +10,7 @@ export default function MapEditor(props) {
     
 
     return (
-        <Box bgcolor={"#1f293a"}>
+        <Box bgcolor={"#1f293a"} sx={{position: "fixed", height: '100vh', width: '100vw'}}>
             <Stack direction="row" justifyContent='space-between'>
                 <MapToolBar/>
                 <MapCanvas/>

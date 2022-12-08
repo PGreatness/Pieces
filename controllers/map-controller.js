@@ -330,6 +330,7 @@ updateMap = async (req, res) => {
                 return res.status(200).json({
                     success: true,
                     id: map._id,
+                    map: map,
                     message: 'Map was successfully updated',
                 })
             })
@@ -1212,17 +1213,17 @@ getMapTilesets = async (req, res) => {
     
     var tilesets = await Tileset.find({ "_id": { $in: tilesetIdObjs } });
 
-    //var tiles = await Tile.find({ "tilesetId": { $in: tilesetIdObjs } });
+    var tiles = await Tile.find({ "tilesetId": { $in: tilesetIdObjs } });
     
     
-    // console.log('these are the tilesets')
-    // console.log(tilesets)
+    console.log('these are the tiles')
+    console.log(tiles)
     
 
     return res.status(200).json({
         success: true,
         tilesets: tilesets,
-        //tiles: tiles
+        tiles: tiles
     });
 }
 

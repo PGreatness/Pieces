@@ -32,9 +32,11 @@ export const GlobalStoreActionType = {
     IMPORT_TILESET_TO_TILESET: "IMPORT_TILESET_TO_TILESET",
     IMPORT_TILESET_TO_MAP: "IMPORT_TILESET_TO_MAP",
     SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
+    LOAD_MAP: 'LOAD_MAP',
     CLEAR_STORE: "CLEAR_STORE",
 
-    SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE'
+    SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE',
+    DELETE_TILESET_FROM_MAP: 'DELETE_TILESET_FROM_MAP',
 }
 
 
@@ -47,24 +49,33 @@ function GlobalStoreContextProvider(props) {
         publicProjects: [],
         userProjects: [],
         projectComments: [],
+        currentPage: "",
+
+        // map or tile
         currentProject: null,
 
+        // for tileset editor
+        currentTile: null,
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff',
+
+        // for map editor
+        mapTilesets: [],
+        mapTiles: [],
+        currentMapTiles: [],
+        primaryTile: -1,
+        secondaryTile: -1,
+
+
+        // for both map and tileset editor
+        tilesetTool: 'brush',
         userFavs: {
             maps: [],
             tilesets: []
         },
-
-        librarySortOption: "",
-        librarySortDirection: "",
-        sortedLibraryList: [],
-
         projSortOpt: "",
         projSortDir: "",
-
-        currentPage: "",
-        mapOwner: null,
         searchName: "",
-
         pagination: {
             page: 1,
             limit: 10,
@@ -73,13 +84,13 @@ function GlobalStoreContextProvider(props) {
             order: -1
         },
 
-        currentMapTiles: [],
-        primaryColor: '#000000',
-        secondaryColor: '#ffffff',
-        tilesetTool: 'brush',
-        currentTile: null,
-        primaryTile: null,
-        secondaryTile: null,
+
+        // i think redundant
+        mapOwner: null,
+        librarySortOption: "",
+        librarySortDirection: "",
+        sortedLibraryList: [],
+
     });
 
 
@@ -131,7 +142,10 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.IMPORT_TILESET_TO_MAP: {
                 return setStore({
                     ...store,
-                    currentProject: payload,
+                    currentProject: payload.currentProject,
+                    mapTilesets: payload.mapTilesets,
+                    mapTiles: payload.mapTiles,
+                    
                 })
             }
 
@@ -261,6 +275,21 @@ function GlobalStoreContextProvider(props) {
                 })
             }
 
+            case GlobalStoreActionType.LOAD_MAP: {
+                return setStore({
+                    ...store,
+                    currentPage: "tilesetEditor",
+                    currentProject: payload.currentProject,
+                    primaryTile: payload.primaryTile,
+                    secondaryTile: payload.secondaryTile,
+                    tilesetTool: payload.tilesetTool,
+                    mapTilesets: payload.mapTilesets,
+                    mapTiles: payload.mapTiles,
+                    currentMapTiles: payload.currentMapTiles,
+
+                })
+            }
+
             case GlobalStoreActionType.SET_CURRENT_TILE: {
                 return setStore({
                     ...store,
@@ -300,8 +329,18 @@ function GlobalStoreContextProvider(props) {
                 })
             }
 
+            case GlobalStoreActionType.DELETE_TILESET_FROM_MAP: {
+                return setStore({
+                    ...store,
+                    currentProject: payload.currentProject,
+                    mapTilesets: payload.mapTilesets,
+                    mapTiles: payload.mapTiles,
+                })
+            }
 
             case GlobalStoreActionType.SET_CURRENT_MAP_TILES: {
+                console.log("PAYLOAD CURRENT MAP TILES")
+                console.log(payload.currentMapTiles)
                 return setStore({
                     ...store,
                     currentMapTiles: payload.currentMapTiles
@@ -332,7 +371,10 @@ function GlobalStoreContextProvider(props) {
                     primaryColor: '#000000',
                     secondaryColor: '#ffffff',
                     tilesetTool: 'brush',
-                    currentTile: null
+                    currentTile: null,
+                    mapTilesets: [],
+                    mapTiles: [],
+                    currentMapTiles: []
                 });
             }
 
@@ -564,10 +606,68 @@ function GlobalStoreContextProvider(props) {
         const response = await api.importTilesetToMap(payload);
         console.log(response);
         if (response.status < 400) {
-            storeReducer({
-                type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
-                payload: response.data.map
-            })
+
+
+            const response2 = await api.getMapTilesets(response.data.map._id)
+
+            let mapTilesets;
+            let mapTiles;
+
+            let mapTilesetsOrdered = []
+            let mapTilesOrdered = []
+            let sorting = response.data.map.tilesets
+
+
+            if (response2.status === 200) {
+                mapTilesets = response2.data.tilesets;
+                mapTiles = response2.data.tiles;
+
+                sorting.forEach(function(id) {
+                    var found = false;
+                    mapTilesets = mapTilesets.filter(function(tileset) {
+                        if(!found && tileset._id == id) {
+                            mapTilesetsOrdered.push(tileset);
+                            found = true;
+                            return false;
+                        } else 
+                            return true;
+                    })
+                })
+
+                sorting.forEach(function(id) {
+                    mapTiles = mapTiles.filter(function(tile) {
+                        if(tile.tilesetId == id) {
+                            mapTilesOrdered.push(tile);
+                            return false;
+                        } else 
+                            return true;
+                    })
+                })
+
+
+                storeReducer({
+                    type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
+                    payload: {
+                        currentProject: response.data.map,
+                        mapTilesets: mapTilesetsOrdered,
+                        mapTiles: mapTilesOrdered,
+                    }
+                })
+            }
+
+            // let mapTilesets = await store.getMapTilesets(response.data.map._id)
+            // let mapTiles = [];
+            // let tileIds = [];
+
+            // for (let i = 0; i < mapTilesets.length; i++) {
+            //     tileIds = tileIds.concat(mapTilesets[i].tiles)
+            // }
+
+            // await Promise.all(tileIds.map(async (tileId) => {
+            //     let tile = await store.getTileById(tileId)
+            //     mapTiles.push(tile)
+            // }));
+
         }
     }
 
@@ -599,7 +699,7 @@ function GlobalStoreContextProvider(props) {
                     currentTile: null,
                     currentPage: "explore",
                     userProjects: store.userProjects,
-                    publicProjects: publicProjects
+                    publicProjects: publicProjects,
                 }
             });
 
@@ -1452,10 +1552,30 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setCurrentMapTiles = async function (currentMapTiles) {
+
+        // call backend function to update the map as well
+        let payload = {
+            tiles: currentMapTiles
+        }
+
+        let query = {
+            id: store.currentProject._id,
+            ownerId: store.currentProject.ownerId,
+        }
+        
+        const response = await api.updateMap(query, payload)
+
+        let map;
+        if (response.status === 200) {
+            map = response.data.map
+        }
+
+
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
             payload: {
-                currentMapTiles: currentMapTiles
+                currentMapTiles: currentMapTiles,
+                currentProject: map
             }
         })
     }
@@ -1484,14 +1604,100 @@ function GlobalStoreContextProvider(props) {
     store.loadMap = async function (id) {
 
         // set store 
-        // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, currentMapTiles, userFavs, mapTilesets, mapTiles [images]
+        // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, 
+        // mapTilesets (pallete section), mapTiles [images]
+        // currentMapTiles is just going to be map.tiles now (what the map look likes), userFavs, 
 
-    
-        
         const response = await api.getMapById(id)
 
+        let map;
         if (response.status === 200) {
+            map = response.data.map;
+            
+            let primaryTile = -1
+            let secondaryTile = -1
+            if (map.tilesets.length !== 0) {
+                let tilesetId = map.tilesets[0]
+                const response = await api.getTilesetById(tilesetId)
+                let tileset = response.data.tileset
+
+                if (tileset.tiles.length !== 0) {
+                    primaryTile = 0
+                }
+
+                if (tileset.tiles.length > 1) {
+                    secondaryTile = 1
+                }
+
+            }
+
+            
+            const response2 = await api.getMapTilesets(id)
+
+            let mapTilesets; // list of all tileset objects in incorrect order
+            let mapTiles; // list of all tiles in incorrect order (from all tilesets)
+            
+            if (response2.status === 200) {
+                mapTilesets = response2.data.tilesets;
+                mapTiles = response2.data.tiles;
+            }
+
+            let mapTilesetsOrdered = []
+            let mapTilesOrdered = []
+            let sorting = map.tilesets
+
+            sorting.forEach(function(id) {
+                var found = false;
+                mapTilesets = mapTilesets.filter(function(tileset) {
+                    if(!found && tileset._id == id) {
+                        mapTilesetsOrdered.push(tileset);
+                        found = true;
+                        return false;
+                    } else 
+                        return true;
+                })
+            })
+
+
+            sorting.forEach(function(id) {
+                mapTiles = mapTiles.filter(function(tile) {
+                    if(tile.tilesetId == id) {
+                        mapTilesOrdered.push(tile);
+                        return false;
+                    } else 
+                        return true;
+                })
+            })
+
+
+
+           
+
+
+            let numTiles = map.mapHeight * map.mapWidth
+            let currentMapTiles = map.tiles.length > 0 ? map.tiles : Array(numTiles).fill(-1)
+
+
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_MAP,
+                payload: {
+                    currentPage: 'mapEditor',
+                    currentProject: map,
+                    primaryTile: primaryTile,
+                    secondaryTile: secondaryTile,
+                    tilesetTool: 'brush',
+                    mapTilesets: mapTilesetsOrdered,
+                    mapTiles: mapTilesOrdered,
+                    currentMapTiles: currentMapTiles,
+                }
+            })
+
+        } else {
+            console.log("LOADING MAP FAILED")
         }
+
+
+
     }
 
 
@@ -1543,8 +1749,27 @@ function GlobalStoreContextProvider(props) {
             id: store.currentProject._id,
             ownerId: store.currentProject.ownerId,
         }
-        console.log(query)
-        const response = await api.updateTileset(payload, query)
+        const response = await api.updateTileset(query, payload)
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+            payload: {
+                currentProject: response.data.tileset
+            }
+        })
+    }
+
+    store.updateMapProperties = async function (payload) {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: store.currentProject.ownerId,
+        }
+        const response = await api.updateMap(query, payload)
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+            payload: {
+                currentProject: response.data.map
+            }
+        })
     }
 
 
@@ -1564,14 +1789,71 @@ function GlobalStoreContextProvider(props) {
         }
         const response = await api.deleteMapTileset(payload);
         console.log(response);
-        
+
         if (response.status < 400) {
-            storeReducer({
-                type: GlobalStoreActionType.SET_CURRENT_PROJECT,
-                payload: {
-                    currentProject: response.data.map
-                }
-            })
+
+            const response2 = await api.getMapTilesets(store.currentProject._id)
+
+            let mapTilesets;
+            let mapTiles;
+
+            let mapTilesetsOrdered = []
+            let mapTilesOrdered = []
+            let sorting = response.data.map.tilesets
+
+            if (response2.status === 200) {
+                mapTilesets = response2.data.tilesets;
+                mapTiles = response2.data.tiles;
+
+                sorting.forEach(function(id) {
+                    var found = false;
+                    mapTilesets = mapTilesets.filter(function(tileset) {
+                        if(!found && tileset._id == id) {
+                            mapTilesetsOrdered.push(tileset);
+                            found = true;
+                            return false;
+                        } else 
+                            return true;
+                    })
+                })
+
+                sorting.forEach(function(id) {
+                    mapTiles = mapTiles.filter(function(tile) {
+                        if(tile.tilesetId == id) {
+                            mapTilesOrdered.push(tile);
+                            return false;
+                        } else 
+                            return true;
+                    })
+                })
+
+
+
+                storeReducer({
+                    type: GlobalStoreActionType.DELETE_TILESET_FROM_MAP,
+                    payload: {
+                        currentProject: response.data.map,
+                        mapTilesets: mapTilesetsOrdered,
+                        mapTiles: mapTilesOrdered,
+                    }
+                })
+            }
+
+            // let mapTilesets = await store.getMapTilesets(store.currentProject._id)
+
+            // let mapTiles = [];
+            // let tileIds = [];
+
+            // for (let i = 0; i < mapTilesets.length; i++) {
+            //     tileIds = tileIds.concat(mapTilesets[i].tiles)
+            // }
+
+            // await Promise.all(tileIds.map(async (tileId) => {
+            //     let tile = await store.getTileById(tileId)
+            //     mapTiles.push(tile)
+            // }));
+
+
         }
     }
 
@@ -1609,7 +1891,7 @@ function GlobalStoreContextProvider(props) {
 
     store.addTileToTilesetById = async function (id) {
         let tileset = (await api.getTilesetById(id)).data.tileset
-        
+
         let payload = {
             tilesetId: tileset._id,
             height: tileset.tileHeight,
@@ -1617,7 +1899,7 @@ function GlobalStoreContextProvider(props) {
             tileData: Array(tileset.tileHeight * tileset.tileWidth).fill(''),
         }
         const response = await api.createTile(payload)
-        
+
         if (response.status === 200) {
             storeReducer({
                 type: GlobalStoreActionType.ADD_TILE_TO_CURRENT_TILESET,
@@ -1629,13 +1911,16 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.createTile = async function (tilesetId, height, width, tileData) {
+    store.createTile = async function (tilesetId, height, width, tileData, tileImage) {
+        
+        
         console.log("creating new tile")
         let payload = {
             tilesetId: tilesetId,
             height: height,
             width: width,
-            tileData: tileData
+            tileData: tileData,
+            tileImage: tileImage
         }
         const response = await api.createTile(payload)
         console.log(response)
@@ -1718,9 +2003,9 @@ function GlobalStoreContextProvider(props) {
             tileId: id,
             userId: userId
         }
-        
+
         let response = await api.deleteTileById(payload)
-        
+
         console.log("delete tileset response")
         console.log(response)
         let tilesetId = response.data.tileset_id
@@ -1728,9 +2013,17 @@ function GlobalStoreContextProvider(props) {
         let newCurrentProject = getTilesetResponse.data.tileset
         console.log("Updated current project after deleting tile from tileset...")
         console.log(newCurrentProject)
-        
-        let tileId = newCurrentProject.tiles[0]
-        let newCurrentTile = (await api.getTileById(tileId)).data.tile
+
+        let newCurrentTile;
+
+        if (newCurrentProject.tiles.length > 0) {
+            let tileId = newCurrentProject.tiles[0]
+            newCurrentTile = (await api.getTileById(tileId)).data.tile
+        }
+        else {
+            newCurrentTile = null
+        }
+    
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PROJECT_AND_TILE,
             payload: {

@@ -179,6 +179,7 @@ deleteTileset = async (req, res) => {
 }
 
 updateTileset = async (req, res) => {
+
     if (req.query.id == undefined) {
         return res.status(404).json({
             message: 'ID empty',
@@ -189,6 +190,9 @@ updateTileset = async (req, res) => {
             message: 'ownerId empty',
         })
     }
+
+    console.log("checked if ids are undefined")
+
 
     let id = mongoose.Types.ObjectId(req.query.id)
     let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
@@ -202,6 +206,9 @@ updateTileset = async (req, res) => {
                 message: "Tileset not found"
             })
         }
+
+        console.log("found tileset")
+
 
         // Checks if tileset belongs to the User who is trying to update it
         // if (!tileset.ownerId.equals(ObjectOwnerId)) {
@@ -281,12 +288,17 @@ updateTileset = async (req, res) => {
         if (comments)
             tileset.comments = comments
 
+        console.log("changed tileset")
+
+
 
         // Attempts to save updated tileset
         tileset.save().then(() => {
+            console.log("saved changes")
             return res.status(200).json({
                 success: true,
                 id: tileset._id,
+                tileset: tileset,
                 message: 'Tileset was successfully updated',
             })
         })
