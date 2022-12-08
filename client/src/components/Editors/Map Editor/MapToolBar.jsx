@@ -111,12 +111,12 @@ export default function MapToolBar() {
 
                 <Grid item xs={12}>
                     <Box style={{marginTop: '10px'}} className="brush_selections_container">
-                        {store.primaryTile
-                            ? <img src={store.primaryTile} className="brush_selection" id="tile_primary"/>
+                        {store.primaryTile !== -1
+                            ? <img src={store.mapTiles[store.primaryTile].tileImage} className="brush_tile_selection" id="tile_primary"/>
                             : <Box style={{height:'80px', width:'80px'}} className="brush_selection" bgcolor='white' id="tile_primary"></Box>
                         }
-                        {store.secondaryTile
-                            ? <img src={store.secondaryTile} className="brush_selection_tileset" id="tile_secondary"/>
+                        {store.secondaryTile !== -1
+                            ? <img src={store.mapTiles[store.secondaryTile].tileImage} className="brush_tile_selection_tileset" id="tile_secondary"/>
                             : <Box className="brush_selection_tileset" bgcolor='white' id="tile_secondary"></Box>
                         }
                         <Button onClick={handleSwapTiles} className="toolbar_mui_icon" id="swap_primary">

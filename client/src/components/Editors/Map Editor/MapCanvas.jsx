@@ -231,9 +231,16 @@ export default function MapCanvas() {
                 }
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
+                        {console.log("current Indices")}
+                        {console.log(currentIndices)}
                         {
-                            tileImages.slice(currentIndices[0], currentIndices[1]).map((image, index) => (
-                                <img onClick={handleClickTileOption} src={image} className='palette_option' />
+                            // tileImages.slice(currentIndices[0], currentIndices[1]).map((image, index) => (
+                            //     <img onClick={handleClickTileOption} src={image} className='palette_option' />
+                            // ))
+                            store.mapTiles.map((image, index) => (
+                                (index >= currentIndices[0] && index < currentIndices[1])
+                                    ? <img onClick={handleClickTileOption} src={store.mapTiles[index].tileImage} className='palette_option' />
+                                    : null
                             ))
                         }
                     </Stack>

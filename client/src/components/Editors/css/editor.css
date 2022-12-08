@@ -48,6 +48,15 @@
     border-style: solid;
     border-width: 5px;
     border-color: black;
+}
+
+.brush_tile_selection {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: black;
     image-rendering: pixelated;
 }
 
@@ -65,6 +74,16 @@
     border-style: solid;
     border-width: 5px;
     border-color: black;
+}
+
+.brush_tile_selection_tileset {
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: black;
+    image-rendering: pixelated;
 }
 
 .brush_selections_container_tileset {
