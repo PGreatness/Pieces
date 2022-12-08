@@ -23,7 +23,7 @@ export default function MapCanvas() {
     
     
     const [value, setValue] = useState(0);
-    const [currentIndices, setCurrentIndices] = useState([0, 0])
+    const [currentIndices, setCurrentIndices] = useState([0, store.mapTilesets[0].tiles.length])
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
@@ -106,16 +106,13 @@ export default function MapCanvas() {
     const updateCurrentMapTiles = async (value, index) => {
         let map = currentMapTiles
         map[index] = value
-        console.log(map)
         // setCurrentMapTiles(map)
         await store.setCurrentMapTiles(map)
     }
 
     const handleBucket = () => {
-        // console.log(store.currentMapTiles)
         let originalTile = currentMapTiles[currentTile[0] * mapWidth + currentTile[1]]
         fillHelper(currentTile[0], currentTile[1], originalTile)
-        // console.log(store.currentMapTiles)
     }
 
     const handleClickTileOption = (e) => {
@@ -143,14 +140,10 @@ export default function MapCanvas() {
             startIndex += tilesets[i].tiles.length
         }
         let endIndex = startIndex + tilesets[newValue].tiles.length
-        console.log("(" + startIndex + " , " + endIndex + ")")
         setCurrentIndices([startIndex, endIndex])
-
-        console.log(tileImages)
     }
 
     const deleteTileset = () => {
-        console.log(tilesets[value]._id)
         store.deleteTilesetFromMap(tilesets[value]._id)
         setValue(0);
     }
@@ -221,8 +214,8 @@ export default function MapCanvas() {
                 }
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
-                        {console.log("current Indices")}
-                        {console.log(currentIndices)}
+                        {console.log("store map tiles")}
+                        {console.log(store.mapTiles)}
                         {
                             // tileImages.slice(currentIndices[0], currentIndices[1]).map((image, index) => (
                             //     <img onClick={handleClickTileOption} src={image} className='palette_option' />

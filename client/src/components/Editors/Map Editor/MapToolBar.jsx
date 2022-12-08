@@ -15,8 +15,6 @@ export default function MapToolBar() {
 
     useEffect(() => {
         setCurrTool(currTool)
-        console.log("MapToolBar rerender")
-        console.log(store.primaryTile)
     }, [store.primaryTile, store.secondaryTile])
 
     const handleOpenClearConfirm = () => {
@@ -29,17 +27,11 @@ export default function MapToolBar() {
 
     const handleSwapTiles = async () => {
         await store.swapTiles()
-        console.log("after swapping tiles")
-        console.log(store.primaryTile)
-        console.log(store.secondaryTile)
-
     }
 
     const handleToolClick = (event) => {
         let tool = event.currentTarget.id
-
         setCurrTool(tool)
-        console.log("tl Selected " + tool)
         store.setTilesetTool(tool)
     }
 
