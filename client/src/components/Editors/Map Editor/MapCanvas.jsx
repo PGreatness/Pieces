@@ -12,70 +12,85 @@ export default function MapCanvas() {
     // Map Editor Code Start
 
     const { store } = useContext(GlobalStoreContext)
+
     const [mapHeight, setMapHeight] = useState(store.currentProject.mapHeight)
     const [mapWidth, setMapWidth] = useState(store.currentProject.mapWidth)
-    const [currentMapTiles, setCurrentMapTiles] = useState(
-        store.currentProject.tiles.length > 0
-            ? store.currentProject.tiles
-            : Array(mapHeight * mapWidth).fill('')
-    )
-    const [tileImages, setTileImages] = useState([])
+    const [currentMapTiles, setCurrentMapTiles] = useState(store.currentMapTiles)
+    const [tilesets, setTilesets] = useState(store.mapTilesets)
+    const [tileImages, setTileImages] = useState(store.mapTiles.map(function (tile) { return tile.tileImage }))
+    const [currentIndices, setCurrentIndices] = useState([0, store.mapTilesets.length > 0 ? store.mapTilesets[0].tiles.length: 0])
+    
+    const [value, setValue] = useState(0);
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
-    const [tilesets, setTilesets] = useState([])
-    const [value, setValue] = useState(0);
-    const [currentIndices, setCurrentIndices] = useState([0, 0])
 
 
     useEffect(() => {
-        store.setCurrentMapTiles(currentMapTiles)
-    }, [])
-
-    useEffect(() => {
-        store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
-            setTilesets(tilesetObjs)
-            console.log(tilesetObjs)
-            console.log(tilesets)
-
-            let tileIds = []
-            let tileImages = []
-
-            // Build array of all tile ids
-            for (let i = 0; i < tilesetObjs.length; i++) {
-                tileIds = tileIds.concat(tilesetObjs[i].tiles)
-            }
-            console.log(tileIds)
-
-            const fetchTiles = async () => {
-                await Promise.all(tileIds.map(async (tileId) => {
-                    let tile = await store.getTileById(tileId)
-                    tileImages.push(tile.tileImage)
-                }));
-            }
-
-            fetchTiles()
-
-            console.log(tileImages)
-            setTileImages(tileImages)
-        })
+        setMapHeight(store.currentProject.mapHeight)
+        setMapWidth(store.currentProject.mapWidth)
+        // TODO: probably update currentMapTiles as well
+        setCurrentMapTiles(store.currentMapTiles)
     }, [store.currentProject])
 
-    
-
+    // Updating map object in canvas
     useEffect(() => {
-        console.log("Changing to store tilesets")
-        console.log(store.currentProject.tilesets)
+        // console.log(store.currentMapTiles)
+        setCurrentMapTiles(store.currentMapTiles)
+    }, [store.currentMapTiles])
 
-        // TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
-        // setTilesets(store.currentProject.tilesets)
+    // updating map tilesets
+    useEffect(() => {
+        setTilesets(store.mapTilesets)
+        setTileImages(store.mapTiles.map(function (tile) { return tile.tileImage }))
+        setCurrentIndices([0, store.mapTilesets.length > 0 ? store.mapTilesets[0].tiles.length: 0])
+    }, [store.mapTilesets])
 
-    }, [store.currentProject.tilesets])
+
+
+    // useEffect(() => {
+    //     console.log("Changing to store tilesets")
+    //     console.log(store.currentProject.tilesets)
+
+    //     TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
+    //     setTilesets(store.currentProject.tilesets)
+
+    // }, [store.currentProject.tilesets])
+
+    // useEffect(() => {
+    //     store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+    //         setTilesets(tilesetObjs)
+    //         console.log(tilesetObjs)
+    //         console.log(tilesets)
+
+    //         let tileIds = []
+    //         let tileImages = []
+
+    //         // Build array of all tile ids
+    //         for (let i = 0; i < tilesetObjs.length; i++) {
+    //             tileIds = tileIds.concat(tilesetObjs[i].tiles)
+    //         }
+    //         console.log(tileIds)
+
+    //         const fetchTiles = async () => {
+    //             await Promise.all(tileIds.map(async (tileId) => {
+    //                 let tile = await store.getTileById(tileId)
+    //                 tileImages.push(tile.tileImage)
+    //             }));
+    //         }
+
+    //         fetchTiles()
+
+    //         console.log(tileImages)
+    //         setTileImages(tileImages)
+    //     })
+    // }, [store.currentProject])
+
 
 
     const fillHelper = async (x, y, originalTile) => {
 
-        let map = store.currentMapTiles
+        let map = currentMapTiles
         if (x < 0 || x >= mapHeight || y < 0 || y >= mapWidth || map[x * mapWidth + y] !== originalTile) {
             return
         }
@@ -100,22 +115,21 @@ export default function MapCanvas() {
     }
 
     const updateCurrentMapTiles = async (value, index) => {
-        let map = store.currentMapTiles
-        map[index] = value
+        let mapTiles = currentMapTiles
+        mapTiles[index] = value
         // setCurrentMapTiles(map)
-        await store.setCurrentMapTiles(map)
+        console.log( mapTiles)
+        await store.setCurrentMapTiles(mapTiles)
     }
 
     const handleBucket = () => {
-        // console.log(store.currentMapTiles)
-        let originalTile = store.currentMapTiles[currentTile[0] * mapWidth + currentTile[1]]
+        let originalTile = currentMapTiles[currentTile[0] * mapWidth + currentTile[1]]
         fillHelper(currentTile[0], currentTile[1], originalTile)
-        // console.log(store.currentMapTiles)
     }
 
     const handleClickTileOption = (e) => {
-        let src = e.currentTarget.src
-        store.setPrimaryTile(src)
+        let id = Number(e.currentTarget.id.replace("tile_option_", ""))
+        store.setPrimaryTile(id)
         setMapHeight(mapHeight)
     }
 
@@ -138,14 +152,10 @@ export default function MapCanvas() {
             startIndex += tilesets[i].tiles.length
         }
         let endIndex = startIndex + tilesets[newValue].tiles.length
-        console.log("(" + startIndex + " , " + endIndex + ")")
         setCurrentIndices([startIndex, endIndex])
-
-        console.log(tileImages)
     }
 
     const deleteTileset = () => {
-        console.log(tilesets[value]._id)
         store.deleteTilesetFromMap(tilesets[value]._id)
         setValue(0);
     }
@@ -167,7 +177,7 @@ export default function MapCanvas() {
             </Button>
 
             <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `${70 * renderHeightRatio}vh`, width: `${70 * renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
-                {store.currentMapTiles?.length > 0 && store.currentMapTiles.map((tile, index) => (
+                {currentMapTiles?.length > 0 && currentMapTiles.map((tile, index) => (
                     <MapTile
                         handleBucket={handleBucket}
                         updateCurrentMapTiles={updateCurrentMapTiles}
@@ -202,11 +212,11 @@ export default function MapCanvas() {
                             </Box>
                         </Grid>
                         <Grid item xs={1}>
-                        {tilesets.length > 0 ?
-                            <Button onClick={deleteTileset} className='tileset_option_delete'>
-                                <Delete style={{ color: 'azure', fontSize: '25px' }} />
-                            </Button> : <></>}
-                    </Grid>
+                            {tilesets.length > 0 ?
+                                <Button onClick={deleteTileset} className='tileset_option_delete'>
+                                    <Delete style={{ color: 'azure', fontSize: '25px' }} />
+                                </Button> : <></>}
+                        </Grid>
                     </Grid>
                     : <Box sx={{ textAlign: 'center', marginTop: '40px' }}>
                         <Typography sx={{ fontSize: '25px' }} color='azure'>
@@ -216,15 +226,16 @@ export default function MapCanvas() {
                 }
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
+                        {/* {console.log("store map tiles")}
+                        {console.log(store.mapTiles)} */}
                         {
-                            // tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
-                            //     <img onClick={handleClickTileOption} src={tileImages[1] ? tileImages[1] : require('../images/dummyTile1.png')} className='palette_option' />
+                            // tileImages.slice(currentIndices[0], currentIndices[1]).map((image, index) => (
+                            //     <img onClick={handleClickTileOption} src={image} className='palette_option' />
                             // ))
-                            // console.log(tileImages)
-                            tileImages.map((image, index) => (
-                                // { console.log(image + " " + index) }
-                                // <img src={tileImages[1]} className='palette_option' />
-                                <img onClick={handleClickTileOption} src={image} className='palette_option' />
+                            store.mapTiles.map((image, index) => (
+                                (index >= currentIndices[0] && index < currentIndices[1])
+                                    ? <img onClick={handleClickTileOption} src={store.mapTiles[index].tileImage} id={`tile_option_${index}`} className='palette_option' />
+                                    : null
                             ))
                         }
                     </Stack>

@@ -34,7 +34,7 @@ const mapSchema = new Schema({
         required: true,
     },
     tiles: {
-        type: [ObjectId],
+        type: [Number],
         required: true,
     },
     tilesets: {

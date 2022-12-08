@@ -31,20 +31,23 @@ export default function MapRightBar(props) {
   //const project = store.currentProject;
 
   const [project, setProject] = useState(store.currentProject);
+  const [owner, setOwner] = useState(null);
+  const [collaborators, setCollaborators] = useState([]);
+  const [users, setUsers] = useState([]);
   const [value, setValue] = useState(0);
+
   const [openImportMap, setOpenImportMap] = useState(false);
   const [openExportMap, setOpenExportMap] = useState(false);
   const [openImportTileset, setOpenImportTileset] = useState(false);
   const [openPublishMap, setOpenPublishMap] = useState(false);
   const [openUnpublishMap, setOpenUnpublishMap] = useState(false);
   const [openDeleteMap, setOpenDeleteMap] = useState(false);
-  const [owner, setOwner] = useState(null);
-  const [collaborators, setCollaborators] = useState([]);
   const [favs, setFavs] = useState(store.userFavs);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [editMode, setEditMode] = useState(false);
   const [image, setImage] = useState(null)
   const [showError, setShowError] = useState(false)
+  const [openTagsErrorModal, setOpenTagsErrorModal] = useState(false)
   const inputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -79,6 +82,46 @@ export default function MapRightBar(props) {
     }
   });
 
+
+  const startEditing = () => {
+    setEditMode(true)
+  }
+
+  const endEditing = () => {
+    setEditMode(false)
+  }
+
+  const handleUpdateProperties = () => {
+
+    let tagsText = document.getElementById('tags_input').value
+    if (tagsText.includes(',') && !tagsText.includes(', ')) {
+      setOpenTagsErrorModal(true)
+      return
+    }
+
+    let tags = tagsText
+    if (tagsText.length > 0) {
+      tags = tagsText.split(", ")
+      for (let i = 0; i < tags.length; i++) {
+        if (tags[i] === '') {
+          setOpenTagsErrorModal(true)
+          return
+        }
+      }
+    }
+  
+    let payload = {
+      title: document.getElementById('title_input').value,
+      mapDescription: document.getElementById('desc_input').value,
+      tags: tags
+    }
+    store.updateMapProperties(payload)
+    setEditMode(false)
+  }
+
+  const handleCloseTagsErrorModal = () => {
+    setOpenTagsErrorModal(false)
+  }
 
   const handleOpenImportMap = () => {
     setOpenImportMap(true)
@@ -268,8 +311,8 @@ export default function MapRightBar(props) {
             i += ((tileHeight - 1) * img.width)
           }
         }
-        
-        
+
+
         // TODO: CALL STORE FUNCTION TO :
         // 1. CREATE NEW TILES 
         // 2. CREATE NEW TILESET
@@ -280,9 +323,48 @@ export default function MapRightBar(props) {
         let response = await store.createNewTileset(image.name.slice(0, -4), tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
         let newTileset = response.data.tileset
 
+
+        const convertToImage = (tileData) => {
+          let rgba = []
+
+          tileData.forEach((tile) => {
+            if (tile.length === 0) {
+              rgba.push(0)
+              rgba.push(0)
+              rgba.push(0)
+              rgba.push(0)
+            } else {
+              var bigint = parseInt(tile.slice(1), 16);
+              var r = (bigint >> 16) & 255;
+              var g = (bigint >> 8) & 255;
+              var b = bigint & 255;
+              rgba.push(r)
+              rgba.push(g)
+              rgba.push(b)
+              rgba.push(255)
+
+            }
+          })
+
+          var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), tileWidth, tileHeight);
+
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = tileHeight
+          canvas.width = tileWidth
+
+          context.putImageData(rgbaArray, 0, 0);
+          var imgSrc = canvas.toDataURL();
+          canvas.remove();
+          return imgSrc
+        }
+
+
         // Create new tiles to go into tileset
         for (let i = 0; i < tiles.length; i++) {
-          let createTileResponse = await store.createTile(newTileset._id, tileHeight, tileWidth, tiles[i])
+          let imgSrc = convertToImage(tiles[i]);
+          //console.log(imgSrc)
+          let createTileResponse = await store.createTile(newTileset._id, tileHeight, tileWidth, tiles[i], imgSrc)
           console.log(createTileResponse)
         }
 
@@ -328,7 +410,7 @@ export default function MapRightBar(props) {
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 <Grid container direction='row' rowSpacing={0} columns={store.currentProject.mapWidth} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
                   {store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
-                    <MapTile index={index} />
+                    <MapTile index={index} preview={true}/>
                   ))}
                 </Grid>
               </Stack>
@@ -420,42 +502,88 @@ export default function MapRightBar(props) {
 
             <Box className='properties_container'>
               <Stack direction='column' textAlign='center'>
-                <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
-                  <Grid item xs={10}>
-                    <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
+                {!editMode
+                  ? <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
+                    <Grid item xs={10}>
+                      <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Button onClick={startEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '50px' }}>
+                        <Edit />
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={2}>
-                    <Button style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '50px' }}>
-                      <Edit/>
-                    </Button>
+                  : <Grid container style={{ backgroundColor: "#1f293a", height: '50px' }}>
+                    <Grid item xs={8}>
+                      <Typography color='azure' style={{ textAlign: 'center', marginTop: '5px', fontSize: '25px' }} >Properties</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Button onClick={handleUpdateProperties} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '30px' }}>
+                        <Check />
+                      </Button>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Button onClick={endEditing} style={{ minHeight: '30px', minWidth: '30px', maxHeight: '30px', maxWidth: '30px', marginTop: '10px', paddingRight: '20px' }}>
+                        <Clear />
+                      </Button>
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
-                  <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
+                }
+                {!editMode
+                  ? <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
+                    <Grid item xs={3}>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
+                    </Grid>
+                    <Grid item xs={9} zeroMinWidth>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px' }} color='azure'>{store.currentProject.title}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
+                    </Grid>
+                    <Grid item xs={9} zeroMinWidth>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.mapDescription}</Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
+                    </Grid>
+                    <Grid item xs={7} zeroMinWidth>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
+                    </Grid>
+                    <Grid item xs={9} zeroMinWidth>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{store.currentProject.tags.join(', ')}</Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px'}} color='azure'>{project.title}</Typography>
+                  : <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
+                    <Grid item xs={3}>
+                      <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
+                    </Grid>
+                    <Grid item xs={9} zeroMinWidth>
+                      <TextField id='title_input' defaultValue={store.currentProject.title} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
+                    </Grid>
+                    <Grid item xs={9} zeroMinWidth>
+                      <TextField id='desc_input' defaultValue={store.currentProject.mapDescription} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '0px', fontSize: '15px' }} color='azure'>Tile Size: </Typography>
+                    </Grid>
+                    <Grid item xs={7} zeroMinWidth>
+                      <Typography style={{ overflowWrap: "break-word" }} color='azure'>{store.currentProject.tileHeight + " x " + store.currentProject.tileWidth}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', marginTop: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
+                    </Grid>
+                    <Grid item xs={9} zeroMinWidth>
+                      <TextField id='tags_input' defaultValue={store.currentProject.tags.join(', ')} size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', borderRadius: '10px', "& .MuiInputBase-root": { height: 30 } }} />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{project.mapDescription}</Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Size: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{project.mapHeight} x {project.mapWidth}</Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Tags: </Typography>
-                  </Grid>
-                  <Grid item xs={9} zeroMinWidth>
-                    <Typography style={{ overflowWrap: "break-word", fontSize: '15px' }} color='azure'>{project.tags.join(', ')}</Typography>
-                  </Grid>
-                </Grid>
+                }
+
               </Stack>
             </Box>
 
@@ -520,7 +648,7 @@ export default function MapRightBar(props) {
                 style={{ display: 'none' }}
                 ref={inputRef}
                 type="file"
-                accept="image/png" 
+                accept="image/png"
                 onChange={handleFileChange}
               />
               <TextField
@@ -566,7 +694,7 @@ export default function MapRightBar(props) {
                   Compatible Tilesets:
                 </Typography>
                 {
-                  favs.tilesets && favs.tilesets.length > 0 ? favs.tilesets.map((tileset, index) => {
+                  favs?.tilesets && favs?.tilesets.length > 0 ? favs?.tilesets.map((tileset, index) => {
                     return (
                       <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
                         <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
@@ -696,6 +824,17 @@ export default function MapRightBar(props) {
         </Box>
       </Modal>
 
+      <Modal
+          open={openTagsErrorModal}
+          onClose={handleCloseTagsErrorModal}
+      >
+          <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column' style={{margin:'10px'}}>
+              <Typography style={{textAlign:'center', marginBottom:'10px'}} variant='h5' color='#2dd4cf'>Error</Typography>
+              <Typography style={{textAlign:'center'}} color='azure'>Make sure tags are separated with ", "</Typography>
+          </Stack>
+          </Box>
+      </Modal>
 
     </Box>
   )

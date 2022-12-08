@@ -37,6 +37,7 @@ export default function TilesetRightBar(props) {
   const [showError, setShowError] = useState(false)
   const [image, setImage] = useState(null)
   const [favs, setFavs] = useState([])
+  const [openTagsErrorModal, setOpenTagsErrorModal] = useState(false)
   const inputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -104,13 +105,35 @@ export default function TilesetRightBar(props) {
   }
 
   const handleUpdateProperties = () => {
+
+    let tagsText = document.getElementById('tags_input').value
+    if (tagsText.includes(',') && !tagsText.includes(', ')) {
+      setOpenTagsErrorModal(true)
+      return
+    }
+
+    let tags = tagsText
+    if (tagsText.length > 0) {
+      tags = tagsText.split(", ")
+      for (let i = 0; i < tags.length; i++) {
+        if (tags[i] === '') {
+          setOpenTagsErrorModal(true)
+          return
+        }
+      }
+    }
+
     let payload = {
       title: document.getElementById('title_input').value,
       tilesetDesc: document.getElementById('desc_input').value,
-      tilesetTags: document.getElementById('tags_input').value
+      tilesetTags: tags
     }
-    store.updateTilesetProperties(store.currentProject._id, store.currentProject.ownerId, payload)
+    store.updateTilesetProperties(payload)
     setEditMode(false)
+  }
+
+  const handleCloseTagsErrorModal = () => {
+    setOpenTagsErrorModal(false)
   }
 
   const handleChange = (event, newValue) => {
@@ -319,19 +342,52 @@ export default function TilesetRightBar(props) {
           }
         }
 
-        console.log("TILES")
-        console.log(tiles)
+        // console.log("TILES")
+        // console.log(tiles)
         // console.log(title)
-        console.log(tilesetHeight)
-        console.log(tileHeight)
-        console.log(ownerId)
+        // console.log(tilesetHeight)
+        // console.log(tileHeight)
+        // console.log(ownerId)
 
-        // Create new tileset
-        // let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+        const convertToImage = (tileData) => {
+          let rgba = []
+
+          tileData.forEach((tile) => {
+            if (tile.length === 0) {
+              rgba.push(0)
+              rgba.push(0)
+              rgba.push(0)
+              rgba.push(0)
+            } else {
+              var bigint = parseInt(tile.slice(1), 16);
+              var r = (bigint >> 16) & 255;
+              var g = (bigint >> 8) & 255;
+              var b = bigint & 255;
+              rgba.push(r)
+              rgba.push(g)
+              rgba.push(b)
+              rgba.push(255)
+
+            }
+          })
+
+          var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), store.currentProject.tileWidth, store.currentProject.tileHeight);
+
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = store.currentProject.tileHeight
+          canvas.width = store.currentProject.tileWidth
+
+          context.putImageData(rgbaArray, 0, 0);
+          var imgSrc = canvas.toDataURL();
+          canvas.remove();
+          return imgSrc
+        }
 
         // Create new tiles to go into tileset
         for (let i = 0; i < tiles.length; i++) {
-          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i])
+          let imgSrc = convertToImage(tiles[i]);
+          let createTileResponse = await store.createTile(store.currentProject._id, store.currentProject.tileHeight, store.currentProject.tileWidth, tiles[i], imgSrc)
           console.log(createTileResponse)
         }
         await store.setCurrentTileset(project._id);
@@ -372,7 +428,7 @@ export default function TilesetRightBar(props) {
             rgba.push(g)
             rgba.push(b)
             rgba.push(255)
-  
+
           }
         })
 
@@ -380,12 +436,12 @@ export default function TilesetRightBar(props) {
 
       console.log(rgba)
       let numTiles = tiles.length
-      var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), store.currentProject.tileWidth, store.currentProject.tileHeight*numTiles);
+      var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), store.currentProject.tileWidth, store.currentProject.tileHeight * numTiles);
       console.log(rgbaArray)
 
       var canvas = document.createElement('canvas');
       var context = canvas.getContext('2d');
-      canvas.height = store.currentProject.tileHeight*numTiles
+      canvas.height = store.currentProject.tileHeight * numTiles
       canvas.width = store.currentProject.tileWidth
 
       context.putImageData(rgbaArray, 0, 0);
@@ -888,6 +944,18 @@ export default function TilesetRightBar(props) {
             </Grid>
             <Grid item xs={2}></Grid>
           </Grid>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openTagsErrorModal}
+        onClose={handleCloseTagsErrorModal}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column' style={{ margin: '10px' }}>
+            <Typography style={{ textAlign: 'center', marginBottom: '10px' }} variant='h5' color='#2dd4cf'>Error</Typography>
+            <Typography style={{ textAlign: 'center' }} color='azure'>Make sure tags are separated with ", "</Typography>
+          </Stack>
         </Box>
       </Modal>
 
