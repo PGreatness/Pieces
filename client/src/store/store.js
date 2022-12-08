@@ -1821,8 +1821,16 @@ function GlobalStoreContextProvider(props) {
         console.log("Updated current project after deleting tile from tileset...")
         console.log(newCurrentProject)
 
-        let tileId = newCurrentProject.tiles[0]
-        let newCurrentTile = (await api.getTileById(tileId)).data.tile
+        let newCurrentTile;
+
+        if (newCurrentProject.tiles.length > 0) {
+            let tileId = newCurrentProject.tiles[0]
+            newCurrentTile = (await api.getTileById(tileId)).data.tile
+        }
+        else {
+            newCurrentTile = null
+        }
+    
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PROJECT_AND_TILE,
             payload: {
