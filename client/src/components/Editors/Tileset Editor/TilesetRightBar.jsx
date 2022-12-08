@@ -104,12 +104,16 @@ export default function TilesetRightBar(props) {
   }
 
   const handleUpdateProperties = () => {
+    // if (wrong format) {
+    //   modal
+    //   return
+    // }
     let payload = {
       title: document.getElementById('title_input').value,
       tilesetDesc: document.getElementById('desc_input').value,
-      tilesetTags: document.getElementById('tags_input').value
+      tilesetTags: document.getElementById('tags_input').value.split(", ")
     }
-    store.updateTilesetProperties(store.currentProject._id, store.currentProject.ownerId, payload)
+    store.updateTilesetProperties(payload)
     setEditMode(false)
   }
 

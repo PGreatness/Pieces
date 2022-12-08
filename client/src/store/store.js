@@ -1669,8 +1669,13 @@ function GlobalStoreContextProvider(props) {
             id: store.currentProject._id,
             ownerId: store.currentProject.ownerId,
         }
-        console.log(query)
-        const response = await api.updateTileset(payload, query)
+        const response = await api.updateTileset(query, payload)
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+            payload: {
+                currentProject: response.data.tileset
+            }
+        })
     }
 
 
