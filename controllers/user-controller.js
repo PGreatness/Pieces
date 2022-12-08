@@ -700,7 +700,6 @@ var getUserFavorites = async (req, res) => {
                         ] },
                     { ownerId: uid },
                     { $and: [
-                        {favs: { $in: [uid] }},
                         {collaboratorIds: { $in: [uid] }}
                         ]
                     },
@@ -726,7 +725,6 @@ var getUserFavorites = async (req, res) => {
                             ] },
                         { ownerId: uid },
                         { $and: [
-                            {favs: { $in: [uid] }},
                             {collaboratorIds: { $in: [uid] }}
                             ]
                         },
