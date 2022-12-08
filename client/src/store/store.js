@@ -335,6 +335,8 @@ function GlobalStoreContextProvider(props) {
                     currentProject: payload.currentProject,
                     mapTilesets: payload.mapTilesets,
                     mapTiles: payload.mapTiles,
+                    primaryTile: payload.primaryTile,
+                    secondaryTile: payload.secondaryTile,
                 })
             }
 
@@ -1846,7 +1848,8 @@ function GlobalStoreContextProvider(props) {
                     })
                 })
 
-
+                let primaryTile = -1
+                let secondaryTile = -1
 
                 console.log("response data map")
                 console.log(response.data.map)
@@ -1856,6 +1859,8 @@ function GlobalStoreContextProvider(props) {
                         currentProject: response.data.map,
                         mapTilesets: mapTilesetsOrdered,
                         mapTiles: mapTilesOrdered,
+                        primaryTile: primaryTile,
+                        secondaryTile: secondaryTile,
                     }
                 })
             }
