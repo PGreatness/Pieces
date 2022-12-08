@@ -32,6 +32,7 @@ export const GlobalStoreActionType = {
     IMPORT_TILESET_TO_TILESET: "IMPORT_TILESET_TO_TILESET",
     IMPORT_TILESET_TO_MAP: "IMPORT_TILESET_TO_MAP",
     SET_CURRENT_MAP_TILES: 'SET_CURRENT_MAP_TILES',
+    LOAD_MAP: 'LOAD_MAP',
     CLEAR_STORE: "CLEAR_STORE",
 
     SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE'
@@ -80,6 +81,9 @@ function GlobalStoreContextProvider(props) {
         currentTile: null,
         primaryTile: null,
         secondaryTile: null,
+
+        mapTilesets: null,
+        mapTiles: null,
     });
 
 
@@ -258,6 +262,18 @@ function GlobalStoreContextProvider(props) {
                     currentPage: "tilesetEditor",
                     currentProject: payload.currentProject,
                     currentTile: payload.currentTile,
+                })
+            }
+
+            case GlobalStoreActionType.LOAD_MAP: {
+                return setStore({
+                    ...store,
+                    currentPage: "tilesetEditor",
+                    currentProject: payload.currentProject,
+                    primaryTile: payload.primaryTile,
+                    secondaryTile: payload.secondaryTile,
+                    tilesetTool: payload.tilesetTool,
+
                 })
             }
 
@@ -1484,14 +1500,78 @@ function GlobalStoreContextProvider(props) {
     store.loadMap = async function (id) {
 
         // set store 
-        // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, currentMapTiles, userFavs, mapTilesets, mapTiles [images]
+        // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, 
+        // mapTilesets (pallete section), mapTiles [images]
+        // currentMapTiles (what the map look likes), userFavs, 
 
     
         
         const response = await api.getMapById(id)
 
+        let map;
         if (response.status === 200) {
+            map = response.data.map;
         }
+
+
+        let primaryTile = -1
+        let secondaryTile = -1
+        if(map.tilesets.length !== 0){
+            let tilesetId = map.tilesets[0]
+            const response = await api.getTilesetById(tilesetId)
+            let tileset = response.data.tileset
+            
+            if (tileset.tiles.length !== 0){
+                primaryTile = 0
+            } 
+
+            if(tileset.tiles.length > 1){
+                secondaryTile = 1
+            }
+
+        }
+
+
+        //let currentMapTiles = map.tiles.length > 0? map.tiles: Number(-1)
+
+        let mapTilesets = await store.getMapTilesets(id)
+
+        let mapTiles = [];
+        let tileIds = [];
+
+        for (let i = 0; i < mapTilesets.length; i++) {
+            tileIds = tileIds.concat(mapTilesets[i].tiles)
+        }
+
+        await Promise.all(tileIds.map(async (tileId) => {
+            let tile = await store.getTileById(tileId)
+            mapTiles.push(tile)
+        }));
+
+
+
+
+
+
+        console.log(map)
+        console.log(primaryTile)
+        console.log(secondaryTile)
+        console.log(mapTilesets)
+        console.log(mapTiles)
+
+
+        // storeReducer({
+        //     type: GlobalStoreActionType.LOAD_MAP,
+        //     payload: {
+        //         currentPage: 'mapEditor',
+        //         currentProject: map,
+        //         primaryTile: primaryTile,
+        //         secondaryTile: secondaryTile,
+        //         tilesetTool: 'brush',
+        //         mapTilesets: mapTilesets,
+        //         mapTiles: mapTiles,
+        //     }
+        // })
     }
 
 
