@@ -47,6 +47,7 @@ export default function MapRightBar(props) {
   const [editMode, setEditMode] = useState(false);
   const [image, setImage] = useState(null)
   const [showError, setShowError] = useState(false)
+  const [openTagsErrorModal, setOpenTagsErrorModal] = useState(false)
   const inputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -91,13 +92,32 @@ export default function MapRightBar(props) {
   }
 
   const handleUpdateProperties = () => {
+
+    let tagsText = document.getElementById('tags_input').value
+    if (tagsText.includes(',') && !tagsText.includes(', ')) {
+      setOpenTagsErrorModal(true)
+      return
+    }
+
+    let tags = tagsText.split(", ")
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i] === '') {
+        setOpenTagsErrorModal(true)
+        return
+      }
+    }
+  
     let payload = {
       title: document.getElementById('title_input').value,
       mapDescription: document.getElementById('desc_input').value,
-      tags: document.getElementById('tags_input').value.split(", ")
+      tags: tags
     }
     store.updateMapProperties(payload)
     setEditMode(false)
+  }
+
+  const handleCloseTagsErrorModal = () => {
+    setOpenTagsErrorModal(false)
   }
 
   const handleOpenImportMap = () => {
@@ -762,6 +782,17 @@ export default function MapRightBar(props) {
         </Box>
       </Modal>
 
+      <Modal
+          open={openTagsErrorModal}
+          onClose={handleCloseTagsErrorModal}
+      >
+          <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column' style={{margin:'10px'}}>
+              <Typography style={{textAlign:'center', marginBottom:'10px'}} variant='h5' color='#2dd4cf'>Error</Typography>
+              <Typography style={{textAlign:'center'}} color='azure'>Make sure tags are separated with ", "</Typography>
+          </Stack>
+          </Box>
+      </Modal>
 
     </Box>
   )

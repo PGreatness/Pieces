@@ -105,12 +105,6 @@ export default function TilesetRightBar(props) {
   }
 
   const handleUpdateProperties = () => {
-    // if (wrong format) {
-    //   modal
-    //   return
-    // }
-
-    let flag = false
 
     let tagsText = document.getElementById('tags_input').value
     if (tagsText.includes(',') && !tagsText.includes(', ')) {
@@ -126,10 +120,6 @@ export default function TilesetRightBar(props) {
       }
     }
 
-    // if (flag) return
-
-    console.log("new tags: ")
-    console.log(tags)
     let payload = {
       title: document.getElementById('title_input').value,
       tilesetDesc: document.getElementById('desc_input').value,
