@@ -99,11 +99,14 @@ export default function MapRightBar(props) {
       return
     }
 
-    let tags = tagsText.split(", ")
-    for (let i = 0; i < tags.length; i++) {
-      if (tags[i] === '') {
-        setOpenTagsErrorModal(true)
-        return
+    let tags = tagsText
+    if (tagsText.length > 0) {
+      tags = tagsText.split(", ")
+      for (let i = 0; i < tags.length; i++) {
+        if (tags[i] === '') {
+          setOpenTagsErrorModal(true)
+          return
+        }
       }
     }
   
@@ -320,9 +323,48 @@ export default function MapRightBar(props) {
         let response = await store.createNewTileset(image.name.slice(0, -4), tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
         let newTileset = response.data.tileset
 
+
+        const convertToImage = (tileData) => {
+          let rgba = []
+
+          tileData.forEach((tile) => {
+            if (tile.length === 0) {
+              rgba.push(0)
+              rgba.push(0)
+              rgba.push(0)
+              rgba.push(0)
+            } else {
+              var bigint = parseInt(tile.slice(1), 16);
+              var r = (bigint >> 16) & 255;
+              var g = (bigint >> 8) & 255;
+              var b = bigint & 255;
+              rgba.push(r)
+              rgba.push(g)
+              rgba.push(b)
+              rgba.push(255)
+
+            }
+          })
+
+          var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), tileWidth, tileHeight);
+
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = tileHeight
+          canvas.width = tileWidth
+
+          context.putImageData(rgbaArray, 0, 0);
+          var imgSrc = canvas.toDataURL();
+          canvas.remove();
+          return imgSrc
+        }
+
+
         // Create new tiles to go into tileset
         for (let i = 0; i < tiles.length; i++) {
-          let createTileResponse = await store.createTile(newTileset._id, tileHeight, tileWidth, tiles[i])
+          let imgSrc = convertToImage(tiles[i]);
+          //console.log(imgSrc)
+          let createTileResponse = await store.createTile(newTileset._id, tileHeight, tileWidth, tiles[i], imgSrc)
           console.log(createTileResponse)
         }
 

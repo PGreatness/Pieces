@@ -169,9 +169,45 @@ export default function CreateButton(props) {
                 // Create new tileset
                 let response = await store.createNewTileset(title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
 
+                const convertToImage = (tileData) => {
+                    let rgba = []
+          
+                    tileData.forEach((tile) => {
+                      if (tile.length === 0) {
+                        rgba.push(0)
+                        rgba.push(0)
+                        rgba.push(0)
+                        rgba.push(0)
+                      } else {
+                        var bigint = parseInt(tile.slice(1), 16);
+                        var r = (bigint >> 16) & 255;
+                        var g = (bigint >> 8) & 255;
+                        var b = bigint & 255;
+                        rgba.push(r)
+                        rgba.push(g)
+                        rgba.push(b)
+                        rgba.push(255)
+          
+                      }
+                    })
+          
+                    var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), response.data.tileset.tileWidth, response.data.tileset.tileHeight);
+          
+                    var canvas = document.createElement('canvas');
+                    var context = canvas.getContext('2d');
+                    canvas.height = response.data.tileset.tileHeight
+                    canvas.width = response.data.tileset.tileWidth
+          
+                    context.putImageData(rgbaArray, 0, 0);
+                    var imgSrc = canvas.toDataURL();
+                    canvas.remove();
+                    return imgSrc
+                  }
+
                 // Create new tiles to go into tileset
                 for (let i = 0; i < tiles.length; i++) {
-                    let createTileResponse = await store.createTile(response.data.tileset._id, response.data.tileset.tileHeight, response.data.tileset.tileWidth, tiles[i])
+                    let imgSrc = convertToImage(tiles[i]);
+                    let createTileResponse = await store.createTile(response.data.tileset._id, response.data.tileset.tileHeight, response.data.tileset.tileWidth, tiles[i], imgSrc)
                     console.log(createTileResponse)
                 }
 
