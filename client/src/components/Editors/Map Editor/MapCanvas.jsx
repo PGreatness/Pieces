@@ -100,6 +100,20 @@ export default function MapCanvas() {
         // setCurrentMapTiles(newMap)
     }
 
+    function scaleImage(tileArr, factor) {
+
+        let scaledTile = [];
+    
+        for(let row of tileArr) {
+            let arr = [];
+            for(let pixel of row)
+                arr = arr.concat(Array(factor).fill(pixel));
+            scaledTile = scaledTile.concat(Array(factor).fill(arr));
+        }
+    
+        return scaledTile;
+    }
+
     const updateCurrentMapTiles = async (value, index) => {
         let map = store.currentMapTiles
         map[index] = value
@@ -218,13 +232,7 @@ export default function MapCanvas() {
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
                         {
-                            // tilesets[value] && tilesets[value].tiles && tilesets[value].tiles.map((tile, index) => (
-                            //     <img onClick={handleClickTileOption} src={tileImages[1] ? tileImages[1] : require('../images/dummyTile1.png')} className='palette_option' />
-                            // ))
-                            // console.log(tileImages)
-                            tileImages.map((image, index) => (
-                                // { console.log(image + " " + index) }
-                                // <img src={tileImages[1]} className='palette_option' />
+                            tileImages.slice(currentIndices[0], currentIndices[1]).map((image, index) => (
                                 <img onClick={handleClickTileOption} src={image} className='palette_option' />
                             ))
                         }
