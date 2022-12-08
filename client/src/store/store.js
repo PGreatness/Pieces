@@ -35,7 +35,8 @@ export const GlobalStoreActionType = {
     LOAD_MAP: 'LOAD_MAP',
     CLEAR_STORE: "CLEAR_STORE",
 
-    SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE'
+    SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE',
+    DELETE_TILESET_FROM_MAP: 'DELETE_TILESET_FROM_MAP',
 }
 
 
@@ -143,7 +144,10 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.IMPORT_TILESET_TO_MAP: {
                 return setStore({
                     ...store,
-                    currentProject: payload,
+                    currentProject: payload.currentProject,
+                    mapTilesets: payload.mapTilesets,
+                    mapTiles: payload.mapTiles,
+                    
                 })
             }
 
@@ -324,6 +328,15 @@ function GlobalStoreContextProvider(props) {
                     currentPage: "tilesetEditor",
                     currentProject: payload.tileset,
                     currentTile: payload.tile
+                })
+            }
+
+            case GlobalStoreActionType.DELETE_TILESET_FROM_MAP: {
+                return setStore({
+                    ...store,
+                    currentProject: payload.currentProject,
+                    mapTilesets: payload.mapTilesets,
+                    mapTiles: payload.mapTiles,
                 })
             }
 
@@ -591,9 +604,29 @@ function GlobalStoreContextProvider(props) {
         const response = await api.importTilesetToMap(payload);
         console.log(response);
         if (response.status < 400) {
+
+            let mapTilesets = await store.getMapTilesets(response.data.map._id)
+
+            let mapTiles = [];
+            let tileIds = [];
+
+            for (let i = 0; i < mapTilesets.length; i++) {
+                tileIds = tileIds.concat(mapTilesets[i].tiles)
+            }
+
+            await Promise.all(tileIds.map(async (tileId) => {
+                let tile = await store.getTileById(tileId)
+                mapTiles.push(tile)
+            }));
+
+
             storeReducer({
                 type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
-                payload: response.data.map
+                payload: {
+                    currentProject: response.data.map,
+                    mapTilesets: mapTilesets,
+                    mapTiles: mapTiles,
+                }
             })
         }
     }
@@ -1556,12 +1589,12 @@ function GlobalStoreContextProvider(props) {
             let numTiles = map.mapHeight * map.mapWidth
             let currentMapTiles = map.tiles.length > 0 ? map.tiles : Array(numTiles).fill(-1)
 
-            console.log(map)
-            console.log(primaryTile)
-            console.log(secondaryTile)
-            console.log(mapTilesets)
-            console.log(mapTiles)
-            console.log(currentMapTiles)
+            // console.log(map)
+            // console.log(primaryTile)
+            // console.log(secondaryTile)
+            // console.log(mapTilesets)
+            // console.log(mapTiles)
+            // console.log(currentMapTiles)
 
 
             storeReducer({
@@ -1658,10 +1691,28 @@ function GlobalStoreContextProvider(props) {
         console.log(response);
 
         if (response.status < 400) {
+
+            let mapTilesets = await store.getMapTilesets(store.currentProject._id)
+
+            let mapTiles = [];
+            let tileIds = [];
+
+            for (let i = 0; i < mapTilesets.length; i++) {
+                tileIds = tileIds.concat(mapTilesets[i].tiles)
+            }
+
+            await Promise.all(tileIds.map(async (tileId) => {
+                let tile = await store.getTileById(tileId)
+                mapTiles.push(tile)
+            }));
+
+
             storeReducer({
-                type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+                type: GlobalStoreActionType.DELETE_TILESET_FROM_MAP,
                 payload: {
-                    currentProject: response.data.map
+                    currentProject: response.data.map,
+                    mapTilesets: mapTilesets,
+                    mapTiles: mapTiles,
                 }
             })
         }
