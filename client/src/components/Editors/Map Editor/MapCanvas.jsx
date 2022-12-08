@@ -72,11 +72,14 @@ export default function MapCanvas() {
     // }, [store.currentProject])
 
 
+    // useEffect(() => {
+    //         store.setCurrentMapTiles(currentMapTiles)
+    // }, [store.currentPorject])
 
 
     const fillHelper = async (x, y, originalTile) => {
 
-        let map = store.currentMapTiles
+        let map = currentMapTiles
         if (x < 0 || x >= mapHeight || y < 0 || y >= mapWidth || map[x * mapWidth + y] !== originalTile) {
             return
         }
@@ -115,7 +118,7 @@ export default function MapCanvas() {
     }
 
     const updateCurrentMapTiles = async (value, index) => {
-        let map = store.currentMapTiles
+        let map = currentMapTiles
         map[index] = value
         // setCurrentMapTiles(map)
         await store.setCurrentMapTiles(map)
@@ -123,7 +126,7 @@ export default function MapCanvas() {
 
     const handleBucket = () => {
         // console.log(store.currentMapTiles)
-        let originalTile = store.currentMapTiles[currentTile[0] * mapWidth + currentTile[1]]
+        let originalTile = currentMapTiles[currentTile[0] * mapWidth + currentTile[1]]
         fillHelper(currentTile[0], currentTile[1], originalTile)
         // console.log(store.currentMapTiles)
     }
@@ -182,7 +185,7 @@ export default function MapCanvas() {
             </Button>
 
             <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `${70 * renderHeightRatio}vh`, width: `${70 * renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
-                {store.currentMapTiles?.length > 0 && store.currentMapTiles.map((tile, index) => (
+                {currentMapTiles?.length > 0 && currentMapTiles.map((tile, index) => (
                     <MapTile
                         handleBucket={handleBucket}
                         updateCurrentMapTiles={updateCurrentMapTiles}
