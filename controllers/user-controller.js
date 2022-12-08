@@ -700,7 +700,6 @@ var getUserFavorites = async (req, res) => {
                         ] },
                     { ownerId: uid },
                     { $and: [
-                        {favs: { $in: [uid] }},
                         {collaboratorIds: { $in: [uid] }}
                         ]
                     },
@@ -726,7 +725,6 @@ var getUserFavorites = async (req, res) => {
                             ] },
                         { ownerId: uid },
                         { $and: [
-                            {favs: { $in: [uid] }},
                             {collaboratorIds: { $in: [uid] }}
                             ]
                         },
@@ -896,7 +894,7 @@ deleteUser = async (req, res) => {
 
     await User.findOneAndUpdate({ _id: uid }, { $set: { profilePic: img } },
         { new: true }).then((newUser) => {
-            console.log(newUser)
+            // console.log(newUser)
         }).catch((err) => {
             console.log(err)
             return res.status(404).json({
