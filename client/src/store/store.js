@@ -338,8 +338,9 @@ function GlobalStoreContextProvider(props) {
                 })
             }
 
-
             case GlobalStoreActionType.SET_CURRENT_MAP_TILES: {
+                console.log("PAYLOAD CURRENT MAP TILES")
+                console.log(payload.currentMapTiles)
                 return setStore({
                     ...store,
                     currentMapTiles: payload.currentMapTiles
@@ -1512,22 +1513,31 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.setCurrentMapTiles = async function (mapId, currentMapTiles) {
+    store.setCurrentMapTiles = async function (currentMapTiles) {
 
         // call backend function to update the map as well
-        
-        const response = await api.getMapById(mapId)
+        let payload = {
+            tiles: currentMapTiles
+        }
 
+        let query = {
+            id: store.currentProject._id,
+            ownerId: store.currentProject.ownerId,
+        }
+        
+        const response = await api.updateMap(query, payload)
+
+        let map;
         if (response.status === 200) {
-            let map = response.data.map
-            
+            map = response.data.map
         }
 
 
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
             payload: {
-                currentMapTiles: currentMapTiles
+                currentMapTiles: currentMapTiles,
+                currentProject: map
             }
         })
     }

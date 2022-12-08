@@ -35,7 +35,7 @@ export default function MapCanvas() {
 
     // Updating map object in canvas
     useEffect(() => {
-        //console.log(store.currentMapTiles)
+        // console.log(store.currentMapTiles)
         setCurrentMapTiles(store.currentMapTiles)
     }, [store.currentMapTiles])
 
@@ -119,7 +119,7 @@ export default function MapCanvas() {
         mapTiles[index] = value
         // setCurrentMapTiles(map)
         console.log( mapTiles)
-        await store.setCurrentMapTiles(store.currentProject._id, mapTiles)
+        await store.setCurrentMapTiles(mapTiles)
     }
 
     const handleBucket = () => {

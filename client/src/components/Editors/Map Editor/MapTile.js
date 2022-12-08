@@ -21,7 +21,7 @@ export default function MapTile(props) {
             case 'eraser':
                 setImgSrc('')
                 setFilled(false)
-                props.updateCurrentMapTiles(imgSrc, props.index)
+                props.updateCurrentMapTiles(-1, props.index)
                 break
 
             case 'dropper':
