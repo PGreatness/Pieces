@@ -40,7 +40,7 @@ export default function MapToolBar() {
         // let map = store.currentProject
         // map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
         // store.setCurrentProject(map._id)
-        store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(''))
+        store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
     }
 
     return (
