@@ -607,29 +607,38 @@ function GlobalStoreContextProvider(props) {
         console.log(response);
         if (response.status < 400) {
 
-            let mapTilesets = await store.getMapTilesets(response.data.map._id)
 
-            let mapTiles = [];
-            let tileIds = [];
+            const response2 = await api.getMapTilesets(response.data.map._id)
 
-            for (let i = 0; i < mapTilesets.length; i++) {
-                tileIds = tileIds.concat(mapTilesets[i].tiles)
+            let mapTilesets;
+            let mapTiles;
+            if (response2.status === 200) {
+                mapTilesets = response2.data.tilesets;
+                mapTiles = response2.data.tiles;
+
+                storeReducer({
+                    type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
+                    payload: {
+                        currentProject: response.data.map,
+                        mapTilesets: mapTilesets,
+                        mapTiles: mapTiles,
+                    }
+                })
             }
 
-            await Promise.all(tileIds.map(async (tileId) => {
-                let tile = await store.getTileById(tileId)
-                mapTiles.push(tile)
-            }));
+            // let mapTilesets = await store.getMapTilesets(response.data.map._id)
+            // let mapTiles = [];
+            // let tileIds = [];
 
+            // for (let i = 0; i < mapTilesets.length; i++) {
+            //     tileIds = tileIds.concat(mapTilesets[i].tiles)
+            // }
 
-            storeReducer({
-                type: GlobalStoreActionType.IMPORT_TILESET_TO_MAP,
-                payload: {
-                    currentProject: response.data.map,
-                    mapTilesets: mapTilesets,
-                    mapTiles: mapTiles,
-                }
-            })
+            // await Promise.all(tileIds.map(async (tileId) => {
+            //     let tile = await store.getTileById(tileId)
+            //     mapTiles.push(tile)
+            // }));
+
         }
     }
 
@@ -1598,21 +1607,16 @@ function GlobalStoreContextProvider(props) {
 
             let mapTilesets;
             let mapTiles;
-            //console.log(response2.status)
             if (response2.status === 200) {
                 mapTilesets = response2.data.tilesets;
                 mapTiles = response2.data.tiles;
-                console.log(mapTilesets)
-                console.log(mapTiles)
             }
 
             
             // let tileIds = [];
-
             // for (let i = 0; i < mapTilesets.length; i++) {
             //     tileIds = tileIds.concat(mapTilesets[i].tiles)
             // }
-
             // await Promise.all(tileIds.map(async (tileId) => {
             //     let tile = await store.getTileById(tileId)
             //     mapTiles.push(tile)
@@ -1744,29 +1748,39 @@ function GlobalStoreContextProvider(props) {
 
         if (response.status < 400) {
 
-            let mapTilesets = await store.getMapTilesets(store.currentProject._id)
+            const response2 = await api.getMapTilesets(store.currentProject._id)
 
-            let mapTiles = [];
-            let tileIds = [];
+            let mapTilesets;
+            let mapTiles;
+            if (response2.status === 200) {
+                mapTilesets = response2.data.tilesets;
+                mapTiles = response2.data.tiles;
 
-            for (let i = 0; i < mapTilesets.length; i++) {
-                tileIds = tileIds.concat(mapTilesets[i].tiles)
+                storeReducer({
+                    type: GlobalStoreActionType.DELETE_TILESET_FROM_MAP,
+                    payload: {
+                        currentProject: response.data.map,
+                        mapTilesets: mapTilesets,
+                        mapTiles: mapTiles,
+                    }
+                })
             }
 
-            await Promise.all(tileIds.map(async (tileId) => {
-                let tile = await store.getTileById(tileId)
-                mapTiles.push(tile)
-            }));
+            // let mapTilesets = await store.getMapTilesets(store.currentProject._id)
+
+            // let mapTiles = [];
+            // let tileIds = [];
+
+            // for (let i = 0; i < mapTilesets.length; i++) {
+            //     tileIds = tileIds.concat(mapTilesets[i].tiles)
+            // }
+
+            // await Promise.all(tileIds.map(async (tileId) => {
+            //     let tile = await store.getTileById(tileId)
+            //     mapTiles.push(tile)
+            // }));
 
 
-            storeReducer({
-                type: GlobalStoreActionType.DELETE_TILESET_FROM_MAP,
-                payload: {
-                    currentProject: response.data.map,
-                    mapTilesets: mapTilesets,
-                    mapTiles: mapTiles,
-                }
-            })
         }
     }
 
