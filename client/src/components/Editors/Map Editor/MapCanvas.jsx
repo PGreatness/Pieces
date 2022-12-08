@@ -103,23 +103,10 @@ export default function MapCanvas() {
         // setCurrentMapTiles(newMap)
     }
 
-    function scaleImage(tileArr, factor) {
-
-        let scaledTile = [];
-    
-        for(let row of tileArr) {
-            let arr = [];
-            for(let pixel of row)
-                arr = arr.concat(Array(factor).fill(pixel));
-            scaledTile = scaledTile.concat(Array(factor).fill(arr));
-        }
-    
-        return scaledTile;
-    }
-
     const updateCurrentMapTiles = async (value, index) => {
         let map = currentMapTiles
         map[index] = value
+        console.log(map)
         // setCurrentMapTiles(map)
         await store.setCurrentMapTiles(map)
     }
@@ -132,8 +119,8 @@ export default function MapCanvas() {
     }
 
     const handleClickTileOption = (e) => {
-        let src = e.currentTarget.src
-        store.setPrimaryTile(src)
+        let id = Number(e.currentTarget.id.replace("tile_option_", ""))
+        store.setPrimaryTile(id)
         setMapHeight(mapHeight)
     }
 
@@ -242,7 +229,7 @@ export default function MapCanvas() {
                             // ))
                             store.mapTiles.map((image, index) => (
                                 (index >= currentIndices[0] && index < currentIndices[1])
-                                    ? <img onClick={handleClickTileOption} src={store.mapTiles[index].tileImage} className='palette_option' />
+                                    ? <img onClick={handleClickTileOption} src={store.mapTiles[index].tileImage} id={`tile_option_${index}`} className='palette_option' />
                                     : null
                             ))
                         }
