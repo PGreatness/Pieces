@@ -1678,6 +1678,20 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
+    store.updateMapProperties = async function (payload) {
+        let query = {
+            id: store.currentProject._id,
+            ownerId: store.currentProject.ownerId,
+        }
+        const response = await api.updateMap(query, payload)
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_PROJECT,
+            payload: {
+                currentProject: response.data.map
+            }
+        })
+    }
+
 
     store.setTilesetTool = async function (newTilesetTool) {
         storeReducer({

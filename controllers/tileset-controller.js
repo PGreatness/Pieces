@@ -180,9 +180,6 @@ deleteTileset = async (req, res) => {
 
 updateTileset = async (req, res) => {
 
-    console.log("inside tileset controller method")
-    console.log(req.query)
-    console.log(req.body)
     if (req.query.id == undefined) {
         return res.status(404).json({
             message: 'ID empty',

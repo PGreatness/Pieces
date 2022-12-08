@@ -94,9 +94,9 @@ export default function MapRightBar(props) {
     let payload = {
       title: document.getElementById('title_input').value,
       mapDescription: document.getElementById('desc_input').value,
-      tags: document.getElementById('tags_input').value
+      tags: document.getElementById('tags_input').value.split(", ")
     }
-    //store.updateMapProperties(store.currentProject._id, store.currentProject.ownerId, payload)
+    store.updateMapProperties(payload)
     setEditMode(false)
   }
 

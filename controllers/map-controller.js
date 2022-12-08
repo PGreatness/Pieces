@@ -330,6 +330,7 @@ updateMap = async (req, res) => {
                 return res.status(200).json({
                     success: true,
                     id: map._id,
+                    map: map,
                     message: 'Map was successfully updated',
                 })
             })
