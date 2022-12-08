@@ -597,6 +597,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.importTilesetToCopyTileset = async function (importedProjectId, tilesetId) {
+        let payload = {
+            importId: importedProjectId,
+            tilesetId: tilesetId,
+        }
+        const response = await api.importTilesetToTileset(payload);
+        console.log(response);
+        if (response.status < 400) {
+            return response.data.tileset
+        }
+    }
+
 
     store.importTilesetToMap = async function (importedId) {
         let payload = {
@@ -840,7 +852,12 @@ function GlobalStoreContextProvider(props) {
         return response;
     }
 
-    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId, locked) {
+        let isLocked = false
+        if (locked !== undefined) {
+            isLocked = locked;
+        }
+
         let payload = {
             title: title,
             imagePixelHeight: tilesetHeight,
@@ -848,7 +865,7 @@ function GlobalStoreContextProvider(props) {
             tileHeight: tileHeight,
             tileWidth: tileWidth,
             ownerId: ownerId,
-            isLocked: true,
+            isLocked: isLocked,
             isPublic: false,
             source: null
         };

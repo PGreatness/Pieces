@@ -210,8 +210,15 @@ export default function MapRightBar(props) {
     setOpenDeleteMap(false)
   }
 
-  const handleImportTileset = (tileset) => {
-    store.importTilesetToMap(tileset._id);
+  const handleImportTileset = async (tileset) => {
+
+    // create a new tileset here with isLocked !!!!
+    let isLocked = true;
+    let response = await store.createNewTileset(tileset.title, tileset.imagePixelHeight, tileset.imagePixelWidth, tileset.tileHeight, tileset.tileWidth, tileset.ownerId, isLocked)
+    
+    await store.importTilesetToCopyTileset(tileset._id, response.data.tileset._id)
+    
+    store.importTilesetToMap(response.data.tileset._id);
     handleCloseImportTileset();
   }
 
@@ -319,8 +326,10 @@ export default function MapRightBar(props) {
         // 3. ADD TILES TO TILESET
         // 2. ADD TILESET TO CURRENT MAP
 
+        let isLocked = true;
+
         // Create new tileset
-        let response = await store.createNewTileset(image.name.slice(0, -4), tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId)
+        let response = await store.createNewTileset(image.name.slice(0, -4), tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId, isLocked)
         let newTileset = response.data.tileset
 
 
