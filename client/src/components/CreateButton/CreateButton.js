@@ -72,7 +72,7 @@ export default function CreateButton(props) {
             let response = await store.createNewMap(title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId)
             console.log(response)
             if (response.data.success) {
-                await store.changePageToMapEditor(response.data.map)
+                //await store.changePageToMapEditor(response.data.map)
                 await store.loadMap(response.data.map._id)
                 setLocation(`/map/${response.data.id}`)
             }

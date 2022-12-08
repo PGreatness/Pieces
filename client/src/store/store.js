@@ -60,13 +60,11 @@ function GlobalStoreContextProvider(props) {
         secondaryColor: '#ffffff',
 
         // for map editor
-        mapTilesets: null,
-        mapTiles: null,
+        mapTilesets: [],
+        mapTiles: [],
+        currentMapTiles: [],
         primaryTile: -1,
         secondaryTile: -1,
-
-        // ???? do i need this
-        currentMapTiles: [],
 
 
         // for both map and tileset editor
@@ -372,7 +370,10 @@ function GlobalStoreContextProvider(props) {
                     primaryColor: '#000000',
                     secondaryColor: '#ffffff',
                     tilesetTool: 'brush',
-                    currentTile: null
+                    currentTile: null,
+                    mapTilesets: [],
+                    mapTiles: [],
+                    currentMapTiles: []
                 });
             }
 
@@ -659,7 +660,7 @@ function GlobalStoreContextProvider(props) {
                     currentTile: null,
                     currentPage: "explore",
                     userProjects: store.userProjects,
-                    publicProjects: publicProjects
+                    publicProjects: publicProjects,
                 }
             });
 

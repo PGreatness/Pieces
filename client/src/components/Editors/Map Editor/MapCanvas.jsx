@@ -18,11 +18,9 @@ export default function MapCanvas() {
     const [currentMapTiles, setCurrentMapTiles] = useState(store.currentMapTiles)
     const [tilesets, setTilesets] = useState(store.mapTilesets)
     const [tileImages, setTileImages] = useState(store.mapTiles.map(function (tile) { return tile.tileImage }))
-    console.log(tileImages)
-
-
+    const [currentIndices, setCurrentIndices] = useState([0, store.mapTilesets.length > 0 ? store.mapTilesets[0].tiles.length: 0])
+    
     const [value, setValue] = useState(0);
-    const [currentIndices, setCurrentIndices] = useState([0, store.mapTilesets[0].tiles.length])
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
@@ -45,7 +43,7 @@ export default function MapCanvas() {
     useEffect(() => {
         setTilesets(store.mapTilesets)
         setTileImages(store.mapTiles.map(function (tile) { return tile.tileImage }))
-        console.log(store.mapTiles.map(function (tile) { return tile.tileImage }))
+        setCurrentIndices([0, store.mapTilesets.length > 0 ? store.mapTilesets[0].tiles.length: 0])
     }, [store.mapTilesets])
 
 
