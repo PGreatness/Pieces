@@ -44,7 +44,7 @@ export default function MapTile(props) {
             className='tile' item xs={1} 
             style={{borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', minHeight:`calc(100% / ${props.mapHeight}`, maxHeight:`calc(100% / ${props.mapHeight}`}} bgcolor='#fff'>
             {store.currentMapTiles[props.index] !== -1
-                ? <img style={{width: '100%', height: '100%'}} src={store.mapTiles[store.currentMapTiles[props.index]].tileImage}></img>
+                ? <img style={{width: '100%', height: '100%'}} src={store.mapTiles[store.currentMapTiles[props.index]]?.tileImage}></img>
                 : <div style={{width: '100%', height: '100%'}}></div>
             }   
         </Grid>
