@@ -30,7 +30,7 @@ export default function MapCanvas() {
         setMapHeight(store.currentProject.mapHeight)
         setMapWidth(store.currentProject.mapWidth)
         // TODO: probably update currentMapTiles as well
-        // setCurrentMapTiles(store.currentMapTiles)
+        setCurrentMapTiles(store.currentMapTiles)
     }, [store.currentProject])
 
     // Updating map object in canvas
@@ -115,10 +115,11 @@ export default function MapCanvas() {
     }
 
     const updateCurrentMapTiles = async (value, index) => {
-        let map = currentMapTiles
-        map[index] = value
+        let mapTiles = currentMapTiles
+        mapTiles[index] = value
         // setCurrentMapTiles(map)
-        await store.setCurrentMapTiles(map)
+        console.log( mapTiles)
+        await store.setCurrentMapTiles(store.currentProject._id, mapTiles)
     }
 
     const handleBucket = () => {
@@ -225,8 +226,8 @@ export default function MapCanvas() {
                 }
                 <Box sx={{ padding: 2 }}>
                     <Stack direction='row' spacing={2}>
-                        {console.log("store map tiles")}
-                        {console.log(store.mapTiles)}
+                        {/* {console.log("store map tiles")}
+                        {console.log(store.mapTiles)} */}
                         {
                             // tileImages.slice(currentIndices[0], currentIndices[1]).map((image, index) => (
                             //     <img onClick={handleClickTileOption} src={image} className='palette_option' />

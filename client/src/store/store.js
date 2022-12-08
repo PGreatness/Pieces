@@ -1512,7 +1512,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.setCurrentMapTiles = async function (currentMapTiles) {
+    store.setCurrentMapTiles = async function (mapId, currentMapTiles) {
+
+        // call backend function to update the map as well
+        
+        const response = await api.getMapById(mapId)
+
+        if (response.status === 200) {
+            let map = response.data.map
+            
+        }
+
+
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
             payload: {
