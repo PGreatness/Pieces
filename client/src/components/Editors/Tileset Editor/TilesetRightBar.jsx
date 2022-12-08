@@ -37,6 +37,7 @@ export default function TilesetRightBar(props) {
   const [showError, setShowError] = useState(false)
   const [image, setImage] = useState(null)
   const [favs, setFavs] = useState([])
+  const [openTagsErrorModal, setOpenTagsErrorModal] = useState(false)
   const inputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -108,13 +109,38 @@ export default function TilesetRightBar(props) {
     //   modal
     //   return
     // }
+
+    let flag = false
+
+    let tagsText = document.getElementById('tags_input').value
+    if (tagsText.includes(',') && !tagsText.includes(', ')) {
+      setOpenTagsErrorModal(true)
+      return
+    }
+
+    let tags = tagsText.split(", ")
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i] === '') {
+        setOpenTagsErrorModal(true)
+        return
+      }
+    }
+
+    // if (flag) return
+
+    console.log("new tags: ")
+    console.log(tags)
     let payload = {
       title: document.getElementById('title_input').value,
       tilesetDesc: document.getElementById('desc_input').value,
-      tilesetTags: document.getElementById('tags_input').value.split(", ")
+      tilesetTags: tags
     }
     store.updateTilesetProperties(payload)
     setEditMode(false)
+  }
+
+  const handleCloseTagsErrorModal = () => {
+    setOpenTagsErrorModal(false)
   }
 
   const handleChange = (event, newValue) => {
@@ -893,6 +919,18 @@ export default function TilesetRightBar(props) {
             <Grid item xs={2}></Grid>
           </Grid>
         </Box>
+      </Modal>
+
+      <Modal
+          open={openTagsErrorModal}
+          onClose={handleCloseTagsErrorModal}
+      >
+          <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column' style={{margin:'10px'}}>
+              <Typography style={{textAlign:'center', marginBottom:'10px'}} variant='h5' color='#2dd4cf'>Error</Typography>
+              <Typography style={{textAlign:'center'}} color='azure'>Make sure tags are separated with ", "</Typography>
+          </Stack>
+          </Box>
       </Modal>
 
       <canvas style={{}} id='canvas'></canvas>
