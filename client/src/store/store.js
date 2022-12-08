@@ -1593,19 +1593,30 @@ function GlobalStoreContextProvider(props) {
 
             }
 
-            let mapTilesets = await store.getMapTilesets(id)
+            
+            const response2 = await api.getMapTilesets(id)
 
-            let mapTiles = [];
-            let tileIds = [];
-
-            for (let i = 0; i < mapTilesets.length; i++) {
-                tileIds = tileIds.concat(mapTilesets[i].tiles)
+            let mapTilesets;
+            let mapTiles;
+            //console.log(response2.status)
+            if (response2.status === 200) {
+                mapTilesets = response2.data.tilesets;
+                mapTiles = response2.data.tiles;
+                console.log(mapTilesets)
+                console.log(mapTiles)
             }
 
-            await Promise.all(tileIds.map(async (tileId) => {
-                let tile = await store.getTileById(tileId)
-                mapTiles.push(tile)
-            }));
+            
+            // let tileIds = [];
+
+            // for (let i = 0; i < mapTilesets.length; i++) {
+            //     tileIds = tileIds.concat(mapTilesets[i].tiles)
+            // }
+
+            // await Promise.all(tileIds.map(async (tileId) => {
+            //     let tile = await store.getTileById(tileId)
+            //     mapTiles.push(tile)
+            // }));
 
 
             let numTiles = map.mapHeight * map.mapWidth
