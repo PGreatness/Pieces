@@ -44,7 +44,7 @@ export default function NavbarAppOptions(props) {
     const { communityStore } = useContext(CommunityStoreContext);
 
     const [user, setUser] = useState(auth.user)
-    const [loggedIn, setLoggedIn] = useState(auth.user? true: false);
+    const [loggedIn, setLoggedIn] = useState(auth.user ? true : false);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
     const [openErrorModal, setOpenErrorModal] = useState(auth.errorMessage !== null)
@@ -174,7 +174,7 @@ export default function NavbarAppOptions(props) {
     const createLogo = () => {
         return (
             <div className='navbar_logo' >
-                <img src={require('../images/logo512.png')}/>
+                <img src={require('../images/logo512.png')} />
             </div>
         )
     }
@@ -192,8 +192,10 @@ export default function NavbarAppOptions(props) {
                         display: 'flex', flexDirection: 'row', marginRight: '10px', bottom: '0',
                         color: `${page === 'explore' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
+                        auth.socket.emit('closeProject', store.currentProject?._id);
                         props.changeLoc('/explore');
-                        navigate("/explore"); store.changePageToExplore();
+                        navigate("/explore");
+                        store.changePageToExplore();
                     }}>
                         <ExploreIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></ExploreIcon>
                         <Typography fontSize='26px' className='navbarappoptions-sections'>Explore</Typography>
@@ -205,7 +207,11 @@ export default function NavbarAppOptions(props) {
                         display: 'flex', flexDirection: 'row', marginRight: '10px', marginLeft: '10px', bottom: '0',
                         color: `${page === 'library' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
-                        store.changePageToLibrary().then(()=> {props.changeLoc('/library'); navigate("/library");})
+                        store.changePageToLibrary().then(() => {
+                            auth.socket.emit('closeProject', store.currentProject?._id)
+                            props.changeLoc('/library');
+                            navigate("/library");
+                        })
                     }}>
                         <CollectionsBookmarkIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></CollectionsBookmarkIcon>
                         <Typography fontSize='26px' className='navbarappoptions-sections'>Library</Typography>
@@ -216,7 +222,11 @@ export default function NavbarAppOptions(props) {
                         display: 'flex', flexDirection: 'row', marginRight: '70px', marginLeft: '10px',
                         color: `${page === 'community' ? "#2dd4cf" : "white"}`
                     }} className='navbarappoptions-sections-box' onClick={() => {
-                        props.changeLoc('/community'); navigate("/community"); store.changePageToCommunity(); communityStore.getPopularThreads(1);
+                        auth.socket.emit('closeProject', store.currentProject?._id)
+                        props.changeLoc('/community');
+                        navigate("/community");
+                        store.changePageToCommunity();
+                        communityStore.getPopularThreads(1);
                     }}>
                         <PeopleIcon className='navbarappoptions-sections' sx={{ fontSize: 25, px: 1, pt: 1 }}></PeopleIcon>
                         <Typography fontSize='26px' className='navbarappoptions-sections'>Community</Typography>
@@ -337,11 +347,11 @@ export default function NavbarAppOptions(props) {
                 {createLogo()}
                 <div className='navbar_appflexbox'>
                     <div className='navbar_flexitem_left'>
-                        {createAppButtons(auth.user? true: false)}
+                        {createAppButtons(auth.user ? true : false)}
                     </div>
                     {createSearchBar()}
                     <div className='navbar_flexitem_right'>
-                        {createLoginButtons(auth.user? true: false, setLoggedIn)}
+                        {createLoginButtons(auth.user ? true : false, setLoggedIn)}
                     </div>
                 </div>
 

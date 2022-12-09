@@ -339,6 +339,7 @@ export default function LibraryScreen(props) {
 
     const openProject = (project) => {
         console.log(project);
+        auth.socket.emit('openProject', { project: project._id });
         if (!project.tilesetDesc) {
             //store.changePageToMapEditor(project)
             store.loadMap(project._id).then(() => {

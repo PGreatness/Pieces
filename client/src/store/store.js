@@ -1745,6 +1745,8 @@ function GlobalStoreContextProvider(props) {
                     tile = tile_res.data.tile
                 }
 
+                console.log(store.tilesetTool)
+                console.log(store.primaryColor)
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_TILESET,
                     payload: {

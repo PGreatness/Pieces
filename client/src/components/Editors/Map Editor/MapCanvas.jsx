@@ -5,6 +5,7 @@ import { Undo, Redo, Delete } from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
 import { useState, useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth'
 import MapTile from './MapTile';
 
 export default function MapCanvas() {
@@ -12,7 +13,8 @@ export default function MapCanvas() {
     // Map Editor Code Start
 
     const { store } = useContext(GlobalStoreContext)
-
+    const { auth } = useContext(AuthContext)
+    
     const [mapHeight, setMapHeight] = useState(store.currentProject ? store.currentProject.mapHeight : 0)
     const [mapWidth, setMapWidth] = useState(store.currentProject ? store.currentProject.mapWidth: 0)
     const [currentMapTiles, setCurrentMapTiles] = useState(store.currentMapTiles)
@@ -31,6 +33,20 @@ export default function MapCanvas() {
     //     setCurrentMapTiles(store.currentMapTiles)
     //     console.log(store.currentMapTiles)
     // }, [store.currentMapTiles])
+
+
+    useEffect(() => {
+        console.log("MapCanvas: Socket recievedUpdate")
+        auth.socket.on('recieveUpdateMap', (data) => {
+            if (auth.socket.id === data.socketId) { return; }
+                console.log('Recieved Map Update');
+                console.log(data);
+                store.loadMap(data.project).then(()=>{
+                    console.log("Map fully loaded");
+                });
+            })
+    }, [auth.socket])
+
 
 
     useEffect(() => {
@@ -123,6 +139,7 @@ export default function MapCanvas() {
         // setCurrentMapTiles(map)
         console.log( mapTiles)
         await store.setCurrentMapTiles(mapTiles)
+        auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
 
     const handleBucket = () => {
