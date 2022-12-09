@@ -25,19 +25,22 @@ export default function MapCanvas() {
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
 
+    //  // Updating map object in canvas
+    // useEffect(() => {
+    //     // console.log(store.currentMapTiles)
+    //     setCurrentMapTiles(store.currentMapTiles)
+    //     console.log(store.currentMapTiles)
+    // }, [store.currentMapTiles])
+
 
     useEffect(() => {
         setMapHeight(store.currentProject ? store.currentProject.mapHeight : 0)
         setMapWidth(store.currentProject ? store.currentProject.mapWidth: 0)
         // TODO: probably update currentMapTiles as well
         setCurrentMapTiles(store.currentMapTiles)
+        console.log(store.currentMapTiles)
     }, [store.currentProject])
 
-    // Updating map object in canvas
-    useEffect(() => {
-        // console.log(store.currentMapTiles)
-        setCurrentMapTiles(store.currentMapTiles)
-    }, [store.currentMapTiles])
 
     // updating map tilesets
     useEffect(() => {
