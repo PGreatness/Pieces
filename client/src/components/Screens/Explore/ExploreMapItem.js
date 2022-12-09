@@ -100,10 +100,18 @@ export default function ExploreMapItem(props) {
         console.log(props.projectId)
     }
 
+    const handlePreviewClick = () => {
+        if (isUnlocked) {
+            setLocation('/view/map/' + project._id);
+        } else {
+            handleConfirmRequest();
+        }
+    }
+
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
-            <img class='image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px"></img>
+            <img class='image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px" onClick={handlePreviewClick}></img>
             {isUnlocked ?
                 <LockOpenIcon className='lock_icon'></LockOpenIcon> :
                 <LockIcon className='lock_icon'></LockIcon>

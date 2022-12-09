@@ -386,6 +386,127 @@ export default function MapRightBar(props) {
 
   }
 
+  const exportMapAsJSON = () => {
+
+    let layers = [{
+      //class
+      compression: '',
+      data: [],
+      encoding: "csv", //not sure what this is
+      height: store.currentProject.mapHeight,
+      id: 1,
+      layers: [],
+      locked: false,
+      name: 'Default Map Layer',
+      offsetx: 0,
+      offsety: 0,
+      opacity: 1,
+      parallaxx: 0,
+      parallaxy: 0,
+      properties: {
+
+      },
+      type: 'tilelayer',
+      visible: true,
+      width: store.currentProject.mapWidth,
+      x: 0,
+      y: 0
+    }]
+
+    let tilesets = []
+
+    store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+
+      let currIndex = 0
+
+      tilesetObjs.forEach((tileset) => {
+        let tilesetObj = {
+          backgroundColor: '#00FFFFFF',
+          //class
+          columns: 1,
+          fillmode: 'stretch',
+          firstgid: currIndex,
+          image: '',
+          imageHeight: -1,
+          imageWidth: -1,
+          margin: 0,
+          name: tileset.title,
+          objectalignment: 'unspecified',
+          properties: [
+            {
+              "name": "title",
+              "type": "string",
+              "value": tileset.title
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "value": tileset.description
+            },
+            {
+              "name": "tags",
+              "type": "string",
+              "value": tileset.tags.join(", ")
+            }
+          ],
+          source: '',
+          spacing: 0,
+          tilecount: tileset.tiles.length,
+          tileheight: tileset.tileHeight,
+          tilewidth: tileset.tileWidth,
+          type: 'tileset',
+
+        }
+        currIndex += tileset.tiles.length
+        tilesets.push(tilesetObj)
+      })
+    })
+
+    let mapObject = {
+      backgroundColor: '#00FFFFFF',
+      //class
+      compressionLevel: -1,
+      height: store.currentProject.mapHeight,
+      infinite: false,
+      layers: layers,
+      nextlayerid: 1,
+      nextobjectid: 1,
+      orientation: 'orthogonal',
+      parallaxoriginx: 0,
+      parallaxoriginy: 0,
+      properties: {
+        "name": store.currentProject.title,
+        "description": store.currentProject.mapDescription,
+        "tags": store.currentProject.tags
+      },
+      renderorder: "right-down",
+      //tiledversion
+      tileheight: store.currentProject.tileHeight,
+      tilesets: tilesets,
+      tilewidth: store.currentProject.tileWidth,
+      type: "map",
+      width: store.currentProject.mapWidth,
+    }
+
+
+    const filename = `${store.currentProject.title}.json`;
+    const jsonStr = JSON.stringify(mapObject);
+
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+    handleCloseExportMap();
+
+
+  }
+
   return (
     <Box bgcolor={"#11182a"} flex={4} className="map_rightbar">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -747,12 +868,28 @@ export default function MapRightBar(props) {
         open={openExportMap}
         onClose={handleCloseExportMap}
       >
-        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' height='40%' width='40%' top='30%' left='30%'>
           <Stack direction='column'>
-            <Typography variant='h5' color='azure'>Export Map</Typography>
-            <TextField size='small' style={{ backgroundColor: 'azure' }} sx={{ marginTop: '5px', "& .MuiInputBase-root": { height: 20 } }} />
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
+              <Typography variant='h3' style={{ textAlign: 'center', marginRight: '10px' }} color='azure'>Export Map as JSON</Typography>
+            </Grid>
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {store.currentProject?.title}</Typography>
+            </Grid>
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject?.mapHeight}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject?.mapWidth}</Typography>
+            </Grid>
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject?.tileHeight}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject?.tileWidth}</Typography>
+            </Grid>
+
             <Stack direction='row'>
-              <Button onClick={handleCloseExportMap}>
+              <Button onClick={exportMapAsJSON} sx={{ fontSize: '20px', marginLeft: '30%', marginRight: '50px' }}>
                 <Typography >Confirm</Typography>
                 <Check />
               </Button>
@@ -761,6 +898,7 @@ export default function MapRightBar(props) {
                 <Clear />
               </Button>
             </Stack>
+
           </Stack>
         </Box>
       </Modal>

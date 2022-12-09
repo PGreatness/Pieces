@@ -1582,6 +1582,9 @@ function GlobalStoreContextProvider(props) {
             id: store.currentProject._id,
             ownerId: store.currentProject.ownerId,
         }
+
+        console.log("STORE SETTING");
+        console.log(payload);
         
         const response = await api.updateMap(query, payload)
 
@@ -1621,7 +1624,7 @@ function GlobalStoreContextProvider(props) {
 
 
     // -----------------------------------------    MAPS   ---------------------------------------------------
-    store.loadMap = async function (id) {
+    store.loadMap = async function (id, getPreview) {
 
         // set store 
         // currentPage, currentProject, primaryTile, secondaryTile, tilesetTool, 
@@ -1691,13 +1694,23 @@ function GlobalStoreContextProvider(props) {
 
 
 
-           
+
 
 
             let numTiles = map.mapHeight * map.mapWidth
             let currentMapTiles = map.tiles.length > 0 ? map.tiles : Array(numTiles).fill(-1)
 
-
+            if (getPreview) {
+                return {
+                    currentPage: 'mapEditor',
+                    currentProject: map,
+                    mapTilesets: mapTilesetsOrdered,
+                    mapTiles: mapTilesOrdered,
+                    width: map.mapWidth,
+                    height: map.mapHeight,
+                    currentMapTiles: currentMapTiles,
+                }
+            }
             storeReducer({
                 type: GlobalStoreActionType.LOAD_MAP,
                 payload: {
