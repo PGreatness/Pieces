@@ -14,17 +14,25 @@ export default function MapCanvas() {
 
     const { store } = useContext(GlobalStoreContext)
     const { auth } = useContext(AuthContext)
-    const [mapHeight, setMapHeight] = useState(store.currentProject.mapHeight)
-    const [mapWidth, setMapWidth] = useState(store.currentProject.mapWidth)
+    
+    const [mapHeight, setMapHeight] = useState(store.currentProject ? store.currentProject.mapHeight : 0)
+    const [mapWidth, setMapWidth] = useState(store.currentProject ? store.currentProject.mapWidth: 0)
     const [currentMapTiles, setCurrentMapTiles] = useState(store.currentMapTiles)
     const [tilesets, setTilesets] = useState(store.mapTilesets)
-    const [tileImages, setTileImages] = useState(store.mapTiles.map(function (tile) { return tile.tileImage }))
+    const [tileImages, setTileImages] = useState(store.mapTiles ? store.mapTiles.map(function (tile) { return tile.tileImage }) : [])
     const [currentIndices, setCurrentIndices] = useState([0, store.mapTilesets.length > 0 ? store.mapTilesets[0].tiles.length: 0])
     
     const [value, setValue] = useState(0);
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
+
+    //  // Updating map object in canvas
+    // useEffect(() => {
+    //     // console.log(store.currentMapTiles)
+    //     setCurrentMapTiles(store.currentMapTiles)
+    //     console.log(store.currentMapTiles)
+    // }, [store.currentMapTiles])
 
 
     useEffect(() => {
@@ -42,17 +50,13 @@ export default function MapCanvas() {
 
 
     useEffect(() => {
-        setMapHeight(store.currentProject.mapHeight)
-        setMapWidth(store.currentProject.mapWidth)
+        setMapHeight(store.currentProject ? store.currentProject.mapHeight : 0)
+        setMapWidth(store.currentProject ? store.currentProject.mapWidth: 0)
         // TODO: probably update currentMapTiles as well
         setCurrentMapTiles(store.currentMapTiles)
+        console.log(store.currentMapTiles)
     }, [store.currentProject])
 
-    // Updating map object in canvas
-    // useEffect(() => {
-    //     // console.log(store.currentMapTiles)
-    //     setCurrentMapTiles(store.currentMapTiles)
-    // }, [store.currentMapTiles])
 
     // updating map tilesets
     useEffect(() => {

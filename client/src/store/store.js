@@ -335,6 +335,9 @@ function GlobalStoreContextProvider(props) {
                     currentProject: payload.currentProject,
                     mapTilesets: payload.mapTilesets,
                     mapTiles: payload.mapTiles,
+                    primaryTile: payload.primaryTile,
+                    secondaryTile: payload.secondaryTile,
+                    currentMapTiles: payload.currentMapTiles,
                 })
             }
 
@@ -597,6 +600,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.importTilesetToCopyTileset = async function (importedProjectId, tilesetId) {
+        let payload = {
+            importId: importedProjectId,
+            tilesetId: tilesetId,
+        }
+        const response = await api.importTilesetToTileset(payload);
+        console.log(response);
+        if (response.status < 400) {
+            return response.data.tileset
+        }
+    }
+
 
     store.importTilesetToMap = async function (importedId) {
         let payload = {
@@ -840,7 +855,12 @@ function GlobalStoreContextProvider(props) {
         return response;
     }
 
-    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId) {
+    store.createNewTileset = async function (title, tilesetHeight, tilesetWidth, tileHeight, tileWidth, ownerId, locked) {
+        let isLocked = false
+        if (locked !== undefined) {
+            isLocked = locked;
+        }
+
         let payload = {
             title: title,
             imagePixelHeight: tilesetHeight,
@@ -848,7 +868,7 @@ function GlobalStoreContextProvider(props) {
             tileHeight: tileHeight,
             tileWidth: tileWidth,
             ownerId: ownerId,
-            isLocked: true,
+            isLocked: isLocked,
             isPublic: false,
             source: null
         };
@@ -1789,12 +1809,27 @@ function GlobalStoreContextProvider(props) {
             tilesetId: deletedId,
             mapId: store.currentProject._id
         }
-        const response = await api.deleteMapTileset(payload);
-        console.log(response);
 
+        let lastIndex = 0
+        let tilesetLength = 0
+
+        for(let i = 0; i < store.mapTilesets.length; i++) {
+            let tileset = store.mapTilesets[i]
+            lastIndex += tileset.tiles.length
+            if (tileset._id === deletedId) {
+                tilesetLength = tileset.tiles.length
+                break
+            }
+        }
+
+        lastIndex = lastIndex - 1
+
+        const response = await api.deleteMapTileset(payload);
+        await store.deleteTileset(deletedId);
+        
         if (response.status < 400) {
 
-            const response2 = await api.getMapTilesets(store.currentProject._id)
+            const response2 = await api.getMapTilesets(response.data.map._id)
 
             let mapTilesets;
             let mapTiles;
@@ -1829,14 +1864,38 @@ function GlobalStoreContextProvider(props) {
                     })
                 })
 
+                let primaryTile = -1
+                let secondaryTile = -1
+                let newMapTiles = []
 
+                for (let i = 0; i < store.currentMapTiles.length; i++) {
+                    let tileIndex = store.currentMapTiles[i]
+                    if (tileIndex > lastIndex) {
+                        tileIndex = tileIndex - tilesetLength 
+                        console.log(tileIndex + " - " + tilesetLength)
+                    }
+                    newMapTiles.push(tileIndex)
+                }
+
+                let payload = {
+                    tiles: newMapTiles
+                };
+
+                let query = {
+                    id: response.data.map._id,
+                    ownerId: auth.user._id
+                }
+                const updateResponse = await api.updateMap(query, payload);
 
                 storeReducer({
                     type: GlobalStoreActionType.DELETE_TILESET_FROM_MAP,
                     payload: {
-                        currentProject: response.data.map,
+                        currentProject: updateResponse.data.map,
                         mapTilesets: mapTilesetsOrdered,
                         mapTiles: mapTilesOrdered,
+                        primaryTile: primaryTile,
+                        secondaryTile: secondaryTile,
+                        currentMapTiles: newMapTiles,
                     }
                 })
             }
