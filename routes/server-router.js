@@ -11,6 +11,7 @@ allRoutes.push('/profile');
 allRoutes.push('/explore');
 allRoutes.push('/library');
 allRoutes.push('/community');
+allRoutes.push('/view/map/:id');
 
 // TILESET
 allRoutes.push('/tileset/:id');
