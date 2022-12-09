@@ -38,11 +38,6 @@ export default function MapCanvas() {
             })
     }, [auth.socket])
 
-    useEffect(() => {
-        if (!window.location.pathname.includes('map')) {
-            auth.socket.emit('closeProject', store.currentProject._id)
-        }
-    }, [window.location.pathname])
 
 
     useEffect(() => {

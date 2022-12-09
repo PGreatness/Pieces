@@ -25,6 +25,19 @@ export default function TilesetCanvas() {
     const [ openDeleteLastTileModal, setOpenDeleteLastTileModal ] = useState(false)
 
     useEffect(() => {
+        auth.socket.on('recieveUpdateTileset', (data) => {
+            // check if the socket that sent the message is auth.socket
+            if (data.socketId === auth.socket.id) return;
+            console.log('Recieved Tileset Update');
+            console.log(data);
+            // setTileset(data.tileset);
+            store.loadTileset(data.project).then(()=>{
+                console.log("Tileset fully loaded");
+            });
+        })
+    }, [auth.socket])
+
+    useEffect(() => {
         console.log(store.currentProject.tiles)
         setTileset(store.currentProject)
     }, [store.currentProject])
@@ -54,7 +67,7 @@ export default function TilesetCanvas() {
     }
 
     const handleSelectTile = async (tileId) => {
-        console.log(store.currentProject.tiles)
+        // console.log(store.currentProject.tiles)
         // await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
         await store.setCurrentTile(tileId)
         setCurrentTile(store.currentTile)
@@ -92,6 +105,7 @@ export default function TilesetCanvas() {
                 setCurrentTile(tile)
                 imgSrc = convertToImage(tile);
                 await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
                 break
 
             case 'eraser':
@@ -99,6 +113,7 @@ export default function TilesetCanvas() {
                 setCurrentTile(tile)
                 imgSrc = convertToImage(tile);
                 await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
                 break
 
             case 'dropper':
@@ -110,6 +125,7 @@ export default function TilesetCanvas() {
                 fillHelper(currentPixel[0], currentPixel[1], originalColor)
                 imgSrc = convertToImage(tile);
                 await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
                 break
 
         }
@@ -219,8 +235,8 @@ export default function TilesetCanvas() {
                 <Box sx={{ padding: 2 }}>
                     {value === 0 && (
                         <Stack direction='row' sx={{overflowX: 'scroll'}}>
-                            {console.log("tileset tiles")}
-                            {console.log(tileset.tiles)}
+                            {/* {console.log("tileset tiles")} */}
+                            {/* {console.log(tileset.tiles)} */}
                             {tileset && tileset.tiles.length > 0
                                 ? tileset?.tiles.map((tileId) => (
                                     <Box className='tile_option'>

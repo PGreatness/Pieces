@@ -60,14 +60,25 @@ const startWebSockets = (server) => {
         });
 
         socket.on('closeProject', (data) => {
-            console.log(`closing project ${data.project} for ${socket.user}`);
+            console.log(`closing project ${data?.project} for ${socket.user}`);
             // leave the project room
-            socket.leave(data.project);
+            try {
+                socket.leaveAll();
+                socket.join(socket.user);
+            } catch (e) {
+                console.log(e);
+                console.log("No project to leave");
+            }
         });
 
         socket.on('updateMap', (data) => {
             console.log('a collaborator updated the map, pushing update to all collaborators');
-            socket.broadcast.to(data.project).emit('recieveUpdateMap', data);
+            socket.broadcast.to(data.project).emit('recieveUpdateMap', {...data, socketId: socket.id});
+        })
+
+        socket.on('updateTileset', (data) => {
+            console.log('a collaborator updated the tileset, pushing update to all collaborators');
+            socket.broadcast.to(data.project).emit('recieveUpdateTileset', {...data, socketId: socket.id});
         })
 
     });
