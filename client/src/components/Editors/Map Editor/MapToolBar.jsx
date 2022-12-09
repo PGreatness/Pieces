@@ -6,10 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEraser } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect, useContext } from 'react'
 import { GlobalStoreContext } from "../../../store/store"
+import AuthContext from '../../../auth/auth'
 
 export default function MapToolBar() {
 
     const { store } = useContext(GlobalStoreContext)
+    const { auth } = useContext(AuthContext)
     const [ openClearConfirm, setOpenClearConfirm ] = useState(false);
     const [ currTool, setCurrTool ] = useState('brush')
 
@@ -35,12 +37,14 @@ export default function MapToolBar() {
         store.setTilesetTool(tool)
     }
 
-    const handleConfirmClear = () => {
+    const handleConfirmClear = async () => {
         setOpenClearConfirm(false)
         // let map = store.currentProject
         // map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
         // store.setCurrentProject(map._id)
-        store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
+
+        await store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
+        auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
 
     return (

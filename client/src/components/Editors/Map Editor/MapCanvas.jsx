@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Stack } from '@mui/system';
-import { Typography, Button, Tabs, Tab, Grid } from '@mui/material'
+import { Modal, Typography, Button, Tabs, Tab, Grid } from '@mui/material'
 import { Undo, Redo, Delete } from '@mui/icons-material'
 import { styled } from "@mui/material/styles";
 import { useState, useContext, useEffect } from 'react'
@@ -26,6 +26,7 @@ export default function MapCanvas() {
     const [renderHeightRatio, setRenderHeightRatio] = useState(mapHeight / Math.max(mapHeight, mapWidth))
     const [renderWidthRatio, setRenderWidthRatio] = useState(mapWidth / Math.max(mapHeight, mapWidth))
     const [currentTile, setCurrentTile] = useState([0, 0])
+    const [ openDeleteTilesetError, setOpenDeleteTilesetError ] = useState(false)
 
     //  // Updating map object in canvas
     // useEffect(() => {
@@ -52,7 +53,6 @@ export default function MapCanvas() {
     useEffect(() => {
         setMapHeight(store.currentProject ? store.currentProject.mapHeight : 0)
         setMapWidth(store.currentProject ? store.currentProject.mapWidth: 0)
-        // TODO: probably update currentMapTiles as well
         setCurrentMapTiles(store.currentMapTiles)
         console.log(store.currentMapTiles)
     }, [store.currentProject])
@@ -175,7 +175,44 @@ export default function MapCanvas() {
         setCurrentIndices([startIndex, endIndex])
     }
 
+    const handleOpenDeleteTilesetError = () => {
+        setOpenDeleteTilesetError(true)
+    }
+
+    const handleCloseDeleteTilesetError = () => {
+        setOpenDeleteTilesetError(false)
+    }
+
     const deleteTileset = () => {
+
+        // get tile indexes of tileset
+        let startIndex = 0;
+        let endIndex = 0;
+        for (let i = 0; i < tilesets.length; i++) { 
+            if(tilesets[i] === tilesets[value]){
+                endIndex = startIndex + tilesets[i].tiles.length - 1
+                break
+            } else {
+                startIndex += tilesets[i].tiles.length
+            }
+        }
+
+        let error = false
+        currentMapTiles.forEach(index => {
+            if (index >= startIndex && index <= endIndex) {
+                console.log("in use haha!")
+                error = true
+                handleOpenDeleteTilesetError()
+                return
+
+            }
+        })
+
+        if(error == true){
+            return
+        }
+
+        console.log('why the fuck')
         store.deleteTilesetFromMap(tilesets[value]._id)
         setValue(0);
     }
@@ -261,6 +298,18 @@ export default function MapCanvas() {
                     </Stack>
                 </Box>
             </Box>
+
+            <Modal
+                open={openDeleteTilesetError}
+                onClose={handleCloseDeleteTilesetError}
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+                <Stack direction='column' style={{margin:'10px'}}>
+                    <Typography style={{textAlign:'center', marginBottom:'10px'}} variant='h5' color='#2dd4cf'>Warning</Typography>
+                    <Typography style={{textAlign:'center'}} color='azure'>Cannot Delete Tileset in use!</Typography>
+                </Stack>
+                </Box>
+            </Modal>
         </Box>
     )
 }

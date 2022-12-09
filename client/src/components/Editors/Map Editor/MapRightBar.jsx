@@ -875,17 +875,17 @@ export default function MapRightBar(props) {
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {store.currentProject.title}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {store.currentProject?.title}</Typography>
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject.mapHeight}</Typography>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject.mapWidth}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject?.mapHeight}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject?.mapWidth}</Typography>
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject.tileHeight}</Typography>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject.tileWidth}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject?.tileHeight}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject?.tileWidth}</Typography>
             </Grid>
 
             <Stack direction='row'>
