@@ -101,11 +101,12 @@ export default function ExploreMapItem(props) {
     }
 
     const handlePreviewClick = () => {
-        if (isUnlocked) {
-            setLocation('/view/map/' + project._id);
-        } else {
-            handleConfirmRequest();
-        }
+        // if (isUnlocked) {
+        //     setLocation('/view/map/' + project._id);
+        // } else {
+        //     handleConfirmRequest();
+        // }
+        setLocation('/view/map/' + project._id);
     }
 
     return (

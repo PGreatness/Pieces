@@ -7,6 +7,7 @@ import CommunityScreen from './components/Screens/CommunityScreen/CommunityScree
 import LibraryScreen from './components/Screens/Library/LibraryScreen'
 import TilesetEditor from './components/Editors/Tileset Editor/TilesetEditor'
 import ViewMap from "./components/Screens/Explore/ViewProject/ViewMap";
+import ViewTileset from "./components/Screens/Explore/ViewProject/ViewTileset";
 import ResetPasswordScreen from './components/ResetPassword/ResetPassword'
 import MapEditor from './components/Editors/Map Editor/MapEditor'
 import Navbar from './components/Navbar/Navbar'
@@ -72,6 +73,7 @@ const App = () => {
                   <Route path="/library/" element={<LibraryScreen setLoc={setLocation} />} />
                   <Route path="/community/" element={<CommunityScreen />} />
                   <Route path="/view/map/:id" element={<ViewMap setLoc={setLocation} />} />
+                  <Route path="/view/tileset/:id" element={<ViewTileset setLoc={setLocation} />} />
 
                   <Route
                     path="/tileset/:id"

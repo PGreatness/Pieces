@@ -175,10 +175,19 @@ export default function ExploreTilesetItem(props) {
         setOpenExportTileset(false)
     }
 
+    const handlePreviewClick = () => {
+        // if (isUnlocked) {
+        //     setLocation('/view/tileset/' + project._id);
+        // } else {
+        //     handleConfirmRequest();
+        // }
+        setLocation('/view/tileset/' + project._id);
+    }
+
     return (
         <Box sx={{ boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }}
             style={{ marginBottom: "40px", width: '98%', height: '78%', position: 'relative' }}>
-            <img class='image' src={require("../../images/tile.png")} width="100%" height="100%" border-radius="16px"></img>
+            <img class='image' src={require("../../images/tile.png")} width="100%" height="100%" border-radius="16px" onClick={handlePreviewClick}></img>
             {isUnlocked ?
                 <LockOpenIcon className='lock_icon'></LockOpenIcon> :
                 <LockIcon className='lock_icon'></LockIcon>
