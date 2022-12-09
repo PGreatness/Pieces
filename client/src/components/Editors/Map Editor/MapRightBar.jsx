@@ -297,7 +297,7 @@ export default function MapRightBar(props) {
 
   const exportMapAsJSON = () => {
 
-    let layers = {
+    let layers = [{
       //class
       compression: '',
       data: [],
@@ -320,11 +320,13 @@ export default function MapRightBar(props) {
       width: store.currentProject.mapWidth,
       x: 0,
       y: 0
-    }
+    }]
 
     let tilesets = []
 
     store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+
+      let currIndex = 0
 
       tilesetObjs.forEach((tileset) => {
         let tileset = {
@@ -332,23 +334,40 @@ export default function MapRightBar(props) {
           //class
           columns: 1,
           fillmode: 'stretch',
-          firstgid: 0,
+          firstgid: currIndex,
           image: '',
           imageHeight: -1,
           imageWidth: -1,
           margin: 0,
           name: tileset.title,
           objectalignment: 'unspecified',
-          properties: {
-            "name": tileset.title,
-            "description": tileset.tilesetDescription,
-            "tags": tileset.tags
-          },
+          properties: [
+            {
+              "name": "title",
+              "type": "string",
+              "value": tileset.title
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "value": tileset.description
+            },
+            {
+              "name": "tags",
+              "type": "string",
+              "value": tileset.tags.join(", ")
+            }
+          ],
           source: '',
           spacing: 0,
           tilecount: tileset.tiles.length,
+          tileheight: tileset.tileHeight,
+          tilewidth: tileset.tileWidth,
+          type: 'tileset',
 
         }
+        currIndex += tileset.tiles.length
+        tilesets.push(tileset)
       })
     })
 
@@ -358,7 +377,7 @@ export default function MapRightBar(props) {
       compressionLevel: -1,
       height: store.currentProject.mapHeight,
       infinite: false,
-      layers: [],
+      layers: layers,
       nextlayerid: 1,
       nextobjectid: 1,
       orientation: 'orthogonal',
@@ -372,7 +391,7 @@ export default function MapRightBar(props) {
       renderorder: "right-down",
       //tiledversion
       tileheight: store.currentProject.tileHeight,
-      tilesets: [],
+      tilesets: tilesets,
       tilewidth: store.currentProject.tileWidth,
       type: "map",
       width: store.currentProject.mapWidth,
