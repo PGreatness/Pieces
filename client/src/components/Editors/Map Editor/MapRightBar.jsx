@@ -420,7 +420,7 @@ export default function MapRightBar(props) {
       let currIndex = 0
 
       tilesetObjs.forEach((tileset) => {
-        let tileset = {
+        let tilesetObj = {
           backgroundColor: '#00FFFFFF',
           //class
           columns: 1,
@@ -458,7 +458,7 @@ export default function MapRightBar(props) {
 
         }
         currIndex += tileset.tiles.length
-        tilesets.push(tileset)
+        tilesets.push(tilesetObj)
       })
     })
 
@@ -489,7 +489,7 @@ export default function MapRightBar(props) {
     }
 
 
-    const filename = `{store.currentProject.title}.json`;
+    const filename = `${store.currentProject.title}.json`;
     const jsonStr = JSON.stringify(mapObject);
 
     let element = document.createElement('a');
@@ -502,6 +502,7 @@ export default function MapRightBar(props) {
     element.click();
 
     document.body.removeChild(element);
+    handleCloseExportMap();
 
 
   }
@@ -878,12 +879,17 @@ export default function MapRightBar(props) {
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject.mapHeight}</Typography>
+              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject.mapWidth}</Typography>
+            </Grid>
+
+            <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
               <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject.tileHeight}</Typography>
               <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject.tileWidth}</Typography>
             </Grid>
 
             <Stack direction='row'>
-              <Button onClick={handleExportTileset} sx={{ fontSize: '20px', marginLeft: '30%', marginRight: '50px' }}>
+              <Button onClick={exportMapAsJSON} sx={{ fontSize: '20px', marginLeft: '30%', marginRight: '50px' }}>
                 <Typography >Confirm</Typography>
                 <Check />
               </Button>
