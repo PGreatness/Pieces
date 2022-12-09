@@ -36,8 +36,7 @@ export default function MapCanvas() {
     // }, [store.currentMapTiles])
 
 
-    useEffect(() => {
-        console.log("MapCanvas: Socket recievedUpdate")
+        // console.log("MapCanvas: Socket recievedUpdate")
         auth.socket.on('recieveUpdateMap', (data) => {
             console.log("")
             if (auth.socket.id === data.socketId) { return; }
@@ -49,7 +48,6 @@ export default function MapCanvas() {
                     // console.log(store);
                 });
             })
-    }, [auth.socket])
 
 
 
@@ -125,8 +123,6 @@ export default function MapCanvas() {
             // setCurrentMapTiles(map)
             await store.setCurrentMapTiles(map)
         }
-
-        auth.socket.emit('updateMap', { project: store.currentProject._id })
         // let newMap = currentMapTiles.map(function(tile) {
         //     if (tile === originalTile) {
         //         return store.primaryTile
@@ -147,9 +143,11 @@ export default function MapCanvas() {
         auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
 
-    const handleBucket = () => {
+    const handleBucket = async () => {
         let originalTile = currentMapTiles[currentTile[0] * mapWidth + currentTile[1]]
-        fillHelper(currentTile[0], currentTile[1], originalTile)
+        await fillHelper(currentTile[0], currentTile[1], originalTile)
+        console.log('handling bucket now')
+        auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
 
     const handleClickTileOption = (e) => {
