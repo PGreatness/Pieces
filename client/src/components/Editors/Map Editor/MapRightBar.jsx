@@ -493,13 +493,23 @@ export default function MapRightBar(props) {
     const jsonStr = JSON.stringify(mapObject);
 
     let element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
-    element.setAttribute('download', filename);
-
     element.style.display = 'none';
     document.body.appendChild(element);
 
+    // download map json
+    //element.setAttribute( 'href', download.path );
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
+    element.setAttribute('download', filename);
     element.click();
+
+    // for( var n = 0; n < tilesetImages.length; n++ )
+    // {
+    //     var download = tilesetImages[n];
+    //     element.setAttribute( 'href', path );
+    //     element.setAttribute( 'download', tilesetImages[n] );
+
+    //     element.click();
+    // }
 
     document.body.removeChild(element);
     handleCloseExportMap();
