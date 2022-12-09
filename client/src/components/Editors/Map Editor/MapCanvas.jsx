@@ -39,11 +39,14 @@ export default function MapCanvas() {
     useEffect(() => {
         console.log("MapCanvas: Socket recievedUpdate")
         auth.socket.on('recieveUpdateMap', (data) => {
+            console.log("")
             if (auth.socket.id === data.socketId) { return; }
                 console.log('Recieved Map Update');
-                console.log(data);
+                // console.log(data);
+                // console.log(store);
                 store.loadMap(data.project).then(()=>{
                     console.log("Map fully loaded");
+                    // console.log(store);
                 });
             })
     }, [auth.socket])
@@ -122,6 +125,8 @@ export default function MapCanvas() {
             // setCurrentMapTiles(map)
             await store.setCurrentMapTiles(map)
         }
+
+        auth.socket.emit('updateMap', { project: store.currentProject._id })
         // let newMap = currentMapTiles.map(function(tile) {
         //     if (tile === originalTile) {
         //         return store.primaryTile

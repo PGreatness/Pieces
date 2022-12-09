@@ -1582,6 +1582,9 @@ function GlobalStoreContextProvider(props) {
             id: store.currentProject._id,
             ownerId: store.currentProject.ownerId,
         }
+
+        console.log("STORE SETTING");
+        console.log(payload);
         
         const response = await api.updateMap(query, payload)
 
