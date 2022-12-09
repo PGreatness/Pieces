@@ -13,7 +13,7 @@ const tileset = require('../models/tileset-model')
  * @param   {string}      tileData
  */
 var createTile = async (req, res) => {
-    const { tilesetId, height, width, userId, tileData } = req.body;
+    const { tilesetId, height, width, userId, tileData, tileImage } = req.body;
 
     try {
         // TOMMMY commented out userId check for testing purposes as of writing this
@@ -79,11 +79,13 @@ var createTile = async (req, res) => {
             });
         }
 
+
         const newTile = new tile({
             tilesetId,
             height,
             width,
-            tileData
+            tileData,
+            tileImage
         });
 
         let savedTile = await newTile.save();

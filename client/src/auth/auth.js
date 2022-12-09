@@ -1,3 +1,4 @@
+import io from 'socket.io-client';
 import React, { createContext, useEffect, useState } from "react";
 import api from '../api/api'
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +17,8 @@ function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         loggedIn: false,
-        errorMessage: null
+        errorMessage: null,
+        socket: null
     });
     const navigate = useNavigate();
 
@@ -28,13 +30,15 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedIn: payload.loggedIn,
-                    errorMessage: null
+                    errorMessage: null,
+                    socket: payload.socket
                 });
             }
             case AuthActionType.LOGIN_USER: {
                 return setAuth({
                     user: payload.user,
                     loggedIn: true,
+                    socket: payload.socket,
                     errorMessage: null
                 })
             }
@@ -42,14 +46,16 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: auth.user,
                     loggedIn: auth.loggedIn,
-                    errorMessage: payload.message
+                    errorMessage: payload.message,
+                    socket: auth.socket
                 });
             }
             case AuthActionType.CHANGE_USER: {
                 return setAuth({
                     user: payload.user,
                     loggedIn: auth.loggedIn,
-                    errorMessage: payload.message
+                    errorMessage: payload.message,
+                    socket: auth.socket
                 });
             }
             default:
@@ -62,12 +68,15 @@ function AuthContextProvider(props) {
         if (response.status === 200) {
             //store.changePageToExplore(); 
             console.log("user is logged in")
+            const socket = io('http://localhost:4000');
+            socket.emit('login', response.data.user._id);
 
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
                 payload: {
                     loggedIn: response.data.loggedIn,
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: socket
                 }
             });
             callback(response.data.user);
@@ -79,10 +88,13 @@ function AuthContextProvider(props) {
 
         await api.loginUser(userData).then(response => {
             console.log(response.data)
+            const socket = io('http://localhost:4000');
+            socket.emit('login', response.data.user._id);
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: socket
                 }
             });
             //store.changePageToExplore();
@@ -126,7 +138,8 @@ function AuthContextProvider(props) {
                 type: AuthActionType.CHANGE_USER,
                 payload: {
                     user: response.data.user,
-                    message: response.data.message
+                    message: response.data.message,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user);
@@ -151,7 +164,8 @@ function AuthContextProvider(props) {
                 type: AuthActionType.CHANGE_USER,
                 payload: {
                     user: response.data.user,
-                    message: response.data.message
+                    message: response.data.message,
+                    socket: auth.socket
                 }
             });
             console.log(response.data.user)
@@ -206,7 +220,8 @@ function AuthContextProvider(props) {
                 type: AuthActionType.CHANGE_USER,
                 payload: {
                     user: response.data.user,
-                    message: response.data.message
+                    message: response.data.message,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user);
@@ -233,7 +248,8 @@ function AuthContextProvider(props) {
                 type: AuthActionType.GET_LOGGED_IN,
                 payload: {
                     user: null,
-                    loggedIn: false
+                    loggedIn: false,
+                    socket: null
                 }
             });
         })
@@ -328,7 +344,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -350,7 +367,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -371,7 +389,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -394,7 +413,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -417,7 +437,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -440,7 +461,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -463,7 +485,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -507,7 +530,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -545,7 +569,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -567,7 +592,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.LOGIN_USER,
                 payload: {
-                    user: response.data.user
+                    user: response.data.user,
+                    socket: auth.socket
                 }
             });
             callback(response.data.user)
@@ -580,11 +606,13 @@ function AuthContextProvider(props) {
     auth.logoutUser = async function (store, callback) {
         const response = await api.logoutUser();
         if (response.status === 200) {
+            auth.socket.emit("logout", auth.user._id);
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
                 payload: {
                     user: null,
-                    loggedIn: false
+                    loggedIn: false,
+                    socket: null
                 }
             });
             store.reset();

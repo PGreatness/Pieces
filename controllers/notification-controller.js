@@ -66,7 +66,7 @@ requestMapEdit = async (req, res) => {
 
 
     receiver.notifications.push(notification);
-    console.log(notification)
+    // console.log(notification)
 
     await receiver.save().then(() => {
         return res.status(200).json({
@@ -132,7 +132,7 @@ mapActionNotif = async (req, res) => {
         return !collab.equals(objectNewUserId)
     })
 
-    console.log(oldCollaborators)
+    // console.log(oldCollaborators)
 
     var d = new Date();
     let options = {
@@ -343,7 +343,7 @@ requestTilesetEdit = async (req, res) => {
 
 
     receiver.notifications.push(notification);
-    console.log(notification)
+    // console.log(notification)
 
     await receiver.save().then(() => {
         return res.status(200).json({
@@ -410,7 +410,7 @@ tilesetActionNotif = async (req, res) => {
         return !collab.equals(objectNewUserId)
     })
 
-    console.log(oldCollaborators)
+    // console.log(oldCollaborators)
 
     var d = new Date();
     let options = {
@@ -628,7 +628,7 @@ friendRequest = async (req, res) => {
 
 
     receiver.notifications.push(notification);
-    console.log(notification)
+    // console.log(notification)
 
     await receiver.save().then(() => {
         return res.status(200).json({
@@ -823,7 +823,7 @@ removeNotification = async (req, res) => {
         { $pull: { notifications: { _id: objectNotifId } } },
         { returnOriginal: false },
     ).then((newUser) => {
-        console.log(newUser)
+        // console.log(newUser)
         return res.status(200).json({
             success: true,
             user: newUser,
@@ -856,7 +856,7 @@ removeAllNotifications = async (req, res) => {
         { $set: { notifications: [] } },
         { returnOriginal: false },
     ).then((newUser) => {
-        console.log(newUser)
+        // console.log(newUser)
         return res.status(200).json({
             success: true,
             user: newUser,
@@ -889,7 +889,7 @@ markAllSeen = async (req, res) => {
         { $set: { "notifications.$[].seen": true } },
         { returnOriginal: false },
     ).then((newUser) => {
-        console.log(newUser)
+        // console.log(newUser)
         return res.status(200).json({
             success: true,
             user: newUser,

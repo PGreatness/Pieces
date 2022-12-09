@@ -451,7 +451,7 @@ addFriend = async (req, res) => {
                 .status(400)
                 .json({ message: "Account with specified id not found (friend)." });
 
-                
+
         if (user.friends.includes(friendId)) {
             return res.status(400).json({
                 success: false,
@@ -689,24 +689,31 @@ var getUserFavorites = async (req, res) => {
         aggregation = [
             // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
             {
-                $match: { $or: [
-                    { $and: [
-                        {favs: { $in: [uid] }},
-                        {ownerId: { $ne: uid }},
-                    ]},
-                    { $and: [
-                        {favs: { $in: [uid] }},
-                        {isPublic: true}
-                        ] },
-                    { ownerId: uid },
-                    { $and: [
-                        {favs: { $in: [uid] }},
-                        {collaboratorIds: { $in: [uid] }}
-                        ]
-                    },
-                ],
-                "tileHeight": tileHeight,
-                "tileWidth": tileWidth }
+                $match: {
+                    $or: [
+                        {
+                            $and: [
+                                { favs: { $in: [uid] } },
+                                { ownerId: { $ne: uid } },
+                            ]
+                        },
+                        {
+                            $and: [
+                                { favs: { $in: [uid] } },
+                                { isPublic: true }
+                            ]
+                        },
+                        { ownerId: uid },
+                        {
+                            $and: [
+                                { collaboratorIds: { $in: [uid] } }
+                            ]
+                        },
+                    ],
+                    "tileHeight": tileHeight,
+                    "tileWidth": tileWidth,
+                    "isLocked": false
+                }
             }
         ];
     } else {
@@ -716,24 +723,29 @@ var getUserFavorites = async (req, res) => {
             {
                 $match: {
                     $or: [
-                        { $and: [
-                            {favs: { $in: [uid] }},
-                            {ownerId: { $ne: uid }},
-                        ]},
-                        { $and: [
-                            {favs: { $in: [uid] }},
-                            {isPublic: true}
-                            ] },
+                        {
+                            $and: [
+                                { favs: { $in: [uid] } },
+                                { ownerId: { $ne: uid } },
+                            ]
+                        },
+                        {
+                            $and: [
+                                { favs: { $in: [uid] } },
+                                { isPublic: true }
+                            ]
+                        },
                         { ownerId: uid },
-                        { $and: [
-                            {favs: { $in: [uid] }},
-                            {collaboratorIds: { $in: [uid] }}
+                        {
+                            $and: [
+                                { collaboratorIds: { $in: [uid] } }
                             ]
                         },
                     ],
                     _id: { $ne: fid },
                     "tileHeight": tileHeight,
-                    "tileWidth": tileWidth
+                    "tileWidth": tileWidth,
+                    "isLocked": false
                 },
             },
         ];
@@ -896,7 +908,7 @@ deleteUser = async (req, res) => {
 
     await User.findOneAndUpdate({ _id: uid }, { $set: { profilePic: img } },
         { new: true }).then((newUser) => {
-            console.log(newUser)
+            // console.log(newUser)
         }).catch((err) => {
             console.log(err)
             return res.status(404).json({

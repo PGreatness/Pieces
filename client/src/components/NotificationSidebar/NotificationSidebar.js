@@ -37,6 +37,16 @@ export default function NotificationSidebar(props) {
     const isOptionsMenuOpen = Boolean(anchorEl);
     const [unseen, setUnseen] = useState(auth.user?.notifications.some(notif => notif.seen === false));
 
+    console.log(auth.socket)
+    auth.socket.on("updateNotifications", () => {
+        console.log("I'M in here!!!");
+        auth.getUserById(auth.user?._id, (user) => {
+            setNotifs(user.notifications.sort(function(x, y){
+                return new Date(y.sentAt) - new Date(x.sentAt);
+            }))
+            setUnseen(user.notifications.some(notif => notif.seen === false))
+        })
+    })
     const updateNotifications = (newNotifications) => {
         setNotifs(newNotifications);
     }

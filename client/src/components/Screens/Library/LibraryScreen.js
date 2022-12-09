@@ -339,9 +339,12 @@ export default function LibraryScreen(props) {
 
     const openProject = (project) => {
         console.log(project);
+        auth.socket.emit('openProject', { project: project._id });
         if (!project.tilesetDesc) {
-            store.changePageToMapEditor(project);
-            setLocation('/map/' + project._id);
+            //store.changePageToMapEditor(project)
+            store.loadMap(project._id).then(() => {
+                setLocation('/map/' + project._id);
+            })
         } else {
             setLocation('/tileset/' + project._id);
             store.changePageToTilesetEditor(project);

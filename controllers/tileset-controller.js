@@ -22,14 +22,14 @@ createTileset = async (req, res) => {
             ownerId: objectOwnerId,
             title: title
         });
-        if (existingTileset) {
-            return res
-                .status(400)
-                .json({
-                    success: false,
-                    message: "Another Tileset owned by the same User already has this name."
-                })
-        }
+        // if (existingTileset) {
+        //     return res
+        //         .status(400)
+        //         .json({
+        //             success: false,
+        //             message: "Another Tileset owned by the same User already has this name."
+        //         })
+        // }
 
         // If name is not specified, "Untitled" is given as default
         // If "Untitled" is already taken, "Untitled1" is given instead and so on
@@ -106,13 +106,11 @@ createTileset = async (req, res) => {
 deleteTileset = async (req, res) => {
     if (req.body.id == undefined) {
         return res.status(404).json({
-            err,
             message: 'ID empty',
         })
     }
     if (req.body.ownerId == undefined) {
         return res.status(404).json({
-            err,
             message: 'ownerId empty',
         })
     }
@@ -179,6 +177,7 @@ deleteTileset = async (req, res) => {
 }
 
 updateTileset = async (req, res) => {
+
     if (req.query.id == undefined) {
         return res.status(404).json({
             message: 'ID empty',
@@ -189,6 +188,9 @@ updateTileset = async (req, res) => {
             message: 'ownerId empty',
         })
     }
+
+    console.log("checked if ids are undefined")
+
 
     let id = mongoose.Types.ObjectId(req.query.id)
     let ObjectOwnerId = mongoose.Types.ObjectId(req.query.ownerId)
@@ -202,6 +204,9 @@ updateTileset = async (req, res) => {
                 message: "Tileset not found"
             })
         }
+
+        console.log("found tileset")
+
 
         // Checks if tileset belongs to the User who is trying to update it
         // if (!tileset.ownerId.equals(ObjectOwnerId)) {
@@ -281,12 +286,17 @@ updateTileset = async (req, res) => {
         if (comments)
             tileset.comments = comments
 
+        console.log("changed tileset")
+
+
 
         // Attempts to save updated tileset
         tileset.save().then(() => {
+            console.log("saved changes")
             return res.status(200).json({
                 success: true,
                 id: tileset._id,
+                tileset: tileset,
                 message: 'Tileset was successfully updated',
             })
         })
@@ -727,6 +737,7 @@ var importTileset = async (req, res) => {
             width: foundTile.width,
             height: foundTile.height,
             tileData: foundTile.tileData,
+            tileImage: foundTile.tileImage
         })
         await newTile.save();
         importedTiles.push(newTile);

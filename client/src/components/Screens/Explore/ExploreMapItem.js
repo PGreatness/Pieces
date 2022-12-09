@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useContext, useEffect } from 'react';
-import { Modal, Grid, Button, Typography} from '@mui/material';
+import { Modal, Grid, Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -132,7 +132,12 @@ export default function ExploreMapItem(props) {
                         <FavoriteIcon sx={{ fontSize: 50, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
                             onClick={handleFavClick}></FavoriteIcon>
                         <EditIcon sx={{ fontSize: 50, color: `${isUnlocked ? "white" : "gray"}` }}
-                            onClick={isUnlocked ? () => {setLocation('/map/'+project._id); store.changePageToMapEditor(project)} : handleConfirmRequest} ></EditIcon>
+                            onClick={isUnlocked ? () => {
+                                store.loadMap(project._id).then(() => {
+                                    setLocation('/map/' + project._id);
+                                    auth.socket.emit('openProject', { project: project._id })
+                                })
+                            } : handleConfirmRequest} ></EditIcon>
                     </Box>
                 </Box>
             </div>
@@ -145,31 +150,31 @@ export default function ExploreMapItem(props) {
                 <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='50%' top='30%' left='30%'>
                     <Grid container>
                         <Grid item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'50px'}} variant='h3' color='azure'>Request Access to Edit Map</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '50px' }} variant='h3' color='azure'>Request Access to Edit Map</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Name:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{project.title}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>Map Name:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>{project.title}</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'10px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>Current Collaborators:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>{project.collaboratorIds.length + 1}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>Current Collaborators:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>{project.collaboratorIds.length + 1}</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'0px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>Map Owner:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'0px', marginRight: '10px', fontSize: '30px'}} color='azure'>{mapOwner?.firstName} {mapOwner?.lastName}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>Map Owner:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '0px', marginRight: '10px', fontSize: '30px' }} color='azure'>{mapOwner?.firstName} {mapOwner?.lastName}</Typography>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom:'50px'}} item xs={12}>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>Username:</Typography>
-                            <Typography style={{textAlign:'center', marginBottom:'5px', marginRight: '10px', fontSize: '20px'}} color='azure'>@{mapOwner?.userName}</Typography>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>Username:</Typography>
+                            <Typography style={{ textAlign: 'center', marginBottom: '5px', marginRight: '10px', fontSize: '20px' }} color='azure'>@{mapOwner?.userName}</Typography>
                         </Grid>
                         <Grid item xs={2}></Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleCloseAccessRequest}>
                                 Close
                             </Button>
                         </Grid>
-                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center'}} item xs={4}>
+                        <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} item xs={4}>
                             <Button onClick={handleRequestAccess}>
                                 Request Access
                             </Button>

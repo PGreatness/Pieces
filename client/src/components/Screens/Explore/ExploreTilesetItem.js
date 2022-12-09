@@ -106,6 +106,7 @@ export default function ExploreTilesetItem(props) {
         store.changePageToTilesetEditor(project).then(() => {
             store.loadTileset(project._id).then(() => {
                 setLocation('/tileset/' + project._id);
+                auth.socket.emit('openProject', { project: project._id })
             })
         })
 
