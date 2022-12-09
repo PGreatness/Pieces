@@ -135,6 +135,7 @@ export default function ExploreMapItem(props) {
                             onClick={isUnlocked ? () => {
                                 store.loadMap(project._id).then(() => {
                                     setLocation('/map/' + project._id);
+                                    auth.socket.emit('openProject', { project: project._id })
                                 })
                             } : handleConfirmRequest} ></EditIcon>
                     </Box>
