@@ -30,6 +30,7 @@ export default function MapCanvas() {
     useEffect(() => {
         console.log("MapCanvas: Socket recievedUpdate")
         auth.socket.on('recieveUpdateMap', (data) => {
+            if (auth.socket.id === data.socketId) { return; }
                 console.log('Recieved Map Update');
                 console.log(data);
                 store.loadMap(data.project).then(()=>{
