@@ -1745,7 +1745,7 @@ function GlobalStoreContextProvider(props) {
 
     // -----------------------------------------    TILESETS   ---------------------------------------------------
 
-    store.loadTileset = async function (id) {
+    store.loadTileset = async function (id, getPreview) {
         const response = await api.getTilesetById(id)
 
         if (response.status === 200) {
@@ -1758,8 +1758,13 @@ function GlobalStoreContextProvider(props) {
                     tile = tile_res.data.tile
                 }
 
-                console.log(store.tilesetTool)
-                console.log(store.primaryColor)
+                if (getPreview) {
+                    return {
+                        currentPage: 'tilesetEditor',
+                        currentProject: response.data.tileset,
+                        currentTile: tile
+                    }
+                }
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_TILESET,
                     payload: {
