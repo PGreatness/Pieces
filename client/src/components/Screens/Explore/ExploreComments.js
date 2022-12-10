@@ -21,6 +21,7 @@ import { useContext, useEffect, useState } from 'react';
 import { GlobalStoreContext } from '../../../store/store'
 import ExploreCommentsItem from './ExploreCommentsItem'
 import AuthContext from '../../../auth/auth';
+import { Modal, Grid, Button, Typography } from '@mui/material';
 
 export default function ExploreComments(props) {
     // console.log("hello");
@@ -97,8 +98,26 @@ export default function ExploreComments(props) {
                         <div class="overlay_comments">
                             <Box style={{ display: 'flex', flexDirection: 'row', maxHeight: '100%' }} >
                                 <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                    <div class="project_title_comments">{props.commentsProject.title}</div>
-                                    <div style={{ marginLeft: '30px', fontSize: '20px' }}>by @{owner.userName}</div>
+                                    <Typography style={{ marginLeft: '20px', fontSize: '35px', fontWeight: '500' }} color='azure'>{props.commentsProject.title}</Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <ListItemAvatar >
+                                            <Avatar src={owner?.profilePic?.url}
+                                                sx={{
+                                                    width: 25,
+                                                    height: 25,
+                                                    fontSize: "20px",
+                                                    bgcolor: "rgb(2, 0, 36)",
+                                                    border: "rgba(59, 130, 206, 1) 2px solid",
+                                                    marginLeft: '20px',
+                                                }}>
+                                                {owner?.firstName.charAt(0)}{owner?.lastName.charAt(0)}
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <Typography style={{ marginLeft: '0px', fontSize: '20px', fontWeight: '300' }} color='azure'>
+                                            @{owner.userName}
+                                        </Typography>
+                                    </Box>
+
                                 </Box>
                                 <Box style={{ width: '50%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                                     <Box style={{ display: 'flex', flexDirection: 'column' }}>
