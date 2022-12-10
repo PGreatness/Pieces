@@ -123,7 +123,7 @@ export default function ExploreComments(props) {
 
 
                 <Box style={{ display: 'flex', width: '100%', height: '55%', overflow: 'auto', marginBottom: "10px" }}>
-                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%",  backgroundColor: 'transparent'}}>
+                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%", backgroundColor: 'transparent' }}>
 
                         {console.log(comments)}
 

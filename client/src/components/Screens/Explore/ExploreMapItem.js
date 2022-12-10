@@ -119,8 +119,8 @@ export default function ExploreMapItem(props) {
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <div class="project_title">{project.title}</div>
-                        <div class="project_desc">{project.mapDescription}</div>
+                        <Typography style={{ marginLeft:'20px', fontSize: '40px', fontWeight: '700' }} color='azure'>{project.title}</Typography>
+                        <Typography style={{ marginLeft:'20px', fontSize: '20px', fontWeight: '300', paddingBottom:'10px' }} color='azure'>{project.mapDescription}</Typography>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
