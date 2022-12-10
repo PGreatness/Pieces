@@ -248,18 +248,20 @@ export default function WelcomeScreen() {
                         <span className="welcome_section_subtitle">Map Editor
                         </span>
                         <br></br>
-                        <span className="welcome_section_description">From designing a level to downloading maps for your own games, 
-                                                                    Pieces has it all. With a state of the art map editing tool, 
-                                                                    you will be able to create the most engaging and user delivering maps.</span>
-
+                        <Typography align="center" sx={{ mx: '10rem' }}>
+                            From designing a level to downloading maps for your own games, 
+                            Pieces has it all. With a state of the art map editing tool, 
+                            you will be able to create the most engaging and user delivering maps.</Typography>
                         <br></br>
                         <SquareIcon sx={{ fontSize: "100px" }}></SquareIcon>
                         <br />
                         <span className="welcome_section_subtitle">Tileset Editor
                         </span>
                         <br></br>
-                        <span className="welcome_section_description">Create a tileset for your own map or build off tilesets that already exist. 
-                                                                    Pieces is flexible in allowing users to create any tileset of any design.</span>
+                        <Typography align="center" sx={{ mx: '10rem' }}>
+                        Create a tileset for your own map or build off tilesets that already exist. 
+                        Pieces is flexible in allowing users to create any tileset of any design.
+                        </Typography>
 
                         <br></br>
                     </div>
@@ -269,9 +271,11 @@ export default function WelcomeScreen() {
                         <span className="welcome_section_subtitle">Get Feedback
                         </span>
                         <br></br>
-                        <span className="welcome_section_description">Make your projects public and receive feedback on your work. 
-                                                                    Pieces allows users to view public projects and give feedback. 
-                                                                    Additionally, users will be able to contribute and collaborate on projects that are unlocked.</span>
+                        <Typography align="center" sx={{ mx: '10rem' }}>
+                        Make your projects public and receive feedback on your work. 
+                        Pieces allows users to view public projects and give feedback. 
+                        Additionally, users will be able to contribute and collaborate on projects that are unlocked.
+                        </Typography>
                                                                     
                         <br></br>
                         <ChatIcon sx={{ fontSize: "100px" }}></ChatIcon>
@@ -279,8 +283,10 @@ export default function WelcomeScreen() {
                         <span className="welcome_section_subtitle">Socials
                         </span>
                         <br></br>
-                        <span className="welcome_section_description">Add other users as friends, invite them to edit on your projects, 
-                                                                    talk to others with our chat service, Pieces has it all.</span>
+                        <Typography align="center" sx={{ mx: '10rem' }}>
+                        Add other users as friends, invite them to edit on your projects, 
+                        talk to others with our chat service, Pieces has it all.
+                        </Typography>
                                                                     
                         <br></br>
                     </div>

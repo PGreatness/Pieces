@@ -47,6 +47,8 @@
 .welcome_vertical_align {
     vertical-align: center;
     text-align: left;
+    /* display: flex; */
+    align-items: center;
 }
 
 .welcome_section {
