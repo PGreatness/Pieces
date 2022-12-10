@@ -15,12 +15,17 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { GlobalStoreContext } from '../../../store/store'
 import { useContext, useEffect, useState } from 'react';
 import { CommunityStoreContext } from '../../../store/communityStore';
+import { Modal, TextField, Grid } from '@mui/material'
+import { Input, InputAdornment, Typography } from '@mui/material';
+import AuthContext from '../../../auth/auth';
 
 export default function WelcomeScreen() {
+    const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     const { communityStore } = useContext(CommunityStoreContext);
     const [publicProjects, setPublicProjects] = useState([]);
     const [topThreads, setTopThreads] = useState([]);
+    const [openRegisterModal, setOpenRegisterModal] = useState(false);
 
     useEffect(() => {
         store.loadPublicProjects().then(()=>{
@@ -33,9 +38,150 @@ export default function WelcomeScreen() {
 
     // let x = db.serverStatus().connections
 
+    const handleOpenRegisterModal = () => {
+        setOpenRegisterModal(true)
+    }
+
+    const handleCloseRegisterModal = () => {
+        setOpenRegisterModal(false)
+    }
+
+    const handleRegister = (event) => {
+        event.preventDefault();
+        handleCloseRegisterModal();
+
+        const formData = new FormData(event.currentTarget);
+        auth.registerUser({
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            email: formData.get('email'),
+            userName: formData.get('userName'),
+            password: formData.get('password'),
+            passwordVerify: formData.get('passwordVerify')
+        }, store);
+    };
 
     return (
         <div className="welcome_body">
+            <Modal
+                    open={openRegisterModal}
+                    onClose={handleCloseRegisterModal}
+                >
+                    <Box
+                        borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' width='40%' top='30%' left='30%'
+                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: "white" }}
+                    >
+
+                        <Typography component="h1" variant="h5">
+                            Register
+                        </Typography>
+                        <Box component="form" noValidate onSubmit={handleRegister} sx={{ mt: 3 }}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        autoComplete="fname"
+                                        name="firstName"
+                                        required
+                                        fullWidth
+                                        id="firstName"
+                                        label="First Name"
+                                        autoFocus
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        id="lastName"
+                                        label="Last Name"
+                                        name="lastName"
+                                        autoComplete="lname"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        id="email"
+                                        label="Email Address"
+                                        name="email"
+                                        autoComplete="email"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        id="userName"
+                                        label="User Name"
+                                        name="userName"
+                                        autoComplete="userName"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        name="password"
+                                        label="Password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="new-password"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        name="passwordVerify"
+                                        label="Password Verify"
+                                        type="password"
+                                        id="passwordVerify"
+                                        autoComplete="new-password"
+                                        InputLabelProps={{ style: { color: "white" } }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "azure" },
+                                            "& .MuiInputBase-root": { color: "azure" }
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Register
+                            </Button>
+                        </Box>
+                    </Box>
+                </Modal>
             <Box sx={{ marginLeft:"20px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius:"16px" }} style={{marginBottom: "60px", width: '96%', height: '200px', position: 'relative' }}>
                     <img className='welcome_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
                     <div className="welcome_overlay">
@@ -65,16 +211,11 @@ export default function WelcomeScreen() {
                     {/* <span className="welcome_call_to_action"><br>
                     </br>Join the Community</span> */}
                     <div className="welcome_call_to_action">
-                        <Button>Join the Community</Button>
+                        <Button onClick={handleOpenRegisterModal}>Join the Community</Button>
                     </div>
                 </div>
                 <div>
                     <div className="welcome_vertical_align">
-                            <div className="welcome_stats">
-                                <PeopleIcon></PeopleIcon>
-                            </div>
-                             1,234,567 Users Online
-                            <br></br>
                             <div className="welcome_stats">
                                 <ForumIcon></ForumIcon>
                             </div>
