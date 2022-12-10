@@ -311,14 +311,14 @@ export default function Explore(props) {
                                     setLoc={props.setLoc}
                                     setShowComments={props.setShowComments}
                                     project={entry}
-                                    projectId = {props.projectId}
-                                    setProjectId = {props.setProjectId}
+                                    commentsProject = {props.commentsProject}
+                                    setCommentsProject = {props.setCommentsProject}
                                 />) : (<ExploreTilesetItem
                                     setLoc={props.setLoc}
                                     setShowComments={props.setShowComments}
                                     project={entry}
-                                    projectId = {props.projectId}
-                                    setProjectId = {props.setProjectId}
+                                    commentsProject = {props.commentsProject}
+                                    setCommentsProject = {props.setCommentsProject}
                                 />)
                             ))
                         :   filteredProjects.map((entry) => (
@@ -326,14 +326,14 @@ export default function Explore(props) {
                                     setLoc={props.setLoc}
                                     setShowComments={props.setShowComments}
                                     project={entry}
-                                    projectId = {props.projectId}
-                                    setProjectId = {props.setProjectId}
+                                    commentsProject = {props.commentsProject}
+                                    setCommentsProject = {props.setCommentsProject}
                                 />) : (<ExploreTilesetItem
                                     setLoc={props.setLoc}
                                     setShowComments={props.setShowComments}
                                     project={entry}
-                                    projectId = {props.projectId}
-                                    setProjectId = {props.setProjectId}
+                                    commentsProject = {props.commentsProject}
+                                    setCommentsProject = {props.setCommentsProject}
                                 />)
                             ))
                     : <div></div>
