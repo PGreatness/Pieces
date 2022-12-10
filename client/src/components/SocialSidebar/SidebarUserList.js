@@ -17,18 +17,20 @@ export default function SidebarUserList(props) {
     const [searchList, setSearchList] = React.useState([]);
 
     // console.log(auth.socket)
-    auth.socket.on('friendRequestResponse', (data) => {
-        console.log("friend Request Response")
-        console.log(data)
-        if (data.action === 'approve') {
-            console.log("approve")
-            getAllFriends(props.ownerId);
-        } else if (data.action === 'deny') {
-            console.log("reject")
-            setIsPendingList(isPendingList.filter((id) => id !== data.from))
-        }
-        auth.socket.emit('requestUpdate', { sendTo: data.from })
-    })
+    React.useEffect(() => {
+        auth.socket?.on('friendRequestResponse', (data) => {
+            console.log("friend Request Response")
+            console.log(data)
+            if (data.action === 'approve') {
+                console.log("approve")
+                getAllFriends(props.ownerId);
+            } else if (data.action === 'deny') {
+                console.log("reject")
+                setIsPendingList(isPendingList.filter((id) => id !== data.from))
+            }
+            auth.socket.emit('requestUpdate', { sendTo: auth.user._id })
+        })
+    }, [auth.user])
 
     React.useEffect(() => {
         getAllFriends(props.ownerId);

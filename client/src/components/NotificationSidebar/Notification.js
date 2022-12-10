@@ -31,7 +31,7 @@ export default function Notification(props) {
 
     useEffect(() => {
         auth.getUserById(notif.senderId, (sender) => {
-            console.log(sender)
+            // console.log(sender)
             setSender(sender)
         })
     }, [])
@@ -85,17 +85,16 @@ export default function Notification(props) {
 
         } else {
             // friend request case
-            auth.socket.emit('friendRequestAction', { sendTo: props.notification.senderId, action: 'approve' })
             // add friend
             auth.addFriend(auth.user?._id, props.notification.senderId, (user) => {
-
+                
                     // remove notification
                     auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
-
+                        
                         // add new Notification to let users know a collaborator added
                         auth.approveFriendRequest(props.notification.senderId, auth.user?._id,
                             (newUser) => {
-                                props.updateNotifs(newUser.notifications)
+                                props.updateNotifs(newUser.notifications, { sendTo: props.notification.senderId, action: 'approve' })
                             })
 
                     })
@@ -137,14 +136,13 @@ export default function Notification(props) {
 
         } else {
             // friend request case
-            auth.socket.emit('friendRequestAction', { sendTo: props.notification.senderId, action: 'deny' })
             // remove notification
             auth.removeNotification(props.notification._id, auth.user?._id, (updatedUser) => {
-
+                
                 // add new Notification to let users know a collaborator added
                 auth.denyFriendRequest(props.notification.senderId, auth.user?._id, 
                     (newUser) => {
-                        props.updateNotifs(newUser.notifications)
+                        props.updateNotifs(newUser.notifications, { sendTo: props.notification.senderId, action: 'deny' })
                     })
 
             })
