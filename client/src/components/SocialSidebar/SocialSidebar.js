@@ -22,33 +22,33 @@ export default function SocialSidebar(props) {
             setId(auth.user._id);
         }
     }, [auth.user]);
-    
+
     // const search = createSearchButton();
 
     const createSearchButton = () => {
         return (
             <InputAdornment position="end">
-                <IconButton sx={{color:'white'}} onClick={() => {handleSearch()}}><SearchIcon /></IconButton>
+                <IconButton sx={{ color: 'white' }} onClick={() => { handleSearch() }}><SearchIcon /></IconButton>
             </InputAdornment>
         );
     }
-    
+
     const handleSearch = () => {
         let query = document.getElementById('search_query').value
         setSearching(query)
     }
-    
+
     return (
         <div className='sidebar-container-container'>
 
-        <div className='sidebar-container'>
-            <div className='sidebar-search'>
-                <SearchBarWhite id="search_query" placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()}/>
+            <div className='sidebar-container'>
+                <div className='sidebar-search'>
+                    <SearchBarWhite id="search_query" placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()} />
+                </div>
+                <div>
+                    <SidebarUserList ownerId={id} query={searching} />
+                </div>
             </div>
-            <div>
-                <SidebarUserList ownerId={id} query={searching}/>
-            </div>
-        </div>
         </div>
     )
 }

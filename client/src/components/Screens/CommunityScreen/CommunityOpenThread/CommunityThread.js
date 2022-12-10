@@ -51,7 +51,7 @@ export default function CommunityThread(props) {
         // let replyId = replies;
         // let result = await communityStore.getReplybyId(replyId);
         let results = []
-        for(let i = 0; i < replies.length; i++) {
+        for (let i = 0; i < replies.length; i++) {
             let result = await communityStore.getReplybyId(replies[i])
             results.push(result)
         }
@@ -211,13 +211,13 @@ export default function CommunityThread(props) {
         return (
             <InputAdornment position="end">
                 <ListItemButton>
-                    <CommentIcon fill='white' sx={{color:'white'}} onClick={() => {handleAddReply()}}/>
+                    <CommentIcon fill='white' sx={{ color: 'white' }} onClick={() => { handleAddReply() }} />
                 </ListItemButton>
             </InputAdornment>
         );
     }
 
-    const handleAddReply = async() => {
+    const handleAddReply = async () => {
         let text = document.getElementById('reply_field').value
         // let senderId = '6366fe474c670183dd2bcae5'
         let senderId = auth.user?._id
@@ -231,8 +231,8 @@ export default function CommunityThread(props) {
             document.getElementById('reply_field').value = "";
         }
     }
-    
-    const handleDeleteReply = async(replyId) => {
+
+    const handleDeleteReply = async (replyId) => {
         let response = await communityStore.deleteReply(replyId, props.thread._id)
         console.log(response)
     }
@@ -241,35 +241,35 @@ export default function CommunityThread(props) {
         <LightListItem alignItems="flex-start" key={"item " + props.thread._id}>
             <ButtonGroup variant='outlined' sx={{ position: 'absolute', right: '0' }}>
                 <ListItemText
-                sx={{ flex: 'revert', paddingRight: '5px' }}
-                primary={props.thread.likes.length}
-                secondary={createUpvoteButton()}
-                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
-                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                    sx={{ flex: 'revert', paddingRight: '5px' }}
+                    primary={props.thread.likes.length}
+                    secondary={createUpvoteButton()}
+                    primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                    secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
 
                 <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
-                primary={props.thread.dislikes.length}
-                secondary={createDownvoteButton()}
-                primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
-                secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                    primary={props.thread.dislikes.length}
+                    secondary={createDownvoteButton()}
+                    primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                    secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
                 {
                     auth.user._id === user.id ? (
                         <ListItemText sx={{ flex: 'revert', paddingRight: '10px' }}
-                        primary={'Delete'}
-                        secondary={createDeleteButton()}
-                        primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
-                        secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
+                            primary={'Delete'}
+                            secondary={createDeleteButton()}
+                            primaryTypographyProps={{ style: { color: 'white', textAlign: 'center' } }}
+                            secondaryTypographyProps={{ style: { color: 'whitesmoke' } }} />
                     ) : (
                         <></>
                     )
                 }
             </ButtonGroup>
             <ListItemButton divider
-            sx={{ width: auth.user._id === user.id ? 'calc(100% - 120px)' : 'calc(100% - 56px)' }}>
+                sx={{ width: auth.user._id === user.id ? 'calc(100% - 120px)' : 'calc(100% - 56px)' }}>
                 <ListItemAvatar>
                     <Avatar alt={username}
-                    src={avatar}
-                    sx={{ width: '100px', height: '100px', fontSize: '250%' }}>
+                        src={avatar}
+                        sx={{ width: '100px', height: '100px', fontSize: '250%' }}>
                         {avatar}
                     </Avatar>
                 </ListItemAvatar>
@@ -283,40 +283,40 @@ export default function CommunityThread(props) {
                         </Typography>
                     </>
                 } secondary={props.thread.threadText}
-                primaryTypographyProps={{ style: { color: 'white' } }}
-                secondaryTypographyProps={{ style: secondaryTypographyProps }} />
+                    primaryTypographyProps={{ style: { color: 'white' } }}
+                    secondaryTypographyProps={{ style: secondaryTypographyProps }} />
             </ListItemButton>
             <ReplyDivider flexItem />
             <ReplyTextField label="Write a reply..."
-            id="reply_field"
-            variant="filled"
-            InputLabelProps={{ style: { color: 'white' } }}
-            InputProps={{ endAdornment: sendButton() }} />
+                id="reply_field"
+                variant="filled"
+                InputLabelProps={{ style: { color: 'white' } }}
+                InputProps={{ endAdornment: sendButton() }} />
             {
                 threadreplies.length < 1 ? <></> : (
                     <LightListItem alignItems="flex-start" key={"replies"}>
                         {
-                            threadreplies.map((reply, index)=>{
+                            threadreplies.map((reply, index) => {
                                 return (
                                     <BetterReplyButton divider>
                                         <ListItemAvatar>
                                             <Avatar alt={reply._id}
-                                            src={reply._id}
-                                            sx={{ width: '30px', height: '30px' }}>
+                                                src={reply._id}
+                                                sx={{ width: '30px', height: '30px' }}>
                                                 {reply._id}
                                             </Avatar>
                                         </ListItemAvatar>
                                         <ListItemText
-                                        primary={reply.replyMsg}
-                                        secondary={("").concat(" Reply #: ").concat(reply._id).concat(" Replying To: ").concat(reply.replyingTo).concat(" on ").concat(new Date(reply.createdAt).toLocaleDateString())}
-                                        primaryTypographyProps={{ style: { color: 'white', fontSize: '1em' } }}
-                                        secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.75em' } }} />
-                                        <ReplyIcon style={{fill: "white"}} onClick={() => {setReplyingTo(reply._id)}}></ReplyIcon>
-                                        { reply.senderId == auth.user?._id ?
-                                            <DeleteIcon style={{fill: "white"}} onClick={() => {handleDeleteReply(reply._id)}}></DeleteIcon>:
+                                            primary={reply.replyMsg}
+                                            secondary={("").concat(" Reply #: ").concat(reply._id).concat(" Replying To: ").concat(reply.replyingTo).concat(" on ").concat(new Date(reply.createdAt).toLocaleDateString())}
+                                            primaryTypographyProps={{ style: { color: 'white', fontSize: '1em' } }}
+                                            secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.75em' } }} />
+                                        <ReplyIcon style={{ fill: "white" }} onClick={() => { setReplyingTo(reply._id) }}></ReplyIcon>
+                                        {reply.senderId == auth.user?._id ?
+                                            <DeleteIcon style={{ fill: "white" }} onClick={() => { handleDeleteReply(reply._id) }}></DeleteIcon> :
                                             <></>
                                         }
-                                        
+
                                     </BetterReplyButton>
                                 );
                             })

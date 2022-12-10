@@ -32,7 +32,7 @@ export default function SidebarUserList(props) {
 
     React.useEffect(() => {
         getAllFriends(props.ownerId);
-      }, []);
+    }, []);
 
     React.useEffect(() => {
         setCurrentUser(props.ownerId);
@@ -54,7 +54,7 @@ export default function SidebarUserList(props) {
         // console.log("????")
         // // console.log(response.friends)
         // return response.data.friends
-        
+
     }
 
     const getAllSearchedUsers = async () => {
@@ -94,28 +94,28 @@ export default function SidebarUserList(props) {
         return (
             <div className="sidebar-user-list">
                 {
-                friendsList.map((user) => {
-                    return (
-                        <SidebarUser user={user} isFriend={true} isOnline={true} key={user._id} />
-                    )
-                })
+                    friendsList.map((user) => {
+                        return (
+                            <SidebarUser user={user} isFriend={true} isOnline={true} key={user._id} />
+                        )
+                    })
                 }
             </div>
         );
     }
     getAllSearchedUsers()
     return (
-        <List sx={{backgroundColor: '#11182A'}}>
+        <List sx={{ backgroundColor: '#11182A' }}>
             {
-            searchList.map((user) => {
-                return (
-                    <>
-                        {/* <SidebarUser user={user} isFriend={false} isOnline={false} key={user.id}/> */}
-                        <SidebarUser pending={isPendingList.includes(user._id)} user={user} isFriend={friendsList.includes(user)} isOnline={true} key={user.id + 1} addPending={(id)=>setIsPendingList([...isPendingList, id])} />
-                        {/* remove the last one during non static trials */}
-                    </>
-                );
-            })
+                searchList.map((user) => {
+                    return (
+                        <>
+                            {/* <SidebarUser user={user} isFriend={false} isOnline={false} key={user.id}/> */}
+                            <SidebarUser pending={isPendingList.includes(user._id)} user={user} isFriend={friendsList.includes(user)} isOnline={true} key={user.id + 1} addPending={(id) => setIsPendingList([...isPendingList, id])} />
+                            {/* remove the last one during non static trials */}
+                        </>
+                    );
+                })
             }
         </List>
     );

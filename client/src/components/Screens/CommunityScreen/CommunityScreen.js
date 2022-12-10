@@ -24,22 +24,22 @@ export default function CommunityScreen() {
 
     const title = (
         createThread ? <h1>Create a New Thread</h1>
-        :
-        (
-            communityStore.TOP_THREADS.length === 1 ?
-            <h1>Filtered Threads</h1>
             :
-            <h1>Top Threads</h1>
-        )
+            (
+                communityStore.TOP_THREADS.length === 1 ?
+                    <h1>Filtered Threads</h1>
+                    :
+                    <h1>Top Threads</h1>
+            )
     );
 
     const buttons = (
         communityStore.TOP_THREADS.length !== 1 && !createThread ? <></> :
-        <Button style={{ backgroundColor: '#3f51b5', float: 'left' }}
-            onClick={()=>communityStore.getPopularThreads(1)}>
-            <div className='button_text'>Clear Filter</div>
-            <FilterAltOffIcon className="button_icons"></FilterAltOffIcon>
-        </Button>
+            <Button style={{ backgroundColor: '#3f51b5', float: 'left' }}
+                onClick={() => communityStore.getPopularThreads(1)}>
+                <div className='button_text'>Clear Filter</div>
+                <FilterAltOffIcon className="button_icons"></FilterAltOffIcon>
+            </Button>
     );
 
     return (
@@ -47,8 +47,8 @@ export default function CommunityScreen() {
             <div className='community-screen'>
                 <div className='community-screen-text'>
                     <br />
-                    { buttons }
-                    { title }
+                    {buttons}
+                    {title}
                     {
                         createThread ?
                             (<Button style={{ backgroundColor: "#10ba36", float: 'left' }} onClick={() => setCreateThread(false)}>
@@ -63,9 +63,9 @@ export default function CommunityScreen() {
                     }
                 </div>
                 {
-                    createThread ? <CreateThread exit={()=>setCreateThread(false)} snack={handleSnack}/> : <CommunityMain />
+                    createThread ? <CreateThread exit={() => setCreateThread(false)} snack={handleSnack} /> : <CommunityMain />
                 }
-                <CreateThreadSnack open={snackOpen} message={snackMessage} severity={snackSeverity}/>
+                <CreateThreadSnack open={snackOpen} message={snackMessage} severity={snackSeverity} />
             </div>
         </>
     )
