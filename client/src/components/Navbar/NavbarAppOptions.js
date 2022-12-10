@@ -87,6 +87,7 @@ export default function NavbarAppOptions(props) {
         handleProfileMenuClose();
         navigate("/profile");
         store.changePageToProfile();
+        auth.socket.emit('closeProject', store.currentProject?._id);
     }
 
     const handleOpenLoginModal = () => {
