@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -25,19 +26,24 @@ export default function ExploreComments(props) {
     // console.log("hello");
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    const [comments, setComments] = useState(store.projectComments);
+    const [comments, setComments] = useState(props.comments);
+    const [owner, setOwner] = useState(props.owner);
+    const [isLiked, setIsLiked] = useState(props.commentsProject.likes.includes(auth.user?._id));
+    const [isDisliked, setIsDisliked] = useState(props.commentsProject.dislikes.includes(auth.user?._id));
+    const [isFav, setIsFav] = useState(props.commentsProject.favs.includes(auth.user?._id));
+    const [isUnlocked, setIsUnlocked] = useState(props.commentsProject.collaboratorIds.includes(auth.user?._id) || props.commentsProject.ownerId == auth.user?._id)
 
-    let test = props.loadStore;
-    console.log(comments)
 
-    useEffect(() => {setComments(store.projectComments)}, [store.projectComments]);
+    //useEffect(() => { setComments(store.projectComments) }, [store.projectComments]);
+    console.log('comments page')
+
 
     const handleCreateNewComment = async () => {
         let text = document.getElementById('reply_field').value
         let time = Date();
         // let ownerId = '636942dd04afd5d5f9331583'
         let ownerId = auth.user?._id
-        let projectId = props.projectId
+        let projectId = props.commentsProject._id
 
         if (text === "") {
             console.log("Empty text field.")
@@ -45,8 +51,19 @@ export default function ExploreComments(props) {
         else {
             let response = await store.createNewComment(projectId, ownerId, text)
             console.log(response)
+
+            let comments = await store.getProjectComments(projectId)
+            setComments(comments)
             document.getElementById('reply_field').value = "";
         }
+    }
+
+
+    const deleteComment = async (commentId) => {
+        let comments = await store.deleteComment(commentId, props.commentsProject._id)
+        console.log(comments)
+        setComments(comments)
+        //return 
     }
 
     return (
@@ -73,28 +90,29 @@ export default function ExploreComments(props) {
                         width: '100%',
                         height: '100%', position: 'relative', backgroundImage: `url(${img})`
                     }}>
-                        <LockIcon className='lock_icon'></LockIcon>
+                        {isUnlocked ?
+                            <LockOpenIcon className='lock_icon'></LockOpenIcon> :
+                            <LockIcon className='lock_icon'></LockIcon>
+                        }
                         <div class="overlay_comments">
                             <Box style={{ display: 'flex', flexDirection: 'row', maxHeight: '100%' }} >
                                 <Box style={{ width: '50%', display: 'flex', flexDirection: 'column' }} >
-                                    <div class="project_title_comments">Planet Midget</div>
-                                    <div class="project_username">by @tomJackson16</div>
+                                    <div class="project_title_comments">{props.commentsProject.title}</div>
+                                    <div style={{ marginLeft: '30px', fontSize: '20px' }}>by @{owner.userName}</div>
                                 </Box>
                                 <Box style={{ width: '50%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                                     <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <ThumbUpIcon sx={{ fontSize: 40, px: 1, pt: 1 }}></ThumbUpIcon>
-                                        <div class="like_num">352</div>
+                                        <ThumbUpIcon sx={{ fontSize: 40, px: 1, pt: 2, color: `${isLiked ? "#2dd4cf" : "white"}` }}></ThumbUpIcon>
+                                        <div class="like_num">{props.commentsProject.likes.length}</div>
                                     </Box>
 
                                     <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <ThumbDownIcon sx={{ fontSize: 40, px: 2, pt: 1 }}></ThumbDownIcon>
-                                        <div class="like_num">7</div>
+                                        <ThumbDownIcon sx={{ fontSize: 40, px: 2, pt: 2, color: `${isDisliked ? "#2dd4cf" : "white"}` }}></ThumbDownIcon>
+                                        <div class="like_num">{props.commentsProject.dislikes.length}</div>
                                     </Box>
 
-                                    <CommentIcon sx={{ fontSize: 40, px: 1, color: '#0e74a0' }}></CommentIcon>
-                                    <DownloadIcon sx={{ fontSize: 40, px: 1 }}></DownloadIcon>
-                                    <FavoriteIcon sx={{ fontSize: 40, px: 1 }}></FavoriteIcon>
-                                    <EditIcon sx={{ fontSize: 40, color: 'gray' }}></EditIcon>
+                                    <FavoriteIcon sx={{ fontSize: 40, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}></FavoriteIcon>
+
                                 </Box>
                             </Box>
                         </div>
@@ -105,15 +123,19 @@ export default function ExploreComments(props) {
 
 
                 <Box style={{ display: 'flex', width: '100%', height: '55%', overflow: 'auto', marginBottom: "10px" }}>
-                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
+                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%",  backgroundColor: 'transparent'}}>
 
+                        {console.log(comments)}
 
-                        {comments.map((entry) => 
-                            entry.projectId == props.projectId ?
-                            <ExploreCommentsItem
+                        {comments.map((entry) => {
+
+                            console.log(entry)
+
+                            return <ExploreCommentsItem
                                 comment={entry}
-                            />:<></>)
-                        }
+                                deleteComment={deleteComment}
+                            />
+                        })}
                     </List>
                 </Box>
 

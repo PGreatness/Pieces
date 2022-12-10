@@ -2193,6 +2193,17 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
                 payload: projectComments
             });
+            return projectComments
+        } else {
+            console.log("API FAILED TO GET THE PROJECT COMMENTS");
+        }
+    }
+
+    store.getProjectComments = async function (id) {
+        const response = await api.getProjectComments(id);
+        if (response.data.success) {
+            let projectComments = response.data.comments;
+            return projectComments
         } else {
             console.log("API FAILED TO GET THE PROJECT COMMENTS");
         }
@@ -2208,15 +2219,36 @@ function GlobalStoreContextProvider(props) {
         let response = await api.createNewComment(payload)
         console.log(response)
 
-        let response1 = await api.getAllProjectComments();
+        //let response1 = await api.getAllProjectComments();
+
+        let response1 = await api.getProjectComments(projectId);
         if (response1.data.success) {
             let projectComments = response1.data.comments;
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
-                payload: projectComments
-            });
+            return projectComments
+            // storeReducer({
+            //     type: GlobalStoreActionType.LOAD_PROJECT_COMMENTS,
+            //     payload: projectComments
+            // });
         } else {
             console.log("API FAILED TO GET THE PROJECT COMMENTS");
+        }
+    }
+
+    store.deleteComment = async function (commentId, projectId) {
+        let payload = {
+            commentId: commentId,
+        };
+        let response = await api.deleteComment(payload)
+        console.log(response)
+
+        //let response1 = await api.getAllProjectComments();
+
+        let response1 = await api.getProjectComments(projectId);
+        if (response1.data.success) {
+            let projectComments = response1.data.comments;
+            return projectComments
+        } else {
+            console.log("API FAILED TO DELETE THE PROJECT COMMENTS");
         }
     }
 
@@ -2250,8 +2282,8 @@ function GlobalStoreContextProvider(props) {
                 response = await api.updateComment(query, payload);
 
                 if (response.data.success) {
-                    setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjectComments();
+                    setLikeDislikeCallback(comment.likes, comment.dislikes, response.data.comment);
+                    //store.loadPublicProjectComments();
                 }
             }
 
@@ -2286,8 +2318,8 @@ function GlobalStoreContextProvider(props) {
                 response = await api.updateComment(query, payload);
 
                 if (response.data.success) {
-                    setLikeDislikeCallback(comment.likes, comment.dislikes);
-                    store.loadPublicProjectComments();
+                    setLikeDislikeCallback(comment.likes, comment.dislikes, response.data.comment);
+                    //store.loadPublicProjectComments();
                 }
             }
             updatingComment(comment)
