@@ -1,6 +1,7 @@
 const express = require('express')
 const UserController = require('../controllers/user-controller')
 const MapController = require('../controllers/map-controller')
+const ViewportController = require('../controllers/viewport-controller')
 const TilesetController = require('../controllers/tileset-controller')
 const TileController = require('../controllers/tile-controller')
 const ThreadController = require('../controllers/thread-controller')
@@ -59,7 +60,10 @@ router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentby
 router.post('/comments/updateComment/', ProjectCommentController.updateComment)
 router.post('/comments/newComment/', ProjectCommentController.createComment)
 
-
+// Map Viewport Routes
+router.post('/viewport/newMapViewport', ViewportController.createMapViewport)
+router.post('/viewport/updateMapToViewport', ViewportController.updateMapToViewport)
+router.post('/viewport/getMapTiles', ViewportController.getMapTiles)
 
 // TileSet Routes
 router.get('/tileset/getAllUserTilesets/:ownerId', TilesetController.getAllUserTilesets)

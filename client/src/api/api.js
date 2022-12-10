@@ -53,6 +53,11 @@ export const importTilesetToMap = (payload) => api.post(`/map/importTilesetToMap
 export const deleteMapTileset = (payload) => api.post(`/map/deleteMapTileset/`, payload)
 export const getMapTilesets = (id) => api.get(`/getMapTilesets/${id}`)
 
+// Map Viewport
+export const getMapViewport = (query) => api.post(`/viewport/newMapViewport/`, query)
+export const updateMapToViewport = (payload) => api.post(`/viewport/updateMapToViewport/`, payload)
+export const getMapTiles = (payload) => api.post(`/viewport/getMapTiles/`, payload)
+
 // Tileset
 export const getTilesetById = (id) => api.get(`/tileset/getTilesetsById/${id}/`)
 export const updateTileset = (query, payload) => api.post(`/tileset/updateTileset`, payload, {params: query})
@@ -112,6 +117,10 @@ export const getThreadById = (payload) => api.get(`/thread/${payload}`)
 
 
 const apis = {
+    getMapViewport,
+    updateMapToViewport,
+    getMapTiles,
+
     getAllPublicProjects,
     getAllProjectComments,
     getAllUserProjects,

@@ -7,21 +7,26 @@ export default function MapTile(props) {
     
     const { store } = useContext(GlobalStoreContext)
 
-    const [ imgSrc, setImgSrc ] = useState(store.currentMapTiles ? store.currentMapTiles[props.index] : '')
+    const [ imgSrc, setImgSrc ] = useState(props.imgSrc)
     const [ filled, setFilled ] = useState(props.filled)
     
+    useEffect(() => {
+        console.log('map tile updated')
+        setImgSrc(props.imgSrc)
+        setFilled(props.filled)
+    }, [props.imgSrc, props.filled])
     const handleClickTile = () => {
+        console.log(props.imgSrc)
         switch (store.tilesetTool) {
             case 'brush':
-                // setImgSrc(store.primaryTile)
+                console.log('brush')
+                props.setSrc(store.primaryTile)
                 setFilled(true)
-                props.updateCurrentMapTiles(store.primaryTile, props.index)
                 break
 
             case 'eraser':
-                setImgSrc('')
+                props.setSrc('')
                 setFilled(false)
-                props.updateCurrentMapTiles(-1, props.index)
                 break
 
             case 'dropper':
@@ -44,7 +49,7 @@ export default function MapTile(props) {
             className='tile' item xs={1} 
             style={{borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', minHeight:`calc(100% / ${props.mapHeight}`, maxHeight:`calc(100% / ${props.mapHeight}`}} bgcolor='#fff'>
             {store.currentMapTiles && store.currentMapTiles[props.index] !== -1
-                ? <img style={{width: '100%', height: '100%'}} src={store.mapTiles[store.currentMapTiles[props.index]]?.tileImage}></img>
+                ? <img style={{width: '100%', height: '100%'}} src={imgSrc?.tileImage}></img>
                 : <div style={{width: '100%', height: '100%'}}></div>
             }   
         </Grid>

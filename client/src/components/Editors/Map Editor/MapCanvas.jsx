@@ -7,6 +7,7 @@ import { useState, useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../../../store/store'
 import AuthContext from '../../../auth/auth'
 import MapTile from './MapTile';
+import Viewport from './Viewport';
 
 export default function MapCanvas() {
 
@@ -236,19 +237,7 @@ export default function MapCanvas() {
                 <Redo className='toolbar_mui_icon' />
             </Button>
 
-            <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `${70 * renderHeightRatio}vh`, width: `${70 * renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-50%, -60%)' }}>
-                {currentMapTiles?.length > 0 && currentMapTiles.map((tile, index) => (
-                    <MapTile
-                        handleBucket={handleBucket}
-                        updateCurrentMapTiles={updateCurrentMapTiles}
-                        mapHeight={mapHeight}
-                        mapWidth={mapWidth}
-                        index={index}
-                        handleHoverTile={handleHoverTile}
-                    // imgSrc={currentMapTiles[index]}/>
-                    />
-                ))}
-            </Grid>
+            <Viewport mapId={store.currentProject._id} setCurrentTile={setCurrentTile} currentTile={currentTile} />
 
             <Box bgcolor="#11182a" className="palettes_container">
                 {tilesets.length > 0 ?

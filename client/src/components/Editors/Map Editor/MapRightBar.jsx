@@ -47,6 +47,7 @@ export default function MapRightBar(props) {
   const [editMode, setEditMode] = useState(false);
   const [image, setImage] = useState(null)
   const [showError, setShowError] = useState(false)
+  const [tilesets, setTilesets] = useState([])
   const [openTagsErrorModal, setOpenTagsErrorModal] = useState(false)
   const inputRef = useRef(null);
 
@@ -62,6 +63,12 @@ export default function MapRightBar(props) {
       setCollaborators(data.collaborators);
     })
   }, [store.currentProject])
+
+  useEffect(()=>{
+    store.getMapTiles(store.currentProject?._id).then((tilesetArray)=>{
+      setTilesets(tilesetArray)
+    })
+  }, [store.currentMapTiles])
 
   useEffect(() => {
     setFavs(store.userFavs)
@@ -540,7 +547,7 @@ export default function MapRightBar(props) {
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 <Grid container direction='row' rowSpacing={0} columns={store.currentProject ? store.currentProject.mapWidth : 0} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
                   {store.currentMapTiles && store.currentMapTiles.length > 0 && store.currentMapTiles.map((tile, index) => (
-                    <MapTile index={index} preview={true}/>
+                    <MapTile index={index} preview={true} imgSrc={tilesets[tile]}/>
                   ))}
                 </Grid>
               </Stack>
