@@ -7,6 +7,7 @@ import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ReplyIcon from '@mui/icons-material/Reply';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
 
@@ -297,15 +298,7 @@ export default function CommunityThread(props) {
                         {
                             threadreplies.map((reply, index)=>{
                                 return (
-                                    <BetterReplyButton divider onClick={() => {
-                                            if (reply.senderId == auth.user?._id) {
-                                                handleDeleteReply(reply._id)
-                                            }
-                                            else {
-                                                setReplyingTo(reply._id)
-                                                console.log(replyingTo)
-                                            }
-                                        }}>
+                                    <BetterReplyButton divider>
                                         <ListItemAvatar>
                                             <Avatar alt={reply._id}
                                             src={reply._id}
@@ -318,6 +311,12 @@ export default function CommunityThread(props) {
                                         secondary={new Date(reply.createdAt).toLocaleDateString()}
                                         primaryTypographyProps={{ style: { color: 'white', fontSize: '0.7em' } }}
                                         secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.5em' } }} />
+                                        <ReplyIcon style={{fill: "white"}} onClick={() => {setReplyingTo(reply._id)}}></ReplyIcon>
+                                        { reply.senderId == auth.user?._id ?
+                                            <DeleteIcon style={{fill: "white"}} onClick={() => {handleDeleteReply(reply._id)}}></DeleteIcon>:
+                                            <></>
+                                        }
+                                        
                                     </BetterReplyButton>
                                 );
                             })
