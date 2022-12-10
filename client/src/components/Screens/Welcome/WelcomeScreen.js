@@ -199,18 +199,21 @@ export default function WelcomeScreen() {
             </Box>
 
             <div className="welcome_flexbox">
-                <MilitaryTechIcon />Island, our currently top-rated map.
+                        <MilitaryTechIcon />
+                        <Typography sx={{fontSize:"14px", fontWeight:"500"}}>
+                            Island, our currently top-rated map.
+                        </Typography>
             </div>
             <div className="welcome_title_card">
                 <div>
-                    <span className="welcome_title">Pieces</span>
-                    <br />
-                    <span className="welcome_title_description">A tilemap and tileset editor.
-                    <br />
-                    A collaboration service.</span>
-                    <br></br>
-                    {/* <span className="welcome_call_to_action"><br>
-                    </br>Join the Community</span> */}
+                    <span className="welcome_title">
+                        <Typography sx={{fontSize:"100px", fontWeight:"700"}}>
+                            Pieces
+                        </Typography></span>
+                        <Typography sx={{fontSize:"20px", fontWeight:"300"}}>
+                        A tilemap and tileset editor.
+                        A collaboration service.
+                        </Typography>
                     <div className="welcome_call_to_action">
                         <Button onClick={handleOpenRegisterModal}>Join the Community</Button>
                     </div>
@@ -240,7 +243,9 @@ export default function WelcomeScreen() {
             </div>
             <div className="welcome_section">
                 <span className="welcome_section_title">
-                    Services
+                    <Typography sx={{fontSize:"40px", fontWeight:"700"}}>
+                        Services
+                    </Typography>
                 </span>
             </div>
                 <br></br>
@@ -248,7 +253,10 @@ export default function WelcomeScreen() {
                     <div>
                         <DesignServicesIcon sx={{ fontSize: "100px" }}></DesignServicesIcon>
                         <br />
-                        <span className="welcome_section_subtitle">Map Editor
+                        <span className="welcome_section_subtitle">
+                            <Typography sx={{fontSize:"30px", fontWeight:"700"}}>
+                                Map Editor
+                            </Typography>
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
@@ -258,7 +266,10 @@ export default function WelcomeScreen() {
                         <br></br>
                         <SquareIcon sx={{ fontSize: "100px" }}></SquareIcon>
                         <br />
-                        <span className="welcome_section_subtitle">Tileset Editor
+                        <span className="welcome_section_subtitle">
+                            <Typography sx={{fontSize:"30px", fontWeight:"700"}}>
+                                Tileset Editor
+                            </Typography>
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
@@ -271,7 +282,10 @@ export default function WelcomeScreen() {
                     <div>
                         <PeopleIcon sx={{ fontSize: "100px" }}></PeopleIcon>
                         <br />
-                        <span className="welcome_section_subtitle">Get Feedback
+                        <span className="welcome_section_subtitle">
+                            <Typography sx={{fontSize:"30px", fontWeight:"700"}}>
+                                Get Feedback
+                            </Typography>
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
@@ -283,7 +297,10 @@ export default function WelcomeScreen() {
                         <br></br>
                         <ChatIcon sx={{ fontSize: "100px" }}></ChatIcon>
                         <br />
-                        <span className="welcome_section_subtitle">Socials
+                        <span className="welcome_section_subtitle">
+                            <Typography sx={{fontSize:"30px", fontWeight:"700"}}>
+                                Socials
+                            </Typography>
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
