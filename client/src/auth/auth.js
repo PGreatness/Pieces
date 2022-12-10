@@ -307,6 +307,7 @@ function AuthContextProvider(props) {
     }
 
     auth.getUserById = async function (id, setOwnerCallback) {
+        console.log('wtf')
         const response = await api.getUserById(id);
         //console.log(response)
         if (response.status === 200) {

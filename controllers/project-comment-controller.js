@@ -164,6 +164,7 @@ updateComment = async (req, res) => {
                 return res.status(200).json({
                     success: true,
                     id: comment._id,
+                    comment: comment,
                     message: 'Comment was successfully updated',
                 })
             })
@@ -178,6 +179,16 @@ updateComment = async (req, res) => {
         //
     })
 
+}
+
+
+getProjectComments = async (req, res) => {
+    const comments = await ProjectComment.find({projectId: req.params.id});
+    
+    return res.status(200).json({
+        success: true,
+        comments: comments
+    })
 }
 
 getAllProjectCommentsOnPage = async (req, res) => {
@@ -237,5 +248,6 @@ module.exports = {
     getComments,
     getCommentbyId,
     updateComment,
+    getProjectComments,
     getAllProjectCommentsOnPage
 };

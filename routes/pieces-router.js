@@ -54,11 +54,16 @@ router.post('/map/removeUserFromMap', MapController.removeUserFromMap)
 router.post('/map/importTilesetToMap', MapController.importTilesetToMap)
 router.post('/map/deleteMapTileset', MapController.deleteMapTileset)
 
+
+// Comments
 router.post('/comments/updateComment', ProjectCommentController.updateComment)
 router.get('/comments/getAllProjectComments', ProjectCommentController.getAllProjectCommentsOnPage)
 router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentbyId)
 router.post('/comments/updateComment/', ProjectCommentController.updateComment)
 router.post('/comments/newComment/', ProjectCommentController.createComment)
+router.get('/comments/getProjectComments/:id', ProjectCommentController.getProjectComments)
+router.post('/comments/deleteComment/', ProjectCommentController.deleteComment)
+
 
 // Map Viewport Routes
 router.post('/viewport/newMapViewport', ViewportController.createMapViewport)
