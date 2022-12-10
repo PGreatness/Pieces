@@ -27,34 +27,38 @@ export default function ExploreCommentsItem(props) {
     const { auth } = useContext(AuthContext);
 
     //const comment = props.comment;
-    const [comment, setComment] = useState(props.comment);
-    const [likes, setLikes] = useState(comment.likes.length);
-    const [dislikes, setDislikes] = useState(comment.dislikes.length);
-    const [isLiked, setIsLiked] = useState(comment.likes.includes(auth.user?._id));
-    const [isDisliked, setIsDisliked] = useState(comment.dislikes.includes(auth.user?._id));
+    const [comment, setComment] = useState('');
+    const [likes, setLikes] = useState(null);
+    const [dislikes, setDislikes] = useState(null);
+    const [isLiked, setIsLiked] = useState(false);
+    const [isDisliked, setIsDisliked] = useState(false);
     const [commentOwner, setCommentOwner] = useState(null);
 
+
     useEffect(() => {
-        setLikes(comment.likes.length);
-        setDislikes(comment.dislikes.length);
-        setIsLiked(comment.likes.includes(auth.user?._id));
-        setIsDisliked(comment.dislikes.includes(auth.user?._id));
-
-        auth.getUserById(comment.userId, (ownerUser) => {
+        auth.getUserById(props.comment.userId, (ownerUser) => {
             setCommentOwner(ownerUser);
-        });
+        }).then(() => {
+            console.log('useEffect2')
+            setComment(props.comment)
+            setLikes(props.comment.likes.length);
+            setDislikes(props.comment.dislikes.length);
+            setIsLiked(props.comment.likes.includes(auth.user?._id));
+            setIsDisliked(props.comment.dislikes.includes(auth.user?._id));
+        })
 
-    }, []);
+    }, [props.comment]);
 
 
     const handleLikeClick = (event) => {
         // console.log("hello");
         event.stopPropagation();
         store.updateCommentLikes(comment._id, (like_arr, dislike_arr, comment) => {
+            console.log('wtf')
             setLikes(like_arr.length);
             setDislikes(dislike_arr.length);
-            setIsLiked(like_arr.includes(auth.user?.userName));
-            setIsDisliked(dislike_arr.includes(auth.user?.userName));
+            setIsLiked(like_arr.includes(auth.user?._id));
+            setIsDisliked(dislike_arr.includes(auth.user?._id));
             setComment(comment)
         });
     }
@@ -70,11 +74,8 @@ export default function ExploreCommentsItem(props) {
         });
     }
 
-    const handleDeleteComment = (event) => {
-        event.stopPropagation();
-        store.updateCommentDislikes(comment._id, (like_arr, dislike_arr, comment) => {
-            setComment(comment)
-        });
+    const handleDeleteComment = () => {
+        props.deleteComment(comment._id)
     }
 
     let options = {

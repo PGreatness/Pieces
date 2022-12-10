@@ -37,6 +37,7 @@ export default function ExploreComments(props) {
     //useEffect(() => { setComments(store.projectComments) }, [store.projectComments]);
     console.log('comments page')
 
+
     const handleCreateNewComment = async () => {
         let text = document.getElementById('reply_field').value
         let time = Date();
@@ -55,6 +56,14 @@ export default function ExploreComments(props) {
             setComments(comments)
             document.getElementById('reply_field').value = "";
         }
+    }
+
+
+    const deleteComment = async (commentId) => {
+        let comments = await store.deleteComment(commentId, props.commentsProject._id)
+        console.log(comments)
+        setComments(comments)
+        //return 
     }
 
     return (
@@ -114,14 +123,19 @@ export default function ExploreComments(props) {
 
 
                 <Box style={{ display: 'flex', width: '100%', height: '55%', overflow: 'auto', marginBottom: "10px" }}>
-                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
+                    <List style={{ display: 'flex', flexDirection: 'column', width: "100%",  backgroundColor: 'transparent'}}>
 
+                        {console.log(comments)}
 
-                        {comments.map((entry) => (
-                            <ExploreCommentsItem
+                        {comments.map((entry) => {
+
+                            console.log(entry)
+
+                            return <ExploreCommentsItem
                                 comment={entry}
+                                deleteComment={deleteComment}
                             />
-                        ))}
+                        })}
                     </List>
                 </Box>
 

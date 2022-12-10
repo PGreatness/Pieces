@@ -76,6 +76,7 @@ export const getProjectComments = (id) => api.get(`/comments/getProjectComments/
 export const getCommentbyId = (id) => api.get(`/comments/getCommentbyId/${id}`)
 export const updateComment = (query, payload) => api.post(`/comments/updateComment/`, payload, {params: query})
 export const createNewComment = (payload) => api.post(`/comments/newComment/`, payload)
+export const deleteComment = (payload) => api.post(`/comments/deleteComment/`, payload)
 
 // Pagination
 export const changePage = (page, limit) => api.get(`/changePage`, page, {params: limit})
@@ -198,7 +199,8 @@ const apis = {
     getTilesetTiles,
     getMapTilesets,
     deleteMapTileset,
-    getProjectComments
+    getProjectComments,
+    deleteComment
 }
 
 export default apis

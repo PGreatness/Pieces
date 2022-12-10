@@ -61,6 +61,7 @@ router.get('/comments/getCommentbyId/:id', ProjectCommentController.getCommentby
 router.post('/comments/updateComment/', ProjectCommentController.updateComment)
 router.post('/comments/newComment/', ProjectCommentController.createComment)
 router.get('/comments/getProjectComments/:id', ProjectCommentController.getProjectComments)
+router.post('/comments/deleteComment/', ProjectCommentController.deleteComment)
 
 
 

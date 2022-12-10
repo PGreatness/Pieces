@@ -2234,6 +2234,24 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.deleteComment = async function (commentId, projectId) {
+        let payload = {
+            commentId: commentId,
+        };
+        let response = await api.deleteComment(payload)
+        console.log(response)
+
+        //let response1 = await api.getAllProjectComments();
+
+        let response1 = await api.getProjectComments(projectId);
+        if (response1.data.success) {
+            let projectComments = response1.data.comments;
+            return projectComments
+        } else {
+            console.log("API FAILED TO DELETE THE PROJECT COMMENTS");
+        }
+    }
+
     store.updateCommentLikes = async function (id, setLikeDislikeCallback) {
         await api.getCommentbyId(id).then(response => {
             // console.log(response)
