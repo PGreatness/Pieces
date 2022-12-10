@@ -17,6 +17,7 @@ import { useContext, useEffect, useState } from 'react';
 import { CommunityStoreContext } from '../../../store/communityStore';
 import { Modal, TextField, Grid } from '@mui/material'
 import { Input, InputAdornment, Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
 import AuthContext from '../../../auth/auth';
 
 export default function WelcomeScreen() {
@@ -216,20 +217,22 @@ export default function WelcomeScreen() {
                 </div>
                 <div>
                     <div className="welcome_vertical_align">
-                            <div className="welcome_stats">
-                                <ForumIcon></ForumIcon>
-                            </div>
-                            {topThreads.length} Ongoing Discussions
+                                <Stack direction="row" alignItems="center" gap={1} sx={{ ml:"15em"}}>
+                                    <ForumIcon></ForumIcon>
+                                    <Typography variant="body1">{topThreads.length} Discussions</Typography>
+                                </Stack>
+                            
                             <br></br>
-                            <div className="welcome_stats">
-                                <DownloadIcon></DownloadIcon>
-                            </div>
-                            No Download Data
+                                <Stack direction="row" alignItems="center" gap={1} sx={{ ml:"15em"}}>
+                                    <DownloadIcon></DownloadIcon>
+                                    <Typography variant="body1">No Download Data</Typography>
+                                </Stack>
+                            
                             <br></br>
-                            <div className="welcome_stats">
-                                <WorkIcon></WorkIcon>
-                            </div>
-                            {publicProjects.length} Projects to Collaborate On
+                                <Stack direction="row" alignItems="center" gap={1} sx={{ ml:"15em"}}>
+                                    <WorkIcon></WorkIcon>
+                                    <Typography variant="body1">{publicProjects.length} Projects to Collaborate On</Typography>
+                                </Stack>
                             <br></br>
                         
                     </div>
@@ -259,8 +262,8 @@ export default function WelcomeScreen() {
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
-                        Create a tileset for your own map or build off tilesets that already exist. 
-                        Pieces is flexible in allowing users to create any tileset of any design.
+                            Create a tileset for your own map or build off tilesets that already exist. 
+                            Pieces is flexible in allowing users to create any tileset of any design.
                         </Typography>
 
                         <br></br>
@@ -272,9 +275,9 @@ export default function WelcomeScreen() {
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
-                        Make your projects public and receive feedback on your work. 
-                        Pieces allows users to view public projects and give feedback. 
-                        Additionally, users will be able to contribute and collaborate on projects that are unlocked.
+                            Make your projects public and receive feedback on your work. 
+                            Pieces allows users to view public projects and give feedback. 
+                            Additionally, users will be able to contribute and collaborate on projects that are unlocked.
                         </Typography>
                                                                     
                         <br></br>
@@ -284,8 +287,8 @@ export default function WelcomeScreen() {
                         </span>
                         <br></br>
                         <Typography align="center" sx={{ mx: '10rem' }}>
-                        Add other users as friends, invite them to edit on your projects, 
-                        talk to others with our chat service, Pieces has it all.
+                            Add other users as friends, invite them to edit on your projects, 
+                            talk to others with our chat service, Pieces has it all.
                         </Typography>
                                                                     
                         <br></br>
