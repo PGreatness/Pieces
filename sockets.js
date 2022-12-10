@@ -29,13 +29,13 @@ const startWebSockets = (server) => {
 
         socket.on("collaboratorAdded", (data) => {
             console.log("map collaborator added");
-            socket.to(data.sendTo).emit("updateNotifications");
+            socket.to(data.sendTo).emit("updateNotifications", { socketId: socket.id });
         });
 
         socket.on("addFriend", (data) => {
             console.log("friend request sent");
             console.log(`Sending to ${data.sendTo}`)
-            socket.to(data.sendTo).emit("updateNotifications");
+            socket.to(data.sendTo).emit("updateNotifications", { socketId: socket.id });
         })
 
         socket.on("friendRequestAction", (data) => {
@@ -43,13 +43,13 @@ const startWebSockets = (server) => {
             console.log(`Sending to ${data.sendTo} from ${socket.user}`)
             socket.to(data.sendTo).emit("friendRequestResponse", { from: socket.user, action: data.action } );
             console.log("friend request response sent");
-            socket.to(data.sendTo).emit("updateNotifications");
-            console.log('updating notifications...');
         });
 
         socket.on('requestUpdate', (data) => {
-            console.log('requesting update to notifications...');
-            socket.to(data.sendTo).emit('updateNotifications');
+            console.log(`requesting update to notifications from ${socket.user} to ${data.sendTo}, currently ${socket.id}`);
+            console.log([...socket.rooms])
+            console.log([...socket.rooms].includes(data.sendTo))
+            socket.to(data.sendTo).emit("updateNotifications", { socketId: socket.id });
             console.log('update sent');
         })
 
@@ -79,6 +79,10 @@ const startWebSockets = (server) => {
         socket.on('updateTileset', (data) => {
             console.log('a collaborator updated the tileset, pushing update to all collaborators');
             socket.broadcast.to(data.project).emit('recieveUpdateTileset', {...data, socketId: socket.id});
+        })
+
+        socket.on('acknowledgeEmit', (data) => {
+            console.log('emit was acknowledged');
         })
 
     });

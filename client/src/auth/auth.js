@@ -22,6 +22,18 @@ function AuthContextProvider(props) {
     });
     const navigate = useNavigate();
 
+    const loginUser = async () => {
+        if (!auth.user) {
+            auth.getLoggedIn(auth, (user) => {
+                console.log("logged in user: " + user);
+            })
+        }
+    }
+
+    useEffect(() => {
+        loginUser();
+    }, []);
+
     const authReducer = (action) => {
         const { type, payload } = action;
 
@@ -70,6 +82,11 @@ function AuthContextProvider(props) {
             console.log("user is logged in")
             const socket = io('http://localhost:4000');
             socket.emit('login', response.data.user._id);
+
+            if (response.data.user._id === auth.user?._id) {
+                callback(response.data.user);
+                return;
+            }
 
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,

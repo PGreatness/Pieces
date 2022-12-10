@@ -37,18 +37,30 @@ export default function NotificationSidebar(props) {
     const isOptionsMenuOpen = Boolean(anchorEl);
     const [unseen, setUnseen] = useState(auth.user?.notifications.some(notif => notif.seen === false));
 
-    console.log(auth.socket)
-    auth.socket.on("updateNotifications", () => {
-        console.log("I'M in here!!!");
-        auth.getUserById(auth.user?._id, (user) => {
-            setNotifs(user.notifications.sort(function(x, y){
-                return new Date(y.sentAt) - new Date(x.sentAt);
-            }))
-            setUnseen(user.notifications.some(notif => notif.seen === false))
+    // console.log(auth.socket)
+        // Add an event listener for the "updateNotifications" event
+        auth.socket?.on("updateNotifications", (data) => {
+            // If the event was not emitted by the current socket, continue as usual
+            console.log("Updating event")
+            auth.getUserById(auth.user?._id, (user) => {
+                console.log(user.notifications)
+                setNotifs(user.notifications.sort(function(x, y){
+                    return new Date(y.sentAt) - new Date(x.sentAt);
+                }))
+                setUnseen(user.notifications.some(notif => notif.seen === false))
+            })
         })
-    })
-    const updateNotifications = (newNotifications) => {
+
+        auth.socket?.on("updateNotification", (data) => {
+            console.log("i'm in updateNotification")
+        })
+
+    const updateNotifications = (newNotifications, data) => {
         setNotifs(newNotifications);
+        if (data) {
+            console.log("emitting friendRequestAction event from updateNotifications")
+            auth.socket?.emit("friendRequestAction", data);
+        }
     }
 
     const handleOptionsMenuOpen = (event) => {

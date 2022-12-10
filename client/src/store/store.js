@@ -1734,6 +1734,61 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+    // -----------------------------------------    MAP VIEWPORT   ------------------------------------------------
+
+    store.initializeViewportOfMap = async function (id) {
+        let query = {
+            mapId: id,
+            startingLocationObject: {
+                x: 5,
+                y: 5
+            }
+        }
+
+        const response = await api.getMapViewport(query)
+
+        if (response.status < 400) {
+            console.log(response)
+            return {
+                tiles: response.data.tiles,
+                width: response.data.width,
+                height: response.data.height,
+                tilesets: response.data.tilesets,
+                start: response.data.start,
+                trueIndices: response.data.tilesetData,
+                map: response.data._doc
+            }
+        }
+    }
+
+    store.updateMapToViewport = async function (mapId, viewport) {
+        let query = {
+            mapId: mapId,
+            viewport: viewport,
+        }
+
+        const response = await api.updateMapToViewport(query)
+        console.log("in update viewport", viewport)
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
+            payload: {
+                currentMapTiles: viewport
+            }
+        })
+    }
+
+    store.getMapTiles = async function (mapId) {
+        let query = {
+            mapId: mapId,
+        }
+
+        const response = await api.getMapTiles(query)
+
+        if (response.status < 400) {
+            console.log(response)
+            return response.data
+        }
+    }
 
 
 
