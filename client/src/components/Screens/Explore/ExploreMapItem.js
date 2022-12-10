@@ -95,9 +95,8 @@ export default function ExploreMapItem(props) {
     }
 
     const handleComments = () => {
-        props.setShowComments()
-        props.setProjectId(project._id)
-        console.log(props.projectId)
+        props.setShowComments(project)
+        props.setCommentsProject(project)
     }
 
     const handlePreviewClick = () => {
