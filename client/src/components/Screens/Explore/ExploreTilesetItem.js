@@ -36,6 +36,12 @@ export default function ExploreTilesetItem(props) {
     const [isFav, setIsFav] = useState(project.favs.includes(auth.user?._id));
     const [isUnlocked, setIsUnlocked] = useState(project.collaboratorIds.includes(auth.user?._id) || project.ownerId == auth.user?._id)
     const [openExportTileset, setOpenExportTileset] = useState(false);
+    const [showExportError, setShowExportError] = useState(false)
+
+
+    const handleCloseExportError = () => {
+        setShowExportError(false)
+    }
 
 
     const handleOpenExportTileset = () => {
@@ -112,17 +118,22 @@ export default function ExploreTilesetItem(props) {
     }
 
     const handleExportTileset = () => {
-        console.log("exporting tileset")
+        //console.log("exporting tileset")
+        let error = false
 
         store.getTilesetTiles(project._id).then((tiles) => {
-            console.log(tiles)
-
             // if tile data = '' then put rgba a equal to 0
-            let tiles1 = tiles[0].tileData
             let rgba = []
 
-            tiles.forEach((tileObj) => {
+            tiles.every((tileObj) => {
                 let tileData = tileObj.tileData
+
+                if (tileData.every(pixel => pixel === '')) {
+                    // cannot import tileset with empty tile
+                    error = true
+                    setShowExportError(true)
+                    return false
+                }
 
                 tileData.forEach((tile) => {
                     console.log(tile)
@@ -143,10 +154,15 @@ export default function ExploreTilesetItem(props) {
 
                     }
                 })
+                return true
 
             })
 
-            console.log(rgba)
+            if (error) {
+                return
+            }
+
+            //console.log(rgba)
             let numTiles = tiles.length
             var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), project.tileWidth, project.tileHeight * numTiles);
             console.log(rgbaArray)
@@ -297,6 +313,18 @@ export default function ExploreTilesetItem(props) {
                             </Button>
                         </Stack>
 
+                    </Stack>
+                </Box>
+            </Modal>
+
+            <Modal
+                open={showExportError}
+                onClose={handleCloseExportError}
+            >
+                <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+                    <Stack direction='column' style={{ margin: '10px' }}>
+                        <Typography style={{ textAlign: 'center', marginBottom: '10px' }} variant='h5' color='#2dd4cf'>Warning</Typography>
+                        <Typography style={{ textAlign: 'center' }} color='azure'>Cannot Export Tileset with empty tiles!</Typography>
                     </Stack>
                 </Box>
             </Modal>
