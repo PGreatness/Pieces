@@ -478,13 +478,42 @@ function GlobalStoreContextProvider(props) {
             tileWidth: store.currentProject.tileWidth
         };
         const response = await api.getFavorites(payload);
-        console.log(response)
+
+        let tilesets = response.data.tilesets
+
+        
+        // filter tilesets with empty tiles!
+        tilesets = await tilesets.reduce(async (acc, tileset) => {
+            let empty = false
+            
+            let tiles = await store.getTilesetTiles(tileset._id)
+            tiles.every((tileObj) => {
+                let tileData = tileObj.tileData
+            
+                if (tileData.every(pixel => pixel === '')) {
+                    // cannot import tileset with empty tile
+                    empty = true
+                    return false
+                }
+                return true
+            })
+
+            if (empty == true){
+                return acc
+            } else {
+                return (await acc).concat(tileset)
+            }
+        }, [])
+        
+        //console.log(tilesets)
+        //console.log(response)
+
         if (response.status < 400) {
             storeReducer({
                 type: GlobalStoreActionType.LOAD_USER_FAVORITES,
                 payload: {
                     maps: response.data.maps,
-                    tilesets: response.data.tilesets
+                    tilesets: tilesets
                 }
             })
         }

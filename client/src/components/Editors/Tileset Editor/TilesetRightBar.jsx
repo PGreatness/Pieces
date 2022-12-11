@@ -35,6 +35,7 @@ export default function TilesetRightBar(props) {
   const [users, setUsers] = useState([]);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [showError, setShowError] = useState(false)
+  const [showExportError, setShowExportError] = useState(false)
   const [image, setImage] = useState(null)
   const [favs, setFavs] = useState([])
   const [openTagsErrorModal, setOpenTagsErrorModal] = useState(false)
@@ -154,6 +155,10 @@ export default function TilesetRightBar(props) {
     setImage(null)
     setShowError(false)
     setOpenImportTileset(false)
+  }
+
+  const handleCloseExportError = () => {
+    setShowExportError(false)
   }
 
   const handleOpenExportTileset = () => {
@@ -400,20 +405,27 @@ export default function TilesetRightBar(props) {
 
 
   const handleExportTileset = () => {
-    console.log("exporting tileset")
+    //console.log("exporting tileset")
+    let error = false
 
     store.getTilesetTiles(store.currentProject._id).then((tiles) => {
-      console.log(tiles)
+      //console.log(tiles)
 
       // if tile data = '' then put rgba a equal to 0
-      let tiles1 = tiles[0].tileData
       let rgba = []
 
-      tiles.forEach((tileObj) => {
+      tiles.every((tileObj) => {
         let tileData = tileObj.tileData
 
+        if (tileData.every(pixel => pixel === '')) {
+          // cannot import tileset with empty tile
+          error = true
+          setShowExportError(true)
+          return false
+        }
+
         tileData.forEach((tile) => {
-          console.log(tile)
+          //console.log(tile)
           if (tile.length === 0) {
             rgba.push(0)
             rgba.push(0)
@@ -432,9 +444,19 @@ export default function TilesetRightBar(props) {
           }
         })
 
+        return true
+
       })
 
-      console.log(rgba)
+      if(error){
+        return
+      }
+
+      //console.log(rgba)
+
+
+      // check for empty tiles
+
       let numTiles = tiles.length
       var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), store.currentProject.tileWidth, store.currentProject.tileHeight * numTiles);
       console.log(rgbaArray)
@@ -955,6 +977,18 @@ export default function TilesetRightBar(props) {
           <Stack direction='column' style={{ margin: '10px' }}>
             <Typography style={{ textAlign: 'center', marginBottom: '10px' }} variant='h5' color='#2dd4cf'>Error</Typography>
             <Typography style={{ textAlign: 'center' }} color='azure'>Make sure tags are separated with ", "</Typography>
+          </Stack>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={showExportError}
+        onClose={handleCloseExportError}
+      >
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column' style={{ margin: '10px' }}>
+            <Typography style={{ textAlign: 'center', marginBottom: '10px' }} variant='h5' color='#2dd4cf'>Warning</Typography>
+            <Typography style={{ textAlign: 'center' }} color='azure'>Cannot Export Tileset with empty tiles!</Typography>
           </Stack>
         </Box>
       </Modal>
