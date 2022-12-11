@@ -39,13 +39,13 @@ export default function MapCanvas() {
 
         // console.log("MapCanvas: Socket recievedUpdate")
         auth.socket.on('recieveUpdateMap', (data) => {
-            console.log("")
+            //console.log("")
             if (auth.socket.id === data.socketId) { return; }
-                console.log('Recieved Map Update');
+                // console.log('Recieved Map Update');
                 // console.log(data);
                 // console.log(store);
                 store.loadMap(data.project).then(()=>{
-                    console.log("Map fully loaded");
+                    //console.log("Map fully loaded");
                     // console.log(store);
                 });
             })
@@ -187,7 +187,7 @@ export default function MapCanvas() {
         setOpenDeleteTilesetError(false)
     }
 
-    const deleteTileset = () => {
+    const deleteTileset = async () => {
 
         // get tile indexes of tileset
         let startIndex = 0;
@@ -204,7 +204,7 @@ export default function MapCanvas() {
         let error = false
         currentMapTiles.forEach(index => {
             if (index >= startIndex && index <= endIndex) {
-                console.log("in use haha!")
+                //console.log("in use haha!")
                 error = true
                 handleOpenDeleteTilesetError()
                 return
@@ -216,8 +216,7 @@ export default function MapCanvas() {
             return
         }
 
-        console.log('why the fuck')
-        store.deleteTilesetFromMap(tilesets[value]._id)
+        await store.deleteTilesetFromMap(tilesets[value]._id)
         setValue(0);
     }
 
@@ -237,7 +236,7 @@ export default function MapCanvas() {
                 <Redo className='toolbar_mui_icon' />
             </Button>
 
-            <Viewport mapId={store.currentProject._id} setCurrentTile={setCurrentTile} currentTile={currentTile} />
+            <Viewport mapId={store.currentProject?._id} setCurrentTile={setCurrentTile} currentTile={currentTile} />
 
             <Box bgcolor="#11182a" className="palettes_container">
                 {tilesets.length > 0 ?
