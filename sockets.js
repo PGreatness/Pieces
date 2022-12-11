@@ -73,6 +73,7 @@ const startWebSockets = (server) => {
 
         socket.on('updateMap', (data) => {
             console.log('a collaborator updated the map, pushing update to all collaborators');
+            console.log(data);
             socket.broadcast.to(data.project).emit('recieveUpdateMap', {...data, socketId: socket.id});
         })
 

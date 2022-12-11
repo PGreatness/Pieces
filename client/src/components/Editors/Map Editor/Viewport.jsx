@@ -20,8 +20,8 @@ export default function Viewport(props) {
 	});
 	const [mapWidth, setMapWidth] = useState(1);
 	const [mapHeight, setMapHeight] = useState(1);
-	const [viewportWidth, setViewportWidth] = useState(32); // max width of 32
-	const [viewportHeight, setViewportHeight] = useState(32); // max height of 32
+	const [viewportWidth, setViewportWidth] = useState(16); // max width of 16
+	const [viewportHeight, setViewportHeight] = useState(16); // max height of 16
 	const [renderWidthRatio, setRenderWidthRatio] = useState(1);
 	const [renderHeightRatio, setRenderHeightRatio] = useState(1);
 
@@ -36,9 +36,11 @@ export default function Viewport(props) {
 			width: viewportWidth,
 			height: viewportHeight,
 		};
+		console.log(data)
+		console.log(startingPoint)
 		createMapViewport(props.mapId, data).then((view) => {
 			setViewport(view.tiles);
-			console.log(view.map.mapWidth);
+			console.log(view.start);
 			setViewportWidth(view.width);
 			setStartingPoint({
 				x: view.start.x,
@@ -49,13 +51,14 @@ export default function Viewport(props) {
 			setMapHeight(view.map.mapHeight);
 			setViewportHeight(view.height);
 			setTilesets(view.tilesets);
-			setRenderWidthRatio(view.width / Math.max(view.width, view.height));
+			setRenderWidthRatio(view.map.mapWidth / Math.max(view.map.mapWidth, view.map.mapHeight));
 			setRenderHeightRatio(
-				view.height / Math.max(view.width, view.height)
+				view.map.Height / Math.max(view.map.mapWidth, view.map.mapHeight)
 			);
+			console.log(view.width);
 			console.log("Viewport created");
 		});
-	}, [store.mapTilesets, store.currentMapTiles]);
+	}, [store.mapTilesets, store.currentMapTiles, props.map]);
 
 	const handleKeyPress = async (e) => {
 		if (e.key === "ArrowUp") {
@@ -85,6 +88,10 @@ export default function Viewport(props) {
 		}
 		await store.updateMapToViewport(props.mapId, oldTiles);
 		console.log("map updated in database");
+		let project = {
+			project: props.mapId
+		}
+		auth.socket.emit('updateMap', project)
 	};
 
 	const fillHelper = async (x, y, originalTile) => {
@@ -118,9 +125,9 @@ export default function Viewport(props) {
 	const handleHoverTile = (e) => {
 		let id = Number(e.currentTarget.id.slice(5));
 		console.log(mapWidth);
-		let x = Math.floor(id / mapWidth);
-		let y = (id % mapHeight) + startingPoint.y;
-		props.setCurrentTile([x, y]);
+		let x = (id % mapWidth) + startingPoint.x;
+		let y = Math.floor(id / mapWidth) + startingPoint.y;
+		props.setCurrentTile([x,y]);
 	};
 	const handleBucket = async () => {
 		let originalTile =
@@ -136,9 +143,9 @@ export default function Viewport(props) {
 		await updateMapInDatabase();
 		auth.socket.emit("updateMap", { project: store.currentProject._id });
 	};
-	const createMapViewport = async () => {
-		const mapId = props.mapId;
-		const view = await store.initializeViewportOfMap(mapId);
+	const createMapViewport = async (id, data) => {
+		const mapId = id;
+		const view = await store.initializeViewportOfMap(mapId, data);
 		return view;
 	};
 

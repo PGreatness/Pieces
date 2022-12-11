@@ -232,6 +232,7 @@ export default function MapRightBar(props) {
     await store.importTilesetToCopyTileset(tileset._id, response.data.tileset._id)
 
     store.importTilesetToMap(response.data.tileset._id);
+    auth.socket.emit('updateMap', {project: project._id})
     handleCloseImportTileset();
   }
 
