@@ -7,6 +7,7 @@ import { faEraser } from '@fortawesome/free-solid-svg-icons'
 import { SketchPicker } from 'react-color'
 import { useState, useContext } from 'react'
 import { GlobalStoreContext } from '../../../store/store'
+import AuthContext from '../../../auth/auth';
 
 
 export default function TilesetToolBar() {
@@ -16,6 +17,7 @@ export default function TilesetToolBar() {
     // const [ currTool, setCurrTool ] = useState(null)
     // const [ currColor, setCurrColor ] = useState(null)
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [ currColor, setCurrColor ] = useState('#ffffff')
     const [ currTool, setCurrTool ] = useState('brush')
     const [ colorHistory, setColorHistory ] = useState(['#fff', '#fff', '#fff', '#fff', '#fff', '#fff', '#fff', '#fff'])
@@ -64,12 +66,55 @@ export default function TilesetToolBar() {
         setOpenClearConfirm(false)
     }
 
-    const handleConfirmClear = () => {
+    const convertToImage = (tile) => {
+        let rgba = []
+        let height = store.currentTile.height
+        let width = store.currentTile.height
+  
+        tile.tileData.forEach((tile) => {
+            if (tile.length === 0) {
+                rgba.push(0)
+                rgba.push(0)
+                rgba.push(0)
+                rgba.push(0)
+            } else {
+                var bigint = parseInt(tile.slice(1), 16);
+                var r = (bigint >> 16) & 255;
+                var g = (bigint >> 8) & 255;
+                var b = bigint & 255;
+                rgba.push(r)
+                rgba.push(g)
+                rgba.push(b)
+                rgba.push(255)
+  
+            }
+        })
+  
+        console.log(rgba.length)
+  
+        var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), width, height);
+  
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        canvas.height = height
+        canvas.width = width
+  
+        context.putImageData(rgbaArray, 0, 0);
+        var imgSrc = canvas.toDataURL();
+        canvas.remove();
+        return imgSrc
+    } 
+
+    const handleConfirmClear = async () => {
         setOpenClearConfirm(false)
         let tile = store.currentTile
-        tile.tileData = Array(5*5).fill('')
+        let oldData = [...tile.tileData]
+        tile.tileData = Array(store.currentTile.tileData.length).fill('')
         store.setCurrentTile(tile)
-        console.log(store.currentTile)
+        let imgSrc = convertToImage(tile);
+        await store.updateTile(store.currentTile._id, store.currentTile.tilesetId, store.currentTile.tileData, imgSrc)
+        auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: store.currentProject })
+        // await store.addTransaction(oldData, store.currentTile.tileData)
     }
 
     return (
@@ -145,9 +190,8 @@ export default function TilesetToolBar() {
                         disableAlpha 
                         presetColors={[]} 
                         width={125} 
-                        onChange={changeCurrColor} 
                         onChangeComplete={handleSelectColor}
-                        color={currColor}
+                        color={store.primaryColor}
                     />
                 </Grid>
 

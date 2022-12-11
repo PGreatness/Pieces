@@ -393,126 +393,144 @@ export default function MapRightBar(props) {
 
   }
 
-  const exportMapAsJSON = () => {
-
-    let layers = [{
-      //class
-      compression: '',
-      data: [],
-      encoding: "csv", //not sure what this is
-      height: store.currentProject.mapHeight,
-      id: 1,
-      layers: [],
-      locked: false,
-      name: 'Default Map Layer',
-      offsetx: 0,
-      offsety: 0,
-      opacity: 1,
-      parallaxx: 0,
-      parallaxy: 0,
-      properties: {
-
-      },
-      type: 'tilelayer',
-      visible: true,
-      width: store.currentProject.mapWidth,
-      x: 0,
-      y: 0
-    }]
+  const exportMapAsJSON = async () => {
 
     let tilesets = []
+    let tilesetImages = []
 
-    store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
+    store.getMapTilesets(project._id).then( (tilesetObjs) => {
 
       let currIndex = 0
 
       tilesetObjs.forEach((tileset) => {
+
+        let img;
+
+        store.getTilesetTiles(tileset._id).then( (tiles) => {
+
+          let rgba = []
+
+          tiles.forEach((tileObj) => {
+            let tileData = tileObj.tileData
+
+            tileData.forEach((tile) => {
+              if (tile.length === 0) {
+                rgba.push(0)
+                rgba.push(0)
+                rgba.push(0)
+                rgba.push(0)
+              } else {
+                var bigint = parseInt(tile.slice(1), 16);
+                var r = (bigint >> 16) & 255;
+                var g = (bigint >> 8) & 255;
+                var b = bigint & 255;
+                rgba.push(r)
+                rgba.push(g)
+                rgba.push(b)
+                rgba.push(255)
+
+              }
+            })
+
+          })
+
+          let numTiles = tiles.length
+          var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), project.tileWidth, project.tileHeight * numTiles);
+
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = project.tileHeight * numTiles
+          canvas.width = project.tileWidth
+
+          context.putImageData(rgbaArray, 0, 0);
+          img = canvas.toDataURL()
+          var link = document.createElement('a');
+          link.download = tileset.title + '_' + tileset.tileHeight + 'x' + tileset.tileWidth;
+          link.href = canvas.toDataURL();
+          link.click();
+
+          canvas.remove();
+          link.remove();
+
+        })
+     
+        console.log(img)
+
         let tilesetObj = {
-          backgroundColor: '#00FFFFFF',
-          //class
           columns: 1,
-          fillmode: 'stretch',
           firstgid: currIndex,
-          image: '',
-          imageHeight: -1,
-          imageWidth: -1,
+          image: "./" + tileset.title + "_" + tileset.tileHeight + "x" + tileset.tileWidth,
+          imageheight: tileset.tileHeight * tileset.tiles.length,
+          imagewidth: tileset.tileWidth,
           margin: 0,
           name: tileset.title,
-          objectalignment: 'unspecified',
-          properties: [
-            {
-              "name": "title",
-              "type": "string",
-              "value": tileset.title
-            },
-            {
-              "name": "description",
-              "type": "string",
-              "value": tileset.description
-            },
-            {
-              "name": "tags",
-              "type": "string",
-              "value": tileset.tags.join(", ")
-            }
-          ],
-          source: '',
           spacing: 0,
           tilecount: tileset.tiles.length,
           tileheight: tileset.tileHeight,
           tilewidth: tileset.tileWidth,
-          type: 'tileset',
-
         }
         currIndex += tileset.tiles.length
         tilesets.push(tilesetObj)
+        console.log(tilesets)
       })
-    })
 
-    let mapObject = {
-      backgroundColor: '#00FFFFFF',
-      //class
-      compressionLevel: -1,
-      height: store.currentProject.mapHeight,
-      infinite: false,
-      layers: layers,
-      nextlayerid: 1,
-      nextobjectid: 1,
-      orientation: 'orthogonal',
-      parallaxoriginx: 0,
-      parallaxoriginy: 0,
-      properties: {
-        "name": store.currentProject.title,
-        "description": store.currentProject.mapDescription,
-        "tags": store.currentProject.tags
-      },
-      renderorder: "right-down",
-      //tiledversion
-      tileheight: store.currentProject.tileHeight,
-      tilesets: tilesets,
-      tilewidth: store.currentProject.tileWidth,
-      type: "map",
-      width: store.currentProject.mapWidth,
-    }
+      let mapJSON =
+      { "height": project.mapHeight,
+        "layers":[
+              {
+                "data": store.currentMapTiles,
+                "height": project.mapHeight,
+                "name": project.title,
+                "opacity": 1,
+                "type": "tilelayer",
+                "visible": true,
+                "width": project.mapWidth,
+                "x": 0,
+                "y": 0
+              }],
+        "nextobjectid":1,
+        "orientation":"orthogonal",
+        "renderorder":"right-down",
+        "tiledversion":"1.0.3",
+        "tileheight": project.tileHeight,
+        "tilesets": tilesets,
+        "tilewidth": project.tileWidth,
+        "type": "map",
+        "version": 1,
+        "width": project.mapWidth,
+      }
 
 
-    const filename = `${store.currentProject.title}.json`;
-    const jsonStr = JSON.stringify(mapObject);
+      console.log(mapJSON)
+      const filename = `${project.title}.json`;
+      const jsonStr = JSON.stringify(mapJSON);
 
     let element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
-    element.setAttribute('download', filename);
-
     element.style.display = 'none';
     document.body.appendChild(element);
 
+    // download map json
+    //element.setAttribute( 'href', download.path );
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
+    element.setAttribute('download', filename);
     element.click();
+
+    // console.log(tilesetImages)
+    // for( var n = 0; n < tilesetImages.length; n++ )
+    // {
+    //     var download = tilesetImages[n];
+    //     // element.setAttribute( 'href', path );
+    //     element.setAttribute( 'download', download );
+    //     element.click();
+    // }
 
     document.body.removeChild(element);
     handleCloseExportMap();
 
+    })
 
   }
+
 
   return (
     <Box bgcolor={"#11182a"} flex={4} className="map_rightbar">

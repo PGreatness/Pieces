@@ -23,6 +23,10 @@ export default function TilesetCanvas() {
     const [ currentPixel, setCurrentPixel ] = useState([0, 0])
     const [ movePixels, setMovePixels ] = useState([])
     const [ openDeleteLastTileModal, setOpenDeleteLastTileModal ] = useState(false)
+    const [ redoColor, setRedoColor ] = useState(store.canRedo ? '#2dd4cf' : '#1f293a')
+    const [ undoColor, setUndoColor ] = useState(store.canUndo ? '#2dd4cf' : '#1f293a')
+
+
 
     useEffect(() => {
         auth.socket.on('recieveUpdateTileset', (data) => {
@@ -48,6 +52,36 @@ export default function TilesetCanvas() {
         setHeight(store.currentTile ? store.currentTile.height : 0)
         setWidth(store.currentTile ? store.currentTile.width : 0)
     }, [store.currentTile])
+
+    useEffect(() => {
+        setUndoColor(store.canUndo ? '#2dd4cf' : '#1f293a')
+        setRedoColor(store.canRedo ? '#2dd4cf' : '#1f293a')
+    }, [store.canUndo, store.canRedo])
+
+    const redo = async () => {
+        if (store.currentStackIndex < store.transactionStack.length - 1) {
+            let tile = currentTile
+            tile.tileData = store.transactionStack[store.currentStackIndex + 1].new
+            setCurrentTile(tile)
+            let imgSrc = convertToImage(tile);
+            await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+            await store.redo()
+            auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
+        }
+    }
+ 
+    const undo = async () => {
+        if (store.currentStackIndex > -1) {
+            let tile = currentTile
+            tile.tileData = store.transactionStack[store.currentStackIndex].old
+            setCurrentTile(tile)
+            let imgSrc = convertToImage(tile);
+            await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+            await store.undo()
+            auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
+        }
+    }
+ 
 
 
     // Auto Update code (not working rn)
@@ -95,45 +129,11 @@ export default function TilesetCanvas() {
         }
     }
 
-    const handleClickPixel = async (e) => {
-
-        let tile = currentTile
-        let imgSrc = ''
-        switch (store.tilesetTool) {
-            case 'brush':
-                tile.tileData[currentPixel[0] * width + currentPixel[1]] = store.primaryColor
-                setCurrentTile(tile)
-                imgSrc = convertToImage(tile);
-                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
-                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
-                break
-
-            case 'eraser':
-                tile.tileData[currentPixel[0] * width + currentPixel[1]] = ''
-                setCurrentTile(tile)
-                imgSrc = convertToImage(tile);
-                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
-                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
-                break
-
-            case 'dropper':
-                store.setPrimaryColor(tile.tileData[currentPixel[0] * width + currentPixel[1]])
-                break
-
-            case 'bucket':
-                let originalColor = currentTile.tileData[currentPixel[0] * width + currentPixel[1]]
-                fillHelper(currentPixel[0], currentPixel[1], originalColor)
-                imgSrc = convertToImage(tile);
-                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
-                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
-                break
-
-        }
-    }
-
     const convertToImage = (tile) => {
         let rgba = []
-
+        let height = store.currentTile.height
+        let width = store.currentTile.height
+  
         tile.tileData.forEach((tile) => {
             if (tile.length === 0) {
                 rgba.push(0)
@@ -149,23 +149,89 @@ export default function TilesetCanvas() {
                 rgba.push(g)
                 rgba.push(b)
                 rgba.push(255)
-
+  
             }
         })
-
+  
+        console.log(rgba.length)
+  
         var rgbaArray = new ImageData(new Uint8ClampedArray(rgba), width, height);
-
+  
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
         canvas.height = height
         canvas.width = width
-
+  
         context.putImageData(rgbaArray, 0, 0);
         var imgSrc = canvas.toDataURL();
         canvas.remove();
         return imgSrc
     }
-
+ 
+ 
+ const checkArrayEqual = (arr1, arr2) => {
+        return arr1.length === arr2.length && arr1.every((val, index) => val === arr2[index]);
+    }
+  
+    const handleClickPixel = async (e) => {
+  
+        let tile = currentTile
+        let imgSrc = ''
+        let oldData = [...tile.tileData]
+  
+        switch (store.tilesetTool) {
+            case 'brush':
+                tile.tileData[currentPixel[0] * width + currentPixel[1]] = store.primaryColor
+  
+                if (checkArrayEqual(oldData, tile.tileData)) {
+                    console.log("tile did not change")
+                    return
+                }
+  
+                setCurrentTile(tile)
+                console.log(store.transactionStack)
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
+                await store.addTransaction(oldData, [...store.currentTile.tileData])
+                break
+  
+            case 'eraser':
+                tile.tileData[currentPixel[0] * width + currentPixel[1]] = ''
+  
+                if (checkArrayEqual(oldData, tile.tileData)) {
+                    console.log("tile did not change")
+                    return
+                }
+  
+                setCurrentTile(tile)
+                imgSrc = convertToImage(tile);
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
+                await store.addTransaction(oldData, [...store.currentTile.tileData])
+                break
+  
+            case 'dropper':
+                store.setPrimaryColor(tile.tileData[currentPixel[0] * width + currentPixel[1]])
+                break
+  
+            case 'bucket':
+                let originalColor = currentTile.tileData[currentPixel[0] * width + currentPixel[1]]
+  
+                if (originalColor === store.primaryColor) {
+                    console.log("tile did not change")
+                    return
+                }
+  
+                await fillHelper(currentPixel[0], currentPixel[1], originalColor)
+  
+                imgSrc = convertToImage(tile);
+                await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
+                auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
+                await store.addTransaction(oldData, [...store.currentTile.tileData])
+                break
+  
+        }
+    }
 
     const handleDeleteTile = async (tileId) => {
         console.log("Deleting tile " + tileId + " for user " + auth.user)
@@ -205,12 +271,13 @@ export default function TilesetCanvas() {
     return (
         <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
             <Typography variant='h5' id='cursor_coord' color='azure'>{currentPixel[0] + ", " + currentPixel[1]}</Typography>
-            <Button id='tile_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
-                <Undo className='toolbar_mui_icon' />
+            <Button onClick={undo} disabled={!store.canUndo} id='tile_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+                <Undo style={{color: undoColor}} className='toolbar_mui_icon' />
             </Button>
-            <Button id='tile_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
-                <Redo className='toolbar_mui_icon' />
+            <Button onClick={redo} disabled={!store.canRedo} id='tile_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+                <Redo style={{color: redoColor}} className='toolbar_mui_icon' />
             </Button>
+
 
             {currentTile 
                 ? <Grid container direction='row' id='tileset-canvas-grid'
