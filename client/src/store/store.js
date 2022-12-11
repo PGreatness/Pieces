@@ -37,6 +37,9 @@ export const GlobalStoreActionType = {
 
     SET_CURRENT_PROJECT_AND_TILE: 'SET_CURRENT_PROJECT_AND_TILE',
     DELETE_TILESET_FROM_MAP: 'DELETE_TILESET_FROM_MAP',
+
+    UPDATE_TRANSACTION: "UPDATE_TRANSACTION",
+    CLEAR_TRANSACTION_STACK: "CLEAR_TRANSACTION_STACK"
 }
 
 
@@ -91,6 +94,12 @@ function GlobalStoreContextProvider(props) {
         librarySortDirection: "",
         sortedLibraryList: [],
 
+        //undo redo
+       transactionStack: [],
+       currentStackIndex: -1,
+       canRedo: false,
+       canUndo: false
+
     });
 
 
@@ -108,6 +117,29 @@ function GlobalStoreContextProvider(props) {
         console.log(type)
         console.log(payload)
         switch (type) {
+
+            case GlobalStoreActionType.UPDATE_TRANSACTION: {
+                console.log("updating transaction to")
+                console.log(payload)
+                return setStore({
+                    ...store,
+                    transactionStack: payload.updatedStack,
+                    canRedo: payload.canRedo,
+                    canUndo: payload.canUndo,
+                    currentStackIndex: payload.currentStackIndex
+                })
+            }
+  
+            case GlobalStoreActionType.CLEAR_TRANSACTION_STACK: {
+                console.log("CLEARING TRANSACTION STACK RIGHT NOWWWWWWW")
+                return setStore({
+                    ...store,
+                    transactionStack: [],
+                    currentStackIndex: -1,
+                    canRedo: false,
+                    canUndo: false
+                })
+            }
 
             // GET ALL PUBLIC PROJECTS SO WE CAN PRESENT THEM IN EXPLORE SCREEN
             case GlobalStoreActionType.LOAD_PUBLIC_PROJECTS: {
@@ -272,6 +304,9 @@ function GlobalStoreContextProvider(props) {
                     currentPage: "tilesetEditor",
                     currentProject: payload.currentProject,
                     currentTile: payload.currentTile,
+                    primaryColor: '#000',
+                   secondaryColor: '#fff',
+                   tilesetTool: 'brush',
                 })
             }
 
@@ -403,6 +438,115 @@ function GlobalStoreContextProvider(props) {
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
+
+    
+    // ----------------------------------------- TRANSACTION STACK ------------------------------------------------
+    store.addTransaction = async function (oldData, newData) {
+    
+        if (store.transactionStack.length === 0) {
+            console.log("Adding first transaction")
+            storeReducer({
+                type: GlobalStoreActionType.UPDATE_TRANSACTION,
+                payload: {
+                    updatedStack: [
+                        {"old": oldData, "new": newData},
+                    ],
+                    canRedo: false,
+                    canUndo: true,
+                    currentStackIndex: 0,
+                }
+            })
+            console.log(store.transactionStack)
+            return
+        }
+
+        console.log("Attempting to add transaction...")
+
+        let tstack = store.transactionStack
+        tstack = tstack.slice(0, store.currentStackIndex + 1)
+
+        tstack.push(
+            {"old": oldData, "new": newData},
+        )
+
+        console.log(tstack)
+        let currentStackIndex = store.currentStackIndex + 1
+        let canRedo = false
+        let canUndo = true
+
+        storeReducer({
+            type: GlobalStoreActionType.UPDATE_TRANSACTION,
+            payload: {
+                updatedStack: tstack,
+                canRedo: canRedo,
+                canUndo: canUndo,
+                currentStackIndex: currentStackIndex,
+            }
+        })
+
+        console.log(store.transactionStack)
+
+    }
+
+    store.redo = async function () {
+        console.log("Redo")
+        console.log(this.transactionStack)
+        let newStackIndex = store.currentStackIndex + 1
+        let canRedo = newStackIndex < store.transactionStack.length - 1
+        let canUndo = newStackIndex > -1
+        for (let i = -1; i < store.transactionStack.length; i++) {
+            if(newStackIndex === i)
+                console.log(i + "<<<")
+            else
+                console.log(i)
+        }
+        storeReducer({
+            type: GlobalStoreActionType.UPDATE_TRANSACTION,
+            payload: {
+                updatedStack: store.transactionStack,
+                canRedo: canRedo,
+                canUndo: canUndo,
+                currentStackIndex: newStackIndex,
+            }
+        });
+
+        console.log(this.transactionStack)
+    }
+
+    store.undo = async function() {
+        console.log("Undo")
+        let newStackIndex = store.currentStackIndex - 1
+        let canRedo = newStackIndex < store.transactionStack.length - 1
+        let canUndo = newStackIndex > -1
+        for (let i = -1; i < store.transactionStack.length; i++) {
+            if(newStackIndex === i)
+                console.log(i + "<<<")
+            else
+                console.log(i)
+        }
+    
+        storeReducer({
+            type: GlobalStoreActionType.UPDATE_TRANSACTION,
+            payload: {
+                updatedStack: store.transactionStack,
+                canRedo: canRedo,
+                canUndo: canUndo,
+                currentStackIndex: newStackIndex,
+            }
+        });
+    }
+    store.clearTransactionStack = async function () {
+        console.log("transaction stack cleared")
+        storeReducer({
+            type: GlobalStoreActionType.UPDATE_TRANSACTION,
+            payload: {
+                updatedStack: [],
+                canRedo: false,
+                canUndo: false,
+                currentStackIndex: -1,
+            }
+        });
+    }
 
 
     // -----------------------------------------  GET PROJECTS  ---------------------------------------------------
