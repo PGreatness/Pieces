@@ -626,7 +626,7 @@ getAllPublicMapsOnPage = async (req, res) => {
     var { limit } = req.body;
 
     if (!page) {
-        page = 0;
+        page = 1;
     }
 
     if (!limit) {
@@ -680,7 +680,7 @@ getAllPublicProjects = async (req, res) => {
     var { order } = req.query;
 
     if (!page) {
-        page = 0;
+        page = 1;
     }
 
     // console.log(order)
@@ -731,7 +731,7 @@ getAllPublicProjects = async (req, res) => {
             { $limit: limit },
         ]);
     } else {
-        startIndex = page - 1;
+        startIndex = page;
         rangeProject = await Map.aggregate([
             { $match: { isPublic: true } },
             { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
@@ -757,7 +757,7 @@ var getAllProjectsWithUser = async (req, res) => {
 
         console.log(req.query)
         if (!page) {
-            page = 0;
+            page = 1;
         }
 
         if (!userId) {
@@ -822,7 +822,7 @@ var getAllProjectsWithUser = async (req, res) => {
                 { $limit: limit },
             ]);
         } else {
-            startIndex = page - 1;
+            startIndex = page;
             rangeProject = await Map.aggregate([
                 { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } },
                 { $unionWith: { coll: "tilesets", pipeline: [ { $match: { $and: [{isLocked: false}, { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] }] } } ] } },
@@ -848,7 +848,7 @@ getPublicProjectsByName = async (req, res) => {
     var { limit } = req.body;
 
     if (!page) {
-        page = 0;
+        page = 1;
     }
 
     if (!limit) {
