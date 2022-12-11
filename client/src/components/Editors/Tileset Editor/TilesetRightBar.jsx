@@ -519,7 +519,7 @@ export default function TilesetRightBar(props) {
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Typography color='azure' variant='h4'
-              sx={{ marginTop: '10px', marginLeft: '30px', marginRight: '15px' }}>Tileset: {store.currentProject.title}</Typography>
+              sx={{ marginTop: '10px', marginLeft: '30px', marginRight: '15px' }}>Tileset: {store.currentProject?.title}</Typography>
 
             <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack id='preview-window' direction='column' textAlign='center'>

@@ -337,7 +337,7 @@ export default function LibraryScreen(props) {
         navigate(loc);
     }
 
-    const openProject = (project) => {
+    const openProject = async (project) => {
         console.log(project);
         auth.socket.emit('openProject', { project: project._id });
         if (!project.tilesetDesc) {
@@ -347,8 +347,9 @@ export default function LibraryScreen(props) {
             })
         } else {
             setLocation('/tileset/' + project._id);
-            store.changePageToTilesetEditor(project);
-            store.loadTileset(project._id)
+            await store.changePageToTilesetEditor(project);
+            await store.loadTileset(project._id)
+            // await store.clearTransactionStack()
         }
     }
 

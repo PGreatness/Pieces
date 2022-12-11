@@ -114,7 +114,7 @@ export default function TilesetToolBar() {
         let imgSrc = convertToImage(tile);
         await store.updateTile(store.currentTile._id, store.currentTile.tilesetId, store.currentTile.tileData, imgSrc)
         auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: store.currentProject })
-        // await store.addTransaction(oldData, store.currentTile.tileData)
+        await store.addTransaction(oldData, store.currentTile.tileData)
     }
 
     return (
