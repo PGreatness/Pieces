@@ -29,6 +29,10 @@ export default function MapCanvas() {
     const [currentTile, setCurrentTile] = useState([0, 0])
     const [ openDeleteTilesetError, setOpenDeleteTilesetError ] = useState(false)
 
+    const [ redoColor, setRedoColor ] = useState(store.canRedo ? '#2dd4cf' : '#1f293a')
+    const [ undoColor, setUndoColor ] = useState(store.canUndo ? '#2dd4cf' : '#1f293a')
+
+
     //  // Updating map object in canvas
     // useEffect(() => {
     //     // console.log(store.currentMapTiles)
@@ -67,6 +71,10 @@ export default function MapCanvas() {
         setCurrentIndices([0, store.mapTilesets.length > 0 ? store.mapTilesets[0].tiles.length: 0])
     }, [store.mapTilesets])
 
+    useEffect(() => {
+        setUndoColor(store.canUndo ? '#2dd4cf' : '#1f293a')
+        setRedoColor(store.canRedo ? '#2dd4cf' : '#1f293a')
+    }, [store.canUndo, store.canRedo])
 
 
     // useEffect(() => {
@@ -231,10 +239,10 @@ export default function MapCanvas() {
         <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
             <Typography variant='h5' id='cursor_coord' color='azure'>{currentTile[0] + ", " + currentTile[1]}</Typography>
             <Button id='map_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
-                <Undo className='toolbar_mui_icon' />
+                <Undo style={{color: undoColor}} className='toolbar_mui_icon' />
             </Button>
             <Button id='map_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
-                <Redo className='toolbar_mui_icon' />
+                <Redo style={{color: redoColor}} className='toolbar_mui_icon' />
             </Button>
 
             <Viewport mapId={store.currentProject._id} setCurrentTile={setCurrentTile} currentTile={currentTile} />

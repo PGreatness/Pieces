@@ -114,12 +114,12 @@ function GlobalStoreContextProvider(props) {
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
         const { type, payload } = action;
-        console.log(type)
-        console.log(payload)
+        // console.log(type)
+        // console.log(payload)
         switch (type) {
 
             case GlobalStoreActionType.UPDATE_TRANSACTION: {
-                console.log("updating transaction to")
+                console.log("updating transaction stack to")
                 console.log(payload)
                 return setStore({
                     ...store,
@@ -444,7 +444,6 @@ function GlobalStoreContextProvider(props) {
     store.addTransaction = async function (oldData, newData) {
     
         if (store.transactionStack.length === 0) {
-            console.log("Adding first transaction")
             storeReducer({
                 type: GlobalStoreActionType.UPDATE_TRANSACTION,
                 payload: {
@@ -456,11 +455,8 @@ function GlobalStoreContextProvider(props) {
                     currentStackIndex: 0,
                 }
             })
-            console.log(store.transactionStack)
             return
         }
-
-        console.log("Attempting to add transaction...")
 
         let tstack = store.transactionStack
         tstack = tstack.slice(0, store.currentStackIndex + 1)
@@ -469,7 +465,6 @@ function GlobalStoreContextProvider(props) {
             {"old": oldData, "new": newData},
         )
 
-        console.log(tstack)
         let currentStackIndex = store.currentStackIndex + 1
         let canRedo = false
         let canUndo = true
@@ -484,7 +479,6 @@ function GlobalStoreContextProvider(props) {
             }
         })
 
-        console.log(store.transactionStack)
 
     }
 

@@ -37,13 +37,22 @@ export default function MapToolBar() {
         store.setTilesetTool(tool)
     }
 
+    const checkArrayEqual = (arr1, arr2) => {
+        return arr1.length === arr2.length && arr1.every((val, index) => val === arr2[index]);
+    }
+
     const handleConfirmClear = async () => {
         setOpenClearConfirm(false)
         // let map = store.currentProject
         // map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
         // store.setCurrentProject(map._id)
-
+        let oldData = [...store.currentMapTiles]
+        if (checkArrayEqual(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))) {
+			console.log("no change")
+			return
+		}
         await store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
+        await store.addTransaction(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
         auth.socket.emit('forceViewportRerender')
         auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
