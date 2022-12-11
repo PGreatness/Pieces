@@ -20,6 +20,12 @@ import { Form } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate } from 'react-router-dom';
 import MapTile from './MapTile.js'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+
 
 import './css/mapRightBar.css';
 
@@ -64,8 +70,8 @@ export default function MapRightBar(props) {
     })
   }, [store.currentProject])
 
-  useEffect(()=>{
-    store.getMapTiles(store.currentProject?._id).then((tilesetArray)=>{
+  useEffect(() => {
+    store.getMapTiles(store.currentProject?._id).then((tilesetArray) => {
       setTilesets(tilesetArray)
     })
   }, [store.currentMapTiles])
@@ -116,7 +122,7 @@ export default function MapRightBar(props) {
         }
       }
     }
-  
+
     let payload = {
       title: document.getElementById('title_input').value,
       mapDescription: document.getElementById('desc_input').value,
@@ -222,9 +228,9 @@ export default function MapRightBar(props) {
     // create a new tileset here with isLocked !!!!
     let isLocked = true;
     let response = await store.createNewTileset(tileset.title, tileset.imagePixelHeight, tileset.imagePixelWidth, tileset.tileHeight, tileset.tileWidth, tileset.ownerId, isLocked)
-    
+
     await store.importTilesetToCopyTileset(tileset._id, response.data.tileset._id)
-    
+
     store.importTilesetToMap(response.data.tileset._id);
     auth.socket.emit('updateMap', {project: project._id})
     handleCloseImportTileset();
@@ -399,7 +405,7 @@ export default function MapRightBar(props) {
     let tilesets = []
     let tilesetImages = []
 
-    store.getMapTilesets(project._id).then( (tilesetObjs) => {
+    store.getMapTilesets(project._id).then((tilesetObjs) => {
 
       let currIndex = 0
 
@@ -407,7 +413,7 @@ export default function MapRightBar(props) {
 
         let img;
 
-        store.getTilesetTiles(tileset._id).then( (tiles) => {
+        store.getTilesetTiles(tileset._id).then((tiles) => {
 
           let rgba = []
 
@@ -454,7 +460,7 @@ export default function MapRightBar(props) {
           link.remove();
 
         })
-     
+
         console.log(img)
 
         let tilesetObj = {
@@ -476,23 +482,24 @@ export default function MapRightBar(props) {
       })
 
       let mapJSON =
-      { "height": project.mapHeight,
-        "layers":[
-              {
-                "data": store.currentMapTiles,
-                "height": project.mapHeight,
-                "name": project.title,
-                "opacity": 1,
-                "type": "tilelayer",
-                "visible": true,
-                "width": project.mapWidth,
-                "x": 0,
-                "y": 0
-              }],
-        "nextobjectid":1,
-        "orientation":"orthogonal",
-        "renderorder":"right-down",
-        "tiledversion":"1.0.3",
+      {
+        "height": project.mapHeight,
+        "layers": [
+          {
+            "data": store.currentMapTiles,
+            "height": project.mapHeight,
+            "name": project.title,
+            "opacity": 1,
+            "type": "tilelayer",
+            "visible": true,
+            "width": project.mapWidth,
+            "x": 0,
+            "y": 0
+          }],
+        "nextobjectid": 1,
+        "orientation": "orthogonal",
+        "renderorder": "right-down",
+        "tiledversion": "1.0.3",
         "tileheight": project.tileHeight,
         "tilesets": tilesets,
         "tilewidth": project.tileWidth,
@@ -506,27 +513,27 @@ export default function MapRightBar(props) {
       const filename = `${project.title}.json`;
       const jsonStr = JSON.stringify(mapJSON);
 
-    let element = document.createElement('a');
-    element.style.display = 'none';
-    document.body.appendChild(element);
+      let element = document.createElement('a');
+      element.style.display = 'none';
+      document.body.appendChild(element);
 
-    // download map json
-    //element.setAttribute( 'href', download.path );
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
-    element.setAttribute('download', filename);
-    element.click();
+      // download map json
+      //element.setAttribute( 'href', download.path );
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
+      element.setAttribute('download', filename);
+      element.click();
 
-    // console.log(tilesetImages)
-    // for( var n = 0; n < tilesetImages.length; n++ )
-    // {
-    //     var download = tilesetImages[n];
-    //     // element.setAttribute( 'href', path );
-    //     element.setAttribute( 'download', download );
-    //     element.click();
-    // }
+      // console.log(tilesetImages)
+      // for( var n = 0; n < tilesetImages.length; n++ )
+      // {
+      //     var download = tilesetImages[n];
+      //     // element.setAttribute( 'href', path );
+      //     element.setAttribute( 'download', download );
+      //     element.click();
+      // }
 
-    document.body.removeChild(element);
-    handleCloseExportMap();
+      document.body.removeChild(element);
+      handleCloseExportMap();
 
     })
 
@@ -571,12 +578,52 @@ export default function MapRightBar(props) {
                 </Grid>
               </Stack>
             </Box> */}
+            
+
             <Box>
-              <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
+              <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '40px', backgroundColor: '#2dd4cf' }}>
                 <Typography>Import Tileset</Typography>
                 <LibraryAdd style={{ marginLeft: '15px' }} />
               </Button>
             </Box>
+
+
+            <Grid container sx={{ marginTop: '40px' }}>
+              <Grid item xs={5}></Grid>
+              <Grid item xs={2}>
+                <Button >
+                  <ExpandLessIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={5} ></Grid>
+
+              <Grid item xs={1} sx={{ marginTop: '30px' }}></Grid>
+              <Grid item xs={2} >
+                <Button>
+                  <ChevronLeftIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={6}></Grid>
+              <Grid item xs={2}>
+                <Button >
+                  <ChevronRightIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={1}></Grid>
+
+
+              <Grid item xs={5}></Grid>
+              <Grid item xs={2}>
+                <Button >
+                  <ExpandMoreIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={5}></Grid>
+
+            </Grid>
+
+
+
           </Box>
         )}
         {value === 1 && (
@@ -998,15 +1045,15 @@ export default function MapRightBar(props) {
       </Modal>
 
       <Modal
-          open={openTagsErrorModal}
-          onClose={handleCloseTagsErrorModal}
+        open={openTagsErrorModal}
+        onClose={handleCloseTagsErrorModal}
       >
-          <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
-          <Stack direction='column' style={{margin:'10px'}}>
-              <Typography style={{textAlign:'center', marginBottom:'10px'}} variant='h5' color='#2dd4cf'>Error</Typography>
-              <Typography style={{textAlign:'center'}} color='azure'>Make sure tags are separated with ", "</Typography>
+        <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' top='40%' left='40%'>
+          <Stack direction='column' style={{ margin: '10px' }}>
+            <Typography style={{ textAlign: 'center', marginBottom: '10px' }} variant='h5' color='#2dd4cf'>Error</Typography>
+            <Typography style={{ textAlign: 'center' }} color='azure'>Make sure tags are separated with ", "</Typography>
           </Stack>
-          </Box>
+        </Box>
       </Modal>
 
     </Box>
