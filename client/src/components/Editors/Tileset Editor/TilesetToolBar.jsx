@@ -122,7 +122,7 @@ export default function TilesetToolBar() {
 
             <Grid container space={1} justify='center'>
 
-                <Grid item xs={12} className="toolbar_header">
+                <Grid item xs={12} className="toolbar_header" style={{marginTop: '10px', marginBottom: '10px'}}>
                     <Typography variant="h5" className="editor_typography">Tools</Typography>
                 </Grid>
 
@@ -139,7 +139,7 @@ export default function TilesetToolBar() {
                 </Grid>
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
 
-                <Grid item xs={1} className="toolbar_grid_item"></Grid>
+                {/* <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
                     <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="select" variant={currTool=='select' ? "contained" : ""}>
                         <HighlightAlt className="toolbar_mui_icon"/>
@@ -150,7 +150,7 @@ export default function TilesetToolBar() {
                         <OpenWith className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
-                <Grid item xs={1} className="toolbar_grid_item"></Grid>
+                <Grid item xs={1} className="toolbar_grid_item"></Grid> */}
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
@@ -176,7 +176,7 @@ export default function TilesetToolBar() {
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
 
                 <Grid item xs={12} align='center'>
-                    <Box style={{marginTop: '10px'}} className="brush_selections_container_tileset">
+                    <Box style={{marginTop: '20px'}} className="brush_selections_container_tileset">
                         <Box bgcolor={store.primaryColor} className="brush_selection_tileset" id="color_primary"></Box>
                         <Box bgcolor={store.secondaryColor} className="brush_selection_tileset" id="color_secondary"></Box>
                         <Button className="toolbar_mui_icon" id="swap_primary_color">
