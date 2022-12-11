@@ -626,7 +626,7 @@ getAllPublicMapsOnPage = async (req, res) => {
     var { limit } = req.body;
 
     if (!page) {
-        page = 1;
+        page = 0;
     }
 
     if (!limit) {
@@ -680,7 +680,7 @@ getAllPublicProjects = async (req, res) => {
     var { order } = req.query;
 
     if (!page) {
-        page = 1;
+        page = 0;
     }
 
     // console.log(order)
@@ -710,7 +710,7 @@ getAllPublicProjects = async (req, res) => {
 
     page = +page;
 
-    if (page < 1) {
+    if (page < 0) {
         return res.status(400).json({
             success: false,
             message: "Page must be greater than 0"
@@ -757,7 +757,7 @@ var getAllProjectsWithUser = async (req, res) => {
 
         console.log(req.query)
         if (!page) {
-            page = 1;
+            page = 0;
         }
 
         if (!userId) {
@@ -801,7 +801,7 @@ var getAllProjectsWithUser = async (req, res) => {
     
         page = +page;
     
-        if (page < 1) {
+        if (page < 0) {
             return res.status(400).json({
                 success: false,
                 message: "Page must be greater than 0"
@@ -848,7 +848,7 @@ getPublicProjectsByName = async (req, res) => {
     var { limit } = req.body;
 
     if (!page) {
-        page = 1;
+        page = 0;
     }
 
     if (!limit) {
@@ -865,7 +865,7 @@ getPublicProjectsByName = async (req, res) => {
     page = +page;
     limit = +limit;
 
-    if (page < 1) {
+    if (page < 0) {
         return res.status(400).json({
             success: false,
             message: "Page must be greater than 0"
