@@ -44,7 +44,6 @@ export default function MapToolBar() {
         // store.setCurrentProject(map._id)
 
         await store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
-        auth.socket.emit('forceViewportRerender')
         auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
 

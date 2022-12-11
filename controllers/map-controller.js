@@ -818,7 +818,6 @@ var getAllProjectsWithUser = async (req, res) => {
                 { $unionWith: { coll: "tilesets", pipeline: [ { $match: { $and: [{isLocked: false}, { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] }] } } ] } },
                 { $addFields: { numLikes: { $size: "$likes"} } },
                 { $sort: sort },
-                { $skip: startIndex },
                 { $limit: limit },
             ]);
         } else {
@@ -828,7 +827,6 @@ var getAllProjectsWithUser = async (req, res) => {
                 { $unionWith: { coll: "tilesets", pipeline: [ { $match: { $and: [{isLocked: false}, { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] }] } } ] } },
                 { $addFields: { numLikes: { $size: "$likes"} } },
                 { $sort: sort },
-                { $skip: startIndex },
             ]);
         }
 
