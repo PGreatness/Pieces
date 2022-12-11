@@ -116,6 +116,10 @@ createMap = async (req, res) => {
         let tilesets = []
         let isPublic = false
 
+        for (let i = 0; i < mapWidth * mapHeight; i++) {
+            tiles.push(-1);
+        }
+
         map = new Map({
 
             title: title,

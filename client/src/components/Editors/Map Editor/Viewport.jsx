@@ -18,15 +18,25 @@ export default function Viewport(props) {
 		y: 0,
 		indices: [],
 	});
-    const [mapWidth, setMapWidth] = useState(1);
-    const [mapHeight, setMapHeight] = useState(1);
+	const [mapWidth, setMapWidth] = useState(1);
+	const [mapHeight, setMapHeight] = useState(1);
 	const [viewportWidth, setViewportWidth] = useState(32); // max width of 32
 	const [viewportHeight, setViewportHeight] = useState(32); // max height of 32
 	const [renderWidthRatio, setRenderWidthRatio] = useState(1);
 	const [renderHeightRatio, setRenderHeightRatio] = useState(1);
 
 	useEffect(() => {
-		createMapViewport(props.mapId).then((view) => {
+		window.addEventListener("keydown", handleKeyPress);
+		return () => window.removeEventListener("keydown", handleKeyPress);
+	}, [viewport]);
+
+	useEffect(() => {
+		let data = {
+			startingLocationObject: startingPoint,
+			width: viewportWidth,
+			height: viewportHeight,
+		};
+		createMapViewport(props.mapId, data).then((view) => {
 			setViewport(view.tiles);
 			console.log(view.map.mapWidth);
 			setViewportWidth(view.width);
@@ -35,8 +45,8 @@ export default function Viewport(props) {
 				y: view.start.y,
 				indices: view.trueIndices,
 			});
-            setMapWidth(view.map.mapWidth);
-            setMapHeight(view.map.mapHeight);
+			setMapWidth(view.map.mapWidth);
+			setMapHeight(view.map.mapHeight);
 			setViewportHeight(view.height);
 			setTilesets(view.tilesets);
 			setRenderWidthRatio(view.width / Math.max(view.width, view.height));
@@ -45,24 +55,36 @@ export default function Viewport(props) {
 			);
 			console.log("Viewport created");
 		});
-	}, []);
+	}, [store.mapTilesets]);
+
+	const handleKeyPress = async (e) => {
+		if (e.key === "ArrowUp") {
+			return moveViewport("up");
+		} else if (e.key === "ArrowDown") {
+			return moveViewport("down");
+		} else if (e.key === "ArrowLeft") {
+			return moveViewport("left");
+		} else if (e.key === "ArrowRight") {
+			return moveViewport("right");
+		}
+	};
 
 	const updateSrc = async (index, value) => {
 		viewport[index] = value;
-        console.log('updating viewport')
+		console.log("updating viewport");
 		setViewport(viewport);
-        await updateMapInDatabase();
+		await updateMapInDatabase();
 	};
 
 	const updateMapInDatabase = async () => {
-        console.log('updating map in database')
+		console.log("updating map in database");
 		let map = await store.loadMap(props.mapId, true);
 		let oldTiles = map.currentProject.tiles;
 		for (let i = 0; i < startingPoint.indices.length; i++) {
 			oldTiles[startingPoint.indices[i]] = viewport[i];
 		}
 		await store.updateMapToViewport(props.mapId, oldTiles);
-        console.log('map updated in database')
+		console.log("map updated in database");
 	};
 
 	const fillHelper = async (x, y, originalTile) => {
@@ -95,16 +117,14 @@ export default function Viewport(props) {
 	};
 	const handleHoverTile = (e) => {
 		let id = Number(e.currentTarget.id.slice(5));
-        console.log(mapWidth)
+		console.log(mapWidth);
 		let x = Math.floor(id / mapWidth);
-		let y = (id % viewportWidth) + startingPoint.y;
-        props.setCurrentTile([x,y])
+		let y = (id % mapHeight) + startingPoint.y;
+		props.setCurrentTile([x, y]);
 	};
 	const handleBucket = async () => {
 		let originalTile =
-			viewport[
-				startingPoint.x * viewportWidth + startingPoint.y
-			];
+			viewport[startingPoint.x * viewportWidth + startingPoint.y];
 		let newMap = await fillHelper(
 			startingPoint.x,
 			startingPoint.y,
@@ -122,15 +142,178 @@ export default function Viewport(props) {
 		return view;
 	};
 
-	const moveViewportLeft = () => {};
+	const updateMapViewport = async (data) => {
+		const mapId = props.mapId;
+		const view = await store.initializeViewportOfMap(mapId, data);
+		return view;
+	};
 
-	const moveViewportRight = () => {};
+	const moveViewportLeft = async (startingPoint) => {
+		if (startingPoint.x === 0) {
+			return;
+		}
 
-	const moveViewportUp = () => {};
+		let data = {
+			startingLocationObject: {
+				x: startingPoint.x - 1,
+				y: startingPoint.y,
+			},
+			width: viewportWidth,
+			height: viewportHeight,
+		};
 
-	const moveViewportDown = () => {};
+		return updateMapViewport(data);
+	};
 
-	const moveViewport = (direction) => {};
+	const moveViewportRight = async (startingPoint) => {
+		console.log("moving viewport right");
+		if (startingPoint.x + viewportWidth === mapWidth) {
+			console.log(
+				"viewport too large",
+				startingPoint.x + viewportWidth,
+				mapWidth
+			);
+			return;
+		}
+
+		let data = {
+			startingLocationObject: {
+				x: startingPoint.x + 1,
+				y: startingPoint.y,
+			},
+			width: viewportWidth,
+			height: viewportHeight,
+		};
+
+		return updateMapViewport(data);
+	};
+
+	const moveViewportUp = async (startingPoint) => {
+		if (startingPoint.y === 0) {
+			return;
+		}
+		let data = {
+			startingLocationObject: {
+				x: startingPoint.x,
+				y: startingPoint.y - 1,
+			},
+			width: viewportWidth,
+			height: viewportHeight,
+		};
+
+		return updateMapViewport(data);
+	};
+
+	const moveViewportDown = async (startingPoint) => {
+		if (startingPoint.y + viewportHeight === mapHeight) {
+			return;
+		}
+
+		let data = {
+			startingLocationObject: {
+				x: startingPoint.x,
+				y: startingPoint.y + 1,
+			},
+			width: viewportWidth,
+			height: viewportHeight,
+		};
+
+		return updateMapViewport(data);
+	};
+
+	const moveViewport = async (direction) => {
+		let newView;
+		switch (direction) {
+			case "up":
+				newView = await moveViewportUp(startingPoint);
+				setViewport(newView.tiles);
+				setViewport(newView.tiles);
+				console.log(newView.map.mapWidth);
+				setViewportWidth(newView.width);
+				setStartingPoint({
+					x: newView.start.x,
+					y: newView.start.y,
+					indices: newView.trueIndices,
+				});
+				setMapWidth(newView.map.mapWidth);
+				setMapHeight(newView.map.mapHeight);
+				setViewportHeight(newView.height);
+				setTilesets(newView.tilesets);
+				setRenderWidthRatio(
+					newView.width / Math.max(newView.width, newView.height)
+				);
+				setRenderHeightRatio(
+					newView.height / Math.max(newView.width, newView.height)
+				);
+				break;
+			case "down":
+				newView = await moveViewportDown(startingPoint);
+				setViewport(newView.tiles);
+				console.log(newView.map.mapWidth);
+				setViewportWidth(newView.width);
+				setStartingPoint({
+					x: newView.start.x,
+					y: newView.start.y,
+					indices: newView.trueIndices,
+				});
+				setMapWidth(newView.map.mapWidth);
+				setMapHeight(newView.map.mapHeight);
+				setViewportHeight(newView.height);
+				setTilesets(newView.tilesets);
+				setRenderWidthRatio(
+					newView.width / Math.max(newView.width, newView.height)
+				);
+				setRenderHeightRatio(
+					newView.height / Math.max(newView.width, newView.height)
+				);
+				break;
+			case "left":
+				newView = await moveViewportLeft(startingPoint);
+				setViewport(newView.tiles);
+				console.log(newView.map.mapWidth);
+				setViewportWidth(newView.width);
+				setStartingPoint({
+					x: newView.start.x,
+					y: newView.start.y,
+					indices: newView.trueIndices,
+				});
+				setMapWidth(newView.map.mapWidth);
+				setMapHeight(newView.map.mapHeight);
+				setViewportHeight(newView.height);
+				setTilesets(newView.tilesets);
+				setRenderWidthRatio(
+					newView.width / Math.max(newView.width, newView.height)
+				);
+				setRenderHeightRatio(
+					newView.height / Math.max(newView.width, newView.height)
+				);
+				break;
+			case "right":
+				newView = await moveViewportRight(startingPoint);
+				console.log(newView.tiles, viewport);
+				setViewport(newView.tiles);
+				console.log(newView.map.mapWidth);
+				setViewportWidth(newView.width);
+				setStartingPoint({
+					x: newView.start.x,
+					y: newView.start.y,
+					indices: newView.trueIndices,
+				});
+				setMapWidth(newView.map.mapWidth);
+				setMapHeight(newView.map.mapHeight);
+				setViewportHeight(newView.height);
+				setTilesets(newView.tilesets);
+				setRenderWidthRatio(
+					newView.width / Math.max(newView.width, newView.height)
+				);
+				setRenderHeightRatio(
+					newView.height / Math.max(newView.width, newView.height)
+				);
+				break;
+			default:
+				return;
+		}
+	};
 
 	return (
 		<Grid
@@ -148,7 +331,8 @@ export default function Viewport(props) {
 				transform: "translate(-50%, -60%)",
 			}}
 		>
-			{viewport && viewport?.length > 0 &&
+			{viewport &&
+				viewport?.length > 0 &&
 				viewport.map((tile, index) => (
 					<MapTile
 						handleBucket={handleBucket}

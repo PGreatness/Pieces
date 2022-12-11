@@ -542,7 +542,7 @@ export default function MapRightBar(props) {
             <Typography color='azure' variant='h4'
               sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject ? store.currentProject.title : ''}</Typography>
 
-            <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
+            {/* <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack direction='column' textAlign='center'>
                 <Typography bgcolor="#1f293a" color='azure'>Preview</Typography>
                 <Grid container direction='row' rowSpacing={0} columns={store.currentProject ? store.currentProject.mapWidth : 0} bgcolor='#000000' style={{ height: `250px`, width: `250px` }}>
@@ -551,7 +551,7 @@ export default function MapRightBar(props) {
                   ))}
                 </Grid>
               </Stack>
-            </Box>
+            </Box> */}
             <Box>
               <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '15px', backgroundColor: '#2dd4cf' }}>
                 <Typography>Import Tileset</Typography>

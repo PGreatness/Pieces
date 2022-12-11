@@ -35,26 +35,25 @@ const createMapViewport = async (req, res) => {
         return res.status(400).send({ message: 'Map not found' })
     }
 
-    var startingIndex = startingLocationObject.x + (startingLocationObject.y * map.mapWidth);
+    var startingIndex = +startingLocationObject.x + (+startingLocationObject.y * map.mapWidth);
 
     var viewportData = [];
     var tilesetData = [];
     let min = Math.min(width, map.mapWidth);
     let minHeight = Math.min(height, map.mapHeight);
     let currentMapIndex = startingIndex;
-    for (let i = startingIndex; i < minHeight * map.mapHeight; i+= map.mapWidth) {
-        let row = map.tiles.slice(i, i + min - startingLocationObject.x);
-        let values = Array.from({length: (i + min - startingLocationObject.x) - currentMapIndex}, (_, i) => i + currentMapIndex);
+    for (let i = startingIndex; i < (minHeight * map.mapHeight) + (+startingLocationObject.y * map.mapWidth); i+= map.mapWidth) {
+        let row = map.tiles.slice(i, i + min);
+        let values = Array.from({length: (i + min) - currentMapIndex}, (_, i) => i + currentMapIndex);
         currentMapIndex += map.mapWidth;
         viewportData.push(row);
         tilesetData.push(values);
     }
 
-    // console.log('viewport', viewportData)
 
     // console.log(viewportData?.length != 0, viewportData[0]?.length != 0)
-    height = viewportData?.length != 0 ? viewportData.length : map.mapHeight;
-    width = viewportData[0]?.length != 0 ? viewportData[0].length : map.mapWidth;
+    height = minHeight;
+    width = min;
     viewportData = viewportData.flat();
     tilesetData = tilesetData.flat();
 
@@ -62,10 +61,10 @@ const createMapViewport = async (req, res) => {
     if (viewportData.length === 0) {
         // console.log('viewport is empty')
         // console.log(height * width)
-        for (let i = 0; i < height * width; i++) {
+        for (let i = 0; i < min * minHeight; i++) {
             viewportData.push(-1);
         }
-        // console.log('viewport after change', viewportData)
+        // console.log('viewport after change', viewportData.length)
     }
 
     // console.log('viewport now', viewportData)

@@ -1736,15 +1736,19 @@ function GlobalStoreContextProvider(props) {
 
     // -----------------------------------------    MAP VIEWPORT   ------------------------------------------------
 
-    store.initializeViewportOfMap = async function (id) {
+    store.initializeViewportOfMap = async function (id, data) {
         let query = {
             mapId: id,
-            startingLocationObject: {
-                x: 5,
-                y: 5
+        }
+
+        if (data) {
+            query = {
+                mapId: id,
+                ...data
             }
         }
 
+        console.log(data)
         const response = await api.getMapViewport(query)
 
         if (response.status < 400) {
