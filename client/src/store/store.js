@@ -535,6 +535,7 @@ function GlobalStoreContextProvider(props) {
             }
         });
     }
+    
     store.clearTransactionStack = async function () {
         console.log("transaction stack cleared")
         storeReducer({

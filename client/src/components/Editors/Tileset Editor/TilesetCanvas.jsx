@@ -307,7 +307,7 @@ export default function TilesetCanvas() {
                             {tileset && tileset.tiles.length > 0
                                 ? tileset?.tiles.map((tileId) => (
                                     <Box className='tile_option'>
-                                        <img src={require('../images/dummyTilePreview.png')} className='tile_option_image'/>
+                                        <img src={require('../images/dummyTilePreview.png')} onClick={() => handleSelectTile(tileId)} className='tile_option_image'/>
                                         <Button style={{padding: '0px', maxWidth: '65%', top: '0px', left: '0px', minWidth: '65%'}} className='tile_option_select' onClick={() => handleSelectTile(tileId)}></Button>
                                         <Button onClick={() => handleDeleteTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_delete'><Delete style={{color:'azure', height: '80%', width: '80%'}}/></Button>  
                                         {/* <Button onClick={() => handleDuplicateTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_dupe'><ContentCopy style={{color:'azure', height: '70%', width: '70%'}}/></Button>   */}
