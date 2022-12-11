@@ -1749,7 +1749,6 @@ function GlobalStoreContextProvider(props) {
         }
 
         console.log(data)
-
         const response = await api.getMapViewport(query)
 
         if (response.status < 400) {

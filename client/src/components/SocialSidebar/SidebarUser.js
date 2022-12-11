@@ -91,7 +91,7 @@ export default function SidebarUser(props) {
     }
   });
 
-  useEffect(()=> {
+  useEffect(() => {
     setIsPending(props.pending)
   }, [props.pending])
 
@@ -113,51 +113,51 @@ export default function SidebarUser(props) {
     return (
       <ListItem sx={{ color: 'white' }}>
         <ListItemAvatar>
-          {isOnline ? online(<Avatar alt={props.username} src={props.profilePic} />) : offline(<Avatar alt={props.username} src={props.profilePic} />)}
+          {isOnline ? online(<Avatar alt={props.username} src={props.user.profilePic?.url} />) : offline(<Avatar alt={props.username} src={props.user.profilePic?.url} />)}
         </ListItemAvatar>
-        <ListItemText primary={name} secondary={<Typography style={{ fontSize:'10px', color: '#FFFFFF' }}>{username}</Typography>} style={{ width: '100%' }} />
+        <ListItemText primary={name} secondary={<Typography style={{ fontSize: '10px', color: '#FFFFFF' }}>{username}</Typography>} style={{ width: '100%' }} />
         <ListItemButton style={{ backgroundColor: 'transparent' }} sx={{ '&hover': { color: 'black' } }}>
           {isFriend ? <div>
-                        <Button
-                          id="basic-button"
-                          aria-controls={open ? 'basic-menu' : undefined}
-                          aria-haspopup="true"
-                          aria-expanded={open ? 'true' : undefined}
-                          onClick={handleClick}
-                        >
-                          <WhiteMore />
-                        </Button>
-                        <Menu
-                          id="basic-menu"
-                          anchorEl={anchorEl}
-                          open={open}
-                          onClose={handleClose}
-                          MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                          }}
-                        >
-                          <MenuItem onClick={handleOpenModal}>View Profile</MenuItem>
-                          <Modal
-                            open={openModal}
-                            onClose={handleCloseModal}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                          >
-                            <Box sx={style}>
-                              <Typography id="modal-modal-title" variant="h6" component="h2">
-                               {props.user.firstName} {props.user.lastName}'s Profile
-                              </Typography>
-                              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                Email: {props.user.email} <br></br>
-                                Bio: {props.user.bio ? props.user.bio : "No bio provided for this user."}
-                              </Typography>
-                            </Box>
-                          </Modal>
+            <Button
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              <WhiteMore />
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={handleOpenModal}>View Profile</MenuItem>
+              <Modal
+                open={openModal}
+                onClose={handleCloseModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <Typography id="modal-modal-title" variant="h6" component="h2">
+                    {props.user.firstName} {props.user.lastName}'s Profile
+                  </Typography>
+                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    Email: {props.user.email} <br></br>
+                    Bio: {props.user.bio ? props.user.bio : "No bio provided for this user."}
+                  </Typography>
+                </Box>
+              </Modal>
 
-                          <MenuItem onClick={handleClose}>Chat</MenuItem>
-                          <MenuItem onClick={() => {handleRemoveFriend(props.user._id)}}>Remove Friend</MenuItem>
-                        </Menu>
-                      </div> : <WhitePersonAdd onClick={() => {handleAddFriend(props.user._id)}} disabled={isPending} sx={{color: isPending ? 'grey' : 'white' }}/>}
+              <MenuItem onClick={handleClose}>Chat</MenuItem>
+              <MenuItem onClick={() => { handleRemoveFriend(props.user._id) }}>Remove Friend</MenuItem>
+            </Menu>
+          </div> : <WhitePersonAdd onClick={() => { handleAddFriend(props.user._id) }} disabled={isPending} sx={{ color: isPending ? 'grey' : 'white' }} />}
         </ListItemButton>
         <Divider />
       </ListItem>
