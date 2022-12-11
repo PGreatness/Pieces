@@ -51,10 +51,11 @@ export default function Viewport(props) {
 			setMapHeight(view.map.mapHeight);
 			setViewportHeight(view.height);
 			setTilesets(view.tilesets);
-			setRenderWidthRatio(view.width / Math.max(view.width, view.height));
+			setRenderWidthRatio(view.map.mapWidth / Math.max(view.map.mapWidth, view.map.mapHeight));
 			setRenderHeightRatio(
-				view.height / Math.max(view.width, view.height)
+				view.map.Height / Math.max(view.map.mapWidth, view.map.mapHeight)
 			);
+			console.log(view.width);
 			console.log("Viewport created");
 		});
 	}, [store.mapTilesets, store.currentMapTiles, props.map]);
@@ -124,9 +125,9 @@ export default function Viewport(props) {
 	const handleHoverTile = (e) => {
 		let id = Number(e.currentTarget.id.slice(5));
 		console.log(mapWidth);
-		let x = Math.floor(id / mapWidth);
-		let y = (id % mapHeight) + startingPoint.y;
-		props.setCurrentTile([x, y]);
+		let x = (id % mapWidth) + startingPoint.x;
+		let y = Math.floor(id / mapWidth) + startingPoint.y;
+		props.setCurrentTile([x,y]);
 	};
 	const handleBucket = async () => {
 		let originalTile =

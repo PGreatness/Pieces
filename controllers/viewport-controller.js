@@ -40,10 +40,15 @@ const createMapViewport = async (req, res) => {
     var viewportData = [];
     var tilesetData = [];
     let min = Math.min(width, map.mapWidth);
+    console.log('min', min)
     let minHeight = Math.min(height, map.mapHeight);
+    console.log('minHeight', minHeight)
     let currentMapIndex = startingIndex;
-    for (let i = startingIndex; i < (minHeight * map.mapHeight) + (+startingLocationObject.y * map.mapWidth); i+= map.mapWidth) {
+    console.log(`map.tiles.length is ${map.tiles.length}`)
+    console.log(`doing for loop with starting index ${startingIndex} and ending index ${startingIndex + (minHeight * map.mapWidth)} and map width ${map.mapWidth}`)
+    for (let i = startingIndex; i < startingIndex + (minHeight * map.mapWidth); i+= map.mapWidth) {
         let row = map.tiles.slice(i, i + min);
+        console.log(`row length is ${row.length} and min is ${min} and current map index is ${currentMapIndex} and i is ${i}`)
         let values = Array.from({length: (i + min) - currentMapIndex}, (_, i) => i + currentMapIndex);
         currentMapIndex += map.mapWidth;
         viewportData.push(row);
@@ -59,15 +64,15 @@ const createMapViewport = async (req, res) => {
 
     // console.log(viewportData, height, width, map.mapHeight, map.mapWidth)
     if (viewportData.length === 0) {
-        // console.log('viewport is empty')
-        // console.log(height * width)
+        console.log('viewport is empty')
+        console.log(height * width)
         for (let i = 0; i < min * minHeight; i++) {
             viewportData.push(-1);
         }
         // console.log('viewport after change', viewportData.length)
     }
 
-    // console.log('viewport now', viewportData)
+    console.log('viewport now', viewportData)
     var tilesets = [];
     for (let i = 0; i < map.tilesets.length; i++) {
         var tiles = await Tile.find({ tilesetId: map.tilesets[i] });
