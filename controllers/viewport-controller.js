@@ -15,11 +15,11 @@ const createMapViewport = async (req, res) => {
     }
 
     if (!width) {
-        width = 32;
+        width = 16;
     }
 
     if (!height) {
-        height = 32;
+        height = 16;
     }
 
     if (!startingLocationObject) {

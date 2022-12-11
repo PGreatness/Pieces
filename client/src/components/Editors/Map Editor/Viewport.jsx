@@ -55,7 +55,7 @@ export default function Viewport(props) {
 			);
 			console.log("Viewport created");
 		});
-	}, [store.mapTilesets]);
+	}, [store.mapTilesets, store.currentMapTiles]);
 
 	const handleKeyPress = async (e) => {
 		if (e.key === "ArrowUp") {
