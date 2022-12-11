@@ -488,12 +488,7 @@ function GlobalStoreContextProvider(props) {
         let newStackIndex = store.currentStackIndex + 1
         let canRedo = newStackIndex < store.transactionStack.length - 1
         let canUndo = newStackIndex > -1
-        for (let i = -1; i < store.transactionStack.length; i++) {
-            if(newStackIndex === i)
-                console.log(i + "<<<")
-            else
-                console.log(i)
-        }
+
         storeReducer({
             type: GlobalStoreActionType.UPDATE_TRANSACTION,
             payload: {
@@ -512,13 +507,7 @@ function GlobalStoreContextProvider(props) {
         let newStackIndex = store.currentStackIndex - 1
         let canRedo = newStackIndex < store.transactionStack.length - 1
         let canUndo = newStackIndex > -1
-        for (let i = -1; i < store.transactionStack.length; i++) {
-            if(newStackIndex === i)
-                console.log(i + "<<<")
-            else
-                console.log(i)
-        }
-    
+
         storeReducer({
             type: GlobalStoreActionType.UPDATE_TRANSACTION,
             payload: {

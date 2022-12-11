@@ -195,6 +195,26 @@ export default function MapCanvas() {
         setOpenDeleteTilesetError(false)
     }
 
+    const undo = async () => {
+        if (store.currentStackIndex > -1) {
+            let mapTiles = store.transactionStack[store.currentStackIndex].old
+            console.log(mapTiles)
+            await store.setCurrentMapTiles(mapTiles)
+            store.undo()
+		    auth.socket.emit("updateMap", { project: store.currentProject._id });
+        }
+    }
+
+    const redo = async () => {
+        if (store.currentStackIndex < store.transactionStack.length - 1) {
+            let mapTiles = store.transactionStack[store.currentStackIndex + 1].new
+            console.log(mapTiles)
+            await store.setCurrentMapTiles(mapTiles)
+            store.redo()
+		    auth.socket.emit("updateMap", { project: store.currentProject._id });
+        }
+    }
+
     const deleteTileset = () => {
 
         // get tile indexes of tileset
@@ -238,10 +258,10 @@ export default function MapCanvas() {
     return (
         <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
             <Typography variant='h5' id='cursor_coord' color='azure'>{currentTile[0] + ", " + currentTile[1]}</Typography>
-            <Button id='map_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+            <Button onClick={undo} id='map_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
                 <Undo style={{color: undoColor}} className='toolbar_mui_icon' />
             </Button>
-            <Button id='map_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+            <Button onClick={redo} id='map_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
                 <Redo style={{color: redoColor}} className='toolbar_mui_icon' />
             </Button>
 
