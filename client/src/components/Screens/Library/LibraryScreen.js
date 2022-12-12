@@ -474,7 +474,7 @@ export default function LibraryScreen(props) {
                         </Box>
                     : <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
                 }
-                {sortOpt === 'Size'
+                {/* {sortOpt === 'Size'
                     ? sortDir === 'up'
                         ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
                             <MenuItem onClick={handleSortClick}>Size</MenuItem>
@@ -485,7 +485,7 @@ export default function LibraryScreen(props) {
                             <ArrowDownward />
                         </Box>
                     : <MenuItem onClick={handleSortClick}>Size</MenuItem>
-                }
+                } */}
             </Menu>
 
             <Menu
@@ -552,7 +552,7 @@ export default function LibraryScreen(props) {
                             <div className="library_overlay">
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                     <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
-                                        <div className="library_project_title">{project.title}</div>
+                                        <div className="library_project_title">{project.title.length > 25 ? project.title.substring(0, 24) + "..." : project.title}</div>
                                         <div className="library_project_desc">{project.tilesetDesc ? project.tilesetDesc : project.mapDescription}</div>
                                     </Box>
                                 </Box>

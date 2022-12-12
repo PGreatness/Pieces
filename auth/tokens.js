@@ -4,7 +4,7 @@ const config = require("config")
 function authManager() {
     verifyToken = function (req, res, next) {
         try {
-            console.log(req.cookies)
+            //console.log(req.cookies)
             const token = req.cookies.token;
             if (!token) {
                 return res.status(401).json({

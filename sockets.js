@@ -3,8 +3,10 @@ const { Server } = require("socket.io");
 const startWebSockets = (server) => {
     const io = new Server(server, {
         cors: {
-            origin: "http://localhost:3000",
-            // origin: "http://pieces-316.herokuapp.com",
+
+            //origin: "http://localhost:3000",
+            origin: "https://pieces-316.herokuapp.com",
+
             methods: ["GET", "POST"],
         },
     });
@@ -83,8 +85,11 @@ const startWebSockets = (server) => {
             socket.broadcast.to(data.project).emit('recieveUpdateTileset', {...data, socketId: socket.id});
         })
 
-        socket.on('acknowledgeEmit', (data) => {
-            console.log('emit was acknowledged');
+        socket.on('requestViewportMove', (data) => {
+            console.log('requesting moving of viewport through arrow buttons');
+            console.log(data);
+            // emit a message to self
+            socket.emit('moveViewport', {...data, socketId: socket.id});
         })
 
     });

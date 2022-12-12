@@ -324,7 +324,7 @@ var getTileById = async (req, res) => {
         }
 
         let tilesId = await tile.findOne({ _id: req.params.id });
-        console.log(tilesId)
+        //console.log(tilesId)
         if (!tilesId) {
             return res.status(400).json({
                 success: false,
@@ -363,7 +363,7 @@ var getTilesetTiles = async (req, res) => {
         }
 
         let tiles = await tile.find({ tilesetId: req.params.id });
-        console.log(tiles)
+        //console.log(tiles)
         if (!tiles) {
             return res.status(400).json({
                 success: false,

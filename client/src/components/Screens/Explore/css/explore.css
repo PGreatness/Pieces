@@ -8,7 +8,7 @@
 
 .overlay {
     position: absolute; 
-    bottom: 0; 
+    bottom: 0px; 
     background: rgba(0, 0, 7, 0.70); /* Black see-through */
     width: 100%;
     height: 25%;

@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === "production") {
     // SETUP THE MIDDLEWARE
     app.use(express.urlencoded({ extended: true }))
     app.use(cors({
-        origin: ["http://localhost:3000"],
+        origin: ["https://pieces-316.herokuapp.com/"],
         credentials: true
     }))
     //"http://pieces-316.herokuapp.com", 

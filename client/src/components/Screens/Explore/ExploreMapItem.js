@@ -268,27 +268,27 @@ export default function ExploreMapItem(props) {
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <Typography style={{ marginLeft:'20px', fontSize: '40px', fontWeight: '700' }} color='azure'>{project.title}</Typography>
-                        <Typography style={{ marginLeft:'20px', fontSize: '20px', fontWeight: '300', paddingBottom:'10px' }} color='azure'>{project.mapDescription}</Typography>
+                        <Typography style={{ marginLeft:'20px', fontSize: '40px', fontWeight: '700' }} color='azure'>{project.title.length > 25 ? project.title.substring(0, 24) + "..." : project.title}</Typography>
+                        <Typography style={{ marginLeft:'20px', fontSize: '20px', fontWeight: '300', paddingBottom:'10px' }} color='azure'>{project.mapDescription.length > 25 ? project.mapDescription.substring(0, 24) + "..." : project.mapDescription}</Typography>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <ThumbUpIcon sx={{ fontSize: 50, px: 1, pt: 1, color: `${isLiked ? "#2dd4cf" : "white"}` }}
+                            <ThumbUpIcon sx={{ fontSize: 40, px: 1, pt: 1, color: `${isLiked ? "#2dd4cf" : "white"}` }}
                                 onClick={handleLikeClick} ></ThumbUpIcon>
                             <div class="like_num">{likes}</div>
                         </Box>
 
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <ThumbDownIcon sx={{ fontSize: 50, px: 2, pt: 1, color: `${isDisliked ? "#2dd4cf" : "white"}` }}
+                            <ThumbDownIcon sx={{ fontSize: 40, px: 2, pt: 1, color: `${isDisliked ? "#2dd4cf" : "white"}` }}
                                 onClick={handleDislikeClick} ></ThumbDownIcon>
                             <div class="like_num">{dislikes}</div>
                         </Box>
 
-                        <CommentIcon sx={{ fontSize: 50, px: 1 }} onClick={handleComments}></CommentIcon>
-                        <DownloadIcon onClick={handleOpenExportMap} sx={{ fontSize: 50, px: 1 }}></DownloadIcon>
-                        <FavoriteIcon sx={{ fontSize: 50, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
+                        <CommentIcon sx={{ fontSize: 40, px: 1 }} onClick={handleComments}></CommentIcon>
+                        <DownloadIcon onClick={handleOpenExportMap} sx={{ fontSize: 40, px: 1 }}></DownloadIcon>
+                        <FavoriteIcon sx={{ fontSize: 40, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
                             onClick={handleFavClick}></FavoriteIcon>
-                        <EditIcon sx={{ fontSize: 50, color: `${isUnlocked ? "white" : "gray"}` }}
+                        <EditIcon sx={{ fontSize: 40, color: `${isUnlocked ? "white" : "gray"}` }}
                             onClick={isUnlocked ? () => {
                                 store.loadMap(project._id).then(() => {
                                     setLocation('/map/' + project._id);
@@ -352,17 +352,17 @@ export default function ExploreMapItem(props) {
                     </Grid>
 
                     <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
-                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {store.currentProject?.title}</Typography>
+                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {project?.title}</Typography>
+                    </Grid>
+
+                    <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
+                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {project?.mapHeight}</Typography>
+                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {project?.mapWidth}</Typography>
                     </Grid>
 
                     <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
-                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject?.mapHeight}</Typography>
-                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject?.mapWidth}</Typography>
-                    </Grid>
-
-                    <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
-                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject?.tileHeight}</Typography>
-                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject?.tileWidth}</Typography>
+                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {project?.tileHeight}</Typography>
+                    <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {project?.tileWidth}</Typography>
                     </Grid>
 
                     <Stack direction='row'>

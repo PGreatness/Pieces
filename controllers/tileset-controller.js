@@ -14,7 +14,7 @@ createTileset = async (req, res) => {
         }
 
         const objectOwnerId = mongoose.Types.ObjectId(ownerId)
-        console.log(objectOwnerId)
+        //console.log(objectOwnerId)
 
         // Checks if another one of the user's tilesets already has the given name,
         // If so, tileset is not created.
@@ -134,10 +134,10 @@ deleteTileset = async (req, res) => {
             })
         }
 
-        console.log(tileset)
-        console.log(tileset.ownerId)
-        console.log(ObjectOwnerId)
-        console.log(!tileset.ownerId.equals(ObjectOwnerId))
+        //console.log(tileset)
+        //console.log(tileset.ownerId)
+        //console.log(ObjectOwnerId)
+        //console.log(!tileset.ownerId.equals(ObjectOwnerId))
         // Checks if tileset belongs to the User who is trying to delete it
         if (!tileset.ownerId.equals(ObjectOwnerId)) {
             return res.status(401).json({
@@ -167,7 +167,7 @@ deleteTileset = async (req, res) => {
                         message: "Tiles were not deleted",
                     })
                 }
-                console.log('line 169')
+                //console.log('line 169')
 
                 Tileset.findByIdAndDelete(id, (err, tileset) => {
                     return res.status(200).json({
@@ -194,7 +194,7 @@ updateTileset = async (req, res) => {
         })
     }
 
-    console.log("checked if ids are undefined")
+    //console.log("checked if ids are undefined")
 
 
     let id = mongoose.Types.ObjectId(req.query.id)
@@ -210,7 +210,7 @@ updateTileset = async (req, res) => {
             })
         }
 
-        console.log("found tileset")
+        //console.log("found tileset")
 
 
         // Checks if tileset belongs to the User who is trying to update it
@@ -291,13 +291,13 @@ updateTileset = async (req, res) => {
         if (comments)
             tileset.comments = comments
 
-        console.log("changed tileset")
+        //console.log("changed tileset")
 
 
 
         // Attempts to save updated tileset
         tileset.save().then(() => {
-            console.log("saved changes")
+            //console.log("saved changes")
             return res.status(200).json({
                 success: true,
                 id: tileset._id,
@@ -432,7 +432,7 @@ getUserTilesetsByName = async (req, res) => {
 }
 
 getTilesetbyId = async (req, res) => {
-    console.log(req.params)
+    //console.log(req.params)
     const savedTileset = await Tileset.findById(req.params.id);
     if (savedTileset == null) {
         return res.status(404).json({
@@ -737,7 +737,7 @@ var importTileset = async (req, res) => {
     var importedTiles = []
     const promises = importTileset.tiles.map(async (tile) => {
         foundTile = await Tile.findOne({ _id: tile._id });
-        console.log(foundTile)
+        //console.log(foundTile)
         var newTile = new Tile({
             tilesetId: tid,
             width: foundTile.width,
@@ -745,16 +745,16 @@ var importTileset = async (req, res) => {
             tileData: foundTile.tileData,
             tileImage: foundTile.tileImage
         })
-        console.log(foundTile.tileImage)
+        //console.log(foundTile.tileImage)
         await newTile.save();
         importedTiles.push(newTile);
     })
 
     Promise.all(promises).then(() => {
         tileset.tiles.push(...importedTiles);
-        console.log("importedTiles is: ", importedTiles);
-        console.log("TILESET CHANGED");
-        console.log(tileset.tiles)
+        //console.log("importedTiles is: ", importedTiles);
+        //console.log("TILESET CHANGED");
+        //console.log(tileset.tiles)
         tileset.save().then(() => {
             return res.status(200).json({
                 success: true,
