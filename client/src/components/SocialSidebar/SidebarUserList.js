@@ -112,6 +112,12 @@ export default function SidebarUserList(props) {
         );
     }
     getAllSearchedUsers()
+    // if (searchList === []) {
+    //         console.log("triggered")
+    //         return(<div className="sidebar-user-list">
+    //             No results found.
+    //         </div>)
+    // }
     return (
         <List sx={{ backgroundColor: '#11182A' }}>
             {
