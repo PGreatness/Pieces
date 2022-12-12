@@ -81,7 +81,7 @@ function AuthContextProvider(props) {
             //store.changePageToExplore(); 
             console.log("user is logged in")
             const socket = io('https://pieces-316.herokuapp.com');
-            //const socket = io('localhost:4000');
+            // const socket = io('localhost:4000');
             socket.emit('login', response.data.user._id);
 
             if (response.data.user._id === auth.user?._id) {
@@ -107,7 +107,7 @@ function AuthContextProvider(props) {
         await api.loginUser(userData).then(response => {
             console.log(response.data)
             const socket = io('https://pieces-316.herokuapp.com');
-            //const socket = io('localhost:4000');
+            // const socket = io('localhost:4000');
             socket.emit('login', response.data.user._id);
             authReducer({
                 type: AuthActionType.LOGIN_USER,
