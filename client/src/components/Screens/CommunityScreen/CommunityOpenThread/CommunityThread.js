@@ -8,6 +8,7 @@ import AuthContext from '../../../../auth/auth';
 import CommentIcon from '@mui/icons-material/Comment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
+import ReactTimeAgo from 'react-time-ago';
 
 import { CommunityStoreContext } from '../../../../store/communityStore';
 
@@ -150,6 +151,18 @@ export default function CommunityThread(props) {
                 <DeleteIcon className='thread-interaction-buttons delete-button' sx={{ color: 'white' }} />
             </ListItemButton>
         );
+    }
+
+    const timeStuff = (reply) => {
+        if (!reply.createdAt) {
+            return (<></>)
+        }
+        console.log(reply.createdAt)
+        return (
+            <ReactTimeAgo
+                date={new Date(reply.createdAt)}
+                locale="en-US" timeStyle='twitter-minute-now'/>
+        )
     }
 
     const BetterReplyButton = styled(ListItemButton)({
@@ -308,12 +321,12 @@ export default function CommunityThread(props) {
                                         </ListItemAvatar> */}
                                         <ListItemText
                                             primary={reply.replyMsg}
-                                            secondary={("").concat(" Reply #: ").concat(reply._id).concat(" Replying To: ").concat(reply.replyingTo).concat(" on ").concat(new Date(reply.createdAt).toLocaleDateString())}
+                                            secondary={<>{("").concat(" Reply #: ").concat(reply._id).concat(" Replying To: ").concat(reply.replyingTo)} {timeStuff(reply)} ago</>}
                                             primaryTypographyProps={{ style: { color: 'white', fontSize: '1em' } }}
                                             secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.75em' } }} />
-                                        <ReplyIcon style={{ fill: "white" }} onClick={() => { setReplyingTo(reply._id) }}></ReplyIcon>
+                                        <ReplyIcon style={{ fill: "turquoise" }} onClick={() => { setReplyingTo(reply._id) }}></ReplyIcon>
                                         {reply.senderId == auth.user?._id ?
-                                            <DeleteIcon style={{ fill: "white" }} onClick={() => { handleDeleteReply(reply._id) }}></DeleteIcon> :
+                                            <DeleteIcon style={{ fill: "red" }} onClick={() => { handleDeleteReply(reply._id) }}></DeleteIcon> :
                                             <></>
                                         }
 
