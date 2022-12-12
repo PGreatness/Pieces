@@ -18,7 +18,7 @@ export default function ViewTileset(props) {
 
     const { id } = useParams();
     const [tileset, setTileset] = React.useState([])
-    const [currentTile, setCurrentTile] = React.useState(null);
+    const [currentTile, setCurrentTile] = React.useState(store.currentTile);
     const [owner, setOwner] = React.useState(null);
     const [collaborators, setCollaborators] = React.useState([]);
     const [width, setWidth] = React.useState(currentTile ? currentTile.width : 0)
@@ -117,12 +117,12 @@ export default function ViewTileset(props) {
                                 <Typography style={{ color: 'azure' }}>Tileset</Typography>
                             </Box>
                             <Box sx={{ padding: 2 }}>
-                                <Stack direction='row' sx={{ overflowX: 'scroll' }}>
+                                <Stack style={{display: 'flex', flexDirection: 'row', overflowX: 'scroll'}}>
 
                                     {tileset && tileset.tiles?.length > 0
                                         ? tileset?.tiles.map((tileId) => (
-                                            <Box className='tile_option'>
-                                                <img src={require('../../../Editors/images/dummyTilePreview.png')} className='tile_option_image' />
+                                            <Box style={{flexShrink: '0'}} className='tile_option'>
+                                                <img style={{borderWidth: currentTile?._id === tileId ? '3px': '0px', borderColor: currentTile?._id === tileId ? 'red' : '', borderStyle: currentTile?._id === tileId ? 'solid' : ''}} src={require('../../../Editors/images/dummyTilePreview.png')} className='tile_option_image' />
                                                 <Button style={{ padding: '0px', maxWidth: '100%', top: '0px', left: '0px', minWidth: '100%' }} className='tile_option_select' onClick={() => handleSelectTile(tileId)}></Button>
                                             </Box>
                                         ))

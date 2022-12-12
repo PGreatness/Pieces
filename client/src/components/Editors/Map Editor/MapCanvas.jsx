@@ -283,7 +283,7 @@ export default function MapCanvas() {
 					</Box>
 				)}
 				<Box sx={{ padding: 2 }}>
-					<Stack direction="row" spacing={2}>
+					<Stack style={{display: 'flex', flexDirection: 'row', overflowX: 'scroll'}} direction="row" spacing={2}>
 						{/* {console.log("store map tiles")}
                         {console.log(store.mapTiles)} */}
 						{
@@ -293,7 +293,7 @@ export default function MapCanvas() {
 							store.mapTiles.map((image, index) =>
 								index >= currentIndices[0] &&
 								index < currentIndices[1] ? (
-									<img
+									<img style={{flexShrink: '0'}}
 										onClick={handleClickTileOption}
 										src={store.mapTiles[index].tileImage}
 										id={`tile_option_${index}`}
