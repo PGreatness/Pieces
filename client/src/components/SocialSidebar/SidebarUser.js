@@ -143,7 +143,10 @@ export default function SidebarUser(props) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               >
-                <Box sx={style}>
+                <Box alignItems="center" justify="center" width="100%" sx={style}>
+                  <ListItemAvatar>
+                    {isOnline ? online(<Avatar alt={props.username} src={props.user.profilePic?.url} />) : offline(<Avatar alt={props.username} src={props.user.profilePic?.url} />)}
+                  </ListItemAvatar>
                   <Typography id="modal-modal-title" variant="h6" component="h2">
                     {props.user.firstName} {props.user.lastName}'s Profile
                   </Typography>

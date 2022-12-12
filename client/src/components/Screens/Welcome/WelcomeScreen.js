@@ -183,7 +183,7 @@ export default function WelcomeScreen() {
                     </Box>
                 </Box>
             </Modal>
-            <Box sx={{ marginLeft: "30px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '95%', height: '100px', position: 'relative' }}>
+            <Box sx={{ marginLeft: "30px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '94%', height: '100px', position: 'relative' }}>
                 <img className='welcome_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
             </Box>
             <div className="welcome_title_card">
