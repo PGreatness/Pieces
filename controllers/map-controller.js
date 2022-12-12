@@ -838,8 +838,8 @@ var getAllProjectsWithUser = async (req, res) => {
 }
 
 getPublicProjectsByName = async (req, res) => {
-    console.log('req.params')
-    console.log(req.params)
+    //console.log('req.params')
+    //console.log(req.params)
 
     var name = req.params.name
     var { page } = req.query;
@@ -897,8 +897,8 @@ getPublicProjectsByName = async (req, res) => {
 
 
 
-    console.log("please god")
-    console.log(rangeProject)
+    //console.log("please god")
+    //console.log(rangeProject)
 
     return res.status(200).json({
         success: true,
@@ -1076,8 +1076,8 @@ removeUserFromMap = async (req, res) => {
 var getOwnerAndCollaborator = async (req, res) => {
     var { id } = req.query;
     var { isMap } = req.query;
-    console.log("Getting id of " + id);
-    console.log('isMap: '+ isMap );
+    // console.log("Getting id of " + id);
+    // console.log('isMap: '+ isMap );
     if (isMap == undefined || isMap == null) {
         isMap = false;
     }
@@ -1099,16 +1099,16 @@ var getOwnerAndCollaborator = async (req, res) => {
     id = mongoose.Types.ObjectId(id);
 
     var map;
-    console.log("Map is now: " + isMap);
+    //console.log("Map is now: " + isMap);
     if (isMap === 'true') {
-        console.log("map found");
+        //console.log("map found");
         map = await Map.findOne({_id:id});
     } else {
-        console.log('tileset found');
+        //console.log('tileset found');
         map = await Tileset.findOne({_id:id});
     }
-    console.log(map);
-    console.log(isMap)
+    // console.log(map);
+    // console.log(isMap)
     if (!map) {
         return res.status(400).json({
             success: false,
@@ -1186,7 +1186,7 @@ var importTilesetToMap = async (req, res) => {
         chosenMap.tilesets.push(tid);
     }
 
-    console.log(chosenMap.tilesets);
+    //console.log(chosenMap.tilesets);
     chosenMap.save()
         .then((map) => {
             return res.status(200).json({
@@ -1205,20 +1205,20 @@ var importTilesetToMap = async (req, res) => {
 
 
 getMapTilesets = async (req, res) => {
-    console.log('atleast here')
-    console.log(req.params.id)
+    // console.log('atleast here')
+    // console.log(req.params.id)
     const savedMap = await Map.findById(req.params.id);
 
     let tilesetIds = savedMap.tilesets
     const tilesetIdObjs = tilesetIds.map(id => new ObjectId(id));
-    console.log(tilesetIds)
+    //console.log(tilesetIds)
     
     var tilesets = await Tileset.find({ "_id": { $in: tilesetIdObjs } });
 
     var tiles = await Tile.find({ "tilesetId": { $in: tilesetIdObjs } });
     
     
-    console.log('these are the tiles')
+    //console.log('these are the tiles')
     // console.log(tiles)
     
 
@@ -1281,7 +1281,7 @@ deleteMapTileset = async (req, res) => {
         { $pull: { tilesets: tilesetId } },
         { returnOriginal: false },
     ).then((newMap) => {
-        console.log(newMap)
+        //console.log(newMap)
         return res.status(200).json({
             success: true,
             map: newMap,
