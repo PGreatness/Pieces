@@ -289,8 +289,7 @@ export default function WelcomeScreen() {
                     </span>
                     <br></br>
                     <Typography align="center" sx={{ mx: '10rem' }}>
-                        Add other users as friends, invite them to edit on your projects,
-                        talk to others with our chat service, Pieces has it all.
+                        Add other users as friends, invite them to edit on your projects, talk to others using public threads, Pieces has it all.
                     </Typography>
 
                     <br></br>
