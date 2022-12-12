@@ -552,7 +552,7 @@ export default function LibraryScreen(props) {
                             <div className="library_overlay">
                                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                                     <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
-                                        <div className="library_project_title">{project.title}</div>
+                                        <div className="library_project_title">{project.title.length > 25 ? project.title.substring(0, 24) + "..." : project.title}</div>
                                         <div className="library_project_desc">{project.tilesetDesc ? project.tilesetDesc : project.mapDescription}</div>
                                     </Box>
                                 </Box>
