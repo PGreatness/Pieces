@@ -38,12 +38,18 @@ export default function SocialSidebar(props) {
         setSearching(query)
     }
 
+    const handleSearchChange = (e) => {
+        if (e.keyCode == 13) {
+            handleSearch()
+        }
+    }
+
     return (
         <div className='sidebar-container-container'>
 
             <div className='sidebar-container'>
                 <div className='sidebar-search'>
-                    <SearchBarWhite id="search_query" placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()} />
+                    <SearchBarWhite id="search_query" placeholder="Search" fullWidth className='sidebar-search-bar' endAdornment={createSearchButton()} onKeyDown={handleSearchChange} />
                 </div>
                 <div>
                     <SidebarUserList ownerId={id} query={searching} />

@@ -273,22 +273,22 @@ export default function ExploreMapItem(props) {
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <ThumbUpIcon sx={{ fontSize: 30, px: 1, pt: 1, color: `${isLiked ? "#2dd4cf" : "white"}` }}
+                            <ThumbUpIcon sx={{ fontSize: 40, px: 1, pt: 1, color: `${isLiked ? "#2dd4cf" : "white"}` }}
                                 onClick={handleLikeClick} ></ThumbUpIcon>
                             <div class="like_num">{likes}</div>
                         </Box>
 
                         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <ThumbDownIcon sx={{ fontSize: 30, px: 2, pt: 1, color: `${isDisliked ? "#2dd4cf" : "white"}` }}
+                            <ThumbDownIcon sx={{ fontSize: 40, px: 2, pt: 1, color: `${isDisliked ? "#2dd4cf" : "white"}` }}
                                 onClick={handleDislikeClick} ></ThumbDownIcon>
                             <div class="like_num">{dislikes}</div>
                         </Box>
 
-                        <CommentIcon sx={{ fontSize: 30, px: 1 }} onClick={handleComments}></CommentIcon>
-                        <DownloadIcon onClick={handleOpenExportMap} sx={{ fontSize: 30, px: 1 }}></DownloadIcon>
-                        <FavoriteIcon sx={{ fontSize: 30, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
+                        <CommentIcon sx={{ fontSize: 40, px: 1 }} onClick={handleComments}></CommentIcon>
+                        <DownloadIcon onClick={handleOpenExportMap} sx={{ fontSize: 40, px: 1 }}></DownloadIcon>
+                        <FavoriteIcon sx={{ fontSize: 40, px: 1, color: `${isFav ? "#2dd4cf" : "white"}` }}
                             onClick={handleFavClick}></FavoriteIcon>
-                        <EditIcon sx={{ fontSize: 30, color: `${isUnlocked ? "white" : "gray"}` }}
+                        <EditIcon sx={{ fontSize: 40, color: `${isUnlocked ? "white" : "gray"}` }}
                             onClick={isUnlocked ? () => {
                                 store.loadMap(project._id).then(() => {
                                     setLocation('/map/' + project._id);
