@@ -7,10 +7,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import CreateThreadSnack from './CreateThread/CreateThreadSnack/CreateThreadSnack';
 import { CommunityStoreContext } from '../../../store/communityStore';
+import AuthContext from '../../../auth/auth';
 import './css/communityScreen.css';
 export default function CommunityScreen() {
     const { communityStore } = React.useContext(CommunityStoreContext);
+    const { auth } = React.useContext(AuthContext);
     const [createThread, setCreateThread] = React.useState(false);
+    const [filteredThreads, setFilteredThreads] = React.useState(false);
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState('');
     const [snackSeverity, setSnackSeverity] = React.useState('info');
@@ -22,11 +25,20 @@ export default function CommunityScreen() {
         setSnackSeverity(severity);
     }
 
+    React.useEffect(() => {
+        auth.socket.on('filterThreads', (data) => {
+            if (data.socketId === auth.socket.id) {
+                console.log("WE GOT TO THE SOCKET");
+                setFilteredThreads(true);
+            }
+        })
+    }, [auth.socket])
+
     const title = (
         createThread ? <h1>Create a New Thread</h1>
             :
             (
-                communityStore.TOP_THREADS.length === 1 ?
+                filteredThreads ?
                     <h1>Filtered Threads</h1>
                     :
                     <h1>Top Threads</h1>
@@ -34,9 +46,9 @@ export default function CommunityScreen() {
     );
 
     const buttons = (
-        communityStore.TOP_THREADS.length !== 1 && !createThread ? <></> :
+        !filteredThreads ? <></> :
             <Button style={{ backgroundColor: '#3f51b5', float: 'left' }}
-                onClick={() => communityStore.getPopularThreads(1)}>
+                onClick={() => {communityStore.getPopularThreads(1); setFilteredThreads(false)}}>
                 <div className='button_text'>Clear Filter</div>
                 <FilterAltOffIcon className="button_icons"></FilterAltOffIcon>
             </Button>
