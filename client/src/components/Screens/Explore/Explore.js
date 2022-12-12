@@ -336,7 +336,7 @@ export default function Explore(props) {
                                     setCommentsProject = {props.setCommentsProject}
                                 />)
                             ))
-                    : <div></div>
+                    : <div> No results found. </div>
                 }
                 {   projects
                     ? <MakePaginations count={projects.length} />

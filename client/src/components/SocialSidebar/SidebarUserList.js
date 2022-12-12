@@ -93,6 +93,12 @@ export default function SidebarUserList(props) {
 
     if (!props.query) {
         // getAllFriends();
+        // if (friendsList === []) {
+        //     console.log("triggered")
+        //     return(<div className="sidebar-user-list">
+        //         No results found.
+        //     </div>)
+        // }
         return (
             <div className="sidebar-user-list">
                 {
