@@ -189,7 +189,13 @@ export default function WelcomeScreen() {
             <div className="welcome_title_card">
                 <div>
                     <span className="welcome_title">
-                        <Typography sx={{ fontSize: "100px", fontWeight: "700" }}>
+                        <Typography sx={{ backgroundcolor: "primary",
+                        backgroundImage: `linear-gradient(45deg, #06b4d5, #2d00cf)`,
+                        backgroundSize: "100%",
+                        backgroundRepeat: "repeat",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent", fontSize: 100, fontWeight: 700 }}>
                             Pieces
                         </Typography></span>
                     <Typography sx={{ fontSize: "20px", fontWeight: "300" }}>
@@ -206,19 +212,19 @@ export default function WelcomeScreen() {
                 <div>
                     <div className="welcome_vertical_align">
                         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: "15em" }}>
-                            <ForumIcon></ForumIcon>
+                            <ForumIcon sx={{color: "turquoise"}}></ForumIcon>
                             <Typography variant="body1">{topThreads.length} Discussions</Typography>
                         </Stack>
 
                         <br></br>
                         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: "15em" }}>
-                            <DownloadIcon></DownloadIcon>
+                            <DownloadIcon sx={{color: "lime"}}></DownloadIcon>
                             <Typography variant="body1">No Download Data</Typography>
                         </Stack>
 
                         <br></br>
                         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: "15em" }}>
-                            <WorkIcon></WorkIcon>
+                            <WorkIcon sx={{color: "orange"}}></WorkIcon>
                             <Typography variant="body1">{publicProjects.length} Projects to Collaborate On</Typography>
                         </Stack>
                         <br></br>
