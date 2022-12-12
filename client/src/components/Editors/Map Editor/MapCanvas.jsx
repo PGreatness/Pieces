@@ -10,6 +10,7 @@ import MapTile from "./MapTile";
 import Viewport from "./Viewport";
 
 export default function MapCanvas() {
+
 	// Map Editor Code Start
 
 	const { store } = useContext(GlobalStoreContext);
@@ -46,6 +47,8 @@ export default function MapCanvas() {
 	);
 	const [currentTile, setCurrentTile] = useState([0, 0]);
 	const [openDeleteTilesetError, setOpenDeleteTilesetError] = useState(false);
+  const [ redoColor, setRedoColor ] = useState(store.canRedo ? '#2dd4cf' : '#1f293a')
+  const [ undoColor, setUndoColor ] = useState(store.canUndo ? '#2dd4cf' : '#1f293a')
 
 	//  // Updating map object in canvas
 	// useEffect(() => {
@@ -127,6 +130,11 @@ export default function MapCanvas() {
 	//         setTileImages(tileImages)
 	//     })
 	// }, [store.currentProject])
+  
+  useEffect(() => {
+        setUndoColor(store.canUndo ? '#2dd4cf' : '#1f293a')
+        setRedoColor(store.canRedo ? '#2dd4cf' : '#1f293a')
+  }, [store.canUndo, store.canRedo])
 
 	const fillHelper = async (x, y, originalTile) => {
 		let map = currentMapTiles;
@@ -158,6 +166,28 @@ export default function MapCanvas() {
 		// })
 		// setCurrentMapTiles(newMap)
 	};
+  
+  const undo = async () => {
+      if (store.currentStackIndex > -1) {
+          let mapTiles = store.transactionStack[store.currentStackIndex].old
+          console.log(mapTiles)
+          await store.setCurrentMapTiles(mapTiles)
+          console.log("uiahfuiahifah")
+          store.undo()
+          auth.socket.emit("updateMap", { project: store.currentProject._id });
+      }
+  }
+
+  const redo = async () => {
+      if (store.currentStackIndex < store.transactionStack.length - 1) {
+          let mapTiles = store.transactionStack[store.currentStackIndex + 1].new
+          console.log(mapTiles)
+          await store.setCurrentMapTiles(mapTiles)
+          console.log("diajdoiawjodia")
+          await store.redo()
+          auth.socket.emit("updateMap", { project: store.currentProject._id });
+      }
+  }
 
 	const updateCurrentMapTiles = async (value, index) => {
 		let mapTiles = currentMapTiles;
@@ -253,28 +283,14 @@ export default function MapCanvas() {
 			<Typography variant="h5" id="cursor_coord" color="azure">
 				{currentTile[0] + ", " + currentTile[1]}
 			</Typography>
-			<Button
-				id="map_undo_button"
-				sx={{
-					minHeight: "40px",
-					minWidth: "40px",
-					maxHeight: "40px",
-					maxWidth: "40px",
-				}}
-			>
-				<Undo className="toolbar_mui_icon" />
-			</Button>
-			<Button
-				id="map_redo_button"
-				sx={{
-					minHeight: "40px",
-					minWidth: "40px",
-					maxHeight: "40px",
-					maxWidth: "40px",
-				}}
-			>
-				<Redo className="toolbar_mui_icon" />
-			</Button>
+    
+          
+			<Button onClick={undo} id='map_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+          <Undo style={{color: undoColor}} className='toolbar_mui_icon' />
+      </Button>
+      <Button onClick={redo} id='map_redo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
+          <Redo style={{color: redoColor}} className='toolbar_mui_icon' />
+      </Button>
 
 			<Viewport
 				map={store.currentProject}

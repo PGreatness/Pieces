@@ -101,9 +101,12 @@ export default function TilesetCanvas() {
     }
 
     const handleSelectTile = async (tileId) => {
-        // console.log(store.currentProject.tiles)
-        // await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData)
+        if (tileId === store.currentTile._id) {
+            return
+        }
         await store.setCurrentTile(tileId)
+        console.log("Clear transaction stack")
+        console.log(store.transactionStack)
         setCurrentTile(store.currentTile)
     }
 
@@ -169,7 +172,7 @@ export default function TilesetCanvas() {
     }
  
  
- const checkArrayEqual = (arr1, arr2) => {
+    const checkArrayEqual = (arr1, arr2) => {
         return arr1.length === arr2.length && arr1.every((val, index) => val === arr2[index]);
     }
   
@@ -241,6 +244,9 @@ export default function TilesetCanvas() {
             handleOpenDeleteLastTileModal()
             return
         }
+        if (currentTile._id === tileId) {
+            await store.clearTransactionStack()
+        }
         await store.deleteTileById(tileId, auth.user._id)
     }
 
@@ -302,16 +308,15 @@ export default function TilesetCanvas() {
                 </Box>
                 <Box sx={{ padding: 2 }}>
                     {value === 0 && (
-                        <Stack direction='row' sx={{overflowX: 'scroll'}}>
+                        <Stack style={{display: 'flex', flexDirection: 'row', overflowX: 'scroll'}}>
                             {/* {console.log("tileset tiles")} */}
                             {/* {console.log(tileset.tiles)} */}
                             {tileset && tileset.tiles.length > 0
                                 ? tileset?.tiles.map((tileId) => (
-                                    <Box className='tile_option'>
-                                        <img src={require('../images/dummyTilePreview.png')} onClick={() => handleSelectTile(tileId)} className='tile_option_image'/>
+                                    <Box style={{flexShrink: '0'}} className='tile_option'>
+                                        <img style={{borderWidth: store.currentTile?._id === tileId ? '3px': '0px', borderColor: store.currentTile?._id === tileId ? 'red' : '', borderStyle: store.currentTile?._id === tileId ? 'solid' : ''}} src={require('../images/dummyTilePreview.png')} onClick={() => handleSelectTile(tileId)} className='tile_option_image'/>
                                         <Button style={{padding: '0px', maxWidth: '65%', top: '0px', left: '0px', minWidth: '65%'}} className='tile_option_select' onClick={() => handleSelectTile(tileId)}></Button>
                                         <Button onClick={() => handleDeleteTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_delete'><Delete style={{color:'azure', height: '80%', width: '80%'}}/></Button>  
-                                        {/* <Button onClick={() => handleDuplicateTile(tileId)} style={{backgroundColor: 'rgba(11,11,11,0.7)', padding: '0px', maxWidth: '30%', minWidth: '30%'}} className='tile_option_dupe'><ContentCopy style={{color:'azure', height: '70%', width: '70%'}}/></Button>   */}
                                     </Box>
                                 ))
                                 : null
