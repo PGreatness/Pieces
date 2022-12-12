@@ -119,7 +119,7 @@ export default function TilesetCanvas() {
 
     const fillHelper = (x, y, originalColor) => {
         let tile = currentTile
-        if (x < 0 || x >= height || y < 0 || y >= width) {
+        if (x < 0 || x >= height || y < 0 || y >= width || tile.tileData[x * width + y] !== originalColor) {
             return
         }
         if (tile.tileData[x * width + y] === originalColor) {
@@ -244,9 +244,7 @@ export default function TilesetCanvas() {
             handleOpenDeleteLastTileModal()
             return
         }
-        if (currentTile._id === tileId) {
-            await store.clearTransactionStack()
-        }
+
         await store.deleteTileById(tileId, auth.user._id)
     }
 
@@ -277,7 +275,7 @@ export default function TilesetCanvas() {
 
     return (
         <Box className='canvas_container' bgcolor={"#1f293a"} flex={10}>
-            <Typography variant='h5' id='cursor_coord' color='azure'>{currentPixel[0] + ", " + currentPixel[1]}</Typography>
+            <Typography variant='h5' id='cursor_coord' color='azure'>{currentPixel[1] + ", " + currentPixel[0]}</Typography>
             <Button onClick={undo} disabled={!store.canUndo} id='tile_undo_button' sx={{ minHeight: '40px', minWidth: '40px', maxHeight: '40px', maxWidth: '40px' }}>
                 <Undo style={{color: undoColor}} className='toolbar_mui_icon' />
             </Button>

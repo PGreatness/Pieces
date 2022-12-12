@@ -344,7 +344,11 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     ...store,
                     currentProject: payload.currentProject,
-                    currentTile: payload.currentTile
+                    currentTile: payload.currentTile,
+                    transactionStack: payload.transactionStack,
+                    canUndo: payload.canUndo,
+                    canRedo: payload.canRedo,
+                    currentStackIndex: payload.currentStackIndex,
                 })
             }
 
@@ -368,7 +372,11 @@ function GlobalStoreContextProvider(props) {
                     ...store,
                     currentPage: "tilesetEditor",
                     currentProject: payload.tileset,
-                    currentTile: payload.tile
+                    currentTile: payload.tile,
+                    transactionStack: [],
+                    canUndo: false,
+                    canRedo: false,
+                    currentStackIndex: -1,
                 })
             }
 
@@ -2326,12 +2334,28 @@ function GlobalStoreContextProvider(props) {
         else {
             newCurrentTile = null
         }
+
+        let newCurrentStackIndex = store.currentStackIndex
+        let newTransactionStack = store.transactionStack
+        let newCanRedo = store.canRedo
+        let newCanUndo = store.canUndo
+
+        if (id === store.currentTile._id) {
+            newCurrentStackIndex = -1
+            newTransactionStack = []
+            newCanRedo = false
+            newCanUndo = false
+        }
     
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PROJECT_AND_TILE,
             payload: {
                 currentProject: newCurrentProject,
-                currentTile: newCurrentTile
+                currentTile: newCurrentTile,
+                transactionStack: newTransactionStack,
+                canUndo: newCanUndo,
+                canRedo: newCanRedo,
+                currentStackIndex: newCurrentStackIndex,
             }
         })
         // storeReducer({
