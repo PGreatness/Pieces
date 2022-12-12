@@ -309,8 +309,8 @@ function GlobalStoreContextProvider(props) {
                     currentProject: payload.currentProject,
                     currentTile: payload.currentTile,
                     primaryColor: '#000',
-                   secondaryColor: '#fff',
-                   tilesetTool: 'brush',
+                    secondaryColor: '#fff',
+                    tilesetTool: 'brush',
                 })
             }
 
@@ -1807,6 +1807,7 @@ function GlobalStoreContextProvider(props) {
             })
         }
         else {
+            console.log(currentMapTiles)
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
                 payload: {
@@ -1995,7 +1996,8 @@ function GlobalStoreContextProvider(props) {
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
             payload: {
-                currentMapTiles: viewport
+                ...store,
+                currentMapTiles: viewport,
             }
         })
     }
