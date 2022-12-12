@@ -200,6 +200,7 @@ export default function MapCanvas() {
             let mapTiles = store.transactionStack[store.currentStackIndex].old
             console.log(mapTiles)
             await store.setCurrentMapTiles(mapTiles)
+            console.log("uiahfuiahifah")
             store.undo()
 		    auth.socket.emit("updateMap", { project: store.currentProject._id });
         }
@@ -210,7 +211,8 @@ export default function MapCanvas() {
             let mapTiles = store.transactionStack[store.currentStackIndex + 1].new
             console.log(mapTiles)
             await store.setCurrentMapTiles(mapTiles)
-            store.redo()
+            console.log("diajdoiawjodia")
+            await store.redo()
 		    auth.socket.emit("updateMap", { project: store.currentProject._id });
         }
     }

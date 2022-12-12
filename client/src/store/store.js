@@ -189,7 +189,11 @@ function GlobalStoreContextProvider(props) {
                     currentProject: payload.currentProject,
                     publicProjects: payload.publicProjects,
                     currentPage: payload.currentPage,
-                    userProjects: payload.userProjects
+                    userProjects: payload.userProjects,
+                    transactionStack: [],
+                    canUndo: false,
+                    canRedo: false,
+                    currentStackIndex: -1,
                 });
             }
 
@@ -328,7 +332,11 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_CURRENT_TILE: {
                 return setStore({
                     ...store,
-                    currentTile: payload.currentTile
+                    currentTile: payload.currentTile,
+                    transactionStack: [],
+                    canUndo: false,
+                    canRedo: false,
+                    currentStackIndex: -1,
                 })
             }
 
@@ -1769,7 +1777,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_TILE,
                 payload: {
-                    currentTile: response.data.tile
+                    currentTile: response.data.tile,
                 }
             })
         }

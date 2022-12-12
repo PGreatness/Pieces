@@ -47,12 +47,12 @@ export default function MapToolBar() {
         // map.tiles = Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(null)
         // store.setCurrentProject(map._id)
         let oldData = [...store.currentMapTiles]
-        if (checkArrayEqual(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))) {
-			console.log("no change")
-			return
-		}
+        // if (checkArrayEqual(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))) {
+		// 	console.log("no change")
+		// 	return
+		// }
         await store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
-        await store.addTransaction(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
+        // await store.addTransaction(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
         auth.socket.emit('forceViewportRerender')
         auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
