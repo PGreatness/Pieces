@@ -125,7 +125,7 @@ export default function ViewMap(props) {
                                         <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Description: </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '2px', textAlign: 'start', paddingBottom: "20px" }}>{map.tilesetDesc}</Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '2px', textAlign: 'start', paddingBottom: "20px" }}>{map.mapDescription}</Typography>
                                     </Grid>
                                     <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
