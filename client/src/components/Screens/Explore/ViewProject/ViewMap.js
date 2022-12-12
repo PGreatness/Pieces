@@ -110,7 +110,7 @@ export default function ViewMap(props) {
 
                 {value === 0 && (
                     <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
-                        <Box className='user_settings_container' style={{ marginTop: '50px' }}>
+                        <Box className='user_settings_container' style={{ marginTop: '20px' }}>
                             <Stack direction='column'>
                                 <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>Properties</Typography>
 
@@ -131,10 +131,19 @@ export default function ViewMap(props) {
                                     </Grid>
                                     <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
+                                    <Grid item xs={7}>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Map Size: </Typography>
+                                    </Grid>
+                                    <Grid item xs={5}>
+                                        <Typography color='azure' sx={{ paddingLeft: "0px", fontSize: '14px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{map.mapHeight + " x " + map.mapWidth}</Typography>
+                                    </Grid>
+                                    <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
+
 
                                     <Grid item xs={7}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tileset Count: </Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tileset Count: </Typography>
                                     </Grid>
+                                  
                                     <Grid item xs={5}>
                                         <Typography color='azure' sx={{ paddingLeft: "10px", fontSize: '14px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{map.tilesets.length}</Typography>
                                     </Grid>

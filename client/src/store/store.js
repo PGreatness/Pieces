@@ -756,7 +756,7 @@ function GlobalStoreContextProvider(props) {
             tilesetId: store.currentProject._id
         }
         const response = await api.importTilesetToTileset(payload);
-        console.log(response);
+        //console.log(response);
         if (response.status < 400) {
             storeReducer({
                 type: GlobalStoreActionType.IMPORT_TILESET_TO_TILESET,
@@ -771,7 +771,7 @@ function GlobalStoreContextProvider(props) {
             tilesetId: tilesetId,
         }
         const response = await api.importTilesetToTileset(payload);
-        console.log(response);
+        //console.log(response);
         if (response.status < 400) {
             return response.data.tileset
         }
@@ -784,7 +784,7 @@ function GlobalStoreContextProvider(props) {
             mapId: store.currentProject._id
         }
         const response = await api.importTilesetToMap(payload);
-        console.log(response);
+        //console.log(response);
         if (response.status < 400) {
 
 
@@ -870,7 +870,7 @@ function GlobalStoreContextProvider(props) {
         let limit = store.pagination.limit;
         const response = await api.getAllPublicProjects({ page: page, limit: limit });
         if (response.data.success) {
-            console.log(response.data)
+            //console.log(response.data)
             let publicProjects = response.data.projects;
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -883,7 +883,7 @@ function GlobalStoreContextProvider(props) {
                 }
             });
 
-            console.log(store.currentPage)
+            //console.log(store.currentPage)
         } else {
             console.log("API FAILED TO GET THE PUBLIC PROJECTS");
         }
@@ -897,7 +897,7 @@ function GlobalStoreContextProvider(props) {
 
         const response = await api.getAllUserProjects({ "userId": id });
         if (response.data.success) {
-            console.log(response);
+            //console.log(response);
             let userProjects = response.data.projects;
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -958,8 +958,8 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.changePageToTilesetEditor = async function (tileset) {
-        console.log('changing page to tileset')
-        console.log(tileset)
+        // console.log('changing page to tileset')
+        // console.log(tileset)
 
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -993,7 +993,7 @@ function GlobalStoreContextProvider(props) {
 
 
     store.createNewMap = async function (title, mapHeight, mapWidth, tileHeight, tileWidth, ownerId) {
-        console.log("handling create map in store...")
+        //console.log("handling create map in store...")
         let payload = {
             title: title,
             mapHeight: mapHeight,
@@ -1004,12 +1004,12 @@ function GlobalStoreContextProvider(props) {
             mapDescription: "No Description"
         };
         let response = await api.createNewMap(payload)
-        console.log(response)
+        //console.log(response)
         return response;
     }
 
     store.deleteMap = async function (id) {
-        console.log(id)
+        //console.log(id)
         let query = {
             id: id,
             ownerId: auth.user._id
@@ -1501,7 +1501,8 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentProject: response.data.tileset,
                     currentPage: "tilesetEditor",
-                    publicProjects: store.publicProjects
+                    publicProjects: store.publicProjects,
+                    currentTile: store.currentTile
                 }
             })
         }
@@ -1524,7 +1525,8 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentProject: response.data.tileset,
                     currentPage: "tilesetEditor",
-                    publicProjects: store.publicProjects
+                    publicProjects: store.publicProjects,
+                    currentTile: store.currentTile
                 }
             })
         }
@@ -1611,8 +1613,8 @@ function GlobalStoreContextProvider(props) {
 
     store.changeExploreSort = async function (projSortOpt, projSortDir) {
 
-        console.log(projSortOpt)
-        console.log(projSortDir)
+        // console.log(projSortOpt)
+        // console.log(projSortDir)
 
         let sortOpt;
         if (projSortOpt.toLowerCase().includes('name')) sortOpt = 'name';
@@ -2275,7 +2277,7 @@ function GlobalStoreContextProvider(props) {
                 newPrimaryTile: newPrimaryTile
             }
         });
-        console.log(store.primaryTile)
+        //console.log(store.primaryTile)
     }
 
     store.setSecondaryTile = async function (newSecondaryTile) {
@@ -2290,7 +2292,7 @@ function GlobalStoreContextProvider(props) {
     store.swapTiles = async function () {
         let primary = store.primaryTile
         let secondary = store.secondaryTile
-        console.log("SWAP TILES")
+        //console.log("SWAP TILES")
         storeReducer({
             type: GlobalStoreActionType.SWAP_TILES,
             payload: {
@@ -2301,7 +2303,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.deleteTileById = async function (id, userId) {
-        console.log("Deleting tile (store)")
+        //console.log("Deleting tile (store)")
         let payload = {
             tileId: id,
             userId: userId

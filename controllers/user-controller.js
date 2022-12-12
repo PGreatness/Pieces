@@ -65,7 +65,7 @@ loginUser = async (req, res) => {
                 success: true,
                 user: foundUser,
             });
-            console.log("cookies", res.cookies)
+            //.log("cookies", res.cookies)
             return res;
         }
         else {
@@ -131,7 +131,6 @@ getUsersbyUsername = async (req, res) => {
 }
 
 forgotPassword = async (req, res) => {
-    console.log('atleast here')
     try {
         const { email } = req.query;
 
@@ -186,7 +185,7 @@ forgotPassword = async (req, res) => {
 
 updateUser = async (req, res) => {
     try {
-        console.log(req.body)
+        //console.log(req.body)
         const { id, firstName, lastName, userName, email, bio } = req.body;
         const ObjId = new ObjectId(id);
 
@@ -685,7 +684,7 @@ var getUserFavorites = async (req, res) => {
 
     var aggregation;
     if (!fid) {
-        console.log('doing fid')
+        //console.log('doing fid')
         aggregation = [
             // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
             {
@@ -717,7 +716,7 @@ var getUserFavorites = async (req, res) => {
             }
         ];
     } else {
-        console.log('not doing fid')
+        //console.log('not doing fid')
         aggregation = [
             // get all maps that are in the user's favorites but not owned by the user and the user is not a collaborator
             {
@@ -754,9 +753,9 @@ var getUserFavorites = async (req, res) => {
     const maps = await Map.aggregate(aggregation);
     const tilesets = await Tileset.aggregate(aggregation);
 
-    console.log(id, filteredId, tileHeight, tileWidth)
-    console.log(maps)
-    console.log(tilesets)
+    //console.log(id, filteredId, tileHeight, tileWidth)
+    //console.log(maps)
+    //console.log(tilesets)
     return res.status(200).json({
         success: true,
         maps: maps,
@@ -769,7 +768,7 @@ var getUserFavorites = async (req, res) => {
 deleteUser = async (req, res) => {
 
     const { id } = req.body
-    console.log(id)
+    //console.log(id)
 
     var uid;
     try {
@@ -897,7 +896,7 @@ deleteUser = async (req, res) => {
     // delete image from cloudinary
     if (user.profilePic && user.profilePic.publicId) {
         const res = await cloudinary.v2.uploader.destroy(user.profilePic.publicId);
-        console.log(res)
+        //console.log(res)
         if (res.result !== "ok") throw new Error();
     }
 

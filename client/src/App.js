@@ -21,6 +21,7 @@ import './css/app.css';
 
 import io from 'socket.io-client';
 const socket = io.connect('https://pieces-316.herokuapp.com/');
+//const socket = io.connect('localhost:4000/');
 
 const App = () => {
   //const { store } = useContext(GlobalStoreContext);
