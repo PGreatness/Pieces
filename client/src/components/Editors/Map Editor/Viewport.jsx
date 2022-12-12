@@ -79,15 +79,26 @@ export default function Viewport(props) {
 		await updateMapInDatabase();
 	};
 
+	const checkArrayEqual = (arr1, arr2) => {
+        return arr1.length === arr2.length && arr1.every((val, index) => val === arr2[index]);
+    }
+
 	const updateMapInDatabase = async () => {
 		console.log("updating map in database");
 		let map = await store.loadMap(props.mapId, true);
 		let oldTiles = map.currentProject.tiles;
+		let oldData = [...map.currentProject.tiles]
 		for (let i = 0; i < startingPoint.indices.length; i++) {
 			oldTiles[startingPoint.indices[i]] = viewport[i];
 		}
+		let newData = [...oldTiles]
+		if (checkArrayEqual(oldData, newData)) {
+			console.log("no change")
+			return
+		}
 		await store.updateMapToViewport(props.mapId, oldTiles);
 		console.log("map updated in database");
+		await store.addTransaction(oldData, newData)
 		let project = {
 			project: props.mapId
 		}
@@ -117,10 +128,12 @@ export default function Viewport(props) {
 	};
 	const updateCurrentMapTiles = async (value, index) => {
 		let mapTiles = viewport;
+		// let oldData = [...mapTiles]
 		mapTiles[index] = value;
 		console.log(mapTiles);
 		await store.setCurrentMapTiles(mapTiles);
 		auth.socket.emit("updateMap", { project: store.currentProject._id });
+		// await store.addTransaction(oldData, [...mapTiles])
 	};
 	const handleHoverTile = (e) => {
 		let id = Number(e.currentTarget.id.slice(5));

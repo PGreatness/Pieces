@@ -134,6 +134,10 @@ deleteTileset = async (req, res) => {
             })
         }
 
+        console.log(tileset)
+        console.log(tileset.ownerId)
+        console.log(ObjectOwnerId)
+        console.log(!tileset.ownerId.equals(ObjectOwnerId))
         // Checks if tileset belongs to the User who is trying to delete it
         if (!tileset.ownerId.equals(ObjectOwnerId)) {
             return res.status(401).json({
@@ -163,6 +167,7 @@ deleteTileset = async (req, res) => {
                         message: "Tiles were not deleted",
                     })
                 }
+                console.log('line 169')
 
                 Tileset.findByIdAndDelete(id, (err, tileset) => {
                     return res.status(200).json({
@@ -732,6 +737,7 @@ var importTileset = async (req, res) => {
     var importedTiles = []
     const promises = importTileset.tiles.map(async (tile) => {
         foundTile = await Tile.findOne({ _id: tile._id });
+        console.log(foundTile)
         var newTile = new Tile({
             tilesetId: tid,
             width: foundTile.width,
@@ -739,6 +745,7 @@ var importTileset = async (req, res) => {
             tileData: foundTile.tileData,
             tileImage: foundTile.tileImage
         })
+        console.log(foundTile.tileImage)
         await newTile.save();
         importedTiles.push(newTile);
     })
