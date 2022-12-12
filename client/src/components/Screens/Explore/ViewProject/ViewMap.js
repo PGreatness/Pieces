@@ -10,6 +10,7 @@ import { Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ViewMapTile from './ViewMapTile';
+import Viewport from '../../../Editors/Map Editor/Viewport';
 import { GlobalStoreContext } from '../../../../store/store';
 import AuthContext from '../../../../auth/auth';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -69,7 +70,7 @@ export default function ViewMap(props) {
                 </div>
             </Box>
             :
-            <Box className='canvas_container' bgcolor={"#1f293a"} flex={10} sx={{ height: '100vh' }}>
+            <Box className='canvas_container' bgcolor={"#1f293a"} flex={10} sx={{ height: '100vh', position:'fixed' }}>
 
                 <Box bgcolor="#11182a" style={{
                     position: 'absolute', width: '5%', marginLeft: '1%', marginTop: '1%', backgroundColor: 'transparent'
@@ -77,17 +78,14 @@ export default function ViewMap(props) {
                     <KeyboardBackspaceIcon className="back_icon" sx={{ fontsize: '100px !important' }} onClick={() => { props.setLoc('/explore'); navigate('/explore') }}
                     ></KeyboardBackspaceIcon>
                 </Box>
-                <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `${70 * renderHeightRatio}vh`, width: `${70 * renderWidthRatio}vh`, top: '50%', left: '50%', transform: 'translate(-90%, -60%)' }}>
-                    {currentMapTiles?.length > 0 && currentMapTiles.map((tile, index) => (
-                        <ViewMapTile
-                            currentMapTiles={currentMapTiles}
-                            mapTiles={mapTiles}
-                            mapHeight={mapHeight}
-                            mapWidth={mapWidth}
-                            index={index}
-                        // imgSrc={currentMapTiles[index]}/>
-                        />
-                    ))}
+                <Grid container direction='row' rowSpacing={0} columns={mapWidth} bgcolor='#000000' style={{ position: 'absolute', height: `fit-content`, width: `fit-content`, top: '50%', left: '40%', transform: 'translate(-100%, -100%)' }}>
+                    <Viewport
+                    map={map}
+                    mapId={map?._id}
+                    setCurrentTile={()=>null}
+                    currentTile={null}
+                    preview={true}
+                />
                 </Grid>
                 <Box bgcolor={"#11182a"} flex={4} style={{ height: '100vh', width: '30%', borderRadius: '10px 0px 0px 10px', position: 'absolute', right: '0' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

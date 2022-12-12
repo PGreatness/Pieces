@@ -6,7 +6,13 @@ import { Grid } from "@mui/material";
 import MapTile from "./MapTile";
 /**
  * Creates a viewport for the map editor
- * @param {props} props will contain only the map id
+ * @param {props} props will contain {
+ * 		mapId: the id of the map to create a viewport for
+ * 		map: the map object to create a viewport for
+ * 		setCurrentTile: the function to set the current tile
+ * 		currentTile: the current tile
+ * 		isPreview: whether or not this is a preview
+ * }
  */
 export default function Viewport(props) {
 	const { store } = useContext(GlobalStoreContext);
@@ -377,10 +383,11 @@ export default function Viewport(props) {
 						updateCurrentMapTiles={updateCurrentMapTiles}
 						mapHeight={viewportHeight}
 						mapWidth={viewportWidth}
+						preview={props.preview}
 						index={startingPoint.indices[index]}
 						handleHoverTile={handleHoverTile}
 						imgSrc={tilesets[tile]}
-						setSrc={async (value) => await updateSrc(index, value)}
+						setSrc={async (value) => props.preview ? null : await updateSrc(index, value)}
 					/>
 				))}
 		</Grid>

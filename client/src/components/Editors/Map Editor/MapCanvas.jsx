@@ -231,6 +231,7 @@ export default function MapCanvas() {
 				mapId={store.currentProject?._id}
 				setCurrentTile={setCurrentTile}
 				currentTile={currentTile}
+				isPreview={false}
 			/>
 
 			<Box bgcolor="#11182a" className="palettes_container">
