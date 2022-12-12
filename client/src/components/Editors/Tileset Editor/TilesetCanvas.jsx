@@ -193,6 +193,7 @@ export default function TilesetCanvas() {
   
                 setCurrentTile(tile)
                 console.log(store.transactionStack)
+                imgSrc = convertToImage(tile);
                 await store.updateTile(store.currentTile._id, currentTile.tilesetId, currentTile.tileData, imgSrc)
                 auth.socket.emit('updateTileset', { project: store.currentProject._id, tileset: tileset })
                 await store.addTransaction(oldData, [...store.currentTile.tileData])

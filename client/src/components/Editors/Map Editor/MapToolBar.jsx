@@ -52,8 +52,10 @@ export default function MapToolBar() {
 		// 	return
 		// }
         await store.setCurrentMapTiles(Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
+
         // await store.addTransaction(oldData, Array(store.currentProject.mapHeight * store.currentProject.mapWidth).fill(-1))
-        auth.socket.emit('forceViewportRerender')
+        //auth.socket.emit('forceViewportRerender')
+
         auth.socket.emit('updateMap', { project: store.currentProject._id })
     }
 
@@ -62,7 +64,7 @@ export default function MapToolBar() {
 
             <Grid container space={1} justify='center'>
 
-                <Grid item xs={12} className="toolbar_header">
+                <Grid item xs={12} className="toolbar_header" style={{marginTop: '10px', marginBottom: '20px'}}>
                     <Typography variant="h5" className="editor_typography">Tools</Typography>
                 </Grid>
 
@@ -79,7 +81,7 @@ export default function MapToolBar() {
                 </Grid>
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
 
-                <Grid item xs={1} className="toolbar_grid_item"></Grid>
+                {/* <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
                     <Button onClick={handleToolClick} style={{minHeight: '40px', maxHeight: '40px', minWidth: '50px', maxWidth: '50px'}} id="select" variant={currTool=='select' ? "contained" : ""}>
                         <HighlightAlt className="toolbar_mui_icon"/>
@@ -90,7 +92,7 @@ export default function MapToolBar() {
                         <OpenWith className="toolbar_mui_icon"/>
                     </Button>
                 </Grid>
-                <Grid item xs={1} className="toolbar_grid_item"></Grid>
+                <Grid item xs={1} className="toolbar_grid_item"></Grid> */}
 
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
                 <Grid item xs={5} className="toolbar_grid_item">
@@ -116,7 +118,7 @@ export default function MapToolBar() {
                 <Grid item xs={1} className="toolbar_grid_item"></Grid>
 
                 <Grid item xs={12}>
-                    <Box style={{marginTop: '10px'}} className="brush_selections_container">
+                    <Box style={{marginTop: '30px'}} className="brush_selections_container">
                         {store.primaryTile !== -1
                             ? <img src={store.mapTiles[store.primaryTile].tileImage} className="brush_tile_selection" id="tile_primary"/>
                             : <Box style={{height:'80px', width:'80px'}} className="brush_selection" bgcolor='white' id="tile_primary"></Box>
