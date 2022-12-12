@@ -6,13 +6,16 @@ import ListItemText from '@mui/material/ListItemText';
 import { ThemeProvider } from '@emotion/react';
 
 import { CommunityStoreContext } from '../../../store/communityStore';
+import AuthContext from '../../../auth/auth';
 
 import './css/postListItems.css';
 export default function PostListThread(props) {
     const { communityStore } = React.useContext(CommunityStoreContext);
+    const { auth } = React.useContext(AuthContext);
 
     const handleClick = async () => {
         await communityStore.setThreadAsTop(props.thread._id);
+        auth.socket.emit('requestFilterThreads', { id: props.thread._id });
     }
 
     const primaryProps = {
