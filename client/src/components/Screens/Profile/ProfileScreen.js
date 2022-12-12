@@ -286,10 +286,12 @@ export default function ProfileScreen(props) {
                                     required
                                     id="bio"
                                     defaultValue={user.bio}
+                                    multiline
+                                    rows={4}
                                     sx={{
                                         "& .MuiInputBase-root": {
                                             color: "azure", backgroundColor: '#11182A',
-                                            width: '77%', height: '120px', fontSize: "1.2rem", paddingBottom: '10px'
+                                            width: '77%', fontSize: "1.2rem", paddingBottom: '10px'
                                         }
                                     }}
                                 ></TextField>

@@ -183,31 +183,19 @@ export default function WelcomeScreen() {
                     </Box>
                 </Box>
             </Modal>
-            <Box sx={{ marginLeft: "30px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '95%', height: '300px', position: 'relative' }}>
+            <Box sx={{ marginLeft: "30px", boxShadow: "5px 5px rgb(0 0 0 / 20%)", borderRadius: "16px" }} style={{ marginBottom: "60px", width: '94%', height: '100px', position: 'relative' }}>
                 <img className='welcome_image' src={require("../../images/map.jpg")} width="100%" height="100%" border-radius="16px" object-fit="cover"></img>
-                <div className="welcome_overlay">
-                    <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
-                        <div>
-                            <KeyboardArrowLeftIcon sx={{ fontSize: 30, px: 5, pt: 1 }}></KeyboardArrowLeftIcon>
-                        </div>
-                        <div className="welcome_project_title">Island by tomJackson16</div>
-                        <div>
-                            <KeyboardArrowRightIcon sx={{ fontSize: 30, px: 5, pt: 1 }}></KeyboardArrowRightIcon>
-                        </div>
-                    </Box>
-                </div>
             </Box>
-
-            <div className="welcome_flexbox">
-                <MilitaryTechIcon />
-                <Typography sx={{ fontSize: "14px", fontWeight: "500" }}>
-                    Island, our currently top-rated map.
-                </Typography>
-            </div>
             <div className="welcome_title_card">
                 <div>
                     <span className="welcome_title">
-                        <Typography sx={{ fontSize: "100px", fontWeight: "700" }}>
+                        <Typography sx={{ backgroundcolor: "primary",
+                        backgroundImage: `linear-gradient(45deg, #06b4d5, #2d00cf)`,
+                        backgroundSize: "100%",
+                        backgroundRepeat: "repeat",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent", fontSize: 100, fontWeight: 700 }}>
                             Pieces
                         </Typography></span>
                     <Typography sx={{ fontSize: "20px", fontWeight: "300" }}>
@@ -215,25 +203,28 @@ export default function WelcomeScreen() {
                         A collaboration service.
                     </Typography>
                     <div className="welcome_call_to_action">
-                        <Button onClick={handleOpenRegisterModal}>Join the Community</Button>
+                        <Button onClick={handleOpenRegisterModal}>
+                            <Typography sx={{ fontSize: "20px", fontWeight: "700", px:"2em", py:"1em", color:"white" }}>
+                                Join the Community
+                            </Typography></Button>
                     </div>
                 </div>
                 <div>
                     <div className="welcome_vertical_align">
                         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: "15em" }}>
-                            <ForumIcon></ForumIcon>
+                            <ForumIcon sx={{color: "turquoise"}}></ForumIcon>
                             <Typography variant="body1">{topThreads.length} Discussions</Typography>
                         </Stack>
 
                         <br></br>
                         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: "15em" }}>
-                            <DownloadIcon></DownloadIcon>
+                            <DownloadIcon sx={{color: "lime"}}></DownloadIcon>
                             <Typography variant="body1">No Download Data</Typography>
                         </Stack>
 
                         <br></br>
                         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: "15em" }}>
-                            <WorkIcon></WorkIcon>
+                            <WorkIcon sx={{color: "orange"}}></WorkIcon>
                             <Typography variant="body1">{publicProjects.length} Projects to Collaborate On</Typography>
                         </Stack>
                         <br></br>
@@ -304,14 +295,15 @@ export default function WelcomeScreen() {
                     </span>
                     <br></br>
                     <Typography align="center" sx={{ mx: '10rem' }}>
-                        Add other users as friends, invite them to edit on your projects,
-                        talk to others with our chat service, Pieces has it all.
+                        Add other users as friends, invite them to edit on your projects, talk to others using public threads, Pieces has it all.
                     </Typography>
 
                     <br></br>
                 </div>
             </div>
-
+            <div className="footer">
+                A passion project by Team Cyan 2022.
+            </div>
         </div>
     )
 }

@@ -299,13 +299,13 @@ export default function CommunityThread(props) {
                             threadreplies.map((reply, index) => {
                                 return (
                                     <BetterReplyButton divider>
-                                        <ListItemAvatar>
+                                        {/* <ListItemAvatar>
                                             <Avatar alt={reply._id}
                                                 src={reply._id}
                                                 sx={{ width: '30px', height: '30px' }}>
                                                 {reply._id}
                                             </Avatar>
-                                        </ListItemAvatar>
+                                        </ListItemAvatar> */}
                                         <ListItemText
                                             primary={reply.replyMsg}
                                             secondary={("").concat(" Reply #: ").concat(reply._id).concat(" Replying To: ").concat(reply.replyingTo).concat(" on ").concat(new Date(reply.createdAt).toLocaleDateString())}
