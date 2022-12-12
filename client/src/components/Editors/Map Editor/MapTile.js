@@ -43,8 +43,8 @@ export default function MapTile(props) {
 
     return (
 
-        <Grid onMouseOver={(event) => props.handleHoverTile ? props.handleHoverTile(event) : null}
-            onClick={!props.preview ? handleClickTile : null} 
+        <Grid onMouseOver={(event) => props.preview ? props.handleHoverTile(event) : null}
+            onClick={props.preview ? null : handleClickTile} 
             id={`tile_${props.index}`}
             className='tile' item xs={1}
             style={{borderStyle: 'solid', borderColor: 'rgba(0, 0, 0, 0.05)', borderWidth: '0.5px', minHeight:`calc(100% / ${props.mapHeight}`, maxHeight:`calc(100% / ${props.mapHeight}`}} bgcolor='#fff'>
