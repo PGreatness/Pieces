@@ -164,7 +164,7 @@ export default function ViewTileset(props) {
                                                 <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', fontStyle: 'bold', marginTop: '30px', textAlign: 'start' }}>Title:  </Typography>
                                             </Grid>
                                             <Grid item xs={9}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '30px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.title}</Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '30px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.title.length > 10 ? tileset.title.substring(0, 9) + "..." : tileset.title}</Typography>
                                             </Grid>
                                             <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
