@@ -578,7 +578,45 @@ export default function MapRightBar(props) {
                 </Grid>
               </Stack>
             </Box> */}
-            
+
+            <Grid container sx={{ marginTop: '40px' }}>
+              <Grid item xs={4}></Grid>
+              <Grid item xs={3}>
+                <Button  disabled={true}>
+                  <ExpandLessIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={5} ></Grid>
+
+              <Grid item xs={1} sx={{ marginTop: '30px' }}></Grid>
+              <Grid item xs={3} >
+                <Button disabled={true}>
+                  <ChevronLeftIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={0}></Grid>
+              <Grid item xs={3}>
+                <Button  disabled={true}>
+                  <ExpandMoreIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={0}></Grid>
+
+
+              <Grid item xs={0}></Grid>
+              <Grid item xs={3}>
+                <Button  disabled={true}>
+                  <ChevronRightIcon style={{ color: 'azure', fontSize: '70px' }} />
+                </Button>
+              </Grid>
+              <Grid item xs={0}></Grid>
+              <Grid item xs={12}>
+                <Box style={{margin: '20px 40px 20px 20px'}} alignItems="center" justifyContent="center">
+                  <Typography style={{ textAlign: 'center', color: 'azure'}}>Use your arrow keys to view around the map!</Typography>
+                </Box>
+              </Grid>
+
+            </Grid>
 
             <Box>
               <Button onClick={handleOpenImportTileset} sx={{ color: 'black', width: '250px', marginTop: '40px', backgroundColor: '#2dd4cf' }}>
@@ -586,41 +624,6 @@ export default function MapRightBar(props) {
                 <LibraryAdd style={{ marginLeft: '15px' }} />
               </Button>
             </Box>
-
-
-            <Grid container sx={{ marginTop: '40px' }}>
-              <Grid item xs={5}></Grid>
-              <Grid item xs={2}>
-                <Button >
-                  <ExpandLessIcon style={{ color: 'azure', fontSize: '70px' }} />
-                </Button>
-              </Grid>
-              <Grid item xs={5} ></Grid>
-
-              <Grid item xs={1} sx={{ marginTop: '30px' }}></Grid>
-              <Grid item xs={2} >
-                <Button>
-                  <ChevronLeftIcon style={{ color: 'azure', fontSize: '70px' }} />
-                </Button>
-              </Grid>
-              <Grid item xs={6}></Grid>
-              <Grid item xs={2}>
-                <Button >
-                  <ChevronRightIcon style={{ color: 'azure', fontSize: '70px' }} />
-                </Button>
-              </Grid>
-              <Grid item xs={1}></Grid>
-
-
-              <Grid item xs={5}></Grid>
-              <Grid item xs={2}>
-                <Button >
-                  <ExpandMoreIcon style={{ color: 'azure', fontSize: '70px' }} />
-                </Button>
-              </Grid>
-              <Grid item xs={5}></Grid>
-
-            </Grid>
 
 
 
