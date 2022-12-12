@@ -566,7 +566,7 @@ export default function MapRightBar(props) {
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Typography color='azure' variant='h4'
-              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject ? store.currentProject.title : ''}</Typography>
+              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject ? (store.currentProject.title.length > 10 ? store.currentProject.title.substring(0, 9) + "..." : store.currentProject.title) : ''}</Typography>
 
             {/* <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack direction='column' textAlign='center'>
@@ -901,10 +901,10 @@ export default function MapRightBar(props) {
                     return (
                       <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
                         <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
-                          {tileset.title}
+                          {tileset.title.length > 10 ? tileset.title.substring(0, 9) + "..." : tileset.title}
                         </Typography>
                         <Typography variant='h6' sx={{ color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
-                          {tileset.description ? tileset.description : 'No Description'}
+                          {tileset.description ? (tileset.description.length > 20 ? tileset.description.substring(0, 19) + "..." : tileset.description) : 'No Description'}
                         </Typography>
                         <Button onClick={() => handleImportTileset(tileset)} sx={{ width: '10%', display: 'flex', marginRight: '40px' }}>
                           <Typography variant='p'>
@@ -944,21 +944,21 @@ export default function MapRightBar(props) {
         <Box borderRadius='10px' padding='20px' bgcolor='#11182a' position='absolute' height='40%' width='40%' top='30%' left='30%'>
           <Stack direction='column'>
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '50px' }} item xs={12}>
-              <Typography variant='h3' style={{ textAlign: 'center', marginRight: '10px' }} color='azure'>Export Map as JSON</Typography>
+              <Typography variant='h5' style={{ textAlign: 'center', marginRight: '10px' }} color='azure'>Export Map as JSON</Typography>
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }} item xs={12}>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {store.currentProject?.title}</Typography>
+              <Typography style={{ fontSize: '14px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Name: {store.currentProject?.title}</Typography>
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject?.mapHeight}</Typography>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject?.mapWidth}</Typography>
+              <Typography style={{ fontSize: '14px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Height: {store.currentProject?.mapHeight}</Typography>
+              <Typography style={{ fontSize: '14px', textAlign: 'center', marginRight: '10px' }} color='azure'>Map Width: {store.currentProject?.mapWidth}</Typography>
             </Grid>
 
             <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '40px' }} item xs={12}>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject?.tileHeight}</Typography>
-              <Typography style={{ fontSize: '25px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject?.tileWidth}</Typography>
+              <Typography style={{ fontSize: '14px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Height: {store.currentProject?.tileHeight}</Typography>
+              <Typography style={{ fontSize: '14px', textAlign: 'center', marginRight: '10px' }} color='azure'>Tile Width: {store.currentProject?.tileWidth}</Typography>
             </Grid>
 
             <Stack direction='row'>
