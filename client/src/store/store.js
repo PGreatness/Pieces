@@ -344,7 +344,11 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     ...store,
                     currentProject: payload.currentProject,
-                    currentTile: payload.currentTile
+                    currentTile: payload.currentTile,
+                    transactionStack: payload.transactionStack,
+                    canUndo: payload.canUndo,
+                    canRedo: payload.canRedo,
+                    currentStackIndex: payload.currentStackIndex,
                 })
             }
 
@@ -368,7 +372,11 @@ function GlobalStoreContextProvider(props) {
                     ...store,
                     currentPage: "tilesetEditor",
                     currentProject: payload.tileset,
-                    currentTile: payload.tile
+                    currentTile: payload.tile,
+                    transactionStack: [],
+                    canUndo: false,
+                    canRedo: false,
+                    currentStackIndex: -1,
                 })
             }
 
@@ -389,7 +397,11 @@ function GlobalStoreContextProvider(props) {
                 console.log(payload.currentMapTiles)
                 return setStore({
                     ...store,
-                    currentMapTiles: payload.currentMapTiles
+                    currentMapTiles: payload.currentMapTiles,
+                    transactionStack: payload.transactionStack,
+                    canUndo: payload.canUndo,
+                    canRedo: payload.canRedo,
+                    currentStackIndex: payload.currentStackIndex
                 })
             }
 
@@ -1738,7 +1750,7 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.setCurrentMapTiles = async function (currentMapTiles) {
+    store.setCurrentMapTiles = async function (currentMapTiles, isRedo, isUndo) {
 
         // call backend function to update the map as well
         let payload = {
@@ -1760,14 +1772,54 @@ function GlobalStoreContextProvider(props) {
             map = response.data.map
         }
 
+        if (isRedo) {
+            console.log("Redoing")
+            let newStackIndex = store.currentStackIndex + 1
+            let canRedo = newStackIndex < store.transactionStack.length - 1
+            let canUndo = newStackIndex > -1
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
+                payload: {
+                    currentMapTiles: currentMapTiles,
+                    currentProject: map,
+                    transactionStack: store.transactionStack,
+                    canUndo: canUndo,
+                    canRedo: canRedo,
+                    currentStackIndex: newStackIndex,
+                }
+            })
+        }
+        else if (isUndo) {
+            console.log("Undoing")
+            let newStackIndex = store.currentStackIndex - 1
+            let canRedo = newStackIndex < store.transactionStack.length - 1
+            let canUndo = newStackIndex > -1
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
+                payload: {
+                    currentMapTiles: currentMapTiles,
+                    currentProject: map,
+                    transactionStack: store.transactionStack,
+                    canUndo: canUndo,
+                    canRedo: canRedo,
+                    currentStackIndex: newStackIndex,
+                }
+            })
+        }
+        else {
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
+                payload: {
+                    currentMapTiles: currentMapTiles,
+                    currentProject: map,
+                    transactionStack: store.transactionStack,
+                    canUndo: store.canUndo,
+                    canRedo: store.canRedo,
+                    currentStackIndex: store.currentStackIndex,
+                }
+            })
+        }
 
-        storeReducer({
-            type: GlobalStoreActionType.SET_CURRENT_MAP_TILES,
-            payload: {
-                currentMapTiles: currentMapTiles,
-                currentProject: map
-            }
-        })
     }
 
 
@@ -2328,12 +2380,28 @@ function GlobalStoreContextProvider(props) {
         else {
             newCurrentTile = null
         }
+
+        let newCurrentStackIndex = store.currentStackIndex
+        let newTransactionStack = store.transactionStack
+        let newCanRedo = store.canRedo
+        let newCanUndo = store.canUndo
+
+        if (id === store.currentTile._id) {
+            newCurrentStackIndex = -1
+            newTransactionStack = []
+            newCanRedo = false
+            newCanUndo = false
+        }
     
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_PROJECT_AND_TILE,
             payload: {
                 currentProject: newCurrentProject,
-                currentTile: newCurrentTile
+                currentTile: newCurrentTile,
+                transactionStack: newTransactionStack,
+                canUndo: newCanUndo,
+                canRedo: newCanRedo,
+                currentStackIndex: newCurrentStackIndex,
             }
         })
         // storeReducer({

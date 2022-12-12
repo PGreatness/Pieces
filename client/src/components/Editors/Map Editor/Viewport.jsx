@@ -109,20 +109,20 @@ export default function Viewport(props) {
 		let map = viewport;
 		if (
 			x < 0 ||
-			x >= viewportHeight ||
+			x >= viewportWidth ||
 			y < 0 ||
-			y >= viewportWidth ||
-			map[x * viewportWidth + y] !== originalTile
+			y >= viewportHeight ||
+			map[y * viewportWidth + x] !== originalTile
 		) {
-			return;
+			return map;
 		}
-		if (map[x * viewportWidth + y] === originalTile) {
-			map[x * viewportWidth + y] = store.primaryTile;
-			fillHelper(x - 1, y, originalTile);
-			fillHelper(x + 1, y, originalTile);
-			fillHelper(x, y + 1, originalTile);
-			fillHelper(x, y - 1, originalTile);
-			// await store.setCurrentMapTiles(map);
+		if (map[y * viewportWidth + x] === originalTile) {
+			map[y * viewportWidth + x] = store.primaryTile;
+			console.log("index " + (y * viewportWidth + x) + " set to " + originalTile)
+			await fillHelper(x - 1, y, originalTile);
+			await fillHelper(x + 1, y, originalTile);
+			await fillHelper(x, y + 1, originalTile);
+			await fillHelper(x, y - 1, originalTile);
 			return map;
 		}
 	};
@@ -138,20 +138,26 @@ export default function Viewport(props) {
 	const handleHoverTile = (e) => {
 		let id = Number(e.currentTarget.id.slice(5));
 		console.log(mapWidth);
-		let x = (id % mapWidth) + startingPoint.x;
-		let y = Math.floor(id / mapWidth) + startingPoint.y;
+		let x = (id % mapWidth);
+		let y = Math.floor(id / mapWidth);
 		props.setCurrentTile([x,y]);
 	};
-	const handleBucket = async () => {
-		let originalTile =
-			viewport[startingPoint.x * viewportWidth + startingPoint.y];
+	const handleBucket = async (index) => {
+		let originalTile = viewport[index];
+		let x = (index % viewportWidth)
+		let y = Math.floor(index / viewportWidth)
+
+		if (originalTile === store.primaryTile) {
+			return
+		}
+
 		let newMap = await fillHelper(
-			startingPoint.x,
-			startingPoint.y,
+			x,
+			y,
+			// startingPoint.x,
+			// startingPoint.y,
 			originalTile
 		);
-		console.log(Object.values(startingPoint.indices));
-		console.log("handling bucket now");
 		setViewport(newMap);
 		await updateMapInDatabase();
 		auth.socket.emit("updateMap", { project: store.currentProject._id });
@@ -169,7 +175,9 @@ export default function Viewport(props) {
 	};
 
 	const moveViewportLeft = async (startingPoint) => {
+		console.log(startingPoint)
 		if (startingPoint.x === 0) {
+			console.log("it is 0")
 			return;
 		}
 
@@ -246,7 +254,9 @@ export default function Viewport(props) {
 		switch (direction) {
 			case "up":
 				newView = await moveViewportUp(startingPoint);
-				setViewport(newView.tiles);
+				if (!newView) {
+					return
+				}
 				setViewport(newView.tiles);
 				console.log(newView.map.mapWidth);
 				setViewportWidth(newView.width);
@@ -268,6 +278,9 @@ export default function Viewport(props) {
 				break;
 			case "down":
 				newView = await moveViewportDown(startingPoint);
+				if (!newView) {
+					return
+				}
 				setViewport(newView.tiles);
 				console.log(newView.map.mapWidth);
 				setViewportWidth(newView.width);
@@ -289,7 +302,10 @@ export default function Viewport(props) {
 				break;
 			case "left":
 				newView = await moveViewportLeft(startingPoint);
-				setViewport(newView.tiles);
+				if (!newView) {
+					return
+				}
+				setViewport(newView?.tiles);
 				console.log(newView.map.mapWidth);
 				setViewportWidth(newView.width);
 				setStartingPoint({
@@ -310,7 +326,9 @@ export default function Viewport(props) {
 				break;
 			case "right":
 				newView = await moveViewportRight(startingPoint);
-				console.log(newView.tiles, viewport);
+				if (!newView) {
+					return
+				}
 				setViewport(newView.tiles);
 				console.log(newView.map.mapWidth);
 				setViewportWidth(newView.width);
@@ -355,7 +373,7 @@ export default function Viewport(props) {
 				viewport?.length > 0 &&
 				viewport.map((tile, index) => (
 					<MapTile
-						handleBucket={handleBucket}
+						handleBucket={() => handleBucket(index)}
 						updateCurrentMapTiles={updateCurrentMapTiles}
 						mapHeight={viewportHeight}
 						mapWidth={viewportWidth}

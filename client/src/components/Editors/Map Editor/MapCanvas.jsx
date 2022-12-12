@@ -50,20 +50,11 @@ export default function MapCanvas() {
   const [ redoColor, setRedoColor ] = useState(store.canRedo ? '#2dd4cf' : '#1f293a')
   const [ undoColor, setUndoColor ] = useState(store.canUndo ? '#2dd4cf' : '#1f293a')
 
-	//  // Updating map object in canvas
-	// useEffect(() => {
-	//     // console.log(store.currentMapTiles)
-	//     setCurrentMapTiles(store.currentMapTiles)
-	//     console.log(store.currentMapTiles)
-	// }, [store.currentMapTiles])
-
-	// console.log("MapCanvas: Socket recievedUpdate")
 	auth.socket.on("recieveUpdateMap", (data) => {
 		console.log("");
 		if (auth.socket.id === data.socketId) { return; }
 		console.log("Recieved Map Update");
-		// console.log(data);
-		// console.log(store);
+
 		store.loadMap(data.project).then(() => {
 			console.log("Map fully loaded");
 			// console.log(store);
@@ -93,43 +84,6 @@ export default function MapCanvas() {
 		]);
 	}, [store.mapTilesets]);
 
-	// useEffect(() => {
-	//     console.log("Changing to store tilesets")
-	//     console.log(store.currentProject.tilesets)
-
-	//     TODO: THESE ARE JUST TILESETIDS, GET ACTUAL TILESET OBJECT !!!!!!
-	//     setTilesets(store.currentProject.tilesets)
-
-	// }, [store.currentProject.tilesets])
-
-	// useEffect(() => {
-	//     store.getMapTilesets(store.currentProject._id).then((tilesetObjs) => {
-	//         setTilesets(tilesetObjs)
-	//         console.log(tilesetObjs)
-	//         console.log(tilesets)
-
-	//         let tileIds = []
-	//         let tileImages = []
-
-	//         // Build array of all tile ids
-	//         for (let i = 0; i < tilesetObjs.length; i++) {
-	//             tileIds = tileIds.concat(tilesetObjs[i].tiles)
-	//         }
-	//         console.log(tileIds)
-
-	//         const fetchTiles = async () => {
-	//             await Promise.all(tileIds.map(async (tileId) => {
-	//                 let tile = await store.getTileById(tileId)
-	//                 tileImages.push(tile.tileImage)
-	//             }));
-	//         }
-
-	//         fetchTiles()
-
-	//         console.log(tileImages)
-	//         setTileImages(tileImages)
-	//     })
-	// }, [store.currentProject])
   
   useEffect(() => {
         setUndoColor(store.canUndo ? '#2dd4cf' : '#1f293a')
@@ -153,27 +107,17 @@ export default function MapCanvas() {
 			fillHelper(x + 1, y, originalTile);
 			fillHelper(x, y + 1, originalTile);
 			fillHelper(x, y - 1, originalTile);
-			// setCurrentMapTiles(map)
 			await store.setCurrentMapTiles(map);
 		}
-		// let newMap = currentMapTiles.map(function(tile) {
-		//     if (tile === originalTile) {
-		//         return store.primaryTile
-		//     }
-		//     else {
-		//         return tile
-		//     }
-		// })
-		// setCurrentMapTiles(newMap)
+
 	};
   
   const undo = async () => {
       if (store.currentStackIndex > -1) {
           let mapTiles = store.transactionStack[store.currentStackIndex].old
           console.log(mapTiles)
-          await store.setCurrentMapTiles(mapTiles)
-          console.log("uiahfuiahifah")
-          store.undo()
+          await store.setCurrentMapTiles(mapTiles, false, true)
+        //   store.undo()
           auth.socket.emit("updateMap", { project: store.currentProject._id });
       }
   }
@@ -182,21 +126,11 @@ export default function MapCanvas() {
       if (store.currentStackIndex < store.transactionStack.length - 1) {
           let mapTiles = store.transactionStack[store.currentStackIndex + 1].new
           console.log(mapTiles)
-          await store.setCurrentMapTiles(mapTiles)
-          console.log("diajdoiawjodia")
-          await store.redo()
+          await store.setCurrentMapTiles(mapTiles, true, false)
+        //   await store.redo()
           auth.socket.emit("updateMap", { project: store.currentProject._id });
       }
   }
-
-	const updateCurrentMapTiles = async (value, index) => {
-		let mapTiles = currentMapTiles;
-		mapTiles[index] = value;
-		// setCurrentMapTiles(map)
-		console.log(mapTiles);
-		await store.setCurrentMapTiles(mapTiles);
-		auth.socket.emit("updateMap", { project: store.currentProject._id });
-	};
 
 	const handleBucket = async () => {
 		let originalTile =
