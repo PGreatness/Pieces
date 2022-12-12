@@ -660,12 +660,12 @@ export default function TilesetRightBar(props) {
                   </Grid>
                 }
                 {!editMode
-                  ? <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
+                  ? <Grid container textAlign='left' style={{  overflow: 'scroll', height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
                       <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
                     <Grid item xs={9} zeroMinWidth>
-                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px' }} color='azure'>{store.currentProject.title}</Typography>
+                      <Typography style={{ overflowWrap: "break-word", fontSize: '15px', marginTop: '10px'}} color='azure'>{store.currentProject.title}</Typography>
                     </Grid>
                     <Grid item xs={3}>
                       <Typography style={{ overflowWrap: "break-word", marginLeft: '10px', fontSize: '15px' }} color='azure'>Desc: </Typography>
