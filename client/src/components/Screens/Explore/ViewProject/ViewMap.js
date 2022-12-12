@@ -112,47 +112,47 @@ export default function ViewMap(props) {
                     <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
                         <Box className='user_settings_container' style={{ marginTop: '50px' }}>
                             <Stack direction='column'>
-                                <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h4' color='azure'>Properties</Typography>
+                                <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>Properties</Typography>
 
                                 <Grid container style={{ backgroundColor: "#1f293a", paddingTop: "10px", paddingLeft: '20px', paddingBottom: "30px", marginBottom: '30px' }}>
                                     <Grid item xs={3}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', fontStyle: 'bold', marginTop: '30px', textAlign: 'start' }}>Title:  </Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', fontStyle: 'bold', marginTop: '30px', textAlign: 'start' }}>Title:  </Typography>
                                     </Grid>
                                     <Grid item xs={9}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '30px', textAlign: 'start', paddingBottom: "20px" }}>{map.title.length > 10 ? map.title.substring(0, 9) + "..." : map.title}</Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '30px', textAlign: 'start', paddingBottom: "20px" }}>{map.title.length > 20 ? map.title.substring(0, 19) + "..." : map.title}</Typography>
                                     </Grid>
                                     <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
                                     <Grid item xs={12}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Description: </Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Description: </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '18px', marginTop: '2px', textAlign: 'start', paddingBottom: "20px" }}>{map.tilesetDesc}</Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '2px', textAlign: 'start', paddingBottom: "20px" }}>{map.tilesetDesc}</Typography>
                                     </Grid>
                                     <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
 
                                     <Grid item xs={7}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tileset Count: </Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tileset Count: </Typography>
                                     </Grid>
                                     <Grid item xs={5}>
-                                        <Typography color='azure' sx={{ paddingLeft: "10px", fontSize: '20px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{map.tilesets.length}</Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "10px", fontSize: '14px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{map.tilesets.length}</Typography>
                                     </Grid>
                                     <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
                                     <Grid item xs={7}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tile Size: </Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tile Size: </Typography>
                                     </Grid>
                                     <Grid item xs={5}>
-                                        <Typography color='azure' sx={{ paddingLeft: "0px", fontSize: '20px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{map.tileHeight + " x " + map.tileWidth}</Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "0px", fontSize: '14px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{map.tileHeight + " x " + map.tileWidth}</Typography>
                                     </Grid>
                                     <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
                                     <Grid item xs={3}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tags: </Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tags: </Typography>
                                     </Grid>
                                     <Grid item xs={9}>
-                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '20px', marginTop: '20px', textAlign: 'start' }}>{map.tags.join(', ')}</Typography>
+                                        <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>{map.tags.join(', ')}</Typography>
                                     </Grid>
 
                                 </Grid>

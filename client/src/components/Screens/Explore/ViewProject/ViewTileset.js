@@ -157,47 +157,47 @@ export default function ViewTileset(props) {
                             <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
                                 <Box className='user_settings_container' style={{ marginTop: '50px' }}>
                                     <Stack direction='column'>
-                                        <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h4' color='azure'>Properties</Typography>
+                                        <Typography style={{ textAlign: 'center', marginBottom: '20px', marginTop: '20px' }} variant='h5' color='azure'>Properties</Typography>
 
                                         <Grid container style={{ backgroundColor: "#1f293a", paddingTop: "10px", paddingLeft: '20px', paddingBottom: "30px", marginBottom: '30px' }}>
                                             <Grid item xs={3}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', fontStyle: 'bold', marginTop: '30px', textAlign: 'start' }}>Title:  </Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', fontStyle: 'bold', marginTop: '30px', textAlign: 'start' }}>Title:  </Typography>
                                             </Grid>
                                             <Grid item xs={9}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '30px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.title.length > 10 ? tileset.title.substring(0, 9) + "..." : tileset.title}</Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '30px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.title.length > 20 ? tileset.title.substring(0, 19) + "..." : tileset.title}</Typography>
                                             </Grid>
                                             <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
                                             <Grid item xs={12}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Description: </Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Description: </Typography>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '18px', marginTop: '2px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.tilesetDesc}</Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '2px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.tilesetDesc}</Typography>
                                             </Grid>
                                             <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
 
                                             <Grid item xs={7}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tile Count: </Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tile Count: </Typography>
                                             </Grid>
                                             <Grid item xs={5}>
-                                                <Typography color='azure' sx={{ paddingLeft: "10px", fontSize: '20px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.tiles.length}</Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "10px", fontSize: '14px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.tiles.length}</Typography>
                                             </Grid>
                                             <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
                                             <Grid item xs={7}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tile Size: </Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tile Size: </Typography>
                                             </Grid>
                                             <Grid item xs={5}>
-                                                <Typography color='azure' sx={{ paddingLeft: "0px", fontSize: '20px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.tileHeight + " x " + tileset.tileWidth}</Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "0px", fontSize: '14px', marginTop: '22px', textAlign: 'start', paddingBottom: "20px" }}>{tileset.tileHeight + " x " + tileset.tileWidth}</Typography>
                                             </Grid>
                                             <Divider sx={{ borderBottomWidth: 5, width: '90%' }} />
 
                                             <Grid item xs={3}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '25px', marginTop: '20px', textAlign: 'start' }}>Tags: </Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>Tags: </Typography>
                                             </Grid>
                                             <Grid item xs={9}>
-                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '20px', marginTop: '20px', textAlign: 'start' }}>{tileset.tilesetTags.join(', ')}</Typography>
+                                                <Typography color='azure' sx={{ paddingLeft: "20px", fontSize: '14px', marginTop: '20px', textAlign: 'start' }}>{tileset.tilesetTags.join(', ')}</Typography>
                                             </Grid>
 
                                         </Grid>
