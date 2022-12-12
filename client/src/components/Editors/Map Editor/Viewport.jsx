@@ -123,7 +123,6 @@ export default function Viewport(props) {
 			await fillHelper(x + 1, y, originalTile);
 			await fillHelper(x, y + 1, originalTile);
 			await fillHelper(x, y - 1, originalTile);
-			// await store.setCurrentMapTiles(map);
 			return map;
 		}
 	};
