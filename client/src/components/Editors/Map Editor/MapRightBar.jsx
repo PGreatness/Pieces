@@ -407,7 +407,7 @@ export default function MapRightBar(props) {
 
     store.getMapTilesets(project._id).then((tilesetObjs) => {
 
-      let currIndex = 0
+      let currIndex = 1
 
       tilesetObjs.forEach((tileset) => {
 
@@ -486,7 +486,7 @@ export default function MapRightBar(props) {
         "height": project.mapHeight,
         "layers": [
           {
-            "data": store.currentMapTiles,
+            "data": store.currentMapTiles.map(x => x + 1),
             "height": project.mapHeight,
             "name": project.title,
             "opacity": 1,
