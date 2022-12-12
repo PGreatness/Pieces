@@ -227,7 +227,7 @@ export default function MapCanvas() {
 		let error = false;
 		currentMapTiles.forEach((index) => {
 			if (index >= startIndex && index <= endIndex) {
-				console.log("in use haha!");
+				//console.log("in use haha!");
 				error = true;
 				handleOpenDeleteTilesetError();
 				return;
@@ -238,7 +238,6 @@ export default function MapCanvas() {
 			return;
 		}
 
-		console.log("why the fuck");
 		store.deleteTilesetFromMap(tilesets[value]._id);
 		setValue(0);
 	};
@@ -279,7 +278,7 @@ export default function MapCanvas() {
 
 			<Viewport
 				map={store.currentProject}
-				mapId={store.currentProject._id}
+				mapId={store.currentProject?._id}
 				setCurrentTile={setCurrentTile}
 				currentTile={currentTile}
 			/>
