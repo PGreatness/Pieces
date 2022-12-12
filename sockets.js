@@ -4,8 +4,8 @@ const startWebSockets = (server) => {
     const io = new Server(server, {
         cors: {
 
-            origin: "http://localhost:3000",
-            // origin: "https://pieces-316.herokuapp.com",
+            // origin: "http://localhost:3000",
+            origin: "https://pieces-316.herokuapp.com",
 
             methods: ["GET", "POST"],
         },
