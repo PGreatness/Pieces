@@ -4,8 +4,8 @@ const startWebSockets = (server) => {
     const io = new Server(server, {
         cors: {
 
-            //origin: "http://localhost:3000",
-            origin: "https://pieces-316.herokuapp.com",
+            origin: "http://localhost:3000",
+            // origin: "https://pieces-316.herokuapp.com",
 
             methods: ["GET", "POST"],
         },
@@ -77,7 +77,7 @@ const startWebSockets = (server) => {
         socket.on('updateMap', (data) => {
             console.log('a collaborator updated the map, pushing update to all collaborators');
             console.log(data);
-            socket.broadcast.to(data.project).emit('recieveUpdateMap', {...data, socketId: socket.id});
+            socket.to(data.project).emit('recieveUpdateMap', {...data, socketId: socket.id});
         })
 
         socket.on('updateTileset', (data) => {
