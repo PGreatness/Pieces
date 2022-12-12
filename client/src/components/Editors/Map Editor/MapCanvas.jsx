@@ -47,19 +47,25 @@ export default function MapCanvas() {
 	);
 	const [currentTile, setCurrentTile] = useState([0, 0]);
 	const [openDeleteTilesetError, setOpenDeleteTilesetError] = useState(false);
-  const [ redoColor, setRedoColor ] = useState(store.canRedo ? '#2dd4cf' : '#1f293a')
-  const [ undoColor, setUndoColor ] = useState(store.canUndo ? '#2dd4cf' : '#1f293a')
+  	const [ redoColor, setRedoColor ] = useState(store.canRedo ? '#2dd4cf' : '#1f293a')
+  	const [ undoColor, setUndoColor ] = useState(store.canUndo ? '#2dd4cf' : '#1f293a')
 
+	// useEffect(() => {
 	auth.socket.on("recieveUpdateMap", (data) => {
-		console.log("");
-		if (auth.socket.id === data.socketId) { return; }
-		console.log("Recieved Map Update");
+		if (auth.socket.id === data.socketId) { 
+			if (data.force) {
+
+			}
+			else {
+				return; 
+			}
+		}
 
 		store.loadMap(data.project).then(() => {
-			console.log("Map fully loaded");
-			// console.log(store);
+
 		});
 	});
+	// }, [])
 
 	useEffect(() => {
 		setMapHeight(store.currentProject ? store.currentProject.mapHeight : 0);

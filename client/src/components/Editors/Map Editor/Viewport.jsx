@@ -103,6 +103,8 @@ export default function Viewport(props) {
 			return
 		}
 		await store.updateMapToViewport(props.mapId, oldTiles);
+		console.log(store.currentMapTiles)
+		console.log(store.currentProject)
 		console.log("map updated in database");
 		await store.addTransaction(oldData, newData)
 		let project = {
