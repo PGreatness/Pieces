@@ -190,13 +190,14 @@ export default function ExploreTilesetItem(props) {
         setOpenExportTileset(false)
     }
 
-    const handlePreviewClick = () => {
+    const handlePreviewClick = async () => {
         // if (isUnlocked) {
         //     setLocation('/view/tileset/' + project._id);
         // } else {
         //     handleConfirmRequest();
         // }
         setLocation('/view/tileset/' + project._id);
+        await store.loadTileset(project._id)
     }
 
     return (
@@ -210,7 +211,7 @@ export default function ExploreTilesetItem(props) {
             <div class="overlay">
                 <Box style={{ display: 'flex', flexDirection: 'row' }} >
                     <Box style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
-                        <Typography style={{ marginLeft: '20px', fontSize: '40px', fontWeight: '700' }} color='azure'>{project.title.length > 25 ? project.title.substring(0, 24) + "..." : project.title}</Typography>
+                        <Typography style={{ marginLeft: '20px', fontSize: '40px', fontWeight: '700' }} color='azure'>{project.title.length > 15 ? project.title.substring(0, 15) + "..." : project.title}</Typography>
                         <Typography style={{ marginLeft: '20px', fontSize: '20px', fontWeight: '300', paddingBottom: '10px' }} color='azure'>{project.tilesetDesc.length > 25 ? project.tilesetDesc.substring(0, 24) + "..." : project.tilesetDesc}</Typography>
                     </Box>
                     <Box style={{ width: '40%', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'end', flexDirection: 'row' }} >

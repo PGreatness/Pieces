@@ -736,7 +736,7 @@ export default function MapRightBar(props) {
                   </Grid>
                 }
                 {!editMode
-                  ? <Grid container textAlign='left' style={{ height: '200px', width: '100%', padding: '5px' }}>
+                  ? <Grid container textAlign='left' style={{ overflow: 'scroll', height: '200px', width: '100%', padding: '5px' }}>
                     <Grid item xs={3}>
                       <Typography style={{ overflowWrap: "break-word", marginTop: '10px', marginLeft: '10px', fontSize: '15px' }} color='azure'>Title: </Typography>
                     </Grid>
