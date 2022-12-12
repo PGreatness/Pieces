@@ -566,7 +566,7 @@ export default function MapRightBar(props) {
           <Box display="flex" flexDirection='column' alignItems="center" justifyContent="center">
 
             <Typography color='azure' variant='h4'
-              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject ? store.currentProject.title.length > 10 ? store.currentProject.title.substring(0, 9) + "..." : store.currentProject.title : ''}</Typography>
+              sx={{ marginTop: '10px', marginLeft: '15px', marginRight: '15px' }}>Map: {store.currentProject ? (store.currentProject.title.length > 10 ? store.currentProject.title.substring(0, 9) + "..." : store.currentProject.title) : ''}</Typography>
 
             {/* <Box bgcolor="#ffffff" className="previewWindow" sx={{ marginTop: '30px', marginBottom: '30px' }}>
               <Stack direction='column' textAlign='center'>
