@@ -311,9 +311,9 @@ export default function CommunityThread(props) {
                                             secondary={("").concat(" Reply #: ").concat(reply._id).concat(" Replying To: ").concat(reply.replyingTo).concat(" on ").concat(new Date(reply.createdAt).toLocaleDateString())}
                                             primaryTypographyProps={{ style: { color: 'white', fontSize: '1em' } }}
                                             secondaryTypographyProps={{ style: { color: 'whitesmoke', fontSize: '0.75em' } }} />
-                                        <ReplyIcon style={{ fill: "white" }} onClick={() => { setReplyingTo(reply._id) }}></ReplyIcon>
+                                        <ReplyIcon style={{ fill: "turquoise" }} onClick={() => { setReplyingTo(reply._id) }}></ReplyIcon>
                                         {reply.senderId == auth.user?._id ?
-                                            <DeleteIcon style={{ fill: "white" }} onClick={() => { handleDeleteReply(reply._id) }}></DeleteIcon> :
+                                            <DeleteIcon style={{ fill: "red" }} onClick={() => { handleDeleteReply(reply._id) }}></DeleteIcon> :
                                             <></>
                                         }
 
