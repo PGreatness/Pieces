@@ -13,7 +13,7 @@
 }
 
 .welcome_title_card {
-    padding-top: 50px;
+    padding-top: 5px;
     align-items: center;
     justify-content: center;
     display: grid;
@@ -63,6 +63,7 @@
 .welcome_section_subtitle {
     font-size: 30px;
     font-weight: bold;
+    /* padding-top: 100px; */
 }
 
 .welcome_section_description {
@@ -102,4 +103,9 @@
     padding-left: 15px;
     padding-top: 7px;
     padding-bottom: 0px;
+}
+
+.footer {
+    height: 40px;
+    padding-top: 150px;
 }

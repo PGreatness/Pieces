@@ -296,7 +296,9 @@ export default function WelcomeScreen() {
                     <br></br>
                 </div>
             </div>
-
+            <div className="footer">
+                A passion project by Team Cyan 2022.
+            </div>
         </div>
     )
 }
