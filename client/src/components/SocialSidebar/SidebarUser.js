@@ -153,8 +153,6 @@ export default function SidebarUser(props) {
                   </Typography>
                 </Box>
               </Modal>
-
-              <MenuItem onClick={handleClose}>Chat</MenuItem>
               <MenuItem onClick={() => { handleRemoveFriend(props.user._id) }}>Remove Friend</MenuItem>
             </Menu>
           </div> : <WhitePersonAdd onClick={() => { handleAddFriend(props.user._id) }} disabled={isPending} sx={{ color: isPending ? 'grey' : 'white' }} />}
