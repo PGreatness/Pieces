@@ -474,7 +474,7 @@ export default function LibraryScreen(props) {
                         </Box>
                     : <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
                 }
-                {sortOpt === 'Size'
+                {/* {sortOpt === 'Size'
                     ? sortDir === 'up'
                         ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
                             <MenuItem onClick={handleSortClick}>Size</MenuItem>
@@ -485,7 +485,7 @@ export default function LibraryScreen(props) {
                             <ArrowDownward />
                         </Box>
                     : <MenuItem onClick={handleSortClick}>Size</MenuItem>
-                }
+                } */}
             </Menu>
 
             <Menu

@@ -250,18 +250,6 @@ export default function Explore(props) {
                         </Box>
                     : <MenuItem onClick={handleSortClick}>Most Liked</MenuItem>
                 }
-                {sortOpt === 'Size'
-                    ? sortDir === 'up'
-                        ? <Box style={{ display: 'flex', flexDirection: 'row' }}>
-                            <MenuItem onClick={handleSortClick}>Size</MenuItem>
-                            <ArrowUpward />
-                        </Box>
-                        : <Box style={{ display: 'flex', flexDirection: 'row' }}>
-                            <MenuItem onClick={handleSortClick}>Size</MenuItem>
-                            <ArrowDownward />
-                        </Box>
-                    : <MenuItem onClick={handleSortClick}>Size</MenuItem>
-                }
 
 
             </Menu>
