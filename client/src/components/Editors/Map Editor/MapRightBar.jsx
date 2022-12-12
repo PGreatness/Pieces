@@ -901,7 +901,7 @@ export default function MapRightBar(props) {
                     return (
                       <Box key={index} sx={{ width: '100%', marginTop: '10px', display: 'flex' }}>
                         <Typography variant='h5' sx={{ color: 'white', marginLeft: '20px', width: '30%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
-                          {tileset.title}
+                          {tileset.title.length > 10 ? tileset.title.substring(0, 9) + "..." : tileset.title}
                         </Typography>
                         <Typography variant='h6' sx={{ color: 'white', width: '60%', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex' }}>
                           {tileset.description ? tileset.description : 'No Description'}
