@@ -658,7 +658,7 @@ getAllPublicMapsOnPage = async (req, res) => {
     }
 
     var startIndex = page > 0 ? (page - 1) * limit : 0;
-    skipIndex = skipIndex <= 0 ? 0 : skipIndex;
+    startIndex = startIndex <= 0 ? 0 : startIndex;
     limit = Number(limit);
     const rangeMap = await Map.aggregate([
         { $match: { isPublic: true } },
@@ -723,7 +723,7 @@ getAllPublicProjects = async (req, res) => {
     // console.log("sorting by: ", sort)
     if (limit) {
         startIndex = (page - 1) * limit;
-        skipIndex = skipIndex <= 0 ? 0 : skipIndex;
+        startIndex = startIndex <= 0 ? 0 : startIndex;
         rangeProject = await Map.aggregate([
             { $match: { isPublic: true } },
             { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
@@ -734,7 +734,7 @@ getAllPublicProjects = async (req, res) => {
         ]);
     } else {
         startIndex = page;
-        skipIndex = skipIndex <= 0 ? 0 : skipIndex;
+        startIndex = startIndex <= 0 ? 0 : startIndex;
         rangeProject = await Map.aggregate([
             { $match: { isPublic: true } },
             { $unionWith: { coll: "tilesets", pipeline: [ { $match: { isPublic: true } } ] } },
@@ -826,7 +826,7 @@ var getAllProjectsWithUser = async (req, res) => {
             ]);
         } else {
             startIndex = page;
-            skipIndex = skipIndex <= 0 ? 0 : skipIndex;
+            startIndex = startIndex <= 0 ? 0 : startIndex;
             rangeProject = await Map.aggregate([
                 { $match: { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] } },
                 { $unionWith: { coll: "tilesets", pipeline: [ { $match: { $and: [{isLocked: false}, { $or: [ { ownerId: userId }, { collaboratorIds: { $in: [userId] } } ] }] } } ] } },
@@ -883,7 +883,7 @@ getPublicProjectsByName = async (req, res) => {
     }
 
     var startIndex = page > 0 ? (page - 1) * limit : 0;
-    skipIndex = skipIndex <= 0 ? 0 : skipIndex;
+    startIndex = startIndex <= 0 ? 0 : startIndex;
     limit = Number(limit);
     const rangeProject = await Map.aggregate([
         { $match: { isPublic: true, title: { $regex: name, $options: "i"} }},
