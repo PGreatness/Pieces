@@ -30,7 +30,7 @@ export default function NotificationSidebar(props) {
     const { auth } = useContext(AuthContext);
 
     const [open, setOpen] = useState(false);
-    const [notifs, setNotifs] = useState(auth.user?.notifications.sort(function(x, y){
+    const [notifs, setNotifs] = useState(auth.user?.notifications.sort(function (x, y) {
         return new Date(y.sentAt) - new Date(x.sentAt);
     }));
     const [anchorEl, setAnchorEl] = useState(null);
@@ -38,22 +38,25 @@ export default function NotificationSidebar(props) {
     const [unseen, setUnseen] = useState(auth.user?.notifications.some(notif => notif.seen === false));
 
     // console.log(auth.socket)
-        // Add an event listener for the "updateNotifications" event
-        auth.socket?.on("updateNotifications", (data) => {
+    // Add an event listener for the "updateNotifications" event
+    useEffect(() => {
+        auth.socket.on("updateNotifications", (data) => {
             // If the event was not emitted by the current socket, continue as usual
             console.log("Updating event")
             auth.getUserById(auth.user?._id, (user) => {
                 console.log(user.notifications)
-                setNotifs(user.notifications.sort(function(x, y){
+                setNotifs(user.notifications.sort(function (x, y) {
                     return new Date(y.sentAt) - new Date(x.sentAt);
                 }))
                 setUnseen(user.notifications.some(notif => notif.seen === false))
             })
         })
+    }, [auth.socket])
 
-        auth.socket?.on("updateNotification", (data) => {
-            console.log("i'm in updateNotification")
-        })
+
+    auth.socket?.on("updateNotification", (data) => {
+        console.log("i'm in updateNotification")
+    })
 
     const updateNotifications = (newNotifications, data) => {
         setNotifs(newNotifications);
@@ -114,7 +117,7 @@ export default function NotificationSidebar(props) {
     return (
         <>
             <IconButton className='notification-open-button' onClick={toggleDrawer(true)} >
-                <NotificationsIcon sx={{ color: 'white', fill: unseen? '#D0342C': 'white', fontSize: 35, px: 1.5 }} />
+                <NotificationsIcon sx={{ color: 'white', fill: unseen ? '#D0342C' : 'white', fontSize: 35, px: 1.5 }} />
             </IconButton>
             <div className='notification-sidebar-cover' onAnimationEnd={toggler(true)} ref={containerRef}></div>
             <Drawer anchor="right" open={open} onClose={toggler(false)} transitionDuration={{ enter: 0.1, exit: 500 }} PaperProps={{ sx: { backgroundColor: '#11182A' } }}>
@@ -122,16 +125,18 @@ export default function NotificationSidebar(props) {
                     sx={{ width: 400, display: 'flex', flexDirection: 'column', height: '100vh !important', }}
                     role="presentation"
                 >
-                    <Box sx={{ display: 'flex', flexDirection: 'row', paddingTop: "40px", 
-                                paddingBottom: "30px", paddingLeft: "30px" }} borderBottom={3}>
+                    <Box sx={{
+                        display: 'flex', flexDirection: 'row', paddingTop: "40px",
+                        paddingBottom: "30px", paddingLeft: "30px"
+                    }} borderBottom={3}>
                         <Typography component="h1" variant="h4">Notifications</Typography>
-                        <MoreHorizIcon 
+                        <MoreHorizIcon
                             sx={{ color: 'white', fill: 'white', fontSize: 40, paddingLeft: "100px", paddingTop: "3px" }}
                             onClick={handleOptionsMenuOpen}
-                        /> 
+                        />
                     </Box>
-                    
-                    <NotificationList notifs={notifs} updateNotifications={updateNotifications}/>
+
+                    <NotificationList notifs={notifs} updateNotifications={updateNotifications} />
                 </Box>
             </Drawer>
             <Menu
