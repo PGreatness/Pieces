@@ -26,7 +26,7 @@ Pieces is a web application developed for artists, level designers, and game des
 
 
 ### Explore Screen
-![Explore Screen-10](https://user-images.githubusercontent.com/60799230/217414780-eb7dd5bd-bb94-4cc6-a295-3323a336fde6.png | width=300)
+![Explore Screen-10](https://user-images.githubusercontent.com/60799230/217414780-eb7dd5bd-bb94-4cc6-a295-3323a336fde6.png =250x250)
 
 
 ### Explore Screen Comments
