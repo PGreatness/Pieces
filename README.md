@@ -37,12 +37,16 @@ Pieces is a web application developed for artists, level designers, and game des
 <img src="https://user-images.githubusercontent.com/60799230/217415002-8e95d564-7354-4dee-b649-d8126ef78a8a.png" width="700">
 
 ### Notification Sidebar
-<img src="https://user-images.githubusercontent.com/60799230/217415020-1afd2542-19a1-412a-af35-1d5785a994fb.png" width="700">
+<img src="https://user-images.githubusercontent.com/60799230/217415020-1afd2542-19a1-412a-af35-1d5785a994fb.png" width="400">
+<img width="208" alt="Screenshot 2023-02-07 at 9 50 16 PM" src="https://user-images.githubusercontent.com/60799230/217416444-38b78e4f-d004-4515-83a2-24e601fbcdce.png">
 
 
 ### Map Editor
+<img width="700" alt="Screenshot 2023-02-07 at 9 49 41 PM" src="https://user-images.githubusercontent.com/60799230/217416358-efcfc227-b395-419e-a04c-5a8dbaf29971.png">
+
 
 ### Tileset Editor
+<img width="593" alt="Screenshot 2023-02-07 at 9 49 57 PM" src="https://user-images.githubusercontent.com/60799230/217416410-048c8c83-1a88-4f57-9291-96d87071f17c.png">
 
 
 ### Community Screen
