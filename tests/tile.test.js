@@ -6,7 +6,7 @@ const request = require('supertest');
  */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "tilesetId": "6355e171286afe702190fe10",
             "height": 64,
             "width": 64,
@@ -22,7 +22,7 @@ describe('POST /api/tile/newTile', () => {
  */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "tilesetId": "6355e171286afe702190fe10",
             "height": 64,
             "width": 64,
@@ -38,7 +38,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 64,
             "userId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
@@ -53,7 +53,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "width": 64,
             "userId": "6355e171286afe702190fe10",
             "tileData": ["rgba(0,0,0,0)"]
@@ -68,7 +68,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
 
         });
         expect(res.status).toBe(400);
@@ -81,7 +81,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": -15,
             "width": 64,
             "userId": "6355e171286afe702190fe10",
@@ -98,7 +98,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 0,
             "width": 64,
             "userId": "6355e171286afe702190fe10",
@@ -115,7 +115,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 64,
             "width": -15,
             "userId": "6355e171286afe702190fe10",
@@ -132,7 +132,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 64,
             "width": 0,
             "userId": "6355e171286afe702190fe10",
@@ -149,7 +149,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 1252,
             "width": 64,
             "userId": "6355e171286afe702190fe10",
@@ -166,7 +166,7 @@ describe('POST /api/tile/newTile', () => {
 */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 64,
             "width": 1252,
             "userId": "6355e171286afe702190fe10",
@@ -183,7 +183,7 @@ describe('POST /api/tile/newTile', () => {
  */
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 64,
             "width": 64,
             "userId": "6355e171286afe702190fe11",
@@ -201,7 +201,7 @@ describe('POST /api/tile/newTile', () => {
 /**
 describe('POST /api/tile/newTile', () => {
     it('Should add a Tile to the database', async () => {
-        const res = await request('http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
+        const res = await request(process.env.PUBLIC_URL || 'http://pieces-316.herokuapp.com').post('/api/tile/newTile').send({
             "height": 22,
             "width": 22,
             "userId": "6356e452281db1470ee812cb",
