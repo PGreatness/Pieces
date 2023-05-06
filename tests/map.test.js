@@ -90,7 +90,7 @@ describe("POST /api/map/newMap", () => {
 // ADDING MAP WITH NEGATIVE WIDTH
 describe("POST /api/map/newMap", () => {
     it("Can't have negative width", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
             "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
@@ -109,7 +109,7 @@ describe("POST /api/map/newMap", () => {
 // ADDING MAP WITH NEGATIVE TILE HEIGHT
 describe("POST /api/map/newMap", () => {
     it("Can't have negative tile height", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
             "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
@@ -128,7 +128,7 @@ describe("POST /api/map/newMap", () => {
 // ADDING MAP WITH NEGATIVE TILE WIDTH
 describe("POST /api/map/newMap", () => {
     it("Can't have negative tile width", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/map/newMap").send({
             "title": "nojwoqjwojqowqjwqo",
             "mapDescription": "This map will be deleted vert shortly!",
             "tags": ["188", "Scary"],
