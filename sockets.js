@@ -5,7 +5,7 @@ const startWebSockets = (server) => {
         cors: {
 
             // origin: "http://localhost:3000",
-            origin: "https://pieces-316.herokuapp.com",
+            origin: process.env.PUBLIC_URL || "https://pieces-316.herokuapp.com",
 
             methods: ["GET", "POST"],
         },
