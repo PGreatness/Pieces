@@ -52,7 +52,7 @@ const startWebSockets = (server) => {
             console.log(`requesting update to notifications from ${socket.user} to ${data.sendTo}, currently ${socket.id}`);
             console.log([...socket.rooms])
             console.log([...socket.rooms].includes(data.sendTo))
-            socket.to(data.sendTo).emit("updateNotifications", { socketId: socket.id });
+            socket.emit("updateNotifications", { socketId: socket.id });
             console.log('update sent');
         })
 

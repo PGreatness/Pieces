@@ -43,7 +43,7 @@ export default function MapTile(props) {
 
     return (
 
-        <Grid onMouseOver={(event) => props.preview ? props.handleHoverTile(event) : null}
+        <Grid onMouseOver={(event) => !props.preview ? props.handleHoverTile(event) : null}
             onClick={props.preview ? null : handleClickTile} 
             id={`tile_${props.index}`}
             className='tile' item xs={1}
