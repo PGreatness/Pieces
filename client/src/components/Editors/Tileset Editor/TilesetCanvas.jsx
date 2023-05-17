@@ -35,15 +35,15 @@ export default function TilesetCanvas() {
             console.log('Recieved Tileset Update');
             console.log(data);
             // setTileset(data.tileset);
-            let currentUserTile = store.currentTile;
+            let currentUserTile = currentTile;
             console.log("Current user tile: ", currentUserTile);
             store.loadTileset(data.project).then(()=>{
                 console.log("Tileset fully loaded");
-                console.log("Tile after loading: ", store.currentTile);
-                console.log("same?: ", store.currentTile === currentUserTile, store.currentTile != currentUserTile);
-                if (store.currentTile != currentUserTile) {
+                console.log("Tile after loading: ", currentTile);
+                console.log('saved tile after loading: ', currentUserTile);
+                if (currentTile != currentUserTile) {
                     console.log('User was editing different tile');
-                    store.setCurrentTile(currentUserTile);
+                    store.setCurrentTile(currentUserTile._id).then(()=>setCurrentTile(store.currentTile))
                     console.log("Set current tile back to tile user was editing");
                 }
             });
