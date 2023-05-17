@@ -6,7 +6,7 @@ let updateIdDuplicate = null;
 
 describe("POST /api/register", () => {
     it("Add a new user to the database", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/register").send({
             "firstName": "Iman",
             "lastName": "Ali",
             "userName": userName,
@@ -23,7 +23,7 @@ describe("POST /api/register", () => {
 
 describe("POST /api/register", () => {
     it("Register without all fields", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/register").send({
             "firstName": "Imaniman",
             "userName": "imantestingali",
             "email": "iman1@stonybrook.edu",
@@ -37,7 +37,7 @@ describe("POST /api/register", () => {
 
 describe("POST /api/register", () => {
     it("Register with exisiting email", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/register").send({
             "firstName": "Iman2",
             "lastName": "Ali2",
             "userName": "imantesting",
@@ -52,7 +52,7 @@ describe("POST /api/register", () => {
 
 describe("POST /api/register", () => {
     it("Register with exisiting username", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/register").send({
             "firstName": "Iman2",
             "lastName": "Ali2",
             "userName": userName,
@@ -68,7 +68,7 @@ describe("POST /api/register", () => {
 
 describe("POST /api/register", () => {
     it("Register with invalid password (<8 char)", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/register").send({
             "firstName": "Iman2",
             "lastName": "Ali2",
             "userName": "username",
@@ -83,7 +83,7 @@ describe("POST /api/register", () => {
 
 describe("POST /api/register", () => {
     it("Register with invalid password (passwordVerify)", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/register").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/register").send({
             "firstName": "Iman2",
             "lastName": "Ali2",
             "userName": "username123",
@@ -98,7 +98,7 @@ describe("POST /api/register", () => {
 
 describe("POST /api/updateUser", () => {
     it("Update User)", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/updateUser").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/updateUser").send({
             "_id": updateId,
             "firstName": "Iman",
             "lastName": "Ali",
@@ -114,7 +114,7 @@ describe("POST /api/updateUser", () => {
 
 describe("POST /api/changePassword", () => {
     it("Change Password)", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/changePassword").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/changePassword").send({
             "email": "iman.ali@stonybrook.edu",
             "currentPassword": "iman1234",
             "newPassword": "testinttttt",
@@ -127,7 +127,7 @@ describe("POST /api/changePassword", () => {
 
 describe("POST /api/changePassword", () => {
     it("Change Password (repeat no match))", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/changePassword").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/changePassword").send({
             "email": "iman.ali@stonybrook.edu",
             "currentPassword": "iman1234",
             "newPassword": "testinttttt",
@@ -140,7 +140,7 @@ describe("POST /api/changePassword", () => {
 
 describe("POST /api/changePassword", () => {
     it("Change Password (missing args))", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/changePassword").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/changePassword").send({
             "email": "iman.ali@stonybrook.edu",
             "currentPassword": "iman1234",
             "repeatNewPassword": "testinttttt"
@@ -152,7 +152,7 @@ describe("POST /api/changePassword", () => {
 
 describe("POST /api/changePassword", () => {
     it("Change Password (no user))", async () => {
-        const res = await request("http://pieces-316.herokuapp.com").post("/api/changePassword").send({
+        const res = await request(process.env.PUBLIC_URL || "http://pieces-316.herokuapp.com").post("/api/changePassword").send({
             "email": "unknown@stonybrook.edu",
             "currentPassword": "iman1234",
             "newPassword": "testinttttt",

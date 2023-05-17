@@ -1,4 +1,4 @@
-![site status](https://badgen.net/https/ahnafhasan2000.npkn.net/peices316/ "Site Status")
+![site status](https://badgen.net/https/ahnafhasan2000.npkn.net/pieces/ "Site Status")
 
 # Pieces
 ### By Ahnaf Hasan, Iman Ali, Vincent Chi, Tommy Lin

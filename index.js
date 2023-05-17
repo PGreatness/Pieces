@@ -26,6 +26,9 @@ app.use(express.json())
 app.use(cookieParser())
 app.use('/api', piecesRouter);
 
+app.use('/api/url', (req, res) => {
+    res.json({ env: process.env.PUBLIC_URL })
+})
 
 
 
@@ -36,7 +39,7 @@ if (process.env.NODE_ENV === "production") {
     // SETUP THE MIDDLEWARE
     app.use(express.urlencoded({ extended: true }))
     app.use(cors({
-        origin: ["https://pieces-316.herokuapp.com/"],
+        origin: [process.env.PUBLIC_URL || "https://pieces-316.herokuapp.com/"],
         credentials: true
     }))
     //"http://pieces-316.herokuapp.com", 
