@@ -4,7 +4,6 @@ const startWebSockets = (server) => {
     const io = new Server(server, {
         cors: {
 
-            // origin: "http://localhost:3000",
             origin: process.env.PUBLIC_URL || "http://localhost:3000",
 
             methods: ["GET", "POST"],

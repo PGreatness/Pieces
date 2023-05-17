@@ -22,7 +22,7 @@ import './css/app.css';
 import io from 'socket.io-client';
 
 let PUBLIC_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/";
-
+console.log("PUBLIC_URL: ", PUBLIC_URL)
 const socket = io.connect(PUBLIC_URL);
 // const socket = io.connect('localhost:4000/');
 
