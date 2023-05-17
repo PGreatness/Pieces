@@ -52,14 +52,6 @@ export default function MapCanvas() {
 
 	// useEffect(() => {
 	auth.socket.on("recieveUpdateMap", (data) => {
-		if (auth.socket.id === data.socketId) { 
-			if (data.force) {
-
-			}
-			else {
-				return; 
-			}
-		}
 
 		store.loadMap(data.project).then(() => {
 
