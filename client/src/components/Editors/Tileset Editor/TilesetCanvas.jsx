@@ -35,8 +35,13 @@ export default function TilesetCanvas() {
             console.log('Recieved Tileset Update');
             console.log(data);
             // setTileset(data.tileset);
+            let currentUserTile = store.currentTile;
             store.loadTileset(data.project).then(()=>{
                 console.log("Tileset fully loaded");
+                if (store.currentTile != currentUserTile) {
+                    store.setCurrentTile(currentUserTile);
+                    console.log("Set current tile back to tile user was editing");
+                }
             });
         })
     }, [auth.socket])
