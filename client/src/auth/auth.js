@@ -80,7 +80,7 @@ function AuthContextProvider(props) {
         if (response.status === 200) {
             //store.changePageToExplore(); 
             console.log("user is logged in")
-            const socket = io(process.env.REACT_APP_BASE_URL || 'https://pieces-316.herokuapp.com');
+            const socket = io("https://pieces.onrender.com/" || 'https://pieces-316.herokuapp.com');
             // const socket = io('localhost:4000');
             socket.emit('login', response.data.user._id);
 
@@ -106,7 +106,7 @@ function AuthContextProvider(props) {
 
         await api.loginUser(userData).then(response => {
             console.log(response.data)
-            const socket = io(process.env.REACT_APP_BASE_URL || 'https://pieces-316.herokuapp.com');
+            const socket = io("https://pieces.onrender.com/" || 'https://pieces-316.herokuapp.com');
             // const socket = io('localhost:4000');
             socket.emit('login', response.data.user._id);
             authReducer({
