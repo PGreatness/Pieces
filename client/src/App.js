@@ -20,7 +20,10 @@ import { CommunityStoreContextProvider } from './store/communityStore';
 import './css/app.css';
 
 import io from 'socket.io-client';
-const socket = io.connect('https://pieces-316.herokuapp.com/');
+
+let PUBLIC_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/";
+
+const socket = io.connect(PUBLIC_URL);
 // const socket = io.connect('localhost:4000/');
 
 const App = () => {

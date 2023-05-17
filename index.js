@@ -26,6 +26,9 @@ app.use(express.json())
 app.use(cookieParser())
 app.use('/api', piecesRouter);
 
+app.use('/api/url', (req, res) => {
+    res.json({ env: process.env.PUBLIC_URL })
+})
 
 
 
