@@ -36,9 +36,13 @@ export default function TilesetCanvas() {
             console.log(data);
             // setTileset(data.tileset);
             let currentUserTile = store.currentTile;
+            console.log("Current user tile: ", currentUserTile);
             store.loadTileset(data.project).then(()=>{
                 console.log("Tileset fully loaded");
+                console.log("Tile after loading: ", store.currentTile);
+                console.log("same?: ", store.currentTile === currentUserTile, store.currentTile != currentUserTile);
                 if (store.currentTile != currentUserTile) {
+                    console.log('User was editing different tile');
                     store.setCurrentTile(currentUserTile);
                     console.log("Set current tile back to tile user was editing");
                 }
