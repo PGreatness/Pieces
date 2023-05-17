@@ -21,7 +21,7 @@ import './css/app.css';
 
 import io from 'socket.io-client';
 
-let PUBLIC_URL = "https://pieces.onrender.com/" || "http://localhost:4000/";
+let PUBLIC_URL = "https://pieces.onrender.com/";
 console.log("PUBLIC_URL: ", PUBLIC_URL)
 const socket = io.connect(PUBLIC_URL);
 // const socket = io.connect('localhost:4000/');
